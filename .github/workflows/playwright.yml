@@ -35,15 +35,59 @@ jobs:
 
       - run: pnpm exec playwright install --with-deps
 
-      - name: Build
+      - name: Start PostgreSQL
+        working-directory: ${{ github.workspace }}
+        run: |
+          docker run -d \
+            --name mintly-pg \
+            --network host \
+            -e POSTGRES_USER=mintly \
+            -e POSTGRES_PASSWORD=mintly \
+            -e POSTGRES_DB=mintly \
+            bitnami/postgresql:latest
+
+      - name: Build API image
+        working-directory: ${{ github.workspace }}
+        run: docker build -t mintly-api ./api
+
+      - name: Wait for PostgreSQL
+        working-directory: ${{ github.workspace }}
+        run: timeout 30 bash -c 'until nc -z localhost 5432; do sleep 1; done'
+
+      - name: Run migrations
+        working-directory: ${{ github.workspace }}/api
+        run: pnpm db:migrate
+        env:
+          DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
+
+      - name: Start API
+        working-directory: ${{ github.workspace }}
+        run: |
+          docker run -d \
+            --name mintly-api \
+            --network host \
+            -e DATABASE_URL=postgresql://mintly:mintly@localhost:5432/mintly \
+            -e BETTER_AUTH_URL=http://localhost:3000 \
+            -e BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }} \
+            -e ALLOWED_ORIGIN=http://localhost:4173 \
+            -e NODE_ENV=production \
+            -e OTEL_SERVICE_NAME=mintly-api-e2e \
+            -e OTEL_TRACES_EXPORTER=none \
+            mintly-api
+
+      - name: Wait for API
+        working-directory: ${{ github.workspace }}
+        run: timeout 30 bash -c 'until curl -sf http://localhost:3000/health; do sleep 1; done'
+
+      - name: Build frontend
         run: pnpm build
         env:
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_API_BASE_URL: http://localhost:3000
 
       - name: Run E2E tests
         run: pnpm test
         env:
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_API_BASE_URL: http://localhost:3000
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
