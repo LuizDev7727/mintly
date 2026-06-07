@@ -36,6 +36,8 @@ jobs:
       - run: pnpm exec playwright install --with-deps
 
       - run: pnpm test
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
