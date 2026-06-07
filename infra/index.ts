@@ -5,12 +5,8 @@ import * as awsx from "@pulumi/awsx";
 const config = new pulumi.Config();
 const imageTag = config.require("imageTag");
 
-// ECR Repository
-const repo = new aws.ecr.Repository("api-repo", {
-  name: "mintly-api-staging",
-  imageTagMutability: "MUTABLE",
-  forceDelete: true,
-});
+// ECR Repository (created/ensured by CI before Docker push)
+const repo = aws.ecr.getRepositoryOutput({ name: "mintly-api-staging" });
 
 // ECS Cluster
 const cluster = new aws.ecs.Cluster("api-cluster", {
