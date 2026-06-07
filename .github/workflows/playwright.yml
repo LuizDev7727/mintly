@@ -35,7 +35,13 @@ jobs:
 
       - run: pnpm exec playwright install --with-deps
 
-      - run: pnpm test
+      - name: Build
+        run: pnpm build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+
+      - name: Run E2E tests
+        run: pnpm test
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
