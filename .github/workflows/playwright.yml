@@ -10,9 +10,6 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: web
 
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +22,9 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: web/pnpm-lock.yaml
 
-      - run: pnpm install
+      - name: Install web dependencies
+        working-directory: web
+        run: pnpm install
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
@@ -33,10 +32,11 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('web/pnpm-lock.yaml') }}
 
-      - run: pnpm exec playwright install --with-deps
+      - name: Install Playwright browsers
+        working-directory: web
+        run: pnpm exec playwright install --with-deps
 
       - name: Start PostgreSQL
-        working-directory: ${{ github.workspace }}
         run: |
           docker run -d \
             --name mintly-pg \
@@ -47,28 +47,27 @@ jobs:
             bitnami/postgresql:latest
 
       - name: Build API image
-        working-directory: ${{ github.workspace }}
         run: docker build -t mintly-api ./api
 
       - name: Wait for PostgreSQL
-        working-directory: ${{ github.workspace }}
         run: until nc -z localhost 5432; do sleep 1; done
 
       - name: Run migrations
-        working-directory: ${{ github.workspace }}/api
+        working-directory: api
         run: pnpm db:migrate
         env:
           DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
 
       - name: Start API
-        working-directory: ${{ github.workspace }}
+        env:
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
         run: |
           docker run -d \
             --name mintly-api \
             --network host \
             -e DATABASE_URL=postgresql://mintly:mintly@localhost:5432/mintly \
             -e BETTER_AUTH_URL=http://localhost:3000 \
-            -e BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }} \
+            -e "BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET" \
             -e ALLOWED_ORIGIN=http://localhost:4173 \
             -e NODE_ENV=production \
             -e OTEL_SERVICE_NAME=mintly-api-e2e \
@@ -76,15 +75,16 @@ jobs:
             mintly-api
 
       - name: Wait for API
-        working-directory: ${{ github.workspace }}
         run: until curl -sf http://localhost:3000/api/health; do sleep 1; done
 
       - name: Build frontend
+        working-directory: web
         run: pnpm build
         env:
           VITE_API_BASE_URL: http://localhost:3000
 
       - name: Run E2E tests
+        working-directory: web
         run: pnpm test
         env:
           VITE_API_BASE_URL: http://localhost:3000
