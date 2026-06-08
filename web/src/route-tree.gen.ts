@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './pages/__root'
 import { Route as AuthLayoutRouteImport } from './pages/auth/layout'
 import { Route as IndexRouteImport } from './pages/index'
+import { Route as AuthIndexRouteImport } from './pages/auth/index'
 import { Route as AuthSignUpIndexRouteImport } from './pages/auth/sign-up/index'
 
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
@@ -23,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthLayoutRoute,
+} as any)
 const AuthSignUpIndexRoute = AuthSignUpIndexRouteImport.update({
   id: '/sign-up/',
   path: '/sign-up/',
@@ -32,25 +38,27 @@ const AuthSignUpIndexRoute = AuthSignUpIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/auth/': typeof AuthIndexRoute
   '/auth/sign-up/': typeof AuthSignUpIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthLayoutRouteWithChildren
+  '/auth': typeof AuthIndexRoute
   '/auth/sign-up': typeof AuthSignUpIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/auth/': typeof AuthIndexRoute
   '/auth/sign-up/': typeof AuthSignUpIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/auth/sign-up/'
+  fullPaths: '/' | '/auth' | '/auth/' | '/auth/sign-up/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/auth' | '/auth/sign-up'
-  id: '__root__' | '/' | '/auth' | '/auth/sign-up/'
+  id: '__root__' | '/' | '/auth' | '/auth/' | '/auth/sign-up/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -74,6 +82,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/': {
+      id: '/auth/'
+      path: '/'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
     '/auth/sign-up/': {
       id: '/auth/sign-up/'
       path: '/sign-up'
@@ -85,10 +100,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthLayoutRouteChildren {
+  AuthIndexRoute: typeof AuthIndexRoute
   AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
 }
 
 const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
+  AuthIndexRoute: AuthIndexRoute,
   AuthSignUpIndexRoute: AuthSignUpIndexRoute,
 }
 
