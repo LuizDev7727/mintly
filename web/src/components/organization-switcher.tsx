@@ -62,7 +62,7 @@ export function OrganizationSwitcher() {
           ))}
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <button className="w-full">
+            <button className="w-full cursor-pointer">
               <PlusCircle className="mr-2 size-4" />
               Create new
             </button>
