@@ -1,31 +1,47 @@
-import { Link } from "@tanstack/react-router";
-import { LayoutDashboardIcon, Settings2Icon, UsersIcon } from "lucide-react";
+import { useParams } from "@tanstack/react-router";
+import {
+  ChartPieIcon,
+  LayoutDashboardIcon,
+  Settings2Icon,
+  UsersIcon,
+} from "lucide-react";
+import { Button } from "./ui/button";
+import { NavLink } from "./nav-link";
 
-const tabs = [
-  { label: "Overview", icon: LayoutDashboardIcon, to: "overview" },
-  { label: "Members", icon: UsersIcon, to: "members" },
-  { label: "Settings", icon: Settings2Icon, to: "settings" },
-] as const;
+export function OrganizationTabs() {
+  const { slug } = useParams({
+    from: "/orgs/$slug",
+  });
 
-interface OrganizationTabsProps {
-  slug: string;
-}
+  const buttonStyle =
+    "h-full data-[current=true]:text-foreground pb-4 justify-center rounded-none border-transparent border-y-2 font-medium hover:border-b-primary text-muted-foreground hover:bg-transparent! data-[current=true]:border-b-primary data-[current=true]:bg-transparent!";
 
-export function OrganizationTabs({ slug }: OrganizationTabsProps) {
   return (
-    <nav className="flex items-center gap-2 border-b border-border">
-      {tabs.map(({ label, icon: Icon, to }) => (
-        <Link
-          key={to}
-          to={`/orgs/${slug}/${to}` as never}
-          activeProps={{ className: "border-b-2 border-foreground text-foreground" }}
-          inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
-          className="flex items-center gap-2 px-1 pb-3 pt-1 text-sm font-medium transition-colors -mb-px"
-        >
-          <Icon size={15} />
-          {label}
-        </Link>
-      ))}
+    <nav className="flex items-center gap-2">
+      <Button asChild variant="ghost" size="sm" className={buttonStyle}>
+        <NavLink to={`/orgs/$slug`} params={{ slug }}>
+          <LayoutDashboardIcon className="size-4" />
+          Projects
+        </NavLink>
+      </Button>
+      <Button asChild variant="ghost" size="sm" className={buttonStyle}>
+        <NavLink to={`/orgs/$slug/usage`} params={{ slug }}>
+          <ChartPieIcon className="size-4" />
+          Usage
+        </NavLink>
+      </Button>
+      <Button asChild variant="ghost" size="sm" className={buttonStyle}>
+        <NavLink to={`/orgs/$slug/members`} params={{ slug }}>
+          <UsersIcon className="size-4" />
+          Members
+        </NavLink>
+      </Button>
+      <Button asChild variant="ghost" size="sm" className={buttonStyle}>
+        <NavLink to={`/orgs/$slug/settings`} params={{ slug }}>
+          <Settings2Icon className="size-4" />
+          Settings
+        </NavLink>
+      </Button>
     </nav>
   );
 }

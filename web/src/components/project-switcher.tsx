@@ -1,23 +1,24 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronsUpDown, PlusCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getProjectsHttp } from "@/http/get-projects.http";
 
-type ProjectSwitcherProps = {
-  orgSlug: string;
-};
+export function ProjectSwitcher() {
+  const { slug } = useParams({
+    from: "/orgs/$slug",
+  });
 
-export function ProjectSwitcher({ orgSlug }: ProjectSwitcherProps) {
   const { data } = useSuspenseQuery({
-    queryKey: ["projects", orgSlug],
-    queryFn: () => getProjectsHttp({ orgSlug }),
+    queryKey: ["projects", slug],
+    queryFn: () => getProjectsHttp({ orgSlug: slug }),
   });
 
   const { projects } = data;
@@ -28,20 +29,23 @@ export function ProjectSwitcher({ orgSlug }: ProjectSwitcherProps) {
     console.log({ projectSlug });
   }
 
-  if (!currentProject) return null;
-
   return (
     <div className="w-40 flex items-center justify-between gap-1">
-      <span className="truncate text-left text-sm font-medium">
-        {currentProject.name}
-      </span>
-
       <DropdownMenu>
-        <DropdownMenuTrigger className="cursor-pointer">
+        <DropdownMenuTrigger className="cursor-pointer flex w-42 items-center gap-2 rounded p-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-primary">
+          {/*<span className="truncate text-left text-sm font-medium">
+            {currentProject.name}
+          </span>*/}
+          <span className="text-sm font-medium text-muted-foreground">
+            Select a project
+          </span>
           <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="start" className="w-50">
+          <DropdownMenuLabel className="text-xs text-muted-foreground">
+            Projects
+          </DropdownMenuLabel>
           {projects.map((project) => (
             <DropdownMenuItem
               key={project.id}

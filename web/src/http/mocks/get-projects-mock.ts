@@ -9,21 +9,39 @@ export const getProjectsMock = http.get<
   return HttpResponse.json({
     projects: [
       {
-        id: "01950000-0000-7000-8000-000000000011",
-        name: "Website Redesign",
-        slug: "website-redesign",
+        id: "1",
+        name: "asdasd",
+        slug: "asd",
         avatar: null,
       },
       {
-        id: "01950000-0000-7000-8000-000000000012",
-        name: "Mobile App",
-        slug: "mobile-app",
+        id: "2",
+        name: "asdasdasd",
+        slug: "asdasd",
         avatar: null,
       },
       {
-        id: "01950000-0000-7000-8000-000000000013",
-        name: "API Integration",
-        slug: "api-integration",
+        id: "3",
+        name: "asdasd",
+        slug: "asdasdasd",
+        avatar: null,
+      },
+      {
+        id: "4",
+        name: "asdasdasdasd",
+        slug: "asdasdasdasd",
+        avatar: null,
+      },
+      {
+        id: "5",
+        name: "asdasdasdasdasd",
+        slug: "asdasdasdasdasd",
+        avatar: null,
+      },
+      {
+        id: "6",
+        name: "asdasdasdasdas",
+        slug: "asdasdasd",
         avatar: null,
       },
     ],
