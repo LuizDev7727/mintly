@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth";
@@ -40,7 +41,11 @@ export function OrganizationSwitcher() {
 
   return (
     <div className="w-40 flex items-center justify-between gap-1">
-      <Link to={`/`} className="w-full hover:underline">
+      <Link
+        to={`/orgs/$slug`}
+        params={{ slug: currentOrg.slug }}
+        className="w-full hover:underline"
+      >
         <span className="truncate text-left text-sm font-medium">
           {currentOrg.name}
         </span>
@@ -52,10 +57,14 @@ export function OrganizationSwitcher() {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="start" className="w-50">
+          <DropdownMenuLabel className="text-xs text-muted-foreground">
+            Workspaces
+          </DropdownMenuLabel>
           {organizations.map((org) => (
             <DropdownMenuItem
               key={org.id}
               onClick={() => handleSetSelectedOrg(org.slug)}
+              className="cursor-pointer"
             >
               {org.name}
             </DropdownMenuItem>

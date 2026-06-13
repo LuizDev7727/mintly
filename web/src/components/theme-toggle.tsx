@@ -17,7 +17,7 @@ export function ThemeToggle() {
         }`}
         onClick={() => setTheme("light")}
       >
-        <SunIcon size={14} />
+        <SunIcon className="size-3.5" />
         Light
       </Button>
       <Button
@@ -30,7 +30,7 @@ export function ThemeToggle() {
         }`}
         onClick={() => setTheme("dark")}
       >
-        <MoonIcon size={14} />
+        <MoonIcon className="size-3.5" />
         Dark
       </Button>
     </div>
