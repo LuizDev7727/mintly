@@ -32,11 +32,9 @@ export function ProjectSwitcher({ orgSlug }: ProjectSwitcherProps) {
 
   return (
     <div className="w-40 flex items-center justify-between gap-1">
-      <Link to={`/`} className="w-full hover:underline">
-        <span className="truncate text-left text-sm font-medium">
-          {currentProject.name}
-        </span>
-      </Link>
+      <span className="truncate text-left text-sm font-medium">
+        {currentProject.name}
+      </span>
 
       <DropdownMenu>
         <DropdownMenuTrigger className="cursor-pointer">
@@ -48,13 +46,14 @@ export function ProjectSwitcher({ orgSlug }: ProjectSwitcherProps) {
             <DropdownMenuItem
               key={project.id}
               onClick={() => handleSetSelectedProject(project.slug)}
+              className="cursor-pointer"
             >
               {project.name}
             </DropdownMenuItem>
           ))}
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <button className="w-full">
+            <button className="w-full cursor-pointer">
               <PlusCircle className="mr-2 size-4" />
               Create new
             </button>
