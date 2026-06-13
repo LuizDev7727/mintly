@@ -1,0 +1,172 @@
+name: Tests on PR to Development
+
+on:
+  pull_request:
+    branches: [development]
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      has_e2e_tests: ${{ steps.changed.outputs.has_e2e_tests }}
+      e2e_files: ${{ steps.changed.outputs.e2e_files }}
+      has_api_tests: ${{ steps.changed.outputs.has_api_tests }}
+      api_files: ${{ steps.changed.outputs.api_files }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed test files
+        id: changed
+        run: |
+          BASE="origin/${{ github.base_ref }}"
+          E2E=$(git diff --name-only ${BASE}...HEAD -- 'web/src/tests/e2e/**')
+          API=$(git diff --name-only ${BASE}...HEAD -- 'api/src/tests/**')
+
+          E2E_FILES=$(echo "$E2E" | sed 's|^web/||' | tr '\n' ' ' | xargs)
+          API_FILES=$(echo "$API" | sed 's|^api/||' | tr '\n' ' ' | xargs)
+
+          echo "e2e_files=$E2E_FILES" >> $GITHUB_OUTPUT
+          echo "api_files=$API_FILES" >> $GITHUB_OUTPUT
+          echo "has_e2e_tests=$([ -n "$E2E_FILES" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "has_api_tests=$([ -n "$API_FILES" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+
+  test-api:
+    needs: detect
+    if: needs.detect.outputs.has_api_tests == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: npm install -g pnpm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "pnpm"
+          cache-dependency-path: api/pnpm-lock.yaml
+
+      - name: Install API dependencies
+        working-directory: api
+        run: pnpm install
+
+      - name: Start PostgreSQL
+        run: |
+          docker run -d \
+            --name mintly-pg \
+            --network host \
+            -e POSTGRES_USER=mintly \
+            -e POSTGRES_PASSWORD=mintly \
+            -e POSTGRES_DB=mintly \
+            bitnami/postgresql:latest
+
+      - name: Wait for PostgreSQL
+        run: until nc -z localhost 5432; do sleep 1; done
+
+      - name: Run migrations
+        working-directory: api
+        run: pnpm db:migrate
+        env:
+          DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
+
+      - name: Run API tests
+        working-directory: api
+        run: pnpm test ${{ needs.detect.outputs.api_files }}
+        env:
+          DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          BETTER_AUTH_URL: http://localhost:3000
+
+  test-e2e:
+    needs: detect
+    if: needs.detect.outputs.has_e2e_tests == 'true'
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: npm install -g pnpm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "pnpm"
+          cache-dependency-path: web/pnpm-lock.yaml
+
+      - name: Install web dependencies
+        working-directory: web
+        run: pnpm install
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('web/pnpm-lock.yaml') }}
+
+      - name: Install Playwright browsers
+        working-directory: web
+        run: pnpm exec playwright install --with-deps
+
+      - name: Start PostgreSQL
+        run: |
+          docker run -d \
+            --name mintly-pg \
+            --network host \
+            -e POSTGRES_USER=mintly \
+            -e POSTGRES_PASSWORD=mintly \
+            -e POSTGRES_DB=mintly \
+            bitnami/postgresql:latest
+
+      - name: Build API image
+        run: docker build -t mintly-api ./api
+
+      - name: Wait for PostgreSQL
+        run: until nc -z localhost 5432; do sleep 1; done
+
+      - name: Run migrations
+        working-directory: api
+        run: pnpm db:migrate
+        env:
+          DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
+
+      - name: Start API
+        env:
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+        run: |
+          docker run -d \
+            --name mintly-api \
+            --network host \
+            -e DATABASE_URL=postgresql://mintly:mintly@localhost:5432/mintly \
+            -e BETTER_AUTH_URL=http://localhost:3000 \
+            -e "BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET" \
+            -e ALLOWED_ORIGIN=http://localhost:4173 \
+            -e NODE_ENV=production \
+            -e OTEL_SERVICE_NAME=mintly-api-e2e \
+            -e OTEL_TRACES_EXPORTER=none \
+            mintly-api
+
+      - name: Wait for API
+        run: until curl -sf http://localhost:3000/api/health; do sleep 1; done
+
+      - name: Build frontend
+        working-directory: web
+        run: pnpm build
+        env:
+          VITE_API_BASE_URL: http://localhost:3000
+
+      - name: Run E2E tests
+        working-directory: web
+        run: pnpm test ${{ needs.detect.outputs.e2e_files }}
+        env:
+          VITE_API_BASE_URL: http://localhost:3000
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: web/playwright-report/
+          retention-days: 30
