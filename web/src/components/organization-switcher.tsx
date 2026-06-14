@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronsUpDown, PlusCircle } from "lucide-react";
+import { Building, ChevronsUpDown, PlusCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,11 +7,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuLabel,
+  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "./ui/sidebar";
 
 export function OrganizationSwitcher() {
+  const { isMobile } = useSidebar();
+
   // const { data: activeOrganization } = authClient.useActiveOrganization();
 
   // console.log({ activeOrganization });
@@ -40,44 +49,58 @@ export function OrganizationSwitcher() {
   }
 
   return (
-    <div className="w-40 flex items-center justify-between gap-1">
-      <Link
-        to={`/orgs/$slug`}
-        params={{ slug: currentOrg.slug }}
-        className="w-full hover:underline"
-      >
-        <span className="truncate text-left text-sm font-medium">
-          {currentOrg.name}
-        </span>
-      </Link>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger className="cursor-pointer">
-          <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent align="start" className="w-50">
-          <DropdownMenuLabel className="text-xs text-muted-foreground">
-            Workspaces
-          </DropdownMenuLabel>
-          {organizations.map((org) => (
-            <DropdownMenuItem
-              key={org.id}
-              onClick={() => handleSetSelectedOrg(org.slug)}
-              className="cursor-pointer"
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              size="lg"
+              className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              {org.name}
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <Building className="size-4" />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{currentOrg.name}</span>
+                <span className="truncate text-xs">{currentOrg.slug}</span>
+              </div>
+              <ChevronsUpDown className="ml-auto" />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            align="start"
+            side={isMobile ? "bottom" : "right"}
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Organizations
+            </DropdownMenuLabel>
+            {organizations.map((org, index) => (
+              <DropdownMenuItem
+                key={org.name}
+                onClick={() => handleSetSelectedOrg(org.slug)}
+                className="gap-2 p-2 cursor-pointer"
+              >
+                <div className="flex size-6 items-center justify-center rounded-md border">
+                  <Building className="size-3.5 shrink-0" />
+                </div>
+                {org.name}
+                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-2 p-2 cursor-pointer">
+              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                <PlusCircle className="size-4" />
+              </div>
+              <div className="font-medium text-muted-foreground">
+                Add organization
+              </div>
             </DropdownMenuItem>
-          ))}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <button className="w-full cursor-pointer">
-              <PlusCircle className="mr-2 size-4" />
-              Create new
-            </button>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
   );
 }

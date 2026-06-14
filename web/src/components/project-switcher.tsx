@@ -1,6 +1,6 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ChevronsUpDown, PlusCircle } from "lucide-react";
+import { ChevronsUpDown, PlusCircle, Projector } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,14 +10,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getProjectsHttp } from "@/http/get-projects.http";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "./ui/sidebar";
 
 export function ProjectSwitcher() {
-  const { slug, project: projectSlug } = useParams({ strict: false });
+  const { isMobile } = useSidebar();
+  const { slug, project: projectSlug } = useParams({
+    from: "/orgs/$slug/projects/$project",
+  });
 
   const { data } = useSuspenseQuery({
     queryKey: ["projects", slug],
-    queryFn: () => getProjectsHttp({ orgSlug: slug! }),
-    enabled: !!slug,
+    queryFn: () => getProjectsHttp({ orgSlug: slug }),
   });
 
   const { projects } = data;
@@ -27,45 +35,66 @@ export function ProjectSwitcher() {
   );
 
   return (
-    <div className="w-40 flex items-center justify-between gap-1">
-      <DropdownMenu>
-        <DropdownMenuTrigger className="cursor-pointer flex w-42 items-center gap-2 rounded p-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-primary">
-          {currentProject ? (
-            <span className="truncate text-left text-sm font-medium">
-              {currentProject.name}
-            </span>
-          ) : (
-            <span className="text-sm font-medium text-muted-foreground">
-              Select a project
-            </span>
-          )}
-          <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent align="start" className="w-50">
-          <DropdownMenuLabel className="text-xs text-muted-foreground">
-            Projects
-          </DropdownMenuLabel>
-          {projects.map(({ id, name, slug: projectSlug }) => (
-            <DropdownMenuItem key={id} asChild>
-              <Link
-                to={"/orgs/$slug/projects/$project"}
-                className="cursor-pointer"
-                params={{ slug: slug, project: projectSlug }}
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              size="lg"
+              className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <Projector className="size-4" />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">
+                  {currentProject!.name}
+                </span>
+                <span className="truncate text-xs">
+                  {currentProject!.postsCount} Posts
+                </span>
+              </div>
+              <ChevronsUpDown className="ml-auto" />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            align="start"
+            side={isMobile ? "bottom" : "right"}
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Projects
+            </DropdownMenuLabel>
+            {projects.map((project) => (
+              <DropdownMenuItem
+                key={project.name}
+                className="gap-2 p-2 cursor-pointer"
+                asChild
               >
-                {name}
-              </Link>
+                <Link
+                  to={"/orgs/$slug/projects/$project"}
+                  params={{ slug, project: project.slug }}
+                >
+                  <div className="flex size-6 items-center justify-center rounded-md border">
+                    <Projector className="size-3.5 shrink-0" />
+                  </div>
+                  {project.name}
+                </Link>
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-2 p-2 cursor-pointer">
+              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                <PlusCircle className="size-4" />
+              </div>
+              <div className="font-medium text-muted-foreground">
+                Create project
+              </div>
             </DropdownMenuItem>
-          ))}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <button className="w-full cursor-pointer">
-              <PlusCircle className="mr-2 size-4" />
-              Create new
-            </button>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
   );
 }

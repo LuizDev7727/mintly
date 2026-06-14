@@ -1,38 +1,35 @@
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
-import { Button } from "@/components/ui/button";
+import { Toggle } from "./ui/toggle";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
+  function handleThemeToggle() {
+    setTheme(theme === "light" ? "dark" : "light");
+  }
+
   return (
-    <div className="flex items-center rounded-md bg-transparent border border-muted p-1 gap-1">
-      <Button
-        variant="ghost"
-        size="sm"
-        className={`h-7 gap-1.5 px-3 text-sm transition-all ${
-          theme === "light"
-            ? "bg-background text-foreground shadow-sm hover:bg-background"
-            : "text-muted-foreground hover:text-foreground"
-        }`}
-        onClick={() => setTheme("light")}
+    <div>
+      <Toggle
+        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+        className="group size-8 rounded-full border-none text-muted-foreground shadow-none data-[state=on]:bg-transparent data-[state=on]:text-muted-foreground data-[state=on]:hover:bg-muted data-[state=on]:hover:text-foreground"
+        onPressedChange={handleThemeToggle}
+        pressed={theme === "dark"}
+        variant="outline"
       >
-        <SunIcon className="size-3.5" />
-        Light
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className={`h-7 gap-1.5 px-3 text-sm transition-all ${
-          theme === "dark"
-            ? "bg-background text-foreground shadow-sm hover:bg-background"
-            : "text-muted-foreground hover:text-foreground"
-        }`}
-        onClick={() => setTheme("dark")}
-      >
-        <MoonIcon className="size-3.5" />
-        Dark
-      </Button>
+        {/* Note: After dark mode implementation, rely on dark: prefix rather than group-data-[state=on]: */}
+        <MoonIcon
+          aria-hidden="true"
+          className="shrink-0 scale-0 opacity-0 transition-all group-data-[state=on]:scale-100 group-data-[state=on]:opacity-100"
+          size={16}
+        />
+        <SunIcon
+          aria-hidden="true"
+          className="absolute shrink-0 scale-100 opacity-100 transition-all group-data-[state=on]:scale-0 group-data-[state=on]:opacity-0"
+          size={16}
+        />
+      </Toggle>
     </div>
   );
 }
