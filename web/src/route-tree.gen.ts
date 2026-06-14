@@ -9,219 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './pages/__root'
-import { Route as AuthLayoutRouteImport } from './pages/auth/layout'
 import { Route as IndexRouteImport } from './pages/index'
-import { Route as AuthIndexRouteImport } from './pages/auth/index'
-import { Route as OrgsSlugLayoutRouteImport } from './pages/orgs/$slug/layout'
-import { Route as OrgsSlugIndexRouteImport } from './pages/orgs/$slug/index'
-import { Route as AuthSignUpIndexRouteImport } from './pages/auth/sign-up/index'
-import { Route as OrgsSlugUsageIndexRouteImport } from './pages/orgs/$slug/usage/index'
-import { Route as OrgsSlugSettingsIndexRouteImport } from './pages/orgs/$slug/settings/index'
-import { Route as OrgsSlugMembersIndexRouteImport } from './pages/orgs/$slug/members/index'
-import { Route as OrgsSlugProjectsProjectLayoutRouteImport } from './pages/orgs/$slug/projects/$project/layout'
-import { Route as OrgsSlugProjectsProjectIndexRouteImport } from './pages/orgs/$slug/projects/$project/index'
-import { Route as OrgsSlugProjectsProjectSettingsIndexRouteImport } from './pages/orgs/$slug/projects/$project/settings/index'
-import { Route as OrgsSlugProjectsProjectIntegrationsIndexRouteImport } from './pages/orgs/$slug/projects/$project/integrations/index'
-import { Route as OrgsSlugProjectsProjectCreateUploadIndexRouteImport } from './pages/orgs/$slug/projects/$project/create-upload/index'
-import { Route as OrgsSlugProjectsProjectAiIndexRouteImport } from './pages/orgs/$slug/projects/$project/ai/index'
 
-const AuthLayoutRoute = AuthLayoutRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthIndexRoute = AuthIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthLayoutRoute,
-} as any)
-const OrgsSlugLayoutRoute = OrgsSlugLayoutRouteImport.update({
-  id: '/orgs/$slug',
-  path: '/orgs/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrgsSlugIndexRoute = OrgsSlugIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => OrgsSlugLayoutRoute,
-} as any)
-const AuthSignUpIndexRoute = AuthSignUpIndexRouteImport.update({
-  id: '/sign-up/',
-  path: '/sign-up/',
-  getParentRoute: () => AuthLayoutRoute,
-} as any)
-const OrgsSlugUsageIndexRoute = OrgsSlugUsageIndexRouteImport.update({
-  id: '/usage/',
-  path: '/usage/',
-  getParentRoute: () => OrgsSlugLayoutRoute,
-} as any)
-const OrgsSlugSettingsIndexRoute = OrgsSlugSettingsIndexRouteImport.update({
-  id: '/settings/',
-  path: '/settings/',
-  getParentRoute: () => OrgsSlugLayoutRoute,
-} as any)
-const OrgsSlugMembersIndexRoute = OrgsSlugMembersIndexRouteImport.update({
-  id: '/members/',
-  path: '/members/',
-  getParentRoute: () => OrgsSlugLayoutRoute,
-} as any)
-const OrgsSlugProjectsProjectLayoutRoute =
-  OrgsSlugProjectsProjectLayoutRouteImport.update({
-    id: '/projects/$project',
-    path: '/projects/$project',
-    getParentRoute: () => OrgsSlugLayoutRoute,
-  } as any)
-const OrgsSlugProjectsProjectIndexRoute =
-  OrgsSlugProjectsProjectIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => OrgsSlugProjectsProjectLayoutRoute,
-  } as any)
-const OrgsSlugProjectsProjectSettingsIndexRoute =
-  OrgsSlugProjectsProjectSettingsIndexRouteImport.update({
-    id: '/settings/',
-    path: '/settings/',
-    getParentRoute: () => OrgsSlugProjectsProjectLayoutRoute,
-  } as any)
-const OrgsSlugProjectsProjectIntegrationsIndexRoute =
-  OrgsSlugProjectsProjectIntegrationsIndexRouteImport.update({
-    id: '/integrations/',
-    path: '/integrations/',
-    getParentRoute: () => OrgsSlugProjectsProjectLayoutRoute,
-  } as any)
-const OrgsSlugProjectsProjectCreateUploadIndexRoute =
-  OrgsSlugProjectsProjectCreateUploadIndexRouteImport.update({
-    id: '/create-upload/',
-    path: '/create-upload/',
-    getParentRoute: () => OrgsSlugProjectsProjectLayoutRoute,
-  } as any)
-const OrgsSlugProjectsProjectAiIndexRoute =
-  OrgsSlugProjectsProjectAiIndexRouteImport.update({
-    id: '/ai/',
-    path: '/ai/',
-    getParentRoute: () => OrgsSlugProjectsProjectLayoutRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthLayoutRouteWithChildren
-  '/orgs/$slug': typeof OrgsSlugLayoutRouteWithChildren
-  '/auth/': typeof AuthIndexRoute
-  '/auth/sign-up/': typeof AuthSignUpIndexRoute
-  '/orgs/$slug/': typeof OrgsSlugIndexRoute
-  '/orgs/$slug/projects/$project': typeof OrgsSlugProjectsProjectLayoutRouteWithChildren
-  '/orgs/$slug/members/': typeof OrgsSlugMembersIndexRoute
-  '/orgs/$slug/settings/': typeof OrgsSlugSettingsIndexRoute
-  '/orgs/$slug/usage/': typeof OrgsSlugUsageIndexRoute
-  '/orgs/$slug/projects/$project/': typeof OrgsSlugProjectsProjectIndexRoute
-  '/orgs/$slug/projects/$project/ai/': typeof OrgsSlugProjectsProjectAiIndexRoute
-  '/orgs/$slug/projects/$project/create-upload/': typeof OrgsSlugProjectsProjectCreateUploadIndexRoute
-  '/orgs/$slug/projects/$project/integrations/': typeof OrgsSlugProjectsProjectIntegrationsIndexRoute
-  '/orgs/$slug/projects/$project/settings/': typeof OrgsSlugProjectsProjectSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthIndexRoute
-  '/auth/sign-up': typeof AuthSignUpIndexRoute
-  '/orgs/$slug': typeof OrgsSlugIndexRoute
-  '/orgs/$slug/members': typeof OrgsSlugMembersIndexRoute
-  '/orgs/$slug/settings': typeof OrgsSlugSettingsIndexRoute
-  '/orgs/$slug/usage': typeof OrgsSlugUsageIndexRoute
-  '/orgs/$slug/projects/$project': typeof OrgsSlugProjectsProjectIndexRoute
-  '/orgs/$slug/projects/$project/ai': typeof OrgsSlugProjectsProjectAiIndexRoute
-  '/orgs/$slug/projects/$project/create-upload': typeof OrgsSlugProjectsProjectCreateUploadIndexRoute
-  '/orgs/$slug/projects/$project/integrations': typeof OrgsSlugProjectsProjectIntegrationsIndexRoute
-  '/orgs/$slug/projects/$project/settings': typeof OrgsSlugProjectsProjectSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/auth': typeof AuthLayoutRouteWithChildren
-  '/orgs/$slug': typeof OrgsSlugLayoutRouteWithChildren
-  '/auth/': typeof AuthIndexRoute
-  '/auth/sign-up/': typeof AuthSignUpIndexRoute
-  '/orgs/$slug/': typeof OrgsSlugIndexRoute
-  '/orgs/$slug/projects/$project': typeof OrgsSlugProjectsProjectLayoutRouteWithChildren
-  '/orgs/$slug/members/': typeof OrgsSlugMembersIndexRoute
-  '/orgs/$slug/settings/': typeof OrgsSlugSettingsIndexRoute
-  '/orgs/$slug/usage/': typeof OrgsSlugUsageIndexRoute
-  '/orgs/$slug/projects/$project/': typeof OrgsSlugProjectsProjectIndexRoute
-  '/orgs/$slug/projects/$project/ai/': typeof OrgsSlugProjectsProjectAiIndexRoute
-  '/orgs/$slug/projects/$project/create-upload/': typeof OrgsSlugProjectsProjectCreateUploadIndexRoute
-  '/orgs/$slug/projects/$project/integrations/': typeof OrgsSlugProjectsProjectIntegrationsIndexRoute
-  '/orgs/$slug/projects/$project/settings/': typeof OrgsSlugProjectsProjectSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/auth'
-    | '/orgs/$slug'
-    | '/auth/'
-    | '/auth/sign-up/'
-    | '/orgs/$slug/'
-    | '/orgs/$slug/projects/$project'
-    | '/orgs/$slug/members/'
-    | '/orgs/$slug/settings/'
-    | '/orgs/$slug/usage/'
-    | '/orgs/$slug/projects/$project/'
-    | '/orgs/$slug/projects/$project/ai/'
-    | '/orgs/$slug/projects/$project/create-upload/'
-    | '/orgs/$slug/projects/$project/integrations/'
-    | '/orgs/$slug/projects/$project/settings/'
+  fullPaths: '/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/auth'
-    | '/auth/sign-up'
-    | '/orgs/$slug'
-    | '/orgs/$slug/members'
-    | '/orgs/$slug/settings'
-    | '/orgs/$slug/usage'
-    | '/orgs/$slug/projects/$project'
-    | '/orgs/$slug/projects/$project/ai'
-    | '/orgs/$slug/projects/$project/create-upload'
-    | '/orgs/$slug/projects/$project/integrations'
-    | '/orgs/$slug/projects/$project/settings'
-  id:
-    | '__root__'
-    | '/'
-    | '/auth'
-    | '/orgs/$slug'
-    | '/auth/'
-    | '/auth/sign-up/'
-    | '/orgs/$slug/'
-    | '/orgs/$slug/projects/$project'
-    | '/orgs/$slug/members/'
-    | '/orgs/$slug/settings/'
-    | '/orgs/$slug/usage/'
-    | '/orgs/$slug/projects/$project/'
-    | '/orgs/$slug/projects/$project/ai/'
-    | '/orgs/$slug/projects/$project/create-upload/'
-    | '/orgs/$slug/projects/$project/integrations/'
-    | '/orgs/$slug/projects/$project/settings/'
+  to: '/'
+  id: '__root__' | '/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
-  OrgsSlugLayoutRoute: typeof OrgsSlugLayoutRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthLayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -229,164 +48,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/': {
-      id: '/auth/'
-      path: '/'
-      fullPath: '/auth/'
-      preLoaderRoute: typeof AuthIndexRouteImport
-      parentRoute: typeof AuthLayoutRoute
-    }
-    '/orgs/$slug': {
-      id: '/orgs/$slug'
-      path: '/orgs/$slug'
-      fullPath: '/orgs/$slug'
-      preLoaderRoute: typeof OrgsSlugLayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/orgs/$slug/': {
-      id: '/orgs/$slug/'
-      path: '/'
-      fullPath: '/orgs/$slug/'
-      preLoaderRoute: typeof OrgsSlugIndexRouteImport
-      parentRoute: typeof OrgsSlugLayoutRoute
-    }
-    '/auth/sign-up/': {
-      id: '/auth/sign-up/'
-      path: '/sign-up'
-      fullPath: '/auth/sign-up/'
-      preLoaderRoute: typeof AuthSignUpIndexRouteImport
-      parentRoute: typeof AuthLayoutRoute
-    }
-    '/orgs/$slug/usage/': {
-      id: '/orgs/$slug/usage/'
-      path: '/usage'
-      fullPath: '/orgs/$slug/usage/'
-      preLoaderRoute: typeof OrgsSlugUsageIndexRouteImport
-      parentRoute: typeof OrgsSlugLayoutRoute
-    }
-    '/orgs/$slug/settings/': {
-      id: '/orgs/$slug/settings/'
-      path: '/settings'
-      fullPath: '/orgs/$slug/settings/'
-      preLoaderRoute: typeof OrgsSlugSettingsIndexRouteImport
-      parentRoute: typeof OrgsSlugLayoutRoute
-    }
-    '/orgs/$slug/members/': {
-      id: '/orgs/$slug/members/'
-      path: '/members'
-      fullPath: '/orgs/$slug/members/'
-      preLoaderRoute: typeof OrgsSlugMembersIndexRouteImport
-      parentRoute: typeof OrgsSlugLayoutRoute
-    }
-    '/orgs/$slug/projects/$project': {
-      id: '/orgs/$slug/projects/$project'
-      path: '/projects/$project'
-      fullPath: '/orgs/$slug/projects/$project'
-      preLoaderRoute: typeof OrgsSlugProjectsProjectLayoutRouteImport
-      parentRoute: typeof OrgsSlugLayoutRoute
-    }
-    '/orgs/$slug/projects/$project/': {
-      id: '/orgs/$slug/projects/$project/'
-      path: '/'
-      fullPath: '/orgs/$slug/projects/$project/'
-      preLoaderRoute: typeof OrgsSlugProjectsProjectIndexRouteImport
-      parentRoute: typeof OrgsSlugProjectsProjectLayoutRoute
-    }
-    '/orgs/$slug/projects/$project/settings/': {
-      id: '/orgs/$slug/projects/$project/settings/'
-      path: '/settings'
-      fullPath: '/orgs/$slug/projects/$project/settings/'
-      preLoaderRoute: typeof OrgsSlugProjectsProjectSettingsIndexRouteImport
-      parentRoute: typeof OrgsSlugProjectsProjectLayoutRoute
-    }
-    '/orgs/$slug/projects/$project/integrations/': {
-      id: '/orgs/$slug/projects/$project/integrations/'
-      path: '/integrations'
-      fullPath: '/orgs/$slug/projects/$project/integrations/'
-      preLoaderRoute: typeof OrgsSlugProjectsProjectIntegrationsIndexRouteImport
-      parentRoute: typeof OrgsSlugProjectsProjectLayoutRoute
-    }
-    '/orgs/$slug/projects/$project/create-upload/': {
-      id: '/orgs/$slug/projects/$project/create-upload/'
-      path: '/create-upload'
-      fullPath: '/orgs/$slug/projects/$project/create-upload/'
-      preLoaderRoute: typeof OrgsSlugProjectsProjectCreateUploadIndexRouteImport
-      parentRoute: typeof OrgsSlugProjectsProjectLayoutRoute
-    }
-    '/orgs/$slug/projects/$project/ai/': {
-      id: '/orgs/$slug/projects/$project/ai/'
-      path: '/ai'
-      fullPath: '/orgs/$slug/projects/$project/ai/'
-      preLoaderRoute: typeof OrgsSlugProjectsProjectAiIndexRouteImport
-      parentRoute: typeof OrgsSlugProjectsProjectLayoutRoute
-    }
   }
 }
-
-interface AuthLayoutRouteChildren {
-  AuthIndexRoute: typeof AuthIndexRoute
-  AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
-}
-
-const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
-  AuthIndexRoute: AuthIndexRoute,
-  AuthSignUpIndexRoute: AuthSignUpIndexRoute,
-}
-
-const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
-  AuthLayoutRouteChildren,
-)
-
-interface OrgsSlugProjectsProjectLayoutRouteChildren {
-  OrgsSlugProjectsProjectIndexRoute: typeof OrgsSlugProjectsProjectIndexRoute
-  OrgsSlugProjectsProjectAiIndexRoute: typeof OrgsSlugProjectsProjectAiIndexRoute
-  OrgsSlugProjectsProjectCreateUploadIndexRoute: typeof OrgsSlugProjectsProjectCreateUploadIndexRoute
-  OrgsSlugProjectsProjectIntegrationsIndexRoute: typeof OrgsSlugProjectsProjectIntegrationsIndexRoute
-  OrgsSlugProjectsProjectSettingsIndexRoute: typeof OrgsSlugProjectsProjectSettingsIndexRoute
-}
-
-const OrgsSlugProjectsProjectLayoutRouteChildren: OrgsSlugProjectsProjectLayoutRouteChildren =
-  {
-    OrgsSlugProjectsProjectIndexRoute: OrgsSlugProjectsProjectIndexRoute,
-    OrgsSlugProjectsProjectAiIndexRoute: OrgsSlugProjectsProjectAiIndexRoute,
-    OrgsSlugProjectsProjectCreateUploadIndexRoute:
-      OrgsSlugProjectsProjectCreateUploadIndexRoute,
-    OrgsSlugProjectsProjectIntegrationsIndexRoute:
-      OrgsSlugProjectsProjectIntegrationsIndexRoute,
-    OrgsSlugProjectsProjectSettingsIndexRoute:
-      OrgsSlugProjectsProjectSettingsIndexRoute,
-  }
-
-const OrgsSlugProjectsProjectLayoutRouteWithChildren =
-  OrgsSlugProjectsProjectLayoutRoute._addFileChildren(
-    OrgsSlugProjectsProjectLayoutRouteChildren,
-  )
-
-interface OrgsSlugLayoutRouteChildren {
-  OrgsSlugIndexRoute: typeof OrgsSlugIndexRoute
-  OrgsSlugProjectsProjectLayoutRoute: typeof OrgsSlugProjectsProjectLayoutRouteWithChildren
-  OrgsSlugMembersIndexRoute: typeof OrgsSlugMembersIndexRoute
-  OrgsSlugSettingsIndexRoute: typeof OrgsSlugSettingsIndexRoute
-  OrgsSlugUsageIndexRoute: typeof OrgsSlugUsageIndexRoute
-}
-
-const OrgsSlugLayoutRouteChildren: OrgsSlugLayoutRouteChildren = {
-  OrgsSlugIndexRoute: OrgsSlugIndexRoute,
-  OrgsSlugProjectsProjectLayoutRoute:
-    OrgsSlugProjectsProjectLayoutRouteWithChildren,
-  OrgsSlugMembersIndexRoute: OrgsSlugMembersIndexRoute,
-  OrgsSlugSettingsIndexRoute: OrgsSlugSettingsIndexRoute,
-  OrgsSlugUsageIndexRoute: OrgsSlugUsageIndexRoute,
-}
-
-const OrgsSlugLayoutRouteWithChildren = OrgsSlugLayoutRoute._addFileChildren(
-  OrgsSlugLayoutRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthLayoutRoute: AuthLayoutRouteWithChildren,
-  OrgsSlugLayoutRoute: OrgsSlugLayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

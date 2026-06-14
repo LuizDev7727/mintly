@@ -5,7 +5,6 @@ import "./index.css";
 // Import the generated route tree
 import { routeTree } from "./route-tree.gen.ts";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { enableMSW } from "./http/mocks/index.ts";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -17,10 +16,8 @@ declare module "@tanstack/react-router" {
   }
 }
 
-enableMSW().then(() => {
-  createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-      <RouterProvider router={router} />
-    </StrictMode>,
-  );
-});
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>,
+);
