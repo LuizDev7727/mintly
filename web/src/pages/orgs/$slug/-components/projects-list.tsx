@@ -30,8 +30,8 @@ export function ProjectsList() {
           slug={project.slug}
           title={project.name}
           avatarUrl={project.avatar}
-          postsCount={0}
-          integrationsCount={0}
+          postsCount={project.postsCount}
+          integrationsCount={project.integrationsCount}
         />
       ))}
     </div>

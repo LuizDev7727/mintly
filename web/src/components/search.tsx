@@ -1,5 +1,3 @@
-"use client";
-
 import {
   ArrowUpRightIcon,
   CircleFadingPlusIcon,
@@ -7,7 +5,6 @@ import {
   FolderPlusIcon,
   SearchIcon,
 } from "lucide-react";
-import * as React from "react";
 
 import {
   CommandDialog,
@@ -19,11 +16,13 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 
 export default function Search() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
@@ -38,15 +37,14 @@ export default function Search() {
   return (
     <>
       <button
-        className="inline-flex h-9 w-fit rounded-md border border-input bg-background px-3 py-2 text-foreground text-sm shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        className="cursor-pointer inline-flex h-9 w-fit rounded-md border border-input bg-background px-3 py-2 text-foreground text-sm shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         onClick={() => setOpen(true)}
         type="button"
       >
         <span className="flex grow items-center">
           <SearchIcon
             aria-hidden="true"
-            className="-ms-1 me-3 text-muted-foreground/80"
-            size={16}
+            className="-ms-1 me-3 text-muted-foreground/80 size-4"
           />
           <span className="font-normal text-muted-foreground/70">Search</span>
         </span>
