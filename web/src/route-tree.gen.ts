@@ -19,6 +19,10 @@ import { Route as OrgsSlugUsageIndexRouteImport } from './pages/orgs/$slug/usage
 import { Route as OrgsSlugSettingsIndexRouteImport } from './pages/orgs/$slug/settings/index'
 import { Route as OrgsSlugMembersIndexRouteImport } from './pages/orgs/$slug/members/index'
 import { Route as OrgsSlugProjectsProjectIndexRouteImport } from './pages/orgs/$slug/projects/$project/index'
+import { Route as OrgsSlugProjectsProjectSettingsIndexRouteImport } from './pages/orgs/$slug/projects/$project/settings/index'
+import { Route as OrgsSlugProjectsProjectIntegrationsIndexRouteImport } from './pages/orgs/$slug/projects/$project/integrations/index'
+import { Route as OrgsSlugProjectsProjectCreateUploadIndexRouteImport } from './pages/orgs/$slug/projects/$project/create-upload/index'
+import { Route as OrgsSlugProjectsProjectAiIndexRouteImport } from './pages/orgs/$slug/projects/$project/ai/index'
 
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
   id: '/auth',
@@ -71,6 +75,30 @@ const OrgsSlugProjectsProjectIndexRoute =
     path: '/projects/$project/',
     getParentRoute: () => OrgsSlugLayoutRoute,
   } as any)
+const OrgsSlugProjectsProjectSettingsIndexRoute =
+  OrgsSlugProjectsProjectSettingsIndexRouteImport.update({
+    id: '/projects/$project/settings/',
+    path: '/projects/$project/settings/',
+    getParentRoute: () => OrgsSlugLayoutRoute,
+  } as any)
+const OrgsSlugProjectsProjectIntegrationsIndexRoute =
+  OrgsSlugProjectsProjectIntegrationsIndexRouteImport.update({
+    id: '/projects/$project/integrations/',
+    path: '/projects/$project/integrations/',
+    getParentRoute: () => OrgsSlugLayoutRoute,
+  } as any)
+const OrgsSlugProjectsProjectCreateUploadIndexRoute =
+  OrgsSlugProjectsProjectCreateUploadIndexRouteImport.update({
+    id: '/projects/$project/create-upload/',
+    path: '/projects/$project/create-upload/',
+    getParentRoute: () => OrgsSlugLayoutRoute,
+  } as any)
+const OrgsSlugProjectsProjectAiIndexRoute =
+  OrgsSlugProjectsProjectAiIndexRouteImport.update({
+    id: '/projects/$project/ai/',
+    path: '/projects/$project/ai/',
+    getParentRoute: () => OrgsSlugLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -83,6 +111,10 @@ export interface FileRoutesByFullPath {
   '/orgs/$slug/settings/': typeof OrgsSlugSettingsIndexRoute
   '/orgs/$slug/usage/': typeof OrgsSlugUsageIndexRoute
   '/orgs/$slug/projects/$project/': typeof OrgsSlugProjectsProjectIndexRoute
+  '/orgs/$slug/projects/$project/ai/': typeof OrgsSlugProjectsProjectAiIndexRoute
+  '/orgs/$slug/projects/$project/create-upload/': typeof OrgsSlugProjectsProjectCreateUploadIndexRoute
+  '/orgs/$slug/projects/$project/integrations/': typeof OrgsSlugProjectsProjectIntegrationsIndexRoute
+  '/orgs/$slug/projects/$project/settings/': typeof OrgsSlugProjectsProjectSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -93,6 +125,10 @@ export interface FileRoutesByTo {
   '/orgs/$slug/settings': typeof OrgsSlugSettingsIndexRoute
   '/orgs/$slug/usage': typeof OrgsSlugUsageIndexRoute
   '/orgs/$slug/projects/$project': typeof OrgsSlugProjectsProjectIndexRoute
+  '/orgs/$slug/projects/$project/ai': typeof OrgsSlugProjectsProjectAiIndexRoute
+  '/orgs/$slug/projects/$project/create-upload': typeof OrgsSlugProjectsProjectCreateUploadIndexRoute
+  '/orgs/$slug/projects/$project/integrations': typeof OrgsSlugProjectsProjectIntegrationsIndexRoute
+  '/orgs/$slug/projects/$project/settings': typeof OrgsSlugProjectsProjectSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -106,6 +142,10 @@ export interface FileRoutesById {
   '/orgs/$slug/settings/': typeof OrgsSlugSettingsIndexRoute
   '/orgs/$slug/usage/': typeof OrgsSlugUsageIndexRoute
   '/orgs/$slug/projects/$project/': typeof OrgsSlugProjectsProjectIndexRoute
+  '/orgs/$slug/projects/$project/ai/': typeof OrgsSlugProjectsProjectAiIndexRoute
+  '/orgs/$slug/projects/$project/create-upload/': typeof OrgsSlugProjectsProjectCreateUploadIndexRoute
+  '/orgs/$slug/projects/$project/integrations/': typeof OrgsSlugProjectsProjectIntegrationsIndexRoute
+  '/orgs/$slug/projects/$project/settings/': typeof OrgsSlugProjectsProjectSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,6 +160,10 @@ export interface FileRouteTypes {
     | '/orgs/$slug/settings/'
     | '/orgs/$slug/usage/'
     | '/orgs/$slug/projects/$project/'
+    | '/orgs/$slug/projects/$project/ai/'
+    | '/orgs/$slug/projects/$project/create-upload/'
+    | '/orgs/$slug/projects/$project/integrations/'
+    | '/orgs/$slug/projects/$project/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -130,6 +174,10 @@ export interface FileRouteTypes {
     | '/orgs/$slug/settings'
     | '/orgs/$slug/usage'
     | '/orgs/$slug/projects/$project'
+    | '/orgs/$slug/projects/$project/ai'
+    | '/orgs/$slug/projects/$project/create-upload'
+    | '/orgs/$slug/projects/$project/integrations'
+    | '/orgs/$slug/projects/$project/settings'
   id:
     | '__root__'
     | '/'
@@ -142,6 +190,10 @@ export interface FileRouteTypes {
     | '/orgs/$slug/settings/'
     | '/orgs/$slug/usage/'
     | '/orgs/$slug/projects/$project/'
+    | '/orgs/$slug/projects/$project/ai/'
+    | '/orgs/$slug/projects/$project/create-upload/'
+    | '/orgs/$slug/projects/$project/integrations/'
+    | '/orgs/$slug/projects/$project/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -222,6 +274,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgsSlugProjectsProjectIndexRouteImport
       parentRoute: typeof OrgsSlugLayoutRoute
     }
+    '/orgs/$slug/projects/$project/settings/': {
+      id: '/orgs/$slug/projects/$project/settings/'
+      path: '/projects/$project/settings'
+      fullPath: '/orgs/$slug/projects/$project/settings/'
+      preLoaderRoute: typeof OrgsSlugProjectsProjectSettingsIndexRouteImport
+      parentRoute: typeof OrgsSlugLayoutRoute
+    }
+    '/orgs/$slug/projects/$project/integrations/': {
+      id: '/orgs/$slug/projects/$project/integrations/'
+      path: '/projects/$project/integrations'
+      fullPath: '/orgs/$slug/projects/$project/integrations/'
+      preLoaderRoute: typeof OrgsSlugProjectsProjectIntegrationsIndexRouteImport
+      parentRoute: typeof OrgsSlugLayoutRoute
+    }
+    '/orgs/$slug/projects/$project/create-upload/': {
+      id: '/orgs/$slug/projects/$project/create-upload/'
+      path: '/projects/$project/create-upload'
+      fullPath: '/orgs/$slug/projects/$project/create-upload/'
+      preLoaderRoute: typeof OrgsSlugProjectsProjectCreateUploadIndexRouteImport
+      parentRoute: typeof OrgsSlugLayoutRoute
+    }
+    '/orgs/$slug/projects/$project/ai/': {
+      id: '/orgs/$slug/projects/$project/ai/'
+      path: '/projects/$project/ai'
+      fullPath: '/orgs/$slug/projects/$project/ai/'
+      preLoaderRoute: typeof OrgsSlugProjectsProjectAiIndexRouteImport
+      parentRoute: typeof OrgsSlugLayoutRoute
+    }
   }
 }
 
@@ -245,6 +325,10 @@ interface OrgsSlugLayoutRouteChildren {
   OrgsSlugSettingsIndexRoute: typeof OrgsSlugSettingsIndexRoute
   OrgsSlugUsageIndexRoute: typeof OrgsSlugUsageIndexRoute
   OrgsSlugProjectsProjectIndexRoute: typeof OrgsSlugProjectsProjectIndexRoute
+  OrgsSlugProjectsProjectAiIndexRoute: typeof OrgsSlugProjectsProjectAiIndexRoute
+  OrgsSlugProjectsProjectCreateUploadIndexRoute: typeof OrgsSlugProjectsProjectCreateUploadIndexRoute
+  OrgsSlugProjectsProjectIntegrationsIndexRoute: typeof OrgsSlugProjectsProjectIntegrationsIndexRoute
+  OrgsSlugProjectsProjectSettingsIndexRoute: typeof OrgsSlugProjectsProjectSettingsIndexRoute
 }
 
 const OrgsSlugLayoutRouteChildren: OrgsSlugLayoutRouteChildren = {
@@ -253,6 +337,13 @@ const OrgsSlugLayoutRouteChildren: OrgsSlugLayoutRouteChildren = {
   OrgsSlugSettingsIndexRoute: OrgsSlugSettingsIndexRoute,
   OrgsSlugUsageIndexRoute: OrgsSlugUsageIndexRoute,
   OrgsSlugProjectsProjectIndexRoute: OrgsSlugProjectsProjectIndexRoute,
+  OrgsSlugProjectsProjectAiIndexRoute: OrgsSlugProjectsProjectAiIndexRoute,
+  OrgsSlugProjectsProjectCreateUploadIndexRoute:
+    OrgsSlugProjectsProjectCreateUploadIndexRoute,
+  OrgsSlugProjectsProjectIntegrationsIndexRoute:
+    OrgsSlugProjectsProjectIntegrationsIndexRoute,
+  OrgsSlugProjectsProjectSettingsIndexRoute:
+    OrgsSlugProjectsProjectSettingsIndexRoute,
 }
 
 const OrgsSlugLayoutRouteWithChildren = OrgsSlugLayoutRoute._addFileChildren(

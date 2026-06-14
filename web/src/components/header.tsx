@@ -3,10 +3,10 @@ import { OrganizationTabs } from "@/components/organization-tabs";
 import { Profile } from "@/components/profile";
 import { ProjectSwitcher } from "@/components/project-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Minus, Slash, UploadCloud } from "lucide-react";
+import { Minus, Slash } from "lucide-react";
 import Search from "./search";
 import { Link, useParams } from "@tanstack/react-router";
-import { Button } from "./ui/button";
+import { CreateUploadButtonRedirect } from "./create-upload-button-redirect";
 
 export function Header() {
   const { slug } = useParams({
@@ -28,10 +28,7 @@ export function Header() {
         <div className="flex items-center gap-x-2">
           <Search />
           <Minus className="size-6 -rotate-90 text-border" />
-          <Button disabled={true}>
-            <UploadCloud className="size-4" />
-            Create Upload
-          </Button>
+          <CreateUploadButtonRedirect />
           {/*<ThemeToggle />*/}
           <Minus className="size-6 -rotate-90 text-border" />
           <Profile />

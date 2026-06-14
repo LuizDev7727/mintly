@@ -1,21 +1,27 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { getInitials } from "@/utils/get-initials";
+import { Link, useParams } from "@tanstack/react-router";
 import { Package } from "lucide-react";
 
 type ProjectCardProps = {
   avatarUrl: string | null;
   title: string;
+  slug: string;
   postsCount: number;
   integrationsCount: number;
 };
 
 export function ProjectCard(props: ProjectCardProps) {
-  const { title, postsCount, integrationsCount } = props;
+  const { slug } = useParams({
+    from: "/orgs/$slug",
+  });
+
+  const { title, postsCount, integrationsCount, slug: projectSlug } = props;
 
   return (
-    <div className="w-full hover:bg-zinc-900/20 cursor-pointer rounded-sm border">
+    <Link
+      to={"/orgs/$slug/projects/$project"}
+      params={{ slug, project: projectSlug }}
+      className="w-full hover:bg-zinc-900/20 cursor-pointer rounded-sm border"
+    >
       <header className="p-4 flex items-center gap-x-2">
         <div className="flex items-center justify-between gap-x-2 border p-2 rounded-sm">
           <Package />
@@ -27,6 +33,6 @@ export function ProjectCard(props: ProjectCardProps) {
           </p>
         </div>
       </header>
-    </div>
+    </Link>
   );
 }

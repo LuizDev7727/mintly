@@ -12,33 +12,33 @@ import {
 import { getProjectsHttp } from "@/http/get-projects.http";
 
 export function ProjectSwitcher() {
-  const { slug } = useParams({
-    from: "/orgs/$slug",
-  });
+  const { slug, project: projectSlug } = useParams({ strict: false });
 
   const { data } = useSuspenseQuery({
     queryKey: ["projects", slug],
-    queryFn: () => getProjectsHttp({ orgSlug: slug }),
+    queryFn: () => getProjectsHttp({ orgSlug: slug! }),
+    enabled: !!slug,
   });
 
   const { projects } = data;
 
-  const currentProject = projects[0] ?? null;
-
-  function handleSetSelectedProject(projectSlug: string) {
-    console.log({ projectSlug });
-  }
+  const currentProject = projects.find(
+    (project) => project.slug === projectSlug,
+  );
 
   return (
     <div className="w-40 flex items-center justify-between gap-1">
       <DropdownMenu>
         <DropdownMenuTrigger className="cursor-pointer flex w-42 items-center gap-2 rounded p-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-primary">
-          {/*<span className="truncate text-left text-sm font-medium">
-            {currentProject.name}
-          </span>*/}
-          <span className="text-sm font-medium text-muted-foreground">
-            Select a project
-          </span>
+          {currentProject ? (
+            <span className="truncate text-left text-sm font-medium">
+              {currentProject.name}
+            </span>
+          ) : (
+            <span className="text-sm font-medium text-muted-foreground">
+              Select a project
+            </span>
+          )}
           <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
         </DropdownMenuTrigger>
 
@@ -46,13 +46,15 @@ export function ProjectSwitcher() {
           <DropdownMenuLabel className="text-xs text-muted-foreground">
             Projects
           </DropdownMenuLabel>
-          {projects.map((project) => (
-            <DropdownMenuItem
-              key={project.id}
-              onClick={() => handleSetSelectedProject(project.slug)}
-              className="cursor-pointer"
-            >
-              {project.name}
+          {projects.map(({ id, name, slug: projectSlug }) => (
+            <DropdownMenuItem key={id} asChild>
+              <Link
+                to={"/orgs/$slug/projects/$project"}
+                className="cursor-pointer"
+                params={{ slug: slug, project: projectSlug }}
+              >
+                {name}
+              </Link>
             </DropdownMenuItem>
           ))}
           <DropdownMenuSeparator />

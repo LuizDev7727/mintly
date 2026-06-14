@@ -27,12 +27,11 @@ export function ProjectsList() {
       {projects.map((project) => (
         <ProjectCard
           key={project.id}
+          slug={project.slug}
           title={project.name}
           avatarUrl={project.avatar}
-          description=""
           postsCount={0}
           integrationsCount={0}
-          owner={{ name: "John Doe", avatarUrl: null }}
         />
       ))}
     </div>
