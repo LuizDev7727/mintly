@@ -12,7 +12,6 @@ import { useMatch } from "@tanstack/react-router";
 import { ProjectSwitcher } from "./project-switcher";
 import { NavProjects } from "./nav-projects";
 import { NavUser } from "./nav-user";
-import { CreateUploadButtonRedirect } from "./create-upload-button-redirect";
 
 type AppSidebarProps = ComponentProps<typeof Sidebar>;
 
@@ -29,7 +28,6 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       <SidebarHeader>
         <OrganizationSwitcher />
         {isProjectRoute && <ProjectSwitcher />}
-        {isProjectRoute && <CreateUploadButtonRedirect />}
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
