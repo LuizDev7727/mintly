@@ -23,12 +23,12 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { PostCard } from "./-components/post-card";
 
-export const Route = createFileRoute("/orgs/$slug/projects/$project/")({
-  component: ProjectPage,
+export const Route = createFileRoute("/orgs/$slug/channels/$channel/")({
+  component: ChannelPage,
 });
 
-function ProjectPage() {
-  const { slug, project } = Route.useParams();
+function ChannelPage() {
+  const { slug, channel } = Route.useParams();
   return (
     <div className="space-y-4">
       <header className="flex items-center justify-between">
@@ -53,8 +53,8 @@ function ProjectPage() {
           <div className="bg-zinc-900 w-4 rotate-90 h-px" />
           <Button asChild>
             <Link
-              to="/orgs/$slug/projects/$project/create-upload"
-              params={{ slug, project }}
+              to="/orgs/$slug/channels/$channel/create-upload"
+              params={{ slug, channel }}
             >
               <Plus className="size-4" />
               New Post

@@ -14,7 +14,7 @@ export function Metrics() {
     queryFn: () => getOrganizationMetricsHttp({ orgSlug: slug }),
   });
 
-  const { totalProjects, totalMembers, totalUsage } = data.metrics;
+  const { totalChannels, totalMembers, totalUsage } = data.metrics;
 
   const formattedUsage = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -26,9 +26,9 @@ export function Metrics() {
       <div className="rounded-lg border dark:bg-zinc-900/20 p-5 flex flex-col gap-3">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Package className="size-4" />
-          <span className="text-sm">Projects</span>
+          <span className="text-sm">Channels</span>
         </div>
-        <p className="text-2xl font-bold">{totalProjects}</p>
+        <p className="text-2xl font-bold">{totalChannels}</p>
       </div>
       <div className="rounded-lg border dark:bg-zinc-900/20 p-5 flex flex-col gap-3">
         <div className="flex items-center gap-2 text-muted-foreground">

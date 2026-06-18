@@ -1,7 +1,7 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { Package } from "lucide-react";
 
-type ProjectCardProps = {
+type ChannelCardProps = {
   avatarUrl: string | null;
   title: string;
   slug: string;
@@ -9,17 +9,17 @@ type ProjectCardProps = {
   integrationsCount: number;
 };
 
-export function ProjectCard(props: ProjectCardProps) {
+export function ChannelCard(props: ChannelCardProps) {
   const { slug } = useParams({
     from: "/orgs/$slug",
   });
 
-  const { title, postsCount, integrationsCount, slug: projectSlug } = props;
+  const { title, postsCount, integrationsCount, slug: channelSlug } = props;
 
   return (
     <Link
-      to={"/orgs/$slug/projects/$project"}
-      params={{ slug, project: projectSlug }}
+      to={"/orgs/$slug/channels/$channel"}
+      params={{ slug, channel: channelSlug }}
       className="w-full hover:bg-zinc-900/20 cursor-pointer rounded-sm border"
     >
       <header className="p-4 flex items-center gap-x-2">

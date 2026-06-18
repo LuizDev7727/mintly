@@ -8,8 +8,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 export function CreateUploadButtonRedirect() {
   const { open: isOpen } = useSidebar();
 
-  const { slug, project } = useParams({
-    from: "/orgs/$slug/projects/$project",
+  const { slug, channel } = useParams({
+    from: "/orgs/$slug/channels/$channel",
   });
 
   return (
@@ -17,8 +17,8 @@ export function CreateUploadButtonRedirect() {
       <TooltipTrigger asChild>
         <Button asChild>
           <Link
-            to={"/orgs/$slug/projects/$project/create-upload"}
-            params={{ slug, project: project }}
+            to={"/orgs/$slug/channels/$channel/create-upload"}
+            params={{ slug, channel: channel }}
           >
             {!isOpen ? (
               <UploadCloud className="size-4" />
@@ -31,7 +31,7 @@ export function CreateUploadButtonRedirect() {
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>Create new post to your project</p>
+        <p>Create new post to your channel</p>
       </TooltipContent>
     </Tooltip>
   );

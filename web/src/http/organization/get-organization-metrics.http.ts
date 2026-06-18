@@ -6,7 +6,7 @@ type GetOrganizationMetricsParams = {
 
 export type GetOrganizationMetricsResponse = {
   metrics: {
-    totalProjects: number;
+    totalChannels: number;
     totalMembers: number;
     totalUsage: number;
   };

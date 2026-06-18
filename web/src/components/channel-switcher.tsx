@@ -1,6 +1,6 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ChevronsUpDown, PlusCircle, Projector } from "lucide-react";
+import { ChevronsUpDown, PlusCircle, TvMinimal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getProjectsHttp } from "@/http/get-projects.http";
+import { getChannelsHttp } from "@/http/get-channels.http";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -17,21 +17,21 @@ import {
   useSidebar,
 } from "./ui/sidebar";
 
-export function ProjectSwitcher() {
+export function ChannelSwitcher() {
   const { isMobile } = useSidebar();
-  const { slug, project: projectSlug } = useParams({
-    from: "/orgs/$slug/projects/$project",
+  const { slug, channel: channelSlug } = useParams({
+    from: "/orgs/$slug/channels/$channel",
   });
 
   const { data } = useSuspenseQuery({
-    queryKey: ["projects", slug],
-    queryFn: () => getProjectsHttp({ orgSlug: slug }),
+    queryKey: ["channels", slug],
+    queryFn: () => getChannelsHttp({ orgSlug: slug }),
   });
 
-  const { projects } = data;
+  const { channels } = data;
 
-  const currentProject = projects.find(
-    (project) => project.slug === projectSlug,
+  const currentChannel = channels.find(
+    (channel) => channel.slug === channelSlug,
   );
 
   return (
@@ -44,14 +44,14 @@ export function ProjectSwitcher() {
               className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Projector className="size-4" />
+                <TvMinimal className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
-                  {currentProject!.name}
+                  {currentChannel!.name}
                 </span>
                 <span className="truncate text-xs">
-                  {currentProject!.postsCount} Posts
+                  {currentChannel!.postsCount} Posts
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
@@ -64,22 +64,22 @@ export function ProjectSwitcher() {
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Projects
+              Channels
             </DropdownMenuLabel>
-            {projects.map((project) => (
+            {channels.map((channel) => (
               <DropdownMenuItem
-                key={project.name}
+                key={channel.name}
                 className="gap-2 p-2 cursor-pointer"
                 asChild
               >
                 <Link
-                  to={"/orgs/$slug/projects/$project"}
-                  params={{ slug, project: project.slug }}
+                  to={"/orgs/$slug/channels/$channel"}
+                  params={{ slug, channel: channel.slug }}
                 >
                   <div className="flex size-6 items-center justify-center rounded-md border">
-                    <Projector className="size-3.5 shrink-0" />
+                    <TvMinimal className="size-3.5 shrink-0" />
                   </div>
-                  {project.name}
+                  {channel.name}
                 </Link>
               </DropdownMenuItem>
             ))}
@@ -89,7 +89,7 @@ export function ProjectSwitcher() {
                 <PlusCircle className="size-4" />
               </div>
               <div className="font-medium text-muted-foreground">
-                Create project
+                Create channel
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>

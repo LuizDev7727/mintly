@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 
-export function CreateProjectDialog() {
+export function CreateChannelDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="mt-1">
           <Plus className="size-4" />
-          Create new project
+          Create new channel
         </Button>
       </DialogTrigger>
       <DialogContent>

@@ -2,7 +2,7 @@ import { http, HttpResponse } from "msw";
 
 type GetOrganizationMetricsResponse = {
   metrics: {
-    totalProjects: number;
+    totalChannels: number;
     totalMembers: number;
     totalUsage: number;
   };
@@ -15,7 +15,7 @@ export const getOrganizationMetricsMock = http.get<
 >("http://localhost:3000/api/organizations/:orgSlug/metrics", () => {
   return HttpResponse.json({
     metrics: {
-      totalProjects: 4,
+      totalChannels: 4,
       totalMembers: 2,
       totalUsage: 200,
     },

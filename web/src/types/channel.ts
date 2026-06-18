@@ -1,4 +1,4 @@
-export type Project = {
+export type Channel = {
   id: string;
   name: string;
   slug: string;

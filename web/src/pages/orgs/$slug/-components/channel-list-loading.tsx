@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function ProjectsListLoading() {
+export function ChannelsListLoading() {
   return (
     <div className="flex flex-wrap gap-4">
       {Array.from({ length: 4 }).map((_, i) => (

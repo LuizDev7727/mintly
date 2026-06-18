@@ -9,29 +9,29 @@ import {
 import { OrganizationSwitcher } from "./organization-switcher";
 import { NavMain } from "./nav-main";
 import { useMatch } from "@tanstack/react-router";
-import { ProjectSwitcher } from "./project-switcher";
-import { NavProjects } from "./nav-projects";
+import { ChannelSwitcher } from "./channel-switcher";
+import { NavChannels } from "./nav-channels";
 import { NavUser } from "./nav-user";
 
 type AppSidebarProps = ComponentProps<typeof Sidebar>;
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
   const matchRoute = useMatch({
-    from: "/orgs/$slug/projects/$project",
+    from: "/orgs/$slug/channels/$channel",
     shouldThrow: false,
   });
 
-  const isProjectRoute = !!matchRoute;
+  const isChannelRoute = !!matchRoute;
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <OrganizationSwitcher />
-        {isProjectRoute && <ProjectSwitcher />}
+        {isChannelRoute && <ChannelSwitcher />}
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
-        {isProjectRoute && <NavProjects />}
+        {isChannelRoute && <NavChannels />}
       </SidebarContent>
       <SidebarFooter>
         {/*<ThemeToggle />*/}
