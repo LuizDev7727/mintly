@@ -32,11 +32,11 @@ export function NavChannels() {
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <Link
-              to={"/orgs/$slug/channels/$channel"}
+              to={"/orgs/$slug/channels/$channel/projects"}
               params={{ slug, channel }}
             >
               <Clapperboard />
-              <span>Channels</span>
+              <span>Projects</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
