@@ -46,8 +46,8 @@ type CreatePostFormProps = {
 export function CreatePostForm({ integrations }: CreatePostFormProps) {
   const [isDragging, setIsDragging] = useState(false);
 
-  const { slug: org, project } = useParams({
-    from: "/orgs/$slug/projects/$project",
+  const { slug: org, channel } = useParams({
+    from: "/orgs/$slug/channels/$channel",
   });
 
   const {

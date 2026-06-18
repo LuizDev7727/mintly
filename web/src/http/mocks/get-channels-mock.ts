@@ -1,13 +1,13 @@
-import type { GetProjectsResponse } from "../get-projects.http";
+import type { GetChannelsResponse } from "../get-channels.http";
 import { http, HttpResponse } from "msw";
 
-export const getProjectsMock = http.get<
+export const getChannelsMock = http.get<
   { orgSlug: string },
   never,
-  GetProjectsResponse
->("http://localhost:3000/api/organizations/:orgSlug/projects", () => {
+  GetChannelsResponse
+>("http://localhost:3000/api/organizations/:orgSlug/channels", () => {
   return HttpResponse.json({
-    projects: [
+    channels: [
       {
         id: "1",
         name: "Fox News",

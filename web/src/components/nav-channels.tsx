@@ -5,25 +5,25 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Bot, Projector, Settings, Workflow } from "lucide-react";
+import { Bot, Settings, Workflow, Video, Clapperboard } from "lucide-react";
 import { Link, useParams } from "@tanstack/react-router";
 
-export function NavProjects() {
-  const { slug, project } = useParams({ strict: false });
+export function NavChannels() {
+  const { slug, channel } = useParams({ strict: false });
 
-  if (!slug || !project) return null;
+  if (!slug || !channel) return null;
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Project</SidebarGroupLabel>
+      <SidebarGroupLabel>Channel</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <Link
-              to={"/orgs/$slug/projects/$project"}
-              params={{ slug, project }}
+              to={"/orgs/$slug/channels/$channel"}
+              params={{ slug, channel }}
             >
-              <Projector />
+              <Video />
               <span>Posts</span>
             </Link>
           </SidebarMenuButton>
@@ -32,8 +32,20 @@ export function NavProjects() {
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <Link
-              to={"/orgs/$slug/projects/$project/ai"}
-              params={{ slug, project }}
+              to={"/orgs/$slug/channels/$channel/projects"}
+              params={{ slug, channel }}
+            >
+              <Clapperboard />
+              <span>Projects</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link
+              to={"/orgs/$slug/channels/$channel/ai"}
+              params={{ slug, channel }}
             >
               <Bot />
               <span>AI</span>
@@ -44,8 +56,8 @@ export function NavProjects() {
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <Link
-              to={"/orgs/$slug/projects/$project/integrations"}
-              params={{ slug, project }}
+              to={"/orgs/$slug/channels/$channel/integrations"}
+              params={{ slug, channel }}
             >
               <Workflow />
               <span>Integrations</span>
@@ -56,8 +68,8 @@ export function NavProjects() {
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <Link
-              to={"/orgs/$slug/projects/$project/settings"}
-              params={{ slug, project }}
+              to={"/orgs/$slug/channels/$channel/settings"}
+              params={{ slug, channel }}
             >
               <Settings />
               <span>Settings</span>

@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/sidebar";
 import {
   ChartPieIcon,
-  LayoutDashboardIcon,
   Settings2Icon,
+  TvMinimal,
   UsersIcon,
 } from "lucide-react";
 import { Link, useParams } from "@tanstack/react-router";
@@ -23,8 +23,8 @@ export function NavMain() {
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <Link to={"/orgs/$slug"} params={{ slug }}>
-              <LayoutDashboardIcon />
-              <span>Projects</span>
+              <TvMinimal />
+              <span>Channels</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>

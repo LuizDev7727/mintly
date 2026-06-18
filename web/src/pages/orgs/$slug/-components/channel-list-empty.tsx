@@ -1,4 +1,4 @@
-import { CreateProjectDialog } from "@/components/create-project-dialog";
+import { CreateChannelDialog } from "@/components/create-channel-dialog";
 import {
   Empty,
   EmptyContent,
@@ -9,20 +9,20 @@ import {
 } from "@/components/ui/empty";
 import { Cloud } from "lucide-react";
 
-export function ProjectsListEmpty() {
+export function ChannelsListEmpty() {
   return (
     <Empty className="border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <Cloud />
         </EmptyMedia>
-        <EmptyTitle>Projects Empty</EmptyTitle>
+        <EmptyTitle>Channels Empty</EmptyTitle>
         <EmptyDescription>
-          No projects found. Create a project to get started.
+          No channels found. Create a channel to get started.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <CreateProjectDialog />
+        <CreateChannelDialog />
       </EmptyContent>
     </Empty>
   );

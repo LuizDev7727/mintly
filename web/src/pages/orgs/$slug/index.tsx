@@ -1,22 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CreateProjectDialog } from "@/components/create-project-dialog";
+import { CreateChannelDialog } from "@/components/create-channel-dialog";
 import { Separator } from "@/components/ui/separator";
 import { Suspense } from "react";
-import { ProjectsListLoading } from "./-components/projects-list-loading";
-import { ProjectsList } from "./-components/projects-list";
+import { ChannelsListLoading } from "./-components/channel-list-loading";
+import { ChannelsList } from "./-components/channels-list";
 import { Metrics } from "./-components/metrics";
 import { MetricsLoading } from "./-components/metrics-loading";
 
 export const Route = createFileRoute("/orgs/$slug/")({
-  component: ProjectsPage,
+  component: ChannelsPage,
 });
 
-function ProjectsPage() {
+function ChannelsPage() {
   return (
     <div className="space-y-4 h-full">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-medium">Projects</h1>
-        <CreateProjectDialog />
+        <h1 className="text-xl font-medium">Channels</h1>
+        <CreateChannelDialog />
       </div>
 
       <Suspense fallback={<MetricsLoading />}>
@@ -25,8 +25,8 @@ function ProjectsPage() {
 
       <Separator />
 
-      <Suspense fallback={<ProjectsListLoading />}>
-        <ProjectsList />
+      <Suspense fallback={<ChannelsListLoading />}>
+        <ChannelsList />
       </Suspense>
     </div>
   );
