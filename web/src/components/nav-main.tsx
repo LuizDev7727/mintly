@@ -11,7 +11,8 @@ import {
   TvMinimal,
   UsersIcon,
 } from "lucide-react";
-import { Link, useParams } from "@tanstack/react-router";
+import { useParams } from "@tanstack/react-router";
+import { NavLink } from "./nav-link";
 
 export function NavMain() {
   const { slug } = useParams({ from: "/orgs/$slug" });
@@ -21,38 +22,54 @@ export function NavMain() {
       <SidebarGroupLabel>Organization</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link to={"/orgs/$slug"} params={{ slug }}>
+          <SidebarMenuButton
+            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            asChild
+          >
+            <NavLink
+              to={"/orgs/$slug"}
+              params={{ slug }}
+              activeOptions={{ exact: true }}
+            >
               <TvMinimal />
               <span>Channels</span>
-            </Link>
+            </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
 
-        <SidebarMenuItem className="flex items-center">
-          <SidebarMenuButton asChild>
-            <Link to={"/orgs/$slug/usage"} params={{ slug }}>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            asChild
+          >
+            <NavLink to={"/orgs/$slug/usage"} params={{ slug }}>
               <ChartPieIcon />
               <span>Usage</span>
-            </Link>
+            </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
 
-        <SidebarMenuItem className="flex items-center">
-          <SidebarMenuButton asChild>
-            <Link to={"/orgs/$slug/members"} params={{ slug }}>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            asChild
+          >
+            <NavLink to={"/orgs/$slug/members"} params={{ slug }}>
               <UsersIcon />
               <span>Members</span>
-            </Link>
+            </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
 
-        <SidebarMenuItem className="flex items-center">
-          <SidebarMenuButton asChild>
-            <Link to={"/orgs/$slug/settings"} params={{ slug }}>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            asChild
+          >
+            <NavLink to={"/orgs/$slug/settings"} params={{ slug }}>
               <Settings2Icon />
               <span>Settings</span>
-            </Link>
+            </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
