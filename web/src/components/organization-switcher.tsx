@@ -21,9 +21,8 @@ import {
 export function OrganizationSwitcher() {
   const { isMobile } = useSidebar();
 
-  // const { data: activeOrganization } = authClient.useActiveOrganization();
+  const { data: currentOrg } = authClient.useActiveOrganization();
 
-  // console.log({ activeOrganization });
   const { data: organizations, isPending: isLoading } =
     authClient.useListOrganizations();
 
@@ -31,20 +30,13 @@ export function OrganizationSwitcher() {
     return null;
   }
 
-  const currentOrg = {
-    id: "1",
-    name: "Acme Inc",
-    slug: "acme",
-    image: null,
-  };
-
   if (isLoading) {
     return <Skeleton className="h-6 w-40" />;
   }
 
   if (!currentOrg) return null;
 
-  function handleSetSelectedOrg(orgSlug: string) {
+  async function handleSetSelectedOrg(orgSlug: string) {
     console.log({ orgSlug });
   }
 
@@ -81,12 +73,15 @@ export function OrganizationSwitcher() {
                 key={org.name}
                 onClick={() => handleSetSelectedOrg(org.slug)}
                 className="gap-2 p-2 cursor-pointer"
+                asChild
               >
-                <div className="flex size-6 items-center justify-center rounded-md border">
-                  <Building className="size-3.5 shrink-0" />
-                </div>
-                {org.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                <Link to={"/orgs/$slug"} params={{ slug: org.slug }}>
+                  <div className="flex size-6 items-center justify-center rounded-md border">
+                    <Building className="size-3.5 shrink-0" />
+                  </div>
+                  {org.name}
+                  <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                </Link>
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
