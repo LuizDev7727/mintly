@@ -30,27 +30,36 @@ interface ProjectCardProps {
 
 const STATUS_CONFIG: Record<
   ProjectStatus,
-  { label: string; icon: React.ElementType; className: string }
+  {
+    label: string;
+    icon: React.ElementType;
+    className: string;
+    progressClassName: string;
+  }
 > = {
   DOWNLOADING: {
     label: "Downloading",
     icon: Download,
     className: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    progressClassName: "bg-blue-400",
   },
   GENERATING_METADATA: {
     label: "Processing",
     icon: Sparkles,
     className: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    progressClassName: "bg-amber-400",
   },
   FINDING_BEST_MOMENTS: {
     label: "Finding moments",
     icon: Scissors,
     className: "bg-violet-500/20 text-violet-400 border-violet-500/30",
+    progressClassName: "bg-violet-400",
   },
   DONE: {
     label: "Done",
     icon: Sparkles,
     className: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    progressClassName: "",
   },
 };
 
@@ -100,6 +109,14 @@ export function ProjectCard({
 
   return (
     <div className="group relative w-[300px] cursor-pointer overflow-hidden rounded-2xl border bg-card transition-shadow hover:shadow-md">
+      {isProcessing && (
+        <div
+          className={cn(
+            "absolute bottom-0 inset-x-0 h-0.5 animate-pulse z-10",
+            config.progressClassName,
+          )}
+        />
+      )}
       {/* Thumbnail */}
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
         <img
