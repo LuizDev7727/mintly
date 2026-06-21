@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { SheetClose, SheetFooter } from "@/components/ui/sheet";
+import { DialogClose, DialogFooter } from "@/components/ui/dialog";
+import { Spinner } from "@/components/ui/spinner";
 import {
   inspirationalThumbnailsSchema,
   type InspirationalThumbnailsFormType,
@@ -9,19 +8,18 @@ import {
 import { compressImage } from "@/utils/compress-image";
 import { formatBytes } from "@/utils/format-bytes";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FileImage, Trash, Upload, X } from "lucide-react";
+import { FileImage, Loader2, Trash, Upload } from "lucide-react";
 import { useState, type ChangeEvent, type DragEvent } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 
-const ACCEPTED_TYPES = ["image/png", "image/jpeg", "image/webp", "image/avif"];
-const MAX_SIZE_MB = 10;
-
 export function AddInspirationalThumbnailsForm() {
   const [isDragging, setIsDragging] = useState(false);
+  const [isConverting, setIsConverting] = useState(false);
 
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { isSubmitting },
   } = useForm<InspirationalThumbnailsFormType>({
     resolver: zodResolver(inspirationalThumbnailsSchema),
@@ -42,11 +40,14 @@ export function AddInspirationalThumbnailsForm() {
   const isFilesSelectedEmpty = inspirationalThubmanils.length === 0;
 
   async function addFiles(files: FileList | null) {
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        append({ file: await compressImage({ file: files[i] }) });
-      }
+    if (!files) return;
+    setIsConverting(true);
+
+    for (let i = 0; i < files.length; i++) {
+      append({ file: await compressImage({ file: files[i] }) });
     }
+
+    setIsConverting(false);
   }
 
   function handleSelectedFiles(event: ChangeEvent<HTMLInputElement>) {
@@ -78,16 +79,25 @@ export function AddInspirationalThumbnailsForm() {
     }
   }
 
-  async function handleAddInspirationalThumbnails(
-    event: InspirationalThumbnailsFormType,
-  ) {}
+  async function handleAddInspirationalThumbnails({
+    inspirationalThumbnails,
+  }: InspirationalThumbnailsFormType) {}
+
+  function handleDeleteAllInspirationalThumbnailsSelected() {
+    setValue("inspirationalThumbnails", []);
+  }
+
+  const totalThumbnailsSize = inspirationalThubmanils.reduce(
+    (acc, thumbnail) => acc + thumbnail.file.size,
+    0,
+  );
 
   return (
     <form
       onSubmit={handleSubmit(handleAddInspirationalThumbnails)}
-      className="flex flex-col gap-4"
+      className="flex flex-col flex-1 min-h-0 overflow-hidden"
     >
-      <div className="p-4 space-y-2">
+      <div className="flex flex-col flex-1 min-h-0 gap-3 p-4 overflow-hidden">
         <input
           id="file"
           name="file"
@@ -105,109 +115,113 @@ export function AddInspirationalThumbnailsForm() {
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           data-dragging={isDragging}
-          className="flex flex-col items-center justify-center py-20 gap-4 text-center border border-input rounded-md border-dashed cursor-pointer transition-colors bg-secondary/20 hover:bg-secondary/40 dark:bg-zinc-900/20 hover:dark:bg-zinc-900/40 data-[dragging=true]:bg-primary/10 data-[dragging=true]:border-primary data-[dragging=true]:dark:bg-primary/10"
+          data-converting={isConverting}
+          className="shrink-0 flex flex-col items-center justify-center py-20 gap-4 text-center border border-input rounded-md border-dashed cursor-pointer transition-colors bg-secondary/20 hover:bg-secondary/40 dark:bg-zinc-900/20 hover:dark:bg-zinc-900/40 data-[dragging=true]:bg-primary/10 data-[dragging=true]:border-primary data-[dragging=true]:dark:bg-primary/10 data-[converting=true]:pointer-events-none data-[converting=true]:opacity-50"
         >
-          <div className="size-16 rounded-full bg-secondary/50 border border-input flex items-center justify-center">
-            <FileImage className="size-8 text-muted-foreground" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-foreground">
-              Drag & Drop your files
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              or click to browse — MP4, PNG, JPG, JPEG
-            </p>
-          </div>
+          {isConverting ? (
+            <>
+              <div className="size-16 rounded-full bg-secondary/50 border border-input flex items-center justify-center">
+                <Loader2 className="size-8 text-muted-foreground animate-spin" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  Converting images...
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Please wait while we process your files
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="size-16 rounded-full bg-secondary/50 border border-input flex items-center justify-center">
+                <FileImage className="size-8 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  Drag & Drop your files
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  or click to browse — PNG, JPG, JPEG
+                </p>
+              </div>
+            </>
+          )}
         </label>
 
-        <div className="flex items-center justify-between">
+        <div className="shrink-0 flex items-center justify-between">
           <div className="flex items-center gap-x-2">
-            <h2 className="font-medium">
-              {inspirationalThubmanils.length} Files Selected
-            </h2>
-            <p className="text-muted-foreground text-sm">(200 MB)</p>
+            <div className="font-medium">
+              <h2>{inspirationalThubmanils.length} Files selected</h2>
+            </div>
+            <div className="size-1 rounded-full bg-zinc-700" />
+            <p className="text-muted-foreground text-sm">
+              {formatBytes(totalThumbnailsSize)}
+            </p>
           </div>
 
-          <div className="flex items-center gap-x-2">
-            <Button
-              variant={"destructive"}
-              disabled={isFilesSelectedEmpty || isSubmitting}
-            >
-              <Trash className="size-4" />
-              Delete All
-            </Button>
-          </div>
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            onClick={handleDeleteAllInspirationalThumbnailsSelected}
+            disabled={isFilesSelectedEmpty || isSubmitting || isConverting}
+          >
+            <Trash className="size-4" />
+            Delete All
+          </Button>
         </div>
 
-        <ScrollArea className="min-h-0 flex-1 px-4">
-          {inspirationalThubmanils.map(({ id, file }, index) => {
-            return (
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <div className="space-y-2 pr-1">
+            {inspirationalThubmanils.map(({ id, file }, index) => (
               <div
                 key={id}
-                className="w-full flex items-start justify-between gap-2 rounded-lg border bg-background p-2 pe-3"
+                className="flex items-center gap-3 rounded-lg border bg-muted/30 p-2"
               >
-                <div className="w-full flex items-start gap-3 overflow-hidden">
-                  <div className="aspect-square shrink-0 rounded bg-accent">
-                    <img
-                      alt={file.name}
-                      className="size-10 rounded-[inherit] object-cover"
-                      src={URL.createObjectURL(file)}
-                    />
-                  </div>
-                  <div className="w-full flex min-w-0 flex-col gap-0.5">
-                    <div>
-                      <p className="truncate font-medium text-[13px]">
-                        {file.name}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        {formatBytes(file.size)}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-x-2">
-                      <Progress value={10} />
-                      <p className="text-muted-foreground text-xs">10%</p>
-                    </div>
-                  </div>
+                <div className="shrink-0 rounded overflow-hidden bg-accent">
+                  <img
+                    alt={file.name}
+                    className="size-10 object-cover"
+                    src={URL.createObjectURL(file)}
+                  />
                 </div>
 
-                {isSubmitting ? (
-                  <Button
-                    aria-label="Remove file"
-                    className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
-                    // onClick={() => removeFile("")}
-                    size="icon"
-                    variant="ghost"
-                  >
-                    <X aria-hidden="true" />
-                  </Button>
-                ) : (
-                  <Button
-                    aria-label="Remove file"
-                    className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
-                    onClick={() => removeInspirationalThumbnail(index)}
-                    size="icon"
-                    variant="ghost"
-                  >
-                    <Trash aria-hidden="true" />
-                  </Button>
-                )}
+                <div className="flex-1 min-w-0">
+                  <p className="truncate text-sm font-medium">{file.name}</p>
+                  <div className="flex items-center gap-x-2">
+                    <p className="text-muted-foreground text-xs">
+                      {formatBytes(file.size)}
+                    </p>
+                    <div className="size-1 rounded-full bg-zinc-700" />
+                    <button
+                      type="button"
+                      aria-label="Remove file"
+                      className="shrink-0 cursor-pointer size-8 text-muted-foreground hover:text-destructive"
+                      onClick={() => removeInspirationalThumbnail(index)}
+                      disabled={isSubmitting}
+                    >
+                      <Trash className="size-3" />
+                    </button>
+                  </div>
+                </div>
               </div>
-            );
-          })}
-        </ScrollArea>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <SheetFooter className="flex-row gap-2 border-t">
-        <SheetClose asChild>
-          <Button variant={"secondary"} className="flex-1">
+      <DialogFooter className="flex-row gap-2 border-t p-4">
+        <DialogClose asChild>
+          <Button type="button" variant="secondary" className="flex-1">
             Cancel
           </Button>
-        </SheetClose>
-        <Button className="flex-1">
-          <Upload className="size-4" />
+        </DialogClose>
+        <Button className="flex-1" disabled={isSubmitting || isConverting}>
+          {isSubmitting ? <Spinner /> : <Upload className="size-4" />}
           Save
         </Button>
-      </SheetFooter>
+      </DialogFooter>
     </form>
   );
 }

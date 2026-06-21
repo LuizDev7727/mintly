@@ -1,8 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { NoInspirationalThumbnailsSet } from "./-components/no-inspirational-thumbnails-set";
-import { AddInspirationalThumbnailSheet } from "./-components/add-inspirational-thumbnail-sheet";
+import { AddInspirationalThumbnailDialog } from "./-components/add-inspirational-thumbnail-dialog";
 
 export const Route = createFileRoute("/orgs/$slug/channels/$channel/ai/")({
+  head: () => ({
+    meta: [
+      {
+        name: "Inspirational Thumbnails",
+      },
+      { title: "AI | Mintly" },
+    ],
+  }),
   component: AIPage,
 });
 
@@ -16,7 +24,7 @@ function AIPage() {
             Set inspirational thumbnails to generate thubmnail
           </p>
         </div>
-        <AddInspirationalThumbnailSheet />
+        <AddInspirationalThumbnailDialog />
       </header>
 
       <NoInspirationalThumbnailsSet />

@@ -7,7 +7,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { FileImage } from "lucide-react";
-import { AddInspirationalThumbnailSheet } from "./add-inspirational-thumbnail-sheet";
+import { AddInspirationalThumbnailDialog } from "./add-inspirational-thumbnail-dialog";
 
 export function NoInspirationalThumbnailsSet() {
   return (
@@ -22,7 +22,7 @@ export function NoInspirationalThumbnailsSet() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <AddInspirationalThumbnailSheet />
+        <AddInspirationalThumbnailDialog />
       </EmptyContent>
     </Empty>
   );
