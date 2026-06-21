@@ -17,7 +17,6 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
 
 export default function Search() {
   const [open, setOpen] = useState(false);

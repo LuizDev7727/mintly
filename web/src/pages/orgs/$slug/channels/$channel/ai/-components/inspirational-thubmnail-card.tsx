@@ -3,7 +3,9 @@ import { formatBytes } from "@/utils/format-bytes";
 import { Trash } from "lucide-react";
 
 export function InspirationalThumbnailCard() {
-  async function removeFile(fileId: string) {}
+  async function removeFile(fileId: string) {
+    console.log({ fileId });
+  }
 
   return (
     <div className="flex items-center justify-between gap-2 rounded-lg border bg-background p-2 pe-3">

@@ -12,7 +12,6 @@ import {
 import { formatBytes } from "@/utils/format-bytes";
 import { getFileExtension } from "@/utils/get-file-extension";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams } from "@tanstack/react-router";
 import {
   Calendar,
   CirclePlus,
@@ -46,14 +45,13 @@ type CreatePostFormProps = {
 export function CreatePostForm({ integrations }: CreatePostFormProps) {
   const [isDragging, setIsDragging] = useState(false);
 
-  const { slug: org, channel } = useParams({
-    from: "/orgs/$slug/channels/$channel",
-  });
+  // const { slug: org, channel } = useParams({
+  //   from: "/orgs/$slug/channels/$channel",
+  // });
 
   const {
     control,
     register,
-    handleSubmit,
     watch,
     getValues,
     formState: { isSubmitting },
@@ -63,9 +61,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     defaultValues: { posts: [] },
   });
 
-  const [uploadProgressMap, setUploadProgressMap] = useState(
-    new Map<number, UploadEntry>(),
-  );
+  const [uploadProgressMap] = useState(new Map<number, UploadEntry>());
 
   const {
     fields: posts,

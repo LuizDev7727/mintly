@@ -71,19 +71,19 @@ function ChannelProjectsPage() {
             title="Neymar - All FIFA World Cup Goals and Assists"
             clipCount={10}
             status="DONE"
-            createdAt={new Date(currentDate - 1000 * 60 * 60 * 2)}
+            createdAt={new Date()}
             createdBy={{ name: "Luiz Dev" }}
           />
           <ProjectCard
             title="Flow Podcast - Cortes imperdíveis do episódio #426"
             status="FINDING_BEST_MOMENTS"
-            createdAt={new Date(Date.now() - 1000 * 60 * 5)}
+            createdAt={new Date()}
             createdBy={{ name: "Maria Silva" }}
           />
           <ProjectCard
             title="IPCA + 9% - O melhor investimento?"
             status="GENERATING_METADATA"
-            createdAt={new Date(Date.now() - 1000 * 60 * 1)}
+            createdAt={new Date()}
             createdBy={{ name: "Carlos Mendes" }}
           />
           <ProjectCard
