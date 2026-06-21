@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './pages/__root'
 import { Route as AuthLayoutRouteImport } from './pages/auth/layout'
 import { Route as IndexRouteImport } from './pages/index'
+import { Route as OrgsIndexRouteImport } from './pages/orgs/index'
 import { Route as AuthIndexRouteImport } from './pages/auth/index'
 import { Route as OrgsSlugLayoutRouteImport } from './pages/orgs/$slug/layout'
 import { Route as OrgsSlugIndexRouteImport } from './pages/orgs/$slug/index'
@@ -34,6 +35,11 @@ const AuthLayoutRoute = AuthLayoutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrgsIndexRoute = OrgsIndexRouteImport.update({
+  id: '/orgs/',
+  path: '/orgs/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthIndexRoute = AuthIndexRouteImport.update({
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthLayoutRouteWithChildren
   '/orgs/$slug': typeof OrgsSlugLayoutRouteWithChildren
   '/auth/': typeof AuthIndexRoute
+  '/orgs/': typeof OrgsIndexRoute
   '/auth/sign-up/': typeof AuthSignUpIndexRoute
   '/orgs/$slug/': typeof OrgsSlugIndexRoute
   '/orgs/$slug/channels/$channel': typeof OrgsSlugChannelsChannelLayoutRouteWithChildren
@@ -135,6 +142,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthIndexRoute
+  '/orgs': typeof OrgsIndexRoute
   '/auth/sign-up': typeof AuthSignUpIndexRoute
   '/orgs/$slug': typeof OrgsSlugIndexRoute
   '/orgs/$slug/members': typeof OrgsSlugMembersIndexRoute
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthLayoutRouteWithChildren
   '/orgs/$slug': typeof OrgsSlugLayoutRouteWithChildren
   '/auth/': typeof AuthIndexRoute
+  '/orgs/': typeof OrgsIndexRoute
   '/auth/sign-up/': typeof AuthSignUpIndexRoute
   '/orgs/$slug/': typeof OrgsSlugIndexRoute
   '/orgs/$slug/channels/$channel': typeof OrgsSlugChannelsChannelLayoutRouteWithChildren
@@ -173,6 +182,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/orgs/$slug'
     | '/auth/'
+    | '/orgs/'
     | '/auth/sign-up/'
     | '/orgs/$slug/'
     | '/orgs/$slug/channels/$channel'
@@ -189,6 +199,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/orgs'
     | '/auth/sign-up'
     | '/orgs/$slug'
     | '/orgs/$slug/members'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/orgs/$slug'
     | '/auth/'
+    | '/orgs/'
     | '/auth/sign-up/'
     | '/orgs/$slug/'
     | '/orgs/$slug/channels/$channel'
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
   OrgsSlugLayoutRoute: typeof OrgsSlugLayoutRouteWithChildren
+  OrgsIndexRoute: typeof OrgsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -240,6 +253,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orgs/': {
+      id: '/orgs/'
+      path: '/orgs'
+      fullPath: '/orgs/'
+      preLoaderRoute: typeof OrgsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/': {
@@ -410,6 +430,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
   OrgsSlugLayoutRoute: OrgsSlugLayoutRouteWithChildren,
+  OrgsIndexRoute: OrgsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
