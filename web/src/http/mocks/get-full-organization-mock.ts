@@ -41,7 +41,9 @@ export const getFullOrganizationMock = http.get<
   GetFullOrganizationResponse
 >(
   "http://localhost:3000/api/auth/organization/get-full-organization",
-  () => {
+  async () => {
+    // Delay 2s
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     return HttpResponse.json({
       id: "01950000-0000-7000-8000-000000000001",
       name: "Mintly",
