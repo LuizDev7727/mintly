@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +7,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
-import { Download, Loader2, MoreHorizontal, Scissors, Sparkles, Trash2 } from "lucide-react";
+import {
+  Download,
+  Loader2,
+  MoreHorizontal,
+  Scissors,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 
 type ProjectStatus =
   | "GENERATING_METADATA"
@@ -166,7 +172,9 @@ export function ProjectCard({
             <AvatarImage src={createdBy.avatarUrl} alt={createdBy.name} />
             <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
           </Avatar>
-          <span className="text-xs text-muted-foreground">{createdBy.name}</span>
+          <span className="text-xs text-muted-foreground">
+            {createdBy.name}
+          </span>
           <span className="text-muted-foreground/40 text-xs">·</span>
           <span className="text-xs text-muted-foreground">
             {formatDistanceToNow(createdAt, { addSuffix: true })}

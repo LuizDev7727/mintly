@@ -46,14 +46,13 @@ type CreatePostFormProps = {
 export function CreatePostForm({ integrations }: CreatePostFormProps) {
   const [isDragging, setIsDragging] = useState(false);
 
-  const { slug: org, channel } = useParams({
-    from: "/orgs/$slug/channels/$channel",
-  });
+  // const { slug: org, channel } = useParams({
+  //   from: "/orgs/$slug/channels/$channel",
+  // });
 
   const {
     control,
     register,
-    handleSubmit,
     watch,
     getValues,
     formState: { isSubmitting },
@@ -63,9 +62,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     defaultValues: { posts: [] },
   });
 
-  const [uploadProgressMap, setUploadProgressMap] = useState(
-    new Map<number, UploadEntry>(),
-  );
+  const [uploadProgressMap] = useState(new Map<number, UploadEntry>());
 
   const {
     fields: posts,

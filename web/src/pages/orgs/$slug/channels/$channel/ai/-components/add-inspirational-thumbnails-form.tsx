@@ -81,7 +81,9 @@ export function AddInspirationalThumbnailsForm() {
 
   async function handleAddInspirationalThumbnails({
     inspirationalThumbnails,
-  }: InspirationalThumbnailsFormType) {}
+  }: InspirationalThumbnailsFormType) {
+    console.log({ inspirationalThumbnails });
+  }
 
   function handleDeleteAllInspirationalThumbnailsSelected() {
     setValue("inspirationalThumbnails", []);
