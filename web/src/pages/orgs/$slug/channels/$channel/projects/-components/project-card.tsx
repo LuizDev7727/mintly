@@ -84,7 +84,7 @@ function StatusBadge({ status }: { status: ProjectStatus }) {
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium backdrop-blur-sm",
-        config.className,
+        config.progressClassName,
       )}
     >
       {isProcessing ? (
@@ -105,6 +105,7 @@ export function ProjectCard({
   status = "DONE",
   createdBy = { name: "Luiz Dev", avatarUrl: undefined },
 }: Partial<ProjectCardProps>) {
+  const config = STATUS_CONFIG[status];
   const isProcessing = PROCESSING_STATUSES.includes(status);
   const initials = createdBy.name
     .split(" ")

@@ -12,7 +12,6 @@ import {
 import { formatBytes } from "@/utils/format-bytes";
 import { getFileExtension } from "@/utils/get-file-extension";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams } from "@tanstack/react-router";
 import {
   Calendar,
   CirclePlus,
