@@ -1,6 +1,8 @@
+import { ThemeProvider } from "@/components/theme-provider";
 import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { queryClient } from "./lib/react-query";
 
 type ProvidersProps = {
@@ -9,10 +11,12 @@ type ProvidersProps = {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <div>
+    <ThemeProvider defaultTheme="system" storageKey="mintly-ui-theme">
       <QueryClientProvider client={queryClient}>
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <NuqsAdapter>
+          <TooltipProvider>{children}</TooltipProvider>
+        </NuqsAdapter>
       </QueryClientProvider>
-    </div>
+    </ThemeProvider>
   );
 }
