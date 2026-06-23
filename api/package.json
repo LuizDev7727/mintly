@@ -9,7 +9,8 @@
     "db:generate": "dotenv -e .env drizzle-kit generate",
     "db:migrate": "dotenv -e .env drizzle-kit migrate",
     "db:ui": "dotenv -e .env drizzle-kit studio",
-    "test": "dotenv -e .env vitest run"
+    "test": "dotenv -e .env vitest run",
+    "test:ui": "dotenv -e .env vitest --ui"
   },
   "keywords": [],
   "author": "",
@@ -46,6 +47,7 @@
     "@scalar/fastify-api-reference": "^1.58.0",
     "@types/supertest": "^7.2.0",
     "@vitest/coverage-v8": "^4.1.8",
+    "@vitest/ui": "^4.1.9",
     "dotenv-cli": "^11.0.0",
     "supertest": "^7.2.2",
     "tsdown": "^0.22.1",

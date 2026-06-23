@@ -11,6 +11,7 @@ import { accountsTable } from "@/infra/db/tables/accounts.table.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
+import { testUtils } from "better-auth/plugins";
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
@@ -42,5 +43,8 @@ export const auth = betterAuth({
       },
     },
   },
-  plugins: [organization()],
+  plugins: [testUtils(), organization()],
 });
+
+const ctx = await auth.$context;
+export const test = ctx.test;

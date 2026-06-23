@@ -1,22 +1,22 @@
 import { ResourceNotFoundError } from "@/functions/errors/resource-not-found.error.ts";
 import type { FastifyInstance } from "fastify";
-import { z, ZodError } from "zod";
+import { hasZodFastifySchemaValidationErrors } from "fastify-type-provider-zod";
 
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 
 export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
-  if (error instanceof ZodError) {
-    reply.status(400).send({
+  if (hasZodFastifySchemaValidationErrors(error)) {
+    return reply.status(400).send({
       message: "Validation error",
-      errors: z.treeifyError(error),
+      errors: error.validation,
     });
   }
 
   if (error instanceof ResourceNotFoundError) {
-    reply.status(404).send({
+    return reply.status(404).send({
       message: error.message,
     });
   }
 
-  reply.status(500).send({ message: "Internal server error" });
+  return reply.status(500).send({ message: "Internal server error" });
 };
