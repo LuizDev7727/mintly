@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
+import { channelsTable } from "./channels.table.ts";
 import { invitationsTable } from "./invitations.table.ts";
 import { membersTable } from "./members.table.ts";
 
@@ -24,5 +25,6 @@ export const organizationRelations = relations(
   ({ many }) => ({
     members: many(membersTable),
     invitations: many(invitationsTable),
+    channels: many(channelsTable),
   }),
 );
