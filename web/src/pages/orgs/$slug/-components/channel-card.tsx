@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { formatBytes } from "@/utils/format-bytes";
 import { Link, useParams } from "@tanstack/react-router";
 import { ChevronRight, HardDrive, Plug, TvMinimal, Upload } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart } from "recharts";
 
 import {
   ChartContainer,
