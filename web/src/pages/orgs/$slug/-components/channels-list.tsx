@@ -23,15 +23,16 @@ export function ChannelsList() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
       {channels.map((channel) => (
         <ChannelCard
           key={channel.id}
           slug={channel.slug}
           title={channel.name}
-          avatarUrl={channel.avatar}
-          postsCount={channel.postsCount}
+          uploadsCount={channel.postsCount}
           integrationsCount={channel.integrationsCount}
+          growthPercent={0}
+          totalSize={0}
         />
       ))}
     </div>
