@@ -5,4 +5,6 @@ export type Channel = {
   avatar: string | null;
   postsCount: number;
   integrationsCount: number;
+  postsSize: { size: number }[];
+  totalPostsSize: number;
 };

@@ -14,24 +14,15 @@ import {
 type ChannelCardProps = {
   title: string;
   slug: string;
-  uploadsCount: number;
+  postsCount: number;
   integrationsCount: number;
-  growthPercent: number;
   totalSize: number;
+  postsSize: { size: number }[];
 };
 
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-];
-
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  size: {
+    label: "Size",
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
@@ -39,11 +30,17 @@ const chartConfig = {
 export function ChannelCard({
   title,
   slug: channelSlug,
-  uploadsCount = 0,
+  postsCount = 0,
   integrationsCount = 0,
   totalSize = 0,
+  postsSize = [],
 }: ChannelCardProps) {
   const { slug } = useParams({ from: "/orgs/$slug" });
+
+  const chartData =
+    postsSize.length >= 1
+      ? postsSize
+      : Array.from({ length: 6 }, () => ({ size: 0 }));
 
   return (
     <div className="min-w-0 w-full rounded-md border border-border bg-transparent">
@@ -56,13 +53,13 @@ export function ChannelCard({
             <h3 className="text-[15px] font-semibold leading-[1.3]">{title}</h3>
             <div className="mt-1 flex items-center gap-2.5">
               <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Upload className="size-4" />
-                {uploadsCount} uploads
+                <Upload className="size-3.5" />
+                {postsCount} posts
               </span>
               <span className="text-[13px] text-border">·</span>
               <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Plug className="size-4" />
-                {integrationsCount} integrações
+                <Plug className="size-3.5" />
+                {integrationsCount} integrations
               </span>
             </div>
           </div>
@@ -89,11 +86,12 @@ export function ChannelCard({
             content={<ChartTooltipContent indicator="dot" hideLabel />}
           />
           <Area
-            dataKey="desktop"
+            dataKey="size"
             type="linear"
-            fill="var(--color-desktop)"
+            fill="var(--color-primary)"
             fillOpacity={0.4}
-            stroke="var(--color-desktop)"
+            stroke="var(--color-primary)"
+            dot={false}
           />
         </AreaChart>
       </ChartContainer>

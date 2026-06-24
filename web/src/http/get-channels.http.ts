@@ -16,5 +16,7 @@ export async function getChannelsHttp(
   const { data } = await api.get<GetChannelsResponse>(
     `/organizations/${orgSlug}/channels`,
   );
-  return data;
+
+  const { channels } = data;
+  return { channels };
 }

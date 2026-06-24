@@ -29,10 +29,10 @@ export function ChannelsList() {
           key={channel.id}
           slug={channel.slug}
           title={channel.name}
-          uploadsCount={channel.postsCount}
+          postsCount={channel.postsCount}
           integrationsCount={channel.integrationsCount}
-          growthPercent={0}
-          totalSize={0}
+          totalSize={channel.totalPostsSize}
+          postsSize={channel.postsSize}
         />
       ))}
     </div>
