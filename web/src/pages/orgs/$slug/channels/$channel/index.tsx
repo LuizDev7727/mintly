@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  ArrowLeft,
   ArrowLeftRight,
   ChevronLeft,
   ChevronRight,
@@ -18,11 +17,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { PostCard } from "./-components/post-card";
-import { Suspense } from "react";
 import { FoldersList } from "./-components/folders-list";
 import { CreateFolderDialog } from "./-components/create-folder-dialog";
-import { BackToRootFolderButton } from "./-components/back-to-root-folder-button";
-import { FolderListLoading } from "./-components/folder-list-loading";
 import { CurrentFolderBadge } from "./-components/current-folder-badge";
 
 export const Route = createFileRoute("/orgs/$slug/channels/$channel/")({
@@ -71,29 +67,7 @@ function ChannelPage() {
         </div>
       </header>
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-x-2">
-            <BackToRootFolderButton />
-            <Button variant={"outline"}>
-              <ArrowLeft className="size-4" />
-              Back to Folder name
-            </Button>
-          </div>
-          <div className="flex items-center gap-x-1">
-            <Button variant="ghost" size="icon">
-              <ChevronLeft className="size-4" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <ChevronRight className="size-4" />
-            </Button>
-          </div>
-        </div>
-
-        <Suspense fallback={<FolderListLoading />}>
-          <FoldersList />
-        </Suspense>
-      </div>
+      <FoldersList />
 
       <Separator />
 
