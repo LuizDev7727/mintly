@@ -18,7 +18,7 @@ import { toast } from "sonner";
 
 export function CreateFolderForm() {
   const [currentFolder] = useQueryState("folder", {
-    defaultValue: "",
+    defaultValue: "Default",
   });
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
@@ -53,6 +53,7 @@ export function CreateFolderForm() {
         }
 
         return {
+          ...oldData,
           folders: [newFolder, ...oldData.folders],
         };
       });

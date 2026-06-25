@@ -48,6 +48,7 @@ export function DeleteFolderDialog({
         const newArray = old.folders.filter((f) => f.id !== folderId);
 
         return {
+          ...old,
           folders: newArray,
         };
       });

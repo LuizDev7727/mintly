@@ -16,7 +16,7 @@ type FolderCardProps = {
 
 export function FolderCard({ folder }: FolderCardProps) {
   const [_, setSelectedFolder] = useQueryState("folder", {
-    defaultValue: "",
+    defaultValue: "Default",
   });
 
   function handleSelectFolder() {

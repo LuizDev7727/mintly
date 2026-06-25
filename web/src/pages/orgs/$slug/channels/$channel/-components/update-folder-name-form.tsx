@@ -62,6 +62,7 @@ export function UpdateFolderNameForm({
         );
 
         return {
+          ...old,
           folders: updatedFolder,
         };
       });
