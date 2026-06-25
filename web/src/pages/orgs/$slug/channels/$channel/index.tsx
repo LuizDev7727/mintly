@@ -1,16 +1,12 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  ArrowLeft,
   ArrowLeftRight,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
   Filter,
-  FolderPlus,
-  FolderRoot,
   LayoutGrid,
   Plus,
   RotateCcw,
@@ -18,13 +14,23 @@ import {
   TextAlignJustify,
   X,
 } from "lucide-react";
-import { FolderCard } from "./-components/folder-card";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { PostCard } from "./-components/post-card";
+import { FoldersList } from "./-components/folders-list";
+import { CreateFolderDialog } from "./-components/create-folder-dialog";
+import { CurrentFolderBadge } from "./-components/current-folder-badge";
 
 export const Route = createFileRoute("/orgs/$slug/channels/$channel/")({
+  head: () => ({
+    meta: [
+      {
+        name: "See all posts",
+      },
+      { title: "Posts | Mintly" },
+    ],
+  }),
   component: ChannelPage,
 });
 
@@ -41,13 +47,10 @@ function ChannelPage() {
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-x-2">
           <h1 className="text-xl font-semibold">My Posts</h1>
-          <Badge>Default</Badge>
+          <CurrentFolderBadge />
         </div>
         <div className="flex items-center gap-x-2">
-          <Button variant={"outline"}>
-            <FolderPlus className="mr-2 size-4" />
-            New Folder
-          </Button>
+          <CreateFolderDialog />
           <div className="bg-zinc-900 w-4 rotate-90 h-px" />
           <div className="p-2 flex items-center bg-card rounded-[8px] border border-border">
             <button
@@ -84,39 +87,7 @@ function ChannelPage() {
         </div>
       </header>
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-x-2">
-            <Button variant={"outline"}>
-              <FolderRoot className="size-4" />
-              Back to Root
-            </Button>
-            <Button variant={"outline"}>
-              <ArrowLeft className="size-4" />
-              Back to Folder name
-            </Button>
-          </div>
-          <div className="flex items-center gap-x-1">
-            <Button variant="ghost" size="icon">
-              <ChevronLeft className="size-4" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <ChevronRight className="size-4" />
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-          <FolderCard />
-          <FolderCard />
-          <FolderCard />
-          <FolderCard />
-          <FolderCard />
-          <FolderCard />
-          <FolderCard />
-          <FolderCard />
-        </div>
-      </div>
+      <FoldersList />
 
       <Separator />
 
