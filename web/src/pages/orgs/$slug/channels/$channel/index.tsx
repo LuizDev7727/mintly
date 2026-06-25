@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { PostCard } from "./-components/post-card";
 import { FoldersList } from "./-components/folders-list";
 import { CreateFolderDialog } from "./-components/create-folder-dialog";
@@ -34,8 +35,13 @@ export const Route = createFileRoute("/orgs/$slug/channels/$channel/")({
 });
 
 function ChannelPage() {
+  const [view, setView] = useState<"grid" | "list">("grid");
+
   const { slug, channel } = Route.useParams();
 
+  function handleViewChange(newView: "grid" | "list") {
+    setView(newView);
+  }
   return (
     <div className="space-y-4">
       <header className="flex items-center justify-between">
@@ -47,11 +53,25 @@ function ChannelPage() {
           <CreateFolderDialog />
           <div className="bg-zinc-900 w-4 rotate-90 h-px" />
           <div className="p-2 flex items-center bg-card rounded-[8px] border border-border">
-            <button className="cursor-pointer px-2 py-1 bg-violet-500 rounded-md">
-              <LayoutGrid className="size-3 dark:text-zinc-900" />
+            <button
+              data-current={view === "grid"}
+              className="cursor-pointer px-2 py-1 data-[current=true]:bg-violet-500 rounded-md"
+              onClick={() => handleViewChange("grid")}
+            >
+              <LayoutGrid
+                data-current={view === "grid"}
+                className="size-3 text-muted-foreground data-[current=true]:text-black"
+              />
             </button>
-            <button className="cursor-pointer px-2 py-1">
-              <TextAlignJustify className="size-3 text-muted-foreground" />
+            <button
+              data-current={view === "list"}
+              className="cursor-pointer px-2 py-1 data-[current=true]:bg-violet-500 rounded-md"
+              onClick={() => handleViewChange("list")}
+            >
+              <TextAlignJustify
+                data-current={view === "list"}
+                className="size-3 text-muted-foreground data-[current=true]:text-black"
+              />
             </button>
           </div>
           <div className="bg-zinc-900 w-4 rotate-90 h-px" />
@@ -122,17 +142,114 @@ function ChannelPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <PostCard
+          post={{
+            id: "20390239023",
+            thumbnailUrl:
+              "https://i.ytimg.com/vi/i0WexQJ3UeI/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCAGUH3VSDFqOlrVPYgExUdyQF08Q",
+            title: "Dei um presente para o Toguro",
+            size: 1000,
+            status: "PROCESSING",
+            type: "image/png",
+            duration: 1230239,
+            publishAt: null,
+            socialsToPost: [
+              {
+                id: "3df6f75f-6d80-4cb0-a411-9af693b8af6c",
+                name: "Cristiano Ronaldo",
+                social: "YOUTUBE",
+              },
+              {
+                id: "ad9dc65f-bf36-4505-b3cc-2db39bcae004",
+                name: "John Doe",
+                social: "TIKTOK",
+              },
+            ],
+            author: { name: "John Doe", avatarUrl: null },
+          }}
+        />
+
+        <PostCard
+          post={{
+            id: "20390239023",
+            thumbnailUrl:
+              "https://i.ytimg.com/vi/xb9qDT40mb0/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDfe3eyoNSFd83kD24Q1cWHnhSg9w",
+            title: "Assisti o jogo da seleção na cidade mais doida do Brasil",
+            size: 1000,
+            status: "PUBLISHED",
+            type: "image/png",
+            duration: 1230239,
+            publishAt: null,
+            socialsToPost: [
+              {
+                id: "3df6f75f-6d80-4cb0-a411-9af693b8af6c",
+                name: "Cristiano Ronaldo",
+                social: "YOUTUBE",
+              },
+              {
+                id: "ad9dc65f-bf36-4505-b3cc-2db39bcae004",
+                name: "John Doe",
+                social: "TIKTOK",
+              },
+            ],
+            author: { name: "John Doe", avatarUrl: null },
+          }}
+        />
+
+        <PostCard
+          post={{
+            id: "20390239023",
+            thumbnailUrl:
+              "https://i.ytimg.com/vi/xb9qDT40mb0/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDfe3eyoNSFd83kD24Q1cWHnhSg9w",
+            title: "Assisti o jogo da seleção na cidade mais doida do Brasil",
+            size: 1000,
+            status: "ERROR",
+            type: "image/png",
+            duration: 1230239,
+            publishAt: null,
+            socialsToPost: [
+              {
+                id: "3df6f75f-6d80-4cb0-a411-9af693b8af6c",
+                name: "Cristiano Ronaldo",
+                social: "YOUTUBE",
+              },
+              {
+                id: "ad9dc65f-bf36-4505-b3cc-2db39bcae004",
+                name: "John Doe",
+                social: "TIKTOK",
+              },
+            ],
+            author: { name: "John Doe", avatarUrl: null },
+          }}
+        />
+
+        <PostCard
+          post={{
+            id: "20390239023",
+            thumbnailUrl:
+              "https://i.ytimg.com/vi/xb9qDT40mb0/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDfe3eyoNSFd83kD24Q1cWHnhSg9w",
+            title: "Assisti o jogo da seleção na cidade mais doida do Brasil",
+            size: 1000,
+            status: "SCHEDULED",
+            type: "image/png",
+            duration: 1230239,
+            publishAt: null,
+            socialsToPost: [
+              {
+                id: "3df6f75f-6d80-4cb0-a411-9af693b8af6c",
+                name: "Cristiano Ronaldo",
+                social: "YOUTUBE",
+              },
+              {
+                id: "ad9dc65f-bf36-4505-b3cc-2db39bcae004",
+                name: "John Doe",
+                social: "TIKTOK",
+              },
+            ],
+            author: { name: "John Doe", avatarUrl: null },
+          }}
+        />
       </div>
     </div>
   );

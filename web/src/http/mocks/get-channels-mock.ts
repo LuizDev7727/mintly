@@ -15,6 +15,15 @@ export const getChannelsMock = http.get<
         avatar: null,
         postsCount: 142,
         integrationsCount: 3,
+        postsSize: [
+          { size: 186 },
+          { size: 305 },
+          { size: 237 },
+          { size: 73 },
+          { size: 209 },
+          { size: 214 },
+        ],
+        totalPostsSize: 142,
       },
       {
         id: "2",
@@ -23,6 +32,8 @@ export const getChannelsMock = http.get<
         avatar: null,
         postsCount: 98,
         integrationsCount: 2,
+        postsSize: [{ size: 200 }, { size: 200 }],
+        totalPostsSize: 400,
       },
       {
         id: "3",
@@ -31,6 +42,8 @@ export const getChannelsMock = http.get<
         avatar: null,
         postsCount: 317,
         integrationsCount: 5,
+        postsSize: [{ size: 317 }],
+        totalPostsSize: 317,
       },
       {
         id: "4",
@@ -39,6 +52,8 @@ export const getChannelsMock = http.get<
         avatar: null,
         postsCount: 204,
         integrationsCount: 4,
+        postsSize: [{ size: 204 }],
+        totalPostsSize: 204,
       },
       {
         id: "5",
@@ -47,6 +62,8 @@ export const getChannelsMock = http.get<
         avatar: null,
         postsCount: 56,
         integrationsCount: 1,
+        postsSize: [{ size: 56 }],
+        totalPostsSize: 56,
       },
       {
         id: "6",
@@ -55,6 +72,8 @@ export const getChannelsMock = http.get<
         avatar: null,
         postsCount: 88,
         integrationsCount: 2,
+        postsSize: [{ size: 88 }],
+        totalPostsSize: 88,
       },
     ],
   });

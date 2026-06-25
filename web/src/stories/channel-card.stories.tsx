@@ -15,9 +15,10 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     title: "AchismosTV",
-    avatarUrl: null,
     slug: "1212",
     integrationsCount: 2,
+    totalSize: 0,
     postsCount: 12,
+    postsSize: [],
   },
 };
