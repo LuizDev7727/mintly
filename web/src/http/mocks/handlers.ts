@@ -8,6 +8,7 @@ import { createFolderMock } from "./create-folder-mock";
 import { updateFolderMock } from "./update-folder-mock";
 import { deleteFolderMock } from "./delete-folder-mock";
 import { getPostsMock } from "./get-posts-mock";
+import { createChannelMock } from "./create-channel-mock";
 
 export const handlers = [
   getOrganizationsMock,
@@ -20,4 +21,5 @@ export const handlers = [
   updateFolderMock,
   deleteFolderMock,
   getPostsMock,
+  createChannelMock,
 ];

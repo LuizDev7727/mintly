@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { getChannelsHttp } from "@/http/get-channels.http";
+import { getChannelsHttp } from "@/http/channel/get-channels.http";
 import { ChannelsListEmpty } from "./channel-list-empty";
 import { ChannelCard } from "./channel-card";
 

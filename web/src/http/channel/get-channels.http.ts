@@ -1,5 +1,5 @@
 import type { Channel } from "@/types/channel";
-import { api } from "./api";
+import { api } from "../api";
 
 type GetChannelsParams = {
   orgSlug: string;
