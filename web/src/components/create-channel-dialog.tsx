@@ -8,6 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
+import { CreateChannelForm } from "./create-channel-form";
 
 export function CreateChannelDialog() {
   return (
@@ -20,12 +21,12 @@ export function CreateChannelDialog() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogTitle>Create Channel</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            Create a new channel in your organization.
           </DialogDescription>
         </DialogHeader>
+        <CreateChannelForm />
       </DialogContent>
     </Dialog>
   );

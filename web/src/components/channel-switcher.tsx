@@ -9,14 +9,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getChannelsHttp } from "@/http/get-channels.http";
+import { getChannelsHttp } from "@/http/channel/get-channels.http";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "./ui/sidebar";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { CreateChannelForm } from "./create-channel-form";
 export function ChannelSwitcher() {
   const { isMobile } = useSidebar();
   const { slug, channel: channelSlug } = useParams({
@@ -84,14 +92,28 @@ export function ChannelSwitcher() {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2 cursor-pointer">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                <PlusCircle className="size-4" />
-              </div>
-              <div className="font-medium text-muted-foreground">
-                Create channel
-              </div>
-            </DropdownMenuItem>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className="flex items-center gap-2 p-2 cursor-pointer">
+                  <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                    <PlusCircle className="size-4" />
+                  </div>
+                  <span className="font-medium text-muted-foreground">
+                    Create channel
+                  </span>
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create new channel</DialogTitle>
+                  <DialogDescription>
+                    Create a new channel in your organization.
+                  </DialogDescription>
+                </DialogHeader>
+                <CreateChannelForm />
+              </DialogContent>
+            </Dialog>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

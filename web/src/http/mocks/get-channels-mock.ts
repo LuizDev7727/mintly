@@ -1,4 +1,4 @@
-import type { GetChannelsResponse } from "../get-channels.http";
+import type { GetChannelsResponse } from "../channel/get-channels.http";
 import { http, HttpResponse } from "msw";
 
 export const getChannelsMock = http.get<
