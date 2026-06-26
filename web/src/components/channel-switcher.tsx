@@ -1,6 +1,6 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ChevronsUpDown, Plus, PlusCircle, TvMinimal } from "lucide-react";
+import { ChevronsUpDown, PlusCircle, TvMinimal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
