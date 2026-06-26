@@ -17,7 +17,7 @@ export function LeaveOrganization() {
           its resources immediately.
         </CardDescription>
       </CardHeader>
-      <CardFooter className="border-t justify-between">
+      <CardFooter className="justify-between">
         <p className="text-sm text-muted-foreground">
           You can be re-invited by an admin later.
         </p>

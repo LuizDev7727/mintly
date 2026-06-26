@@ -16,6 +16,10 @@ import { env } from "./env.ts";
 import { errorHandler } from "./infra/http/routes/error-handler.ts";
 import { getHealthRoute } from "./infra/http/routes/health/get-health.route.ts";
 import { authRoute } from "./infra/http/routes/auth/auth.route.ts";
+import { getChannelsRoute } from "./infra/http/routes/channel/get-channels.route.ts";
+import { createChannelRoute } from "./infra/http/routes/channel/create-channel.route.ts";
+import { updateChannelRoute } from "./infra/http/routes/channel/update-channel.route.ts";
+import { deleteChannelRoute } from "./infra/http/routes/channel/delete-channel.route.ts";
 
 export const server = fastify({
   logger: {
@@ -60,3 +64,7 @@ server.register(fastifyCors, {
 
 server.register(getHealthRoute);
 server.register(authRoute);
+server.register(getChannelsRoute);
+server.register(createChannelRoute);
+server.register(updateChannelRoute);
+server.register(deleteChannelRoute);

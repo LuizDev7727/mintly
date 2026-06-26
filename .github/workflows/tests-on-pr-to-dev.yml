@@ -79,6 +79,7 @@ jobs:
           DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           BETTER_AUTH_URL: http://localhost:3000
+          ALLOWED_ORIGIN: http://localhost:5173
 
   test-e2e:
     needs: detect
