@@ -9,6 +9,12 @@ import { MetricsLoading } from "./-components/metrics-loading";
 
 export const Route = createFileRoute("/orgs/$slug/")({
   component: ChannelsPage,
+  head: () => ({
+    meta: [
+      { title: "Channels | Mintly" },
+      { name: "description", content: "Organization channels." },
+    ],
+  }),
 });
 
 function ChannelsPage() {

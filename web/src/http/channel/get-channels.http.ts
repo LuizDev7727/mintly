@@ -1,5 +1,5 @@
 import type { Channel } from "@/types/channel";
-import { api } from "./api";
+import { api } from "../api";
 
 type GetChannelsParams = {
   orgSlug: string;
@@ -16,5 +16,7 @@ export async function getChannelsHttp(
   const { data } = await api.get<GetChannelsResponse>(
     `/organizations/${orgSlug}/channels`,
   );
-  return data;
+
+  const { channels } = data;
+  return { channels };
 }
