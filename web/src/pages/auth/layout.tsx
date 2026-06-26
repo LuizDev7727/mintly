@@ -3,13 +3,14 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { GalleryVerticalEnd } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
+  beforeLoad: () => {},
   component: AuthLayout,
 });
 
 function AuthLayout() {
   return (
     <div className="w-full h-full grid min-h-svh lg:grid-cols-2">
-      <div className="relative hidden bg-primary lg:flex flex-col overflow-visible px-10 pt-10">
+      <div className="relative hidden bg-primary lg:flex flex-col overflow-hidden px-10 pt-10">
         <header className="relative z-10 mb-10">
           <h1 className="text-zinc-900 text-[30px] font-semibold">
             Schedule, publish, and track your content across
