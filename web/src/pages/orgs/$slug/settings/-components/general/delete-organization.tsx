@@ -17,8 +17,10 @@ export function DeleteOrganization() {
           irreversible, so proceed with caution.
         </CardDescription>
       </CardHeader>
-      <CardFooter className="border-t justify-between">
-        <p className="text-sm text-destructive">This action cannot be undone!</p>
+      <CardFooter className="justify-between">
+        <p className="text-sm text-destructive">
+          This action cannot be undone!
+        </p>
         <ConfirmDeleteOrganizationDialog />
       </CardFooter>
     </Card>
