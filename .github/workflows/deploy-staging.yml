@@ -14,16 +14,23 @@ jobs:
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
+      - name: Set Railway variables
+        working-directory: api
+        run: |
+          railway variables set \
+            DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            BETTER_AUTH_URL="${{ secrets.BETTER_AUTH_URL }}" \
+            BETTER_AUTH_SECRET="${{ secrets.BETTER_AUTH_SECRET }}" \
+            ALLOWED_ORIGIN="${{ secrets.ALLOWED_ORIGIN }}" \
+            OTEL_SERVICE_NAME="${{ secrets.OTEL_SERVICE_NAME }}" \
+            OTEL_TRACES_EXPORTER="${{ secrets.OTEL_TRACES_EXPORTER }}" \
+            OTEL_EXPORTER_OTLP_ENDPOINT="${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}" \
+            OTEL_EXPORTER_OTLP_HEADERS="${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}"
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
       - name: Deploy to Railway
         working-directory: api
         run: railway up --service ${{ vars.RAILWAY_SERVICE_NAME }} --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-          ALLOWED_ORIGIN: ${{ secrets.ALLOWED_ORIGIN }}
-          OTEL_SERVICE_NAME: ${{ secrets.OTEL_SERVICE_NAME }}
-          OTEL_TRACES_EXPORTER: ${{ secrets.OTEL_TRACES_EXPORTER }}
-          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
-          OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
