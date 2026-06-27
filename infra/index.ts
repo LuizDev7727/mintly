@@ -5,38 +5,47 @@ import * as awsx from "@pulumi/awsx";
 const config = new pulumi.Config();
 const imageTag = config.require("imageTag");
 
-// ECR Repository (created/ensured by CI before Docker push)
-const repo = aws.ecr.getRepositoryOutput({ name: "mintly-api-staging" });
+// ECR Repository
+const repo = new aws.ecr.Repository("mintly-api-staging", {
+  name: "mintly-api-staging",
+  forceDelete: true,
+});
 
 // ECS Cluster
-const cluster = new aws.ecs.Cluster("api-cluster", {
+const cluster = new aws.ecs.Cluster("mintly-api-staging-cluster", {
   name: "mintly-api-staging-cluster",
 });
 
 // IAM Role para execução de tasks
-const taskExecutionRole = new aws.iam.Role("api-task-execution-role", {
-  assumeRolePolicy: JSON.stringify({
-    Version: "2012-10-17",
-    Statement: [
-      {
-        Action: "sts:AssumeRole",
-        Effect: "Allow",
-        Principal: {
-          Service: "ecs-tasks.amazonaws.com",
+const taskExecutionRole = new aws.iam.Role(
+  "mintly-api-staging-task-execution-role",
+  {
+    assumeRolePolicy: JSON.stringify({
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Action: "sts:AssumeRole",
+          Effect: "Allow",
+          Principal: {
+            Service: "ecs-tasks.amazonaws.com",
+          },
         },
-      },
-    ],
-  }),
-});
+      ],
+    }),
+  },
+);
 
-new aws.iam.RolePolicyAttachment("api-task-execution-role-policy", {
-  role: taskExecutionRole.name,
-  policyArn: aws.iam.ManagedPolicy.AmazonECSTaskExecutionRolePolicy,
-});
+new aws.iam.RolePolicyAttachment(
+  "mintly-api-staging-task-execution-role-policy",
+  {
+    role: taskExecutionRole.name,
+    policyArn: aws.iam.ManagedPolicy.AmazonECSTaskExecutionRolePolicy,
+  },
+);
 
 // Task Definition
-const taskDefinition = new aws.ecs.TaskDefinition("api-task", {
-  family: "minha-api-task",
+const taskDefinition = new aws.ecs.TaskDefinition("mintly-api-staging-task", {
+  family: "mintly-api-staging-task",
   cpu: "256",
   memory: "512",
   networkMode: "awsvpc",
