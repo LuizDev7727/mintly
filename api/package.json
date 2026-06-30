@@ -52,6 +52,7 @@
     "dotenv-cli": "^11.0.0",
     "supertest": "^7.2.2",
     "tsdown": "^0.22.1",
+    "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "unrun": "^0.3.0",
     "vitest": "^4.1.8"
