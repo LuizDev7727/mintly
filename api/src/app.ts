@@ -20,6 +20,7 @@ import { getChannelsRoute } from "./infra/http/routes/channel/get-channels.route
 import { createChannelRoute } from "./infra/http/routes/channel/create-channel.route.ts";
 import { updateChannelRoute } from "./infra/http/routes/channel/update-channel.route.ts";
 import { deleteChannelRoute } from "./infra/http/routes/channel/delete-channel.route.ts";
+import { getOrganizationMetricsRoute } from "./infra/http/routes/organization/get-metrics.route.ts";
 
 export const server = fastify({
   logger: {
@@ -68,3 +69,5 @@ server.register(getChannelsRoute);
 server.register(createChannelRoute);
 server.register(updateChannelRoute);
 server.register(deleteChannelRoute);
+
+server.register(getOrganizationMetricsRoute);

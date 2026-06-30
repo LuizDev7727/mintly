@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { ArrowRight, AtSign, Eye, EyeOff } from "lucide-react";
+import { ArrowRight, AtSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,6 +17,9 @@ import {
 } from "@/schemas/auth/sign-in.schema";
 import { AuthenticateWithGoogle } from "./-components/authenticate-with-google";
 import { Spinner } from "@/components/ui/spinner";
+import { authClient } from "@/lib/auth";
+import { toast } from "sonner";
+import { TogglePasswordVisibility } from "./-components/toggle-password-visibility";
 
 export const Route = createFileRoute("/auth/")({
   head: () => ({
@@ -29,6 +32,7 @@ export const Route = createFileRoute("/auth/")({
 });
 
 function SignInPage() {
+  const navigate = useNavigate();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const {
@@ -39,9 +43,26 @@ function SignInPage() {
     resolver: zodResolver(signInSchema),
   });
 
+  function togglePasswordVisibility() {
+    setIsPasswordVisible(!isPasswordVisible);
+  }
+
   async function handleSignIn(formBody: SignInFormType) {
     const { email, password } = formBody;
-    console.log({ email, password });
+    const { error } = await authClient.signIn.email({
+      email,
+      password,
+      fetchOptions: {
+        onSuccess: async () => {
+          toast("Logged in successfully!");
+          navigate({ to: "/orgs", replace: true, reloadDocument: true });
+        },
+      },
+    });
+
+    if (error) {
+      toast.error(error.message);
+    }
   }
 
   return (
@@ -82,22 +103,10 @@ function SignInPage() {
                 type={isPasswordVisible ? "text" : "password"}
                 {...register("password")}
               />
-              <button
-                aria-controls="password"
-                aria-label={
-                  isPasswordVisible ? "Hide password" : "Show password"
-                }
-                aria-pressed={isPasswordVisible}
-                className="absolute inset-y-0 inset-e-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-                onClick={() => setIsPasswordVisible((v) => !v)}
-                type="button"
-              >
-                {isPasswordVisible ? (
-                  <EyeOff aria-hidden="true" size={16} />
-                ) : (
-                  <Eye aria-hidden="true" size={16} />
-                )}
-              </button>
+              <TogglePasswordVisibility
+                isPasswordInputVisible={isPasswordVisible}
+                togglePasswordVisibility={togglePasswordVisibility}
+              />
             </div>
             {errors.password && (
               <FieldError>{errors.password.message}</FieldError>
@@ -107,8 +116,7 @@ function SignInPage() {
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting && <Spinner />}
-          Log in to my Account
-          {!isSubmitting && <ArrowRight />}
+          Log in
         </Button>
       </form>
 
