@@ -1,9 +1,19 @@
-import { Link } from "@tanstack/react-router";
+import { authClient } from "@/lib/auth";
+import { Link, redirect } from "@tanstack/react-router";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { GalleryVerticalEnd } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
-  beforeLoad: () => {},
+  beforeLoad: async () => {
+    const { data: session } = await authClient.getSession();
+
+    // user is signed
+    const hasSession = session !== null;
+
+    if (hasSession) {
+      throw redirect({ to: "/orgs" });
+    }
+  },
   component: AuthLayout,
 });
 
