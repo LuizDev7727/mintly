@@ -39,13 +39,10 @@ export const auth = betterAuth({
     database: {
       generateId: false,
     },
-    cookies: {
-      state: {
-        attributes: {
-          sameSite: env.NODE_ENV === "production" ? "none" : "lax",
-          secure: env.NODE_ENV === "production",
-        },
-      },
+    useSecureCookies: env.NODE_ENV === "production",
+    defaultCookieAttributes: {
+      sameSite: env.NODE_ENV === "production" ? "none" : "lax",
+      secure: env.NODE_ENV === "production",
     },
   },
   databaseHooks: {
