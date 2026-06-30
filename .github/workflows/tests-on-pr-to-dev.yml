@@ -139,6 +139,8 @@ jobs:
         run: pnpm db:seed
         env:
           DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
+          BETTER_AUTH_URL: http://localhost:3000
+          ALLOWED_ORIGIN: http://localhost:4173
 
       - name: Start API
         env:
