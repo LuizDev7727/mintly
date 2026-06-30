@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import {
   Field,
   FieldError,
@@ -14,9 +15,12 @@ import {
   type SignUpFormType,
 } from "@/schemas/auth/sign-up.schema";
 import { PasswordChecker } from "./-components/password-checker";
-import { AtSign, Eye, EyeOff, User } from "lucide-react";
+import { AtSign, User } from "lucide-react";
 import { useState } from "react";
 import { AuthenticateWithGoogle } from "../-components/authenticate-with-google";
+import { authClient } from "@/lib/auth";
+import { Spinner } from "@/components/ui/spinner";
+import { TogglePasswordVisibility } from "../-components/toggle-password-visibility";
 
 export const Route = createFileRoute("/auth/sign-up/")({
   head: () => ({
@@ -29,6 +33,8 @@ export const Route = createFileRoute("/auth/sign-up/")({
 });
 
 function SignUpPage() {
+  const navigate = useNavigate();
+
   const [isPasswordInputVisible, setIsPasswordInputVisible] = useState(false);
 
   function togglePasswordVisibility() {
@@ -49,7 +55,17 @@ function SignUpPage() {
 
   async function handleSignUp(formBody: SignUpFormType) {
     const { name, email, password } = formBody;
-    console.log({ name, email, password });
+    await authClient.signUp.email({
+      email,
+      password,
+      name,
+      fetchOptions: {
+        onSuccess: () => {
+          toast("Account created successfully!");
+          navigate({ to: "/orgs", replace: true, reloadDocument: true });
+        },
+      },
+    });
   }
 
   return (
@@ -107,22 +123,10 @@ function SignUpPage() {
                 placeholder="*********"
                 type={isPasswordInputVisible ? "text" : "password"}
               />
-              <button
-                aria-controls="password"
-                aria-label={
-                  isPasswordInputVisible ? "Hide password" : "Show password"
-                }
-                aria-pressed={isPasswordInputVisible}
-                className="absolute inset-y-0 inset-e-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-                onClick={togglePasswordVisibility}
-                type="button"
-              >
-                {isPasswordInputVisible ? (
-                  <EyeOff aria-hidden="true" size={16} />
-                ) : (
-                  <Eye aria-hidden="true" size={16} />
-                )}
-              </button>
+              <TogglePasswordVisibility
+                isPasswordInputVisible={isPasswordInputVisible}
+                togglePasswordVisibility={togglePasswordVisibility}
+              />
             </div>
             {errors.password && (
               <FieldError>{errors.password.message}</FieldError>
@@ -147,6 +151,7 @@ function SignUpPage() {
         <AuthenticateWithGoogle />
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting && <Spinner />}
           Create account
         </Button>
       </form>

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth";
+import { getInitials } from "@/utils/get-initials";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -29,7 +30,7 @@ export function NavUser() {
       fetchOptions: {
         onSuccess: () => {
           navigate({
-            to: "/",
+            to: "/auth",
           });
         },
       },
@@ -52,7 +53,9 @@ export function NavUser() {
                     alt={session?.user.name}
                   />
                 )}
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {getInitials(session?.user.name ?? "CN")}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
