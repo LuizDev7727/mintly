@@ -2,8 +2,8 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Sign In", () => {
   const registeredUser = {
-    email: "johndoe@gmail.com",
-    password: "JohnDoe12@",
+    email: "testuser@gmail.com",
+    password: "DwayneJ781@",
   };
 
   test.beforeEach(async ({ page }) => {
@@ -50,8 +50,10 @@ test.describe("Sign In", () => {
   });
 
   test("should sign in successfully and redirect to orgs", async ({ page }) => {
-    await page.getByLabel("Email").fill("thiago@gmail.com");
-    await page.getByRole("textbox", { name: "Password", exact: true }).fill("ThiagoSemT2@");
+    await page.getByLabel("Email").fill(registeredUser.email);
+    await page
+      .getByRole("textbox", { name: "Password", exact: true })
+      .fill(registeredUser.password);
     await page.getByRole("button", { name: "Log in" }).click();
 
     await expect(page).toHaveURL("/orgs");

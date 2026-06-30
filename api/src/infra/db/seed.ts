@@ -12,7 +12,7 @@ async function seedUser() {
     name: "Test User",
     email: "testuser@gmail.com",
     passwordHash:
-      "276d0e2dc4521ffbfa6062fd166c71ba:b6f0463e3b3952a8e5bc848fa2a6bd16030c2d66016c01a90f9b93c8ef7f0358404797aa9bec24728d18b070dc4ee6bc4f8044ec376e47fbd222d91bc55d43a9",
+      "f0619de6cc40b8ee17159d74e23cbc7e:2387e584bb5a6b504c961fed196f7eb4ee11d5edcef749a71b1166c0ee0e6dc98534a4c60760826ae6298087d4ebcc9615b311ba3b6b0eb4d0a71446c61b1779", //DwayneJ781@
   };
 
   const [user] = await db

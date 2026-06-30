@@ -134,6 +134,12 @@ jobs:
         env:
           DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
 
+      - name: Seed E2E test user
+        working-directory: api
+        run: pnpm db:seed
+        env:
+          DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
+
       - name: Start API
         env:
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
