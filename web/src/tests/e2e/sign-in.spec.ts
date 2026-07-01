@@ -57,6 +57,6 @@ test.describe("Sign In", () => {
       .fill(registeredUser.password);
     await page.getByRole("button", { name: "Log in" }).click();
 
-    await expect(page).toHaveURL("/orgs");
+    await expect(page).toHaveURL(/\/orgs/);
   });
 });

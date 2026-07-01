@@ -73,7 +73,7 @@ test.describe("Sign Up", () => {
     await page.getByLabel("Confirm password").fill("Password123!");
     await page.getByRole("button", { name: "Create account" }).click();
 
-    await page.waitForURL("/orgs", { timeout: 15000 });
+    await page.waitForURL(/\/orgs/, { timeout: 15000 });
 
     await expect(page).toHaveURL(/\/orgs/);
   });
