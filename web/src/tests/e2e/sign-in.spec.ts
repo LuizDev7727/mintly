@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Sign In", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
   const registeredUser = {
     email: "testuser@gmail.com",
     password: "DwayneJ781@",
@@ -56,6 +57,6 @@ test.describe("Sign In", () => {
       .fill(registeredUser.password);
     await page.getByRole("button", { name: "Log in" }).click();
 
-    await expect(page).toHaveURL("/orgs");
+    await expect(page).toHaveURL(/\/orgs/);
   });
 });

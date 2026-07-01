@@ -8,6 +8,7 @@ export const channelsTable = pgTable("channels", {
     .primaryKey()
     .$defaultFn(() => uuidv7()),
   name: varchar("name").notNull(),
+  slug: varchar("slug").notNull().default(""),
   organizationSlug: text("organization_slug")
     .notNull()
     .references(() => organizationsTable.slug, { onDelete: "cascade" }),
