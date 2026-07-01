@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Sign In", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
   const registeredUser = {
     email: "testuser@gmail.com",
     password: "DwayneJ781@",

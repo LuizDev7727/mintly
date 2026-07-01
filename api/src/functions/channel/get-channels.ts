@@ -9,6 +9,7 @@ type GetChannelsParams = {
 type GetChannelsResponse = {
   channels: {
     id: string;
+    slug: string;
     name: string;
   }[];
 };
@@ -21,6 +22,7 @@ export async function getChannels(
   const channels = await db
     .select({
       id: channelsTable.id,
+      slug: channelsTable.slug,
       name: channelsTable.name,
     })
     .from(channelsTable)
