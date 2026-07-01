@@ -17,6 +17,7 @@ export const getChannelsRoute: FastifyPluginAsyncZod = async (app) => {
             channels: z.array(
               z.object({
                 id: z.string(),
+                slug: z.string(),
                 name: z.string(),
               }),
             ),

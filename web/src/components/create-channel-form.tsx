@@ -14,6 +14,7 @@ import type { GetChannelsResponse } from "@/http/channel/get-channels.http";
 import type { Channel } from "@/types/channel";
 import { Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { createSlug } from "@/utils/create-slug";
 
 export function CreateChannelForm() {
   const { slug } = useParams({
@@ -35,7 +36,7 @@ export function CreateChannelForm() {
       const newChannel: Channel = {
         id: channelId,
         name,
-        slug: name.toLowerCase().replace(/\s+/g, "-"),
+        slug: createSlug(name),
         avatar: null,
         postsCount: 0,
         integrationsCount: 0,
@@ -66,7 +67,7 @@ export function CreateChannelForm() {
     <form className="space-y-4" onSubmit={handleSubmit(handleCreateChannel)}>
       <Label>Name</Label>
       <Input {...register("name")} placeholder="Amazon" />
-      <Button type="submit" className="w-full">
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? (
           <Loader2 className="animate-spin size-4" />
         ) : (
