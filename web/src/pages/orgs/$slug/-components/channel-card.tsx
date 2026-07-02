@@ -31,7 +31,6 @@ const chartConfig = {
 export function ChannelCard({
   id,
   title,
-  slug: channelSlug,
   postsCount = 0,
   integrationsCount = 0,
   totalSize = 0,

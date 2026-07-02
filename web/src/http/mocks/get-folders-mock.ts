@@ -33,9 +33,11 @@ export const getFoldersMock = http.get<
 
     return HttpResponse.json({
       folders: paginated,
-      total: source.length,
-      page,
-      limit: LIMIT_ITEMS_PER_PAGE,
+      meta: {
+        totalCount: source.length,
+        totalPages: Math.ceil(source.length / LIMIT_ITEMS_PER_PAGE),
+      },
+      parent: null,
     });
   },
 );
