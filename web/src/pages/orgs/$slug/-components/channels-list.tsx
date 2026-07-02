@@ -26,8 +26,8 @@ export function ChannelsList() {
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
       {channels.map((channel) => (
         <ChannelCard
-          id={channel.id}
           key={channel.id}
+          id={channel.id}
           slug={channel.slug}
           title={channel.name}
           postsCount={channel.postsCount}

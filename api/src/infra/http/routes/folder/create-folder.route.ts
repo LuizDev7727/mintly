@@ -15,7 +15,7 @@ export const createFolderRoute: FastifyPluginAsyncZod = async (app) => {
           channelId: z.string(),
         }),
         body: z.object({
-          title: z.string(),
+          title: z.string().min(1),
           parentId: z.string().nullable(),
         }),
         response: {

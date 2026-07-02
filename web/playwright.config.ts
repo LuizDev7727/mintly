@@ -26,7 +26,7 @@ export default defineConfig({
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    baseURL: "http://localhost:4173",
+    baseURL: "http://localhost:5173",
     storageState: "./src/tests/.auth/user.json",
     trace: "on-first-retry",
   },
@@ -71,7 +71,7 @@ export default defineConfig({
 
   webServer: {
     command: "pnpm preview",
-    url: "http://localhost:4173",
+    url: "http://localhost:5173",
     reuseExistingServer: !process.env.CI,
   },
 });

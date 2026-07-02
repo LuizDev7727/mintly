@@ -4,6 +4,7 @@ import { accountsTable } from "@/infra/db/tables/accounts.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { createSlug } from "@/lib/create-slug.ts";
+import { channelsTable } from "./tables/channels.table";
 
 async function seedUser() {
   console.log("Seeding user");
@@ -43,6 +44,15 @@ async function seedUser() {
     organizationId: organization.id,
     userId: user.id,
     role: "owner",
+    createdAt: new Date(),
+  });
+
+  const channelName = "My New Channel";
+  await db.insert(channelsTable).values({
+    id: "019f1b80-42cf-79bb-b828-1cff43be9900",
+    name: channelName,
+    slug: createSlug(channelName),
+    organizationId: organization.id,
     createdAt: new Date(),
   });
 }
