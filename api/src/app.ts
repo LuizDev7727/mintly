@@ -20,6 +20,10 @@ import { getChannelsRoute } from "./infra/http/routes/channel/get-channels.route
 import { createChannelRoute } from "./infra/http/routes/channel/create-channel.route.ts";
 import { updateChannelRoute } from "./infra/http/routes/channel/update-channel.route.ts";
 import { deleteChannelRoute } from "./infra/http/routes/channel/delete-channel.route.ts";
+import { createFolderRoute } from "./infra/http/routes/folder/create-folder.route.ts";
+import { deleteFolderRoute } from "./infra/http/routes/folder/delete-folder.route.ts";
+import { getFoldersRoute } from "./infra/http/routes/folder/get-folders.route.ts";
+import { updateFolderRoute } from "./infra/http/routes/folder/update-folder.route.ts";
 import { getOrganizationMetricsRoute } from "./infra/http/routes/organization/get-metrics.route.ts";
 
 export const server = fastify({
@@ -70,4 +74,8 @@ server.register(createChannelRoute);
 server.register(updateChannelRoute);
 server.register(deleteChannelRoute);
 
+server.register(createFolderRoute);
+server.register(deleteFolderRoute);
+server.register(getFoldersRoute);
+server.register(updateFolderRoute);
 server.register(getOrganizationMetricsRoute);

@@ -27,9 +27,9 @@ export function CreateFolderDialog() {
           <DialogTitle>Create Folder</DialogTitle>
           <DialogDescription>
             You are creating a folder in{" "}
-            <span className="font-bold">{currentFolder}</span>. This will
-            permanently delete your account and remove your data from our
-            servers.
+            <span className="font-bold">{currentFolder ?? "Default"}</span>.
+            This will permanently delete your account and remove your data from
+            our servers.
           </DialogDescription>
         </DialogHeader>
         <CreateFolderForm />

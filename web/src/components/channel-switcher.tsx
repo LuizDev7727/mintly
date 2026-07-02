@@ -27,7 +27,7 @@ import {
 import { CreateChannelForm } from "./create-channel-form";
 export function ChannelSwitcher() {
   const { isMobile } = useSidebar();
-  const { slug, channel: channelSlug } = useParams({
+  const { slug, channel: channelId } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
 
@@ -38,9 +38,7 @@ export function ChannelSwitcher() {
 
   const { channels } = data;
 
-  const currentChannel = channels.find(
-    (channel) => channel.slug === channelSlug,
-  );
+  const currentChannel = channels.find((channel) => channel.id === channelId);
 
   return (
     <SidebarMenu>

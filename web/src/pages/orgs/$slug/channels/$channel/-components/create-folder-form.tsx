@@ -12,20 +12,28 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { FolderPlus } from "lucide-react";
-import { useQueryState } from "nuqs";
+import { parseAsInteger, useQueryState } from "nuqs";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export function CreateFolderForm() {
-  const [currentFolder] = useQueryState("folder", {
-    defaultValue: "Default",
-  });
+  const [currentFolderPage] = useQueryState(
+    "folder_page",
+    parseAsInteger.withDefault(0),
+  );
+  const [currentFolderId] = useQueryState("folder");
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
   const queryClient = useQueryClient();
 
-  const foldersKey = ["folders", slug, channel, currentFolder];
+  const foldersKey = [
+    "folders",
+    slug,
+    channel,
+    currentFolderId,
+    currentFolderPage,
+  ];
 
   const {
     register,
@@ -45,6 +53,9 @@ export function CreateFolderForm() {
         id: folderId,
         title,
         postsCount: 0,
+        parent: currentFolderId
+          ? { id: currentFolderId, title: "precisamos-pegar-title" }
+          : null,
       };
 
       queryClient.setQueryData<GetFoldersResponse>(foldersKey, (oldData) => {
@@ -52,9 +63,12 @@ export function CreateFolderForm() {
           return undefined;
         }
 
+        const { folders, meta } = oldData;
+
         return {
           ...oldData,
-          folders: [newFolder, ...oldData.folders],
+          folders: [newFolder, ...folders],
+          meta: { ...meta, totalCount: meta.totalCount + 1 },
         };
       });
 
@@ -66,7 +80,7 @@ export function CreateFolderForm() {
     const { name } = newFolder;
     await mutateAsync({
       channelSlug: channel,
-      parentFolderId: currentFolder,
+      parentId: currentFolderId,
       orgSlug: slug,
       title: name,
     });
