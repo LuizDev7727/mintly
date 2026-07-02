@@ -1,4 +1,5 @@
 import { ChannelAlreadyExistsError } from "@/functions/errors/channel-already-exists.error.ts";
+import { FolderAlreadyExistsError } from "@/functions/errors/folder-already-exists.error.ts";
 import { ResourceNotFoundError } from "@/functions/errors/resource-not-found.error.ts";
 import type { FastifyInstance } from "fastify";
 import { hasZodFastifySchemaValidationErrors } from "fastify-type-provider-zod";
@@ -20,6 +21,12 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
   }
 
   if (error instanceof ChannelAlreadyExistsError) {
+    return reply.status(409).send({
+      message: error.message,
+    });
+  }
+
+  if (error instanceof FolderAlreadyExistsError) {
     return reply.status(409).send({
       message: error.message,
     });

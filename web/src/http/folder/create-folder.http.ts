@@ -4,7 +4,7 @@ type CreateFolderParams = {
   orgSlug: string;
   channelSlug: string;
   title: string;
-  parentFolderId?: string;
+  parentId: string | null;
 };
 
 export type CreateFolderResponse = {
@@ -14,10 +14,10 @@ export type CreateFolderResponse = {
 export async function createFolderHttp(
   params: CreateFolderParams,
 ): Promise<CreateFolderResponse> {
-  const { orgSlug, channelSlug, title, parentFolderId } = params;
+  const { orgSlug, channelSlug, title, parentId } = params;
   const { data } = await api.post<CreateFolderResponse>(
     `/organizations/${orgSlug}/channels/${channelSlug}/folders`,
-    { title, parentFolderId },
+    { title, parentId },
   );
   return { folderId: data.folderId };
 }

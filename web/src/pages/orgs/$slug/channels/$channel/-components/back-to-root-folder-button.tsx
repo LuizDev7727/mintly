@@ -3,15 +3,13 @@ import { FolderRoot } from "lucide-react";
 import { useQueryState } from "nuqs";
 
 export function BackToRootFolderButton() {
-  const [currentFolder, setFolder] = useQueryState("folder", {
-    defaultValue: "Default",
-  });
+  const [currentFolder, setFolder] = useQueryState("folder");
 
   function handleSetRootFolder() {
-    setFolder("Default");
+    setFolder(null);
   }
 
-  const isRootFolder = currentFolder === "Default";
+  const isRootFolder = currentFolder === null;
   return (
     <Button
       variant={"outline"}

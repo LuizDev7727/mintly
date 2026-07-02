@@ -13,7 +13,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteFolderHttp } from "@/http/folder/delete-folder.http";
 import { Spinner } from "@/components/ui/spinner";
 import { useParams } from "@tanstack/react-router";
-import { useQueryState } from "nuqs";
+import { parseAsInteger, useQueryState } from "nuqs";
 import type { GetFoldersResponse } from "@/http/folder/get-folders.http";
 import { toast } from "sonner";
 
@@ -26,16 +26,24 @@ export function DeleteFolderDialog({
   folderName,
   folderId,
 }: DeleteFolderDialogProps) {
-  const [currentFolder] = useQueryState("folder", {
-    defaultValue: "Default",
-  });
+  const [currentFolderName] = useQueryState("folder");
+  const [currentFolderPage] = useQueryState(
+    "folder_page",
+    parseAsInteger.withDefault(0),
+  );
 
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
   const queryClient = useQueryClient();
 
-  const foldersQueryKey = ["folders", slug, channel, currentFolder];
+  const foldersQueryKey = [
+    "folders",
+    slug,
+    channel,
+    currentFolderName,
+    currentFolderPage,
+  ];
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: deleteFolderHttp,
@@ -72,7 +80,7 @@ export function DeleteFolderDialog({
           <DialogTitle>Delete Folder</DialogTitle>
           <DialogDescription>
             Are you sure you want to delete{" "}
-            <span className="font-medium">{folderName}</span> ? All posts inside
+            <span className="font-bold">{folderName}</span> ? All posts inside
             it will be permanently removed. This action cannot be undone.
           </DialogDescription>
         </DialogHeader>

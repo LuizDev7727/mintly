@@ -3,13 +3,11 @@ import { FolderOpenDot } from "lucide-react";
 import { useQueryState } from "nuqs";
 
 export function CurrentFolderBadge() {
-  const [currentFolder] = useQueryState("folder", {
-    defaultValue: "Default",
-  });
+  const [currentFolderName] = useQueryState("folder");
 
   return (
     <Badge>
-      <FolderOpenDot /> {currentFolder ?? "Default"}
+      <FolderOpenDot /> {currentFolderName ?? "Root"}
     </Badge>
   );
 }

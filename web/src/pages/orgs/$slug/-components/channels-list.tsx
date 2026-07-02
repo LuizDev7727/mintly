@@ -27,6 +27,7 @@ export function ChannelsList() {
       {channels.map((channel) => (
         <ChannelCard
           key={channel.id}
+          id={channel.id}
           slug={channel.slug}
           title={channel.name}
           postsCount={channel.postsCount}

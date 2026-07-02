@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/chart";
 
 type ChannelCardProps = {
+  id: string;
   title: string;
   slug: string;
   postsCount: number;
@@ -28,8 +29,8 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ChannelCard({
+  id,
   title,
-  slug: channelSlug,
   postsCount = 0,
   integrationsCount = 0,
   totalSize = 0,
@@ -67,7 +68,7 @@ export function ChannelCard({
         <Button variant="outline" className="bg-transparent!" asChild>
           <Link
             to="/orgs/$slug/channels/$channel"
-            params={{ slug, channel: channelSlug }}
+            params={{ slug, channel: id }}
           >
             See channel
             <ChevronRight className="size-4" />
