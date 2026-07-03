@@ -1,4 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { getChannelHttp } from "@/http/channel/get-channel.http";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, useParams } from "@tanstack/react-router";
+import { Suspense } from "react";
 import { UpdateChannelNameForm } from "./-components/update-channel-name-form";
 import { DeleteChannel } from "./-components/delete-channel";
 
@@ -25,9 +28,28 @@ function ChannelSettingsPage() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <UpdateChannelNameForm />
-        <DeleteChannel />
+        <Suspense fallback={<p>Loading...</p>}>
+          <ChannelSettingsContent />
+        </Suspense>
       </div>
     </div>
+  );
+}
+
+function ChannelSettingsContent() {
+  const { channel: channelId } = useParams({
+    from: "/orgs/$slug/channels/$channel",
+  });
+
+  const { data: channel } = useSuspenseQuery({
+    queryKey: ["channel", channelId],
+    queryFn: () => getChannelHttp({ channelId }),
+  });
+
+  return (
+    <>
+      <UpdateChannelNameForm id={channel.id} name={channel.name} />
+      <DeleteChannel id={channel.id} name={channel.name} />
+    </>
   );
 }
