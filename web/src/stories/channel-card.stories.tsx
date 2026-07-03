@@ -14,6 +14,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
+    id: "62b575df-b96e-4469-ba69-191a39dd8b34",
     title: "AchismosTV",
     slug: "1212",
     integrationsCount: 2,

@@ -12,7 +12,7 @@ import { CreateFolderForm } from "./create-folder-form";
 import { useQueryState } from "nuqs";
 
 export function CreateFolderDialog() {
-  const [currentFolder] = useQueryState("folder");
+  const [currentFolderId] = useQueryState("folder_id");
 
   return (
     <Dialog>
@@ -27,9 +27,9 @@ export function CreateFolderDialog() {
           <DialogTitle>Create Folder</DialogTitle>
           <DialogDescription>
             You are creating a folder in{" "}
-            <span className="font-bold">{currentFolder}</span>. This will
-            permanently delete your account and remove your data from our
-            servers.
+            <span className="font-bold">{currentFolderId ?? "Default"}</span>.
+            This will permanently delete your account and remove your data from
+            our servers.
           </DialogDescription>
         </DialogHeader>
         <CreateFolderForm />

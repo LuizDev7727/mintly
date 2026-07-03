@@ -15,7 +15,7 @@ export type Post = {
     | "TRANSCRIBING"
     | "SEO_GENERATING"
     | "PUBLISHING";
-  duration: number;
+  duration: number | null;
   publishAt: Date | null;
   socialsToPost: { id: string; name: string; social: "YOUTUBE" | "TIKTOK" }[];
   author: {

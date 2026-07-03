@@ -7,7 +7,6 @@ export const Route = createFileRoute("/auth")({
   beforeLoad: async () => {
     const { data: session } = await authClient.getSession();
 
-    // user is signed
     const hasSession = session !== null;
 
     if (hasSession) {

@@ -4,29 +4,37 @@ import { useParams } from "@tanstack/react-router";
 import { FolderCard } from "./folder-card";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { BackToRootFolderButton } from "./back-to-root-folder-button";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { FoldersPagination } from "./folders-pagination";
 import { FolderListLoading } from "./folder-list-loading";
+import { BackToPreviousFolder } from "./back-to-previous-folder";
 
 export function FoldersList() {
-  const [folderName] = useQueryState("folder", {
-    defaultValue: "Default",
-  });
+  const [currentFolderId] = useQueryState("folder_id");
 
-  const [folderPage] = useQueryState(
+  const [currentFolderPage] = useQueryState(
     "folder_page",
-    parseAsInteger.withDefault(1),
+    parseAsInteger.withDefault(0),
   );
 
-  const { slug: orgSlug, channel: channelSlug } = useParams({
+  const { slug: orgSlug, channel: channelId } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["folders", orgSlug, channelSlug, folderName, folderPage],
+    queryKey: [
+      "folders",
+      orgSlug,
+      channelId,
+      currentFolderId,
+      currentFolderPage,
+    ],
     queryFn: async () =>
-      getFoldersHttp({ orgSlug, channelSlug, folderName, page: folderPage }),
+      getFoldersHttp({
+        orgSlug,
+        channelId,
+        folderId: currentFolderId,
+        page: currentFolderPage,
+      }),
     placeholderData: keepPreviousData,
   });
 
@@ -38,19 +46,24 @@ export function FoldersList() {
     return <p>Error to fetch folders: {error.message}</p>;
   }
 
-  const { folders, total } = data;
+  const { folders, parent, meta } = data;
+
+  const hasParent = parent !== null;
+
+  const { totalPages } = meta;
 
   return (
     <div className="space-y-2">
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-x-2">
           <BackToRootFolderButton />
-          <Button variant={"outline"}>
-            <ArrowLeft className="size-4" />
-            Back to Folder name
-          </Button>
+          {hasParent && <BackToPreviousFolder parent={parent} />}
         </div>
-        <FoldersPagination isLoading={isLoading} totalFolders={total} />
+        <FoldersPagination
+          isLoading={isLoading}
+          totalPages={totalPages}
+          currentFolderPage={currentFolderPage}
+        />
       </header>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
         {folders.map((folder) => (

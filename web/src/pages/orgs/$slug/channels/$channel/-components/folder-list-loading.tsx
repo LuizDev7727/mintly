@@ -18,7 +18,7 @@ function FolderCardSkeleton() {
 export function FolderListLoading() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-      {Array.from({ length: 10 }).map((_, i) => (
+      {Array.from({ length: 12 }).map((_, i) => (
         <FolderCardSkeleton key={i} />
       ))}
     </div>

@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { FolderPen } from "lucide-react";
-import { useQueryState } from "nuqs";
+import { parseAsInteger, useQueryState } from "nuqs";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -24,16 +24,24 @@ export function UpdateFolderNameForm({
   folderId,
   folderName,
 }: UpdateFolderNameFormProps) {
-  const [currentFolder] = useQueryState("folder", {
-    defaultValue: "Default",
-  });
+  const [currentFolderPage] = useQueryState(
+    "folder_page",
+    parseAsInteger.withDefault(0),
+  );
+  const [currentFolderId] = useQueryState("folder");
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
 
   const queryClient = useQueryClient();
 
-  const folderQueryKey = ["folders", slug, channel, currentFolder];
+  const folderQueryKey = [
+    "folders",
+    slug,
+    channel,
+    currentFolderId,
+    currentFolderPage,
+  ];
 
   const {
     register,
