@@ -36,8 +36,14 @@ test.describe("Folder Management", () => {
 
     await page.waitForLoadState("networkidle");
 
-    await expect(page).toHaveURL(/folder=/);
-    await expect(page.getByText(folderTitle)).toBeVisible();
+    await expect(page).toHaveURL((url) => {
+      const params = url.searchParams;
+      return (
+        params.has("folder_id") &&
+        params.has("folder_name") &&
+        params.get("folder_name") === folderTitle
+      );
+    });
   });
 
   test("should rename a folder successfully", async ({ page }) => {
