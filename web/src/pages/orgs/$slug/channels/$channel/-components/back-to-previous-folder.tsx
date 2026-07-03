@@ -10,10 +10,10 @@ type BackToPreviousFolderProps = {
 };
 
 export function BackToPreviousFolder({ parent }: BackToPreviousFolderProps) {
-  const [_, setFolder] = useQueryState("folder");
+  const [_, setFolder] = useQueryState("folder_id");
 
   function handleGoToPreviousFolder() {
-    setFolder(parent.title);
+    setFolder(parent.id);
   }
 
   return (

@@ -9,7 +9,7 @@ import { FolderListLoading } from "./folder-list-loading";
 import { BackToPreviousFolder } from "./back-to-previous-folder";
 
 export function FoldersList() {
-  const [currentFolderName] = useQueryState("folder");
+  const [currentFolderId] = useQueryState("folder_id");
 
   const [currentFolderPage] = useQueryState(
     "folder_page",
@@ -25,14 +25,14 @@ export function FoldersList() {
       "folders",
       orgSlug,
       channelId,
-      currentFolderName,
+      currentFolderId,
       currentFolderPage,
     ],
     queryFn: async () =>
       getFoldersHttp({
         orgSlug,
         channelId,
-        folderName: currentFolderName,
+        folderId: currentFolderId,
         page: currentFolderPage,
       }),
     placeholderData: keepPreviousData,

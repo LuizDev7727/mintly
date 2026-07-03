@@ -25,6 +25,7 @@ import { deleteFolderRoute } from "./infra/http/routes/folder/delete-folder.rout
 import { getFoldersRoute } from "./infra/http/routes/folder/get-folders.route.ts";
 import { updateFolderRoute } from "./infra/http/routes/folder/update-folder.route.ts";
 import { getOrganizationMetricsRoute } from "./infra/http/routes/organization/get-metrics.route.ts";
+import { getPostsRoute } from "./infra/http/routes/post/get-posts.route.ts";
 
 export const server = fastify({
   logger: {
@@ -79,3 +80,5 @@ server.register(deleteFolderRoute);
 server.register(getFoldersRoute);
 server.register(updateFolderRoute);
 server.register(getOrganizationMetricsRoute);
+
+server.register(getPostsRoute);

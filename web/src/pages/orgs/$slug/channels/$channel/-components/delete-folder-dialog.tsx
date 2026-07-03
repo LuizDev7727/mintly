@@ -26,7 +26,7 @@ export function DeleteFolderDialog({
   folderName,
   folderId,
 }: DeleteFolderDialogProps) {
-  const [currentFolderName] = useQueryState("folder");
+  const [currentFolderId] = useQueryState("folder_id");
   const [currentFolderPage] = useQueryState(
     "folder_page",
     parseAsInteger.withDefault(0),
@@ -41,7 +41,7 @@ export function DeleteFolderDialog({
     "folders",
     slug,
     channel,
-    currentFolderName,
+    currentFolderId,
     currentFolderPage,
   ];
 

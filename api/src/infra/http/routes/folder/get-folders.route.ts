@@ -15,8 +15,7 @@ export const getFoldersRoute: FastifyPluginAsyncZod = async (app) => {
         }),
         querystring: z.object({
           pageIndex: z.coerce.number().int().min(0).default(0),
-          // folderId: z.uuidv7().nullable().default(null),
-          folderName: z.string().nullable().default(null),
+          folderId: z.uuidv7().nullable().default(null),
         }),
         response: {
           200: z.object({
@@ -43,16 +42,15 @@ export const getFoldersRoute: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { channelId } = request.params;
-      const { pageIndex, folderName } = request.query;
+      const { pageIndex, folderId } = request.query;
 
       const span = tracer.startSpan("get-folders");
       span.setAttribute("channel.id", channelId);
-      // span.setAttribute("folder.id", folderId ?? "No selected folder");
-      span.setAttribute("folder.name", folderName ?? "No selected folder");
+      span.setAttribute("folder.name", folderId ?? "No selected folder");
 
       const { folders, parent, meta } = await getFolders({
         channelId,
-        folderName,
+        folderId,
         pageIndex,
       });
 

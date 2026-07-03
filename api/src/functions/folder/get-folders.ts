@@ -8,7 +8,7 @@ const PAGE_SIZE = 12;
 
 type GetFoldersParams = {
   channelId: string;
-  folderName: string | null;
+  folderId: string | null;
   pageIndex: number;
 };
 
@@ -33,12 +33,12 @@ type GetFoldersResponse = {
 export async function getFolders(
   params: GetFoldersParams,
 ): Promise<GetFoldersResponse> {
-  const { channelId, folderName, pageIndex } = params;
+  const { channelId, folderId, pageIndex } = params;
 
   let parentFolder: { id: string; title: string } | null = null;
   let currentFolderId: string | null = null;
 
-  if (folderName !== null) {
+  if (folderId !== null) {
     const [currentFolder] = await db
       .select({
         id: foldersTable.id,
@@ -46,13 +46,16 @@ export async function getFolders(
         parentId: foldersTable.parentId,
       })
       .from(foldersTable)
-      .where(and(eq(foldersTable.title, folderName), eq(foldersTable.channelId, channelId)))
+      .where(
+        and(
+          eq(foldersTable.id, folderId),
+          eq(foldersTable.channelId, channelId),
+        ),
+      )
       .limit(1);
 
     if (!currentFolder) {
-      throw new ResourceNotFoundError(
-        `Folder with name: ${folderName} not found`,
-      );
+      throw new ResourceNotFoundError(`Folder with id: ${folderId} not found`);
     }
 
     currentFolderId = currentFolder.id;

@@ -4,7 +4,7 @@ import { api } from "../api";
 type GetFoldersParams = {
   orgSlug: string;
   channelId: string;
-  folderName: string | null;
+  folderId: string | null;
   page: number;
 };
 
@@ -23,11 +23,10 @@ export type GetFoldersResponse = {
 export async function getFoldersHttp(
   params: GetFoldersParams,
 ): Promise<GetFoldersResponse> {
-  const { orgSlug, channelId, folderName, page } = params;
+  const { orgSlug, channelId, folderId, page } = params;
   const { data } = await api.get<GetFoldersResponse>(
     `/organizations/${orgSlug}/channels/${channelId}/folders`,
-    { params: { folderName, pageIndex: page } },
+    { params: { folderId, pageIndex: page } },
   );
-  const { folders, parent, meta } = data;
-  return { folders, parent, meta };
+  return data;
 }
