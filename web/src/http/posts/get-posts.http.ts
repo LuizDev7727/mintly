@@ -4,9 +4,9 @@ import type { Post } from "@/types/post";
 type GetPostsParams = {
   orgSlug: string;
   channelSlug: string;
-  folderId?: string;
+  folderId: string | null;
   page?: number;
-  title?: string;
+  titleFilter: string | null;
   status?: Post["status"];
 };
 
@@ -20,10 +20,10 @@ export type GetPostsResponse = {
 export async function getPostsHttp(
   params: GetPostsParams,
 ): Promise<GetPostsResponse> {
-  const { orgSlug, channelSlug, folderId, page, title, status } = params;
+  const { orgSlug, channelSlug, folderId, page, titleFilter, status } = params;
   const { data } = await api.get<GetPostsResponse>(
     `/organizations/${orgSlug}/channels/${channelSlug}/posts`,
-    { params: { folderId, page, title, status } },
+    { params: { folderId, page, titleFilter, status } },
   );
   return data;
 }

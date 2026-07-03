@@ -81,7 +81,9 @@ export function NavUser() {
                       alt={session?.user.name}
                     />
                   )}
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {getInitials(session?.user.name ?? "CN")}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">

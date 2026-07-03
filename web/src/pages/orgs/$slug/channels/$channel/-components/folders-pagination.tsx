@@ -3,31 +3,30 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
 
 type FoldersPaginationProps = {
-  totalFolders: number;
+  totalPages: number;
+  currentFolderPage: number;
   isLoading: boolean;
 };
 
 export function FoldersPagination({
-  totalFolders,
+  totalPages,
+  currentFolderPage,
   isLoading,
 }: FoldersPaginationProps) {
-  const [currentPage, setCurrentPage] = useQueryState(
+  const [_, setCurrentFolderPage] = useQueryState(
     "folder_page",
-    parseAsInteger.withDefault(1),
+    parseAsInteger.withDefault(0),
   );
 
-  const qtdFoldersPerPage = 12;
-
-  const totalPages = Math.ceil(totalFolders / qtdFoldersPerPage);
-  const hasNextPage = currentPage < totalPages;
-  const hasPrevPage = currentPage > 1;
+  const hasNextPage = currentFolderPage < totalPages;
+  const hasPrevPage = currentFolderPage > 0;
 
   function goToPreviousPage() {
-    setCurrentPage(currentPage - 1);
+    setCurrentFolderPage(currentFolderPage - 1);
   }
 
   function goToNextPage() {
-    setCurrentPage(currentPage + 1);
+    setCurrentFolderPage(currentFolderPage + 1);
   }
 
   return (
@@ -40,6 +39,9 @@ export function FoldersPagination({
       >
         <ChevronLeft className="size-4" />
       </Button>
+      <p className="text-xs text-muted-foreground">
+        {currentFolderPage + 1} of {totalPages}
+      </p>
       <Button
         variant="outline"
         disabled={!hasNextPage || isLoading}

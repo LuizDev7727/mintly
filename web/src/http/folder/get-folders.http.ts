@@ -1,30 +1,32 @@
+import type { Folder } from "@/types/folder";
 import { api } from "../api";
 
 type GetFoldersParams = {
   orgSlug: string;
-  channelSlug: string;
-  folderName?: string;
-  page?: number;
+  channelId: string;
+  folderId: string | null;
+  page: number;
 };
 
 export type GetFoldersResponse = {
-  folders: {
+  folders: Folder[];
+  parent: {
     id: string;
     title: string;
-    postsCount: number;
-  }[];
-  total: number;
-  page: number;
-  limit: number;
+  } | null;
+  meta: {
+    totalCount: number;
+    totalPages: number;
+  };
 };
 
 export async function getFoldersHttp(
   params: GetFoldersParams,
 ): Promise<GetFoldersResponse> {
-  const { orgSlug, channelSlug, folderName, page } = params;
+  const { orgSlug, channelId, folderId, page } = params;
   const { data } = await api.get<GetFoldersResponse>(
-    `/organizations/${orgSlug}/channels/${channelSlug}/folders`,
-    { params: { folderName, page } },
+    `/organizations/${orgSlug}/channels/${channelId}/folders`,
+    { params: { folderId, pageIndex: page } },
   );
   return data;
 }
