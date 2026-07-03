@@ -7,7 +7,13 @@ import {
 } from "@/components/ui/card";
 import { ConfirmDeleteChannelDialog } from "./confirm-delete-channel-dialog";
 
-export function DeleteChannel() {
+type DeleteChannelProps = {
+  id: string;
+  name: string;
+};
+
+export function DeleteChannel(params: DeleteChannelProps) {
+  const { id, name } = params;
   return (
     <Card className="bg-transparent shadow-none">
       <CardHeader className="border-b">
@@ -21,7 +27,7 @@ export function DeleteChannel() {
         <p className="text-sm text-destructive">
           This action cannot be undone!
         </p>
-        <ConfirmDeleteChannelDialog />
+        <ConfirmDeleteChannelDialog id={id} name={name} />
       </CardFooter>
     </Card>
   );

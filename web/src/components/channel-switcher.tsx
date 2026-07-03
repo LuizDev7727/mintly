@@ -56,8 +56,8 @@ export function ChannelSwitcher() {
                 <span className="truncate font-medium">
                   {currentChannel!.name}
                 </span>
-                <span className="truncate text-xs">
-                  {currentChannel!.postsCount} Posts
+                <span className="truncate text-xs text-muted-foreground">
+                  {currentChannel!.postsCount} posts
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />

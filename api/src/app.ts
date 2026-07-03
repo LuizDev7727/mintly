@@ -17,6 +17,7 @@ import { errorHandler } from "./infra/http/routes/error-handler.ts";
 import { getHealthRoute } from "./infra/http/routes/health/get-health.route.ts";
 import { authRoute } from "./infra/http/routes/auth/auth.route.ts";
 import { getChannelsRoute } from "./infra/http/routes/channel/get-channels.route.ts";
+import { getChannelRoute } from "./infra/http/routes/channel/get-channel.route.ts";
 import { createChannelRoute } from "./infra/http/routes/channel/create-channel.route.ts";
 import { updateChannelRoute } from "./infra/http/routes/channel/update-channel.route.ts";
 import { deleteChannelRoute } from "./infra/http/routes/channel/delete-channel.route.ts";
@@ -26,6 +27,7 @@ import { getFoldersRoute } from "./infra/http/routes/folder/get-folders.route.ts
 import { updateFolderRoute } from "./infra/http/routes/folder/update-folder.route.ts";
 import { getOrganizationMetricsRoute } from "./infra/http/routes/organization/get-metrics.route.ts";
 import { getPostsRoute } from "./infra/http/routes/post/get-posts.route.ts";
+import { getIntegrationsRoute } from "./infra/http/routes/integration/get-integrations.route.ts";
 
 export const server = fastify({
   logger: {
@@ -71,6 +73,7 @@ server.register(fastifyCors, {
 server.register(getHealthRoute);
 server.register(authRoute);
 server.register(getChannelsRoute);
+server.register(getChannelRoute);
 server.register(createChannelRoute);
 server.register(updateChannelRoute);
 server.register(deleteChannelRoute);
@@ -82,3 +85,5 @@ server.register(updateFolderRoute);
 server.register(getOrganizationMetricsRoute);
 
 server.register(getPostsRoute);
+
+server.register(getIntegrationsRoute);

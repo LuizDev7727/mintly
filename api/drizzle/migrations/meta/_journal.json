@@ -57,6 +57,13 @@
       "when": 1783077010203,
       "tag": "0007_dusty_juggernaut",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1783088348113,
+      "tag": "0008_curious_sugar_man",
+      "breakpoints": true
     }
   ]
 }

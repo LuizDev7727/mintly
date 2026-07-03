@@ -1,6 +1,7 @@
 import { db } from "@/infra/db/client.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
-import { eq } from "drizzle-orm";
+import { postsTable } from "@/infra/db/tables/posts.table.ts";
+import { count, eq } from "drizzle-orm";
 
 type GetChannelsParams = {
   orgSlug: string;
@@ -11,6 +12,7 @@ type GetChannelsResponse = {
     id: string;
     slug: string;
     name: string;
+    postsCount: number;
   }[];
 };
 
@@ -24,9 +26,12 @@ export async function getChannels(
       id: channelsTable.id,
       slug: channelsTable.slug,
       name: channelsTable.name,
+      postsCount: count(postsTable.id),
     })
     .from(channelsTable)
-    .where(eq(channelsTable.organizationSlug, orgSlug));
+    .leftJoin(postsTable, eq(postsTable.channelId, channelsTable.id))
+    .where(eq(channelsTable.organizationSlug, orgSlug))
+    .groupBy(channelsTable.id);
 
   return { channels };
 }
