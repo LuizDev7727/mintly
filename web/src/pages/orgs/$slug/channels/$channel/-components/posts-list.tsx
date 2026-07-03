@@ -4,25 +4,31 @@ import { PostCard } from "./post-card";
 import { getPostsHttp } from "@/http/posts/get-posts.http";
 import { useParams } from "@tanstack/react-router";
 import { PostListLoading } from "./post-list-loading";
-import { useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftRight } from "lucide-react";
 import { PostsPagination } from "./posts-pagination";
+import { PostsListEmpty } from "./posts-list-empty";
 
 export function PostsList() {
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
 
-  const [currentFolder] = useQueryState("folder", { defaultValue: "Default" });
+  const [currentFolderId] = useQueryState("folder_id");
+  const [titleFilter] = useQueryState(
+    "title_filter",
+    parseAsString.withDefault(""),
+  );
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["posts", slug, channel, currentFolder],
+    queryKey: ["posts", slug, channel, currentFolderId, titleFilter],
     queryFn: async () =>
       getPostsHttp({
         orgSlug: slug,
         channelSlug: channel,
-        folderId: currentFolder,
+        folderId: currentFolderId,
+        titleFilter,
       }),
     placeholderData: keepPreviousData,
   });
@@ -36,6 +42,7 @@ export function PostsList() {
   }
 
   const { posts, total } = data;
+  const isPostsEmpty = posts.length === 0;
 
   return (
     <div className="space-y-4">
@@ -50,15 +57,17 @@ export function PostsList() {
         </Button>
       </div>
 
-      {isLoading ? (
-        <PostListLoading />
-      ) : (
+      {isLoading && <PostListLoading />}
+
+      {!isPostsEmpty && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>
       )}
+
+      {isPostsEmpty && !isLoading && <PostsListEmpty />}
     </div>
   );
 }

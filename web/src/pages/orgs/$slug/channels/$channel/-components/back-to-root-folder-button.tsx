@@ -3,10 +3,12 @@ import { FolderRoot } from "lucide-react";
 import { useQueryState } from "nuqs";
 
 export function BackToRootFolderButton() {
-  const [currentFolder, setFolder] = useQueryState("folder");
+  const [currentFolder, setFolder] = useQueryState("folder_id");
+  const [_, setFolderName] = useQueryState("folder_name");
 
   function handleSetRootFolder() {
     setFolder(null);
+    setFolderName(null);
   }
 
   const isRootFolder = currentFolder === null;

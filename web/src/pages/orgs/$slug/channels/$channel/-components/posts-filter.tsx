@@ -13,7 +13,7 @@ export function PostsFilter() {
   const queryClient = useQueryClient();
 
   const [title, setTitle] = useQueryState(
-    "titleFilter",
+    "title_filter",
     parseAsString.withDefault(""),
   );
 

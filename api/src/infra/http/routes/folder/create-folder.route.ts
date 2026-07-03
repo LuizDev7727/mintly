@@ -16,11 +16,11 @@ export const createFolderRoute: FastifyPluginAsyncZod = async (app) => {
         }),
         body: z.object({
           title: z.string().min(1),
-          parentId: z.string().nullable(),
+          parentId: z.uuidv7().nullable(),
         }),
         response: {
           201: z.object({
-            folderId: z.string(),
+            folderId: z.uuidv7(),
           }),
         },
       },
@@ -31,6 +31,7 @@ export const createFolderRoute: FastifyPluginAsyncZod = async (app) => {
 
       const span = tracer.startSpan("create-folder");
       span.setAttribute("channel.id", channelId);
+      span.setAttribute("channel.parent-id", parentId ?? "No parent selected");
 
       const { folderId } = await createFolder({ title, channelId, parentId });
 

@@ -15,10 +15,13 @@ type FolderCardProps = {
 };
 
 export function FolderCard({ folder }: FolderCardProps) {
-  const [_, setSelectedFolder] = useQueryState("folder");
+  const [_, setSelectedFolder] = useQueryState("folder_id");
+  const [_currentFolderName, setSelectedFolderName] =
+    useQueryState("folder_name");
 
   function handleSelectFolder() {
-    setSelectedFolder(folder.title);
+    setSelectedFolder(folder.id);
+    setSelectedFolderName(folder.title);
   }
 
   return (

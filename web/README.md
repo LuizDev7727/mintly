@@ -1,5 +1,11 @@
 # React + TypeScript + Vite
 
+Mintly UI ideas
+
+[] - Colocar na UI o plano atual junto com alguma informação do limite do plano
+[] - Estruturar melhor o card que mostra o channel
+[] - Colocar um botão dropdown que redireciona para criar post/membro/projects
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
