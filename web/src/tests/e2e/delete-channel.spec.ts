@@ -35,6 +35,8 @@ test.describe("Delete Channel", () => {
     await expect(
       page.getByText("Channel deleted successfully"),
     ).toBeVisible();
+    await page.waitForURL("**/orgs/test-user");
+    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL("/orgs/test-user");
     await expect(page.getByText(channelName)).not.toBeVisible();
   });
