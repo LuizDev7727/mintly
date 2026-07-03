@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { IntegrationCard } from "./-components/integration-card";
-import { TiktokIcon, YoutubeIcon } from "./-components/provider-icons";
 import { Suspense } from "react";
 import { IntegrationsList } from "./-components/integrations-list";
 
@@ -20,12 +18,6 @@ export const Route = createFileRoute(
 });
 
 function IntegrationsPage() {
-  // Demo: YouTube connected, TikTok not connected
-  const youtubeAccount = {
-    name: "@mintly_official",
-    avatarUrl: undefined,
-  };
-
   return (
     <div className="space-y-6">
       <header>
@@ -35,7 +27,7 @@ function IntegrationsPage() {
         </p>
       </header>
 
-      <Suspense fallback={<p>Loading...</p>}>
+      <Suspense fallback={<p>Fetching integrations...</p>}>
         <IntegrationsList />
       </Suspense>
     </div>
