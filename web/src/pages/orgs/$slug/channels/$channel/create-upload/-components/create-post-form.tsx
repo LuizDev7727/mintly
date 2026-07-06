@@ -9,6 +9,7 @@ import {
   createPostSchema,
   type CreatePostsFormType,
 } from "@/schemas/posts/create-posts.schema";
+import type { Integration } from "@/types/integration";
 import { formatBytes } from "@/utils/format-bytes";
 import { getFileExtension } from "@/utils/get-file-extension";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,13 +34,7 @@ export type UploadEntry = {
 };
 
 type CreatePostFormProps = {
-  integrations: {
-    id: string;
-    name: string;
-    email: string;
-    avatarUrl: string | null;
-    provider: "YOUTUBE" | "TIKTOK";
-  }[];
+  integrations: Integration[];
 };
 
 export function CreatePostForm({ integrations }: CreatePostFormProps) {
@@ -371,11 +366,10 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                           data-selected={isSelected}
                           className="flex items-center border-border data-[selected=true]:border-primary cursor-pointer gap-2 rounded-md border bg-background px-3 py-2 text-sm transition-colors hover:bg-accent/50"
                         >
-                          {integration.provider === "YOUTUBE" ? (
+                          {integration.provider === "YOUTUBE" && (
                             <YoutubeIcon />
-                          ) : (
-                            <TikTokIcon />
                           )}
+                          {integration.provider === "TIKTOK" && <TikTokIcon />}
                           <span className="font-medium text-foreground">
                             {integration.name}
                           </span>

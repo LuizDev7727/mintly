@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useParams } from "@tanstack/react-router";
 import type { GetChannelsResponse } from "@/http/channel/get-channels.http";
+import { Save } from "lucide-react";
 
 type UpdateChannelNameFormProps = {
   id: string;
@@ -84,7 +85,8 @@ export function UpdateChannelNameForm({
         <CardHeader className="border-b">
           <CardTitle>Channel Name</CardTitle>
           <CardDescription>
-            This is your channel's visible name within {name}.
+            This is your channel's visible name within{" "}
+            <span className="font-semibold">{name}</span>.
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6">
@@ -100,7 +102,8 @@ export function UpdateChannelNameForm({
           </p>
           <Button size="sm" disabled={!hasChannelNameChanged} type="submit">
             {isSubmitting ? <Spinner /> : null}
-            Save
+            {!isSubmitting && <Save className="size-4" />}
+            Update Channel
           </Button>
         </CardFooter>
       </Card>

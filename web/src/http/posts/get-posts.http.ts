@@ -12,9 +12,10 @@ type GetPostsParams = {
 
 export type GetPostsResponse = {
   posts: Post[];
-  total: number;
-  page: number;
-  limit: number;
+  meta: {
+    totalCount: number;
+    totalPages: number;
+  };
 };
 
 export async function getPostsHttp(

@@ -1,8 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Clock, Mail, MoreHorizontal, User, UserRoundX } from "lucide-react";
+import { Clock, Crown, Mail, MoreHorizontal, UserRoundX } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +15,7 @@ interface MemberCardProps {
 
 export function MemberCard({ pending = false }: MemberCardProps) {
   return (
-    <div className="w-90 space-y-4 rounded-md p-4 border">
+    <div className="w-90 rounded-md p-4 border">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-2">
           <div className="relative">
@@ -29,9 +28,12 @@ export function MemberCard({ pending = false }: MemberCardProps) {
             </Avatar>
           </div>
           <div>
-            <h3 className="truncate text-sm font-semibold leading-tight text-foreground">
-              Luiz Antonio
-            </h3>
+            <div className="flex items-center gap-x-2">
+              <h3 className="truncate text-sm font-semibold leading-tight text-foreground">
+                Luiz Antonio
+              </h3>
+              <Crown className="size-3 shrink-0" />
+            </div>
             <div className="flex mt-0.5 items-center text-xs text-muted-foreground gap-x-0.5">
               <Mail className="size-3 shrink-0" />
               <p className="truncate line-clamp-1">
@@ -60,17 +62,11 @@ export function MemberCard({ pending = false }: MemberCardProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <Separator />
       <div className="flex items-center justify-between">
-        {pending ? (
+        {pending && (
           <Badge variant={"outline"}>
             <Clock className="size-3" />
             Waiting for approval
-          </Badge>
-        ) : (
-          <Badge variant={"outline"}>
-            <User className="size-3" />
-            Member
           </Badge>
         )}
 

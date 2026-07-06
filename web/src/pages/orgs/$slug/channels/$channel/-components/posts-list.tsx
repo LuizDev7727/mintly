@@ -41,7 +41,8 @@ export function PostsList() {
     return null;
   }
 
-  const { posts, total } = data;
+  const { posts, meta } = data;
+  const { totalPages } = meta;
   const isPostsEmpty = posts.length === 0;
 
   return (
@@ -49,7 +50,7 @@ export function PostsList() {
       <div className="flex items-center gap-x-2">
         <PostsFilter />
         <div className="bg-zinc-900 w-4 rotate-90 h-px" />
-        <PostsPagination totalPages={total} />
+        <PostsPagination totalPages={totalPages} />
         <div className="bg-zinc-900 w-4 rotate-90 h-px" />
         <Button>
           <ArrowLeftRight className="size-4" />
