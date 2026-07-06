@@ -12,6 +12,7 @@ import { useMatch } from "@tanstack/react-router";
 import { ChannelSwitcher } from "./channel-switcher";
 import { NavChannels } from "./nav-channels";
 import { NavUser } from "./nav-user";
+import { NavSecondary } from "./nav-secondary";
 
 type AppSidebarProps = ComponentProps<typeof Sidebar>;
 
@@ -32,6 +33,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       <SidebarContent>
         <NavMain />
         {isChannelRoute && <NavChannels />}
+        <NavSecondary />
       </SidebarContent>
       <SidebarFooter>
         {/*<ThemeToggle />*/}

@@ -14,7 +14,7 @@ type PostsPaginationProps = {
 export function PostsPagination({ totalPages }: PostsPaginationProps) {
   const [currentPage, setCurrentPage] = useQueryState(
     "post_page",
-    parseAsInteger.withDefault(1),
+    parseAsInteger.withDefault(0),
   );
 
   function goToFirstPage() {
@@ -56,7 +56,7 @@ export function PostsPagination({ totalPages }: PostsPaginationProps) {
         <ChevronLeft className="size-4" />
       </Button>
       <span className="text-xs text-muted-foreground px-1 tabular-nums">
-        {currentPage}/{totalPages}
+        {currentPage + 1}/{totalPages}
       </span>
       <Button
         variant={"outline"}

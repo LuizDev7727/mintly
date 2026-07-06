@@ -32,7 +32,7 @@ function MembersPage() {
         </p>
       </div>
 
-      <div className="rounded-md space-y-4 p-4 border bg-zinc-900/20">
+      <div className="rounded-md space-y-4 p-4 border dark:bg-zinc-900/20">
         <div>
           <h2 className="text-xl font-semibold">Invite members</h2>
           <p className="text-sm text-muted-foreground">

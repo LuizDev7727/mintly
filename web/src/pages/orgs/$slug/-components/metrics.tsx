@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { getOrganizationMetricsHttp } from "@/http/organization/get-organization-metrics.http";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
@@ -43,7 +42,6 @@ export function Metrics() {
             <ChartPie className="size-4" />
             <span className="text-sm">Usage</span>
           </div>
-          <Badge variant="outline">+12.5%</Badge>
         </div>
         <p className="text-2xl font-bold">{formattedUsage}</p>
       </div>

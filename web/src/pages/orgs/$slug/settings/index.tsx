@@ -10,7 +10,7 @@ import { BillingEmailForm } from "./-components/billing/billing-email-form";
 import { PaymentMethod } from "./-components/billing/payment-method";
 import { InvoiceHistory } from "./-components/billing/invoice-history";
 
-const searchSchema = z.object({
+const settingsSearchSchema = z.object({
   tab: z.enum(["general", "billing"]).default("general"),
 });
 
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/orgs/$slug/settings/")({
       { name: "description", content: "Organization settings." },
     ],
   }),
-  validateSearch: searchSchema,
+  validateSearch: settingsSearchSchema,
   component: SettingsPage,
 });
 
@@ -43,8 +43,8 @@ function SettingsPage() {
         </p>
       </div>
 
-      <div className="flex gap-8">
-        <nav className="flex w-44 shrink-0 flex-col gap-0.5">
+      <div className="flex flex-col gap-4 md:flex-row md:gap-8">
+        <nav className="flex gap-0.5 overflow-x-auto md:w-44 md:shrink-0 md:flex-col md:overflow-visible">
           {navItems.map(({ id, label, icon: Icon }) => (
             <Link
               key={id}
@@ -52,10 +52,10 @@ function SettingsPage() {
               params={{ slug }}
               search={{ tab: id }}
               className={cn(
-                "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors",
+                "flex shrink-0 items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors",
                 tab === id
                   ? "bg-accent text-accent-foreground font-medium"
-                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
               )}
             >
               <Icon className="size-4" />
@@ -64,7 +64,7 @@ function SettingsPage() {
           ))}
         </nav>
 
-        <div className="flex flex-1 flex-col gap-4">
+        <div className="flex min-w-0 flex-1 flex-col gap-4">
           {tab === "general" && <GeneralTab />}
           {tab === "billing" && <BillingTab />}
         </div>

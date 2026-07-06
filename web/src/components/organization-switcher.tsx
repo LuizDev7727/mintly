@@ -53,9 +53,11 @@ export function OrganizationSwitcher() {
                 <Building className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{currentOrg.name}</span>
+                <span className="truncate font-medium">
+                  {currentOrg.name}'s workspace
+                </span>
                 <span className="truncate text-xs text-muted-foreground">
-                  {currentOrg.slug}
+                  FREE
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
@@ -70,7 +72,7 @@ export function OrganizationSwitcher() {
             <DropdownMenuLabel className="text-xs text-muted-foreground">
               Organizations
             </DropdownMenuLabel>
-            {organizations.map((org, index) => (
+            {organizations.map((org) => (
               <DropdownMenuItem
                 key={org.name}
                 onClick={() => handleSetSelectedOrg(org.slug)}
@@ -82,7 +84,7 @@ export function OrganizationSwitcher() {
                     <Building className="size-3.5 shrink-0" />
                   </div>
                   {org.name}
-                  <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                  <DropdownMenuShortcut>FREE</DropdownMenuShortcut>
                 </Link>
               </DropdownMenuItem>
             ))}
