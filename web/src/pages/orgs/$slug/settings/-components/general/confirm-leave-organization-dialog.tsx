@@ -10,11 +10,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-export function ConfirmLeaveOrganizationDialog() {
+type ConfirmLeaveOrganizationDialogProps = {
+  isOwner: boolean;
+};
+
+export function ConfirmLeaveOrganizationDialog({
+  isOwner,
+}: ConfirmLeaveOrganizationDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" disabled={isOwner} size="sm">
           <LogOut className="size-4" />
           Leave Organization
         </Button>

@@ -8,7 +8,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SwitchViewMode } from "@/components/switch-view-mode";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { PendingInvites } from "@/components/pending-invites";
 
 export const Route = createFileRoute("/orgs/$slug")({
   beforeLoad: () => {},
@@ -28,7 +28,8 @@ function OrganizationLayout() {
           </div>
           <div className="flex items-center gap-x-2">
             <SwitchViewMode />
-            <ThemeToggle />
+            <div className="bg-zinc-900 w-4 rotate-90 h-px" />
+            <PendingInvites />
           </div>
         </header>
         <Separator />

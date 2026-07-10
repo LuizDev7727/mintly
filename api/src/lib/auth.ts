@@ -48,9 +48,9 @@ export const auth = betterAuth({
   databaseHooks: {
     session: {
       create: {
-        before: async (session) => {
+        before: async (session, data) => {
           let [member] = await db
-            .select({ organizationId: membersTable.organizationId })
+            .select({ organizationSlug: membersTable.organizationSlug })
             .from(membersTable)
             .where(eq(membersTable.userId, session.userId))
             .limit(1);
@@ -62,29 +62,30 @@ export const auth = betterAuth({
               .where(eq(usersTable.id, session.userId))
               .limit(1);
 
-            const [{ id: orgId }] = await db
-              .insert(organizationsTable)
-              .values({
-                name: user.name,
-                slug: createSlug(user.name),
-                createdAt: new Date(),
-              })
-              .returning({ id: organizationsTable.id });
+            const orgSlug = createSlug(user.name);
+            await db.insert(organizationsTable).values({
+              name: user.name,
+              slug: orgSlug,
+              createdAt: new Date(),
+              ownerId: session.userId,
+            });
 
             await db.insert(membersTable).values({
-              organizationId: orgId,
+              organizationSlug: orgSlug,
               userId: session.userId,
               role: "owner",
               createdAt: new Date(),
             });
 
-            member = { organizationId: orgId };
+            member = { organizationSlug: orgSlug };
           }
+
+          console.log({ member });
 
           return {
             data: {
               ...session,
-              activeOrganizationId: member.organizationId,
+              activeOrganizationId: member.organizationSlug,
             },
           };
         },

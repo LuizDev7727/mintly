@@ -11,6 +11,7 @@ import { sessionsTable } from "./sessions.table.ts";
 import { accountsTable } from "./accounts.table.ts";
 import { membersTable } from "./members.table.ts";
 import { invitationsTable } from "./invitations.table.ts";
+import { organizationsTable } from "./organizations.table.ts";
 
 export const usersTable = pgTable("users", {
   id: text("id")
@@ -33,4 +34,5 @@ export const userRelations = relations(usersTable, ({ many }) => ({
   accounts: many(accountsTable),
   members: many(membersTable),
   invitations: many(invitationsTable),
+  organizations: many(organizationsTable),
 }));

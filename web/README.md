@@ -2,9 +2,6 @@
 
 [] - Aumentar o height do componente que diz que não tem nenhum project criada
 [] - Aumentar o height do componente que diz que não tem nenhum post criada
-[] - Fazer o fetch dos membros e pending-invites da organização
-[] - Criar o convite para o novo membro da organização
-[] - Criar o componente create-organization-form.tsx
 [] - Atualizar o avatar da organização
 [] - Atualizar o nome da organização
   [] - Verificar se o slug da organização já existe
@@ -13,11 +10,13 @@
 [] - Configurar billing email para a organização
 [] - Configurar método de pagamento
 [] - Implementar a tabela de invoices da organização com o banco de dados
-[] - Pegar os pending-invites do usuário
 [] - Página específica do post
 [] - Upload das imagens que serão usadas como inspiração para a geração de thumbnails
 [] - Criação de posts
 [] - Criação de projects
+
+[] - Erro na migration em produção, pois as organizações já existentes vão precisar de um owner id
+
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

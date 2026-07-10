@@ -1,7 +1,7 @@
 import { db } from "@/infra/db/client.ts";
 import { foldersTable } from "@/infra/db/tables/folders.table.ts";
 import { and, eq, isNull } from "drizzle-orm";
-import { FolderAlreadyExistsError } from "../errors/folder-already-exists.error.ts";
+import { FolderAlreadyExistsError } from "../../errors/folder-already-exists.error.ts";
 
 type CreateFolderParams = {
   title: string;

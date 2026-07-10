@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { Search, UserRoundPlus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { createFileRoute, useParams } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { getMembersHttp } from "@/http/organization/get-members.http";
 import { MemberCard } from "./-components/member-card";
 import { EmptyPendingInvites } from "./-components/empty-pending-invites";
+import { CreateInviteMemberForm } from "./-components/create-invite-member-form";
+import { PendingInviteMemberCard } from "./-components/pending-invite-member-card";
 
 export const Route = createFileRoute("/orgs/$slug/members/")({
   head: () => ({
@@ -22,6 +24,17 @@ type MemberView = "members" | "pending";
 
 function MembersPage() {
   const [view, setView] = useState<MemberView>("members");
+
+  const { slug } = useParams({ from: "/orgs/$slug" });
+
+  const { data } = useQuery({
+    queryKey: ["members", slug],
+    queryFn: () => getMembersHttp({ orgSlug: slug }),
+  });
+
+  const members = data?.members ?? [];
+  const pendingInvites = data?.pendingInvites ?? [];
+  const isPendingInvitesEmpty = pendingInvites.length === 0;
 
   return (
     <div className="w-full flex flex-col gap-6 h-full">
@@ -40,18 +53,7 @@ function MembersPage() {
             address.
           </p>
         </div>
-        <form className="w-full space-y-4">
-          <Label>Email Address</Label>
-          <Input
-            type="email"
-            placeholder="jane@example.com"
-            className="w-full"
-          />
-          <Button size="sm" className="w-full">
-            <UserRoundPlus className="size-4" />
-            Send Invite
-          </Button>
-        </form>
+        <CreateInviteMemberForm />
       </div>
 
       <div className="flex flex-col gap-4 h-full">
@@ -72,7 +74,7 @@ function MembersPage() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Members
+              Members ({members.length})
             </button>
             <button
               onClick={() => setView("pending")}
@@ -83,16 +85,32 @@ function MembersPage() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Pending
+              Pending ({pendingInvites.length})
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {view === "members" && <MemberCard />}
-        </div>
+        {view === "members" && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {members.map((member) => (
+              <MemberCard key={member.id} member={member} />
+            ))}
+          </div>
+        )}
 
-        {view === "pending" && <EmptyPendingInvites />}
+        {view === "pending" &&
+          (isPendingInvitesEmpty ? (
+            <EmptyPendingInvites />
+          ) : (
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {pendingInvites.map((invite) => (
+                <PendingInviteMemberCard
+                  key={invite.id}
+                  inviteMember={invite}
+                />
+              ))}
+            </div>
+          ))}
       </div>
     </div>
   );

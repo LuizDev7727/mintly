@@ -9,11 +9,6 @@ type GetMetricsProps = {
 };
 
 export async function getMetrics({ orgSlug }: GetMetricsProps) {
-  const [{ organizationId }] = await db
-    .select({ organizationId: organizationsTable.id })
-    .from(organizationsTable)
-    .where(eq(organizationsTable.slug, orgSlug));
-
   const [[{ totalChannels }], [{ totalMembers }]] = await Promise.all([
     db
       .select({ totalChannels: count() })
@@ -22,7 +17,7 @@ export async function getMetrics({ orgSlug }: GetMetricsProps) {
     db
       .select({ totalMembers: count() })
       .from(membersTable)
-      .where(eq(membersTable.organizationId, organizationId)),
+      .where(eq(membersTable.organizationSlug, orgSlug)),
   ]);
 
   return {

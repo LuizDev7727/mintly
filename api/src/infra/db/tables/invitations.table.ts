@@ -10,9 +10,9 @@ export const invitationsTable = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => uuidv7()),
-    organizationId: text("organization_id")
+    organizationSlug: text("organization_id")
       .notNull()
-      .references(() => organizationsTable.id, { onDelete: "cascade" }),
+      .references(() => organizationsTable.slug, { onDelete: "cascade" }),
     email: text("email").notNull(),
     role: text("role"),
     status: text("status").default("pending").notNull(),
@@ -23,15 +23,15 @@ export const invitationsTable = pgTable(
       .references(() => usersTable.id, { onDelete: "cascade" }),
   },
   (table) => [
-    index("invitation_organizationId_idx").on(table.organizationId),
+    index("invitation_organizationSlug_idx").on(table.organizationSlug),
     index("invitation_email_idx").on(table.email),
   ],
 );
 
 export const invitationRelations = relations(invitationsTable, ({ one }) => ({
   organization: one(organizationsTable, {
-    fields: [invitationsTable.organizationId],
-    references: [organizationsTable.id],
+    fields: [invitationsTable.organizationSlug],
+    references: [organizationsTable.slug],
   }),
   user: one(usersTable, {
     fields: [invitationsTable.inviterId],

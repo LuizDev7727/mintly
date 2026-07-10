@@ -28,6 +28,17 @@ import { updateFolderRoute } from "./infra/http/routes/folder/update-folder.rout
 import { getOrganizationMetricsRoute } from "./infra/http/routes/organization/get-metrics.route.ts";
 import { getPostsRoute } from "./infra/http/routes/post/get-posts.route.ts";
 import { getIntegrationsRoute } from "./infra/http/routes/integration/get-integrations.route.ts";
+import { getOrganizationsRoute } from "./infra/http/routes/organization/get-organizations.route.ts";
+import { getActiveOrganizationRoute } from "./infra/http/routes/organization/get-active-organization.route.ts";
+import { setActiveOrganizationRoute } from "./infra/http/routes/organization/set-active-organization.route.ts";
+import { createOrganizationRoute } from "./infra/http/routes/organization/create-organization.route.ts";
+import { getMembersRoute } from "./infra/http/routes/organization/get-members.route.ts";
+import { createInviteMemberRoute } from "./infra/http/routes/organization/create-invite-member.route.ts";
+import { getPendingInvitesRoute } from "./infra/http/routes/invitation/get-pending-invites.route.ts";
+import { acceptInviteRoute } from "./infra/http/routes/invitation/accept-invite.route.ts";
+import { declineInviteRoute } from "./infra/http/routes/invitation/decline-invite.route.ts";
+import { revokeInviteRoute } from "./infra/http/routes/organization/revoke-invite.route.ts";
+import { updateOrganizationRoute } from "./infra/http/routes/organization/update-organization.route.ts";
 
 export const server = fastify({
   logger: {
@@ -87,3 +98,15 @@ server.register(getOrganizationMetricsRoute);
 server.register(getPostsRoute);
 
 server.register(getIntegrationsRoute);
+
+server.register(getOrganizationsRoute);
+server.register(createOrganizationRoute);
+server.register(getActiveOrganizationRoute);
+server.register(setActiveOrganizationRoute);
+server.register(getMembersRoute);
+server.register(createInviteMemberRoute);
+server.register(getPendingInvitesRoute);
+server.register(acceptInviteRoute);
+server.register(declineInviteRoute);
+server.register(revokeInviteRoute);
+// server.register(updateOrganizationRoute);

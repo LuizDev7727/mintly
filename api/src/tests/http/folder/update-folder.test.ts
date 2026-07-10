@@ -1,20 +1,20 @@
-import { describe, test, expect, beforeAll } from "vitest";
+﻿import { describe, test, expect, beforeAll } from "vitest";
 import request from "supertest";
 import { server } from "@/app.ts";
-import { authHeaders, testOrg } from "@/tests/setup.ts";
+import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
 import { faker } from "@faker-js/faker";
 
 let folderId: string;
 
 beforeAll(async () => {
   const channelRes = await request(server.server)
-    .post(`/api/organizations/${testOrg.slug}/channels`)
+    .post(`/api/organizations/${testOrgSlug}/channels`)
     .set(authHeaders)
     .send({ name: faker.word.noun() });
 
   const folderRes = await request(server.server)
     .post(
-      `/api/organizations/${testOrg.slug}/channels/${channelRes.body.channelId}/folders`,
+      `/api/organizations/${testOrgSlug}/channels/${channelRes.body.channelId}/folders`,
     )
     .set(authHeaders)
     .send({ title: faker.word.noun(), parentId: null });
