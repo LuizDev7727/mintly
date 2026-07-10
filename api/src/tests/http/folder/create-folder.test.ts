@@ -1,14 +1,14 @@
-import { describe, test, expect, beforeAll } from "vitest";
+﻿import { describe, test, expect, beforeAll } from "vitest";
 import request from "supertest";
 import { server } from "@/app.ts";
-import { authHeaders, testOrg } from "@/tests/setup.ts";
+import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
 import { faker } from "@faker-js/faker";
 
 let channelId: string;
 
 beforeAll(async () => {
   const res = await request(server.server)
-    .post(`/api/organizations/${testOrg.slug}/channels`)
+    .post(`/api/organizations/${testOrgSlug}/channels`)
     .set(authHeaders)
     .send({ name: faker.word.noun() });
 
@@ -18,7 +18,7 @@ beforeAll(async () => {
 describe("POST [/api/organizations/:orgSlug/channels/:channelId/folders]", () => {
   test("should return 201 with folderId", async () => {
     const response = await request(server.server)
-      .post(`/api/organizations/${testOrg.slug}/channels/${channelId}/folders`)
+      .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders`)
       .set(authHeaders)
       .send({ title: faker.word.noun(), parentId: null });
 
@@ -31,12 +31,12 @@ describe("POST [/api/organizations/:orgSlug/channels/:channelId/folders]", () =>
     const title = faker.word.noun();
 
     await request(server.server)
-      .post(`/api/organizations/${testOrg.slug}/channels/${channelId}/folders`)
+      .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders`)
       .set(authHeaders)
       .send({ title, parentId: null });
 
     const response = await request(server.server)
-      .post(`/api/organizations/${testOrg.slug}/channels/${channelId}/folders`)
+      .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders`)
       .set(authHeaders)
       .send({ title, parentId: null });
 
@@ -45,7 +45,7 @@ describe("POST [/api/organizations/:orgSlug/channels/:channelId/folders]", () =>
 
   test("should return 400 when title is empty", async () => {
     const response = await request(server.server)
-      .post(`/api/organizations/${testOrg.slug}/channels/${channelId}/folders`)
+      .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders`)
       .set(authHeaders)
       .send({ title: "", parentId: null });
 
@@ -54,7 +54,7 @@ describe("POST [/api/organizations/:orgSlug/channels/:channelId/folders]", () =>
 
   test("should return 400 when body is missing", async () => {
     const response = await request(server.server)
-      .post(`/api/organizations/${testOrg.slug}/channels/${channelId}/folders`)
+      .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders`)
       .set(authHeaders)
       .send({});
 
@@ -63,12 +63,12 @@ describe("POST [/api/organizations/:orgSlug/channels/:channelId/folders]", () =>
 
   test("should return 201 when creating a nested folder", async () => {
     const parentRes = await request(server.server)
-      .post(`/api/organizations/${testOrg.slug}/channels/${channelId}/folders`)
+      .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders`)
       .set(authHeaders)
       .send({ title: faker.word.noun(), parentId: null });
 
     const response = await request(server.server)
-      .post(`/api/organizations/${testOrg.slug}/channels/${channelId}/folders`)
+      .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders`)
       .set(authHeaders)
       .send({ title: faker.word.noun(), parentId: parentRes.body.folderId });
 

@@ -10,12 +10,16 @@ export const getOrganizationsMock = http.get<never, never, Organization[]>(
         name: "Mintly",
         slug: "mintly",
         avatar: null,
+        membersCount: 0,
+        billingEmail:""
       },
       {
         id: "01950000-0000-7000-8000-000000000002",
         name: "Acme Corp",
         slug: "acme-corp",
         avatar: null,
+        membersCount: 0,
+        billingEmail:""
       },
     ]);
   },

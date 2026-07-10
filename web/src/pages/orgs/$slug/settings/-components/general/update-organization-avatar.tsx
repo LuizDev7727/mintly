@@ -9,31 +9,42 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitials } from "@/utils/get-initials";
 
-export function UpdateOrganizationAvatar() {
-  const [preview, setPreview] = useState<string | null>(null);
+type UpdateOrganizationAvatarProps = {
+  name: string;
+  avatarUrl: string | null;
+};
+
+export function UpdateOrganizationAvatar({
+  name,
+  avatarUrl,
+}: UpdateOrganizationAvatarProps) {
+  // State to store the desired crop area in pixels
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(avatarUrl);
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file) return;
-    setPreview(URL.createObjectURL(file));
+    if (!file) {
+      return;
+    }
+    setPreviewUrl(URL.createObjectURL(file));
   }
 
   function handleRemove() {
-    setPreview(null);
-    if (inputRef.current) inputRef.current.value = "";
+    setPreviewUrl(null);
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   }
 
   return (
     <Card className="bg-transparent shadow-none">
       <CardHeader className="border-b">
-        <CardTitle>Organization Avatar</CardTitle>
+        <CardTitle>Avatar</CardTitle>
         <CardDescription>
           This is your organization's avatar. It will be displayed across
           Mintly.
@@ -41,8 +52,10 @@ export function UpdateOrganizationAvatar() {
       </CardHeader>
       <CardContent className="flex items-center gap-4 pt-6">
         <Avatar className="size-14 rounded-lg">
-          <AvatarImage src={preview ?? undefined} />
-          <AvatarFallback className="rounded-lg text-base">M</AvatarFallback>
+          <AvatarImage src={previewUrl ?? undefined} />
+          <AvatarFallback className="rounded-lg text-base">
+            {getInitials(name)}
+          </AvatarFallback>
         </Avatar>
         <div className="flex items-center gap-2">
           <Button
@@ -54,7 +67,7 @@ export function UpdateOrganizationAvatar() {
             <Upload className="size-4" />
             Upload
           </Button>
-          {preview && (
+          {previewUrl && (
             <Button
               type="button"
               variant="ghost"
@@ -78,7 +91,7 @@ export function UpdateOrganizationAvatar() {
         <p className="text-sm text-muted-foreground">
           Recommended: square image, at least 256×256px.
         </p>
-        <Button size="sm" disabled={!preview}>
+        <Button size="sm" disabled={!previewUrl}>
           Save
         </Button>
       </CardFooter>

@@ -2,13 +2,10 @@ import { z } from "zod";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CreditCard, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { UpdateOrganizationAvatar } from "./-components/general/update-organization-avatar";
-import { UpdateOrganizationNameForm } from "./-components/general/update-organization-name-form";
-import { DeleteOrganization } from "./-components/general/delete-organization";
-import { LeaveOrganization } from "./-components/general/leave-organization";
-import { BillingEmailForm } from "./-components/billing/billing-email-form";
-import { PaymentMethod } from "./-components/billing/payment-method";
-import { InvoiceHistory } from "./-components/billing/invoice-history";
+import { GeneralTab } from "./-components/general/general-tab";
+import { BillingTab } from "./-components/billing/billing-tab";
+import { getActiveOrganizationHttp } from "@/http/organization/get-active-organization.http";
+import { useQuery } from "@tanstack/react-query";
 
 const settingsSearchSchema = z.object({
   tab: z.enum(["general", "billing"]).default("general"),
@@ -33,6 +30,13 @@ const navItems = [
 function SettingsPage() {
   const { slug } = Route.useParams();
   const { tab } = Route.useSearch();
+
+  const { data } = useQuery({
+    queryKey: ["active-organization"],
+    queryFn: getActiveOrganizationHttp,
+  });
+
+  const organization = data?.organization;
 
   return (
     <div className="flex flex-col gap-6">
@@ -65,31 +69,15 @@ function SettingsPage() {
         </nav>
 
         <div className="flex min-w-0 flex-1 flex-col gap-4">
-          {tab === "general" && <GeneralTab />}
+          {tab === "general" && (
+            <GeneralTab
+              name={organization!.name}
+              avatarUrl={organization!.logo}
+            />
+          )}
           {tab === "billing" && <BillingTab />}
         </div>
       </div>
     </div>
-  );
-}
-
-function GeneralTab() {
-  return (
-    <>
-      <UpdateOrganizationAvatar />
-      <UpdateOrganizationNameForm />
-      <LeaveOrganization />
-      <DeleteOrganization />
-    </>
-  );
-}
-
-function BillingTab() {
-  return (
-    <>
-      <BillingEmailForm />
-      <PaymentMethod />
-      <InvoiceHistory />
-    </>
   );
 }

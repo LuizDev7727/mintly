@@ -1,6 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { Building, ChevronsUpDown, PlusCircle } from "lucide-react";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -10,23 +18,48 @@ import {
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { authClient } from "@/lib/auth";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "./ui/sidebar";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getOrganizationsHttp } from "@/http/organization/get-organizations.http";
+import { getActiveOrganizationHttp } from "@/http/organization/get-active-organization.http";
+import { setActiveOrganizationHttp } from "@/http/organization/set-active-organization.http";
+import { CreateOrganizationForm } from "./create-organization-form";
 
 export function OrganizationSwitcher() {
+  const queryClient = useQueryClient();
   const { isMobile } = useSidebar();
 
-  const { data: currentOrg } = authClient.useActiveOrganization();
+  const { data: currentOrg } = useQuery({
+    queryKey: ["active-organization"],
+    queryFn: getActiveOrganizationHttp,
+  });
 
-  const { data: organizations, isPending: isLoading } =
-    authClient.useListOrganizations();
+  const { data, isPending: isLoading } = useQuery({
+    queryKey: ["organizations"],
+    queryFn: getOrganizationsHttp,
+    enabled: !!currentOrg,
+  });
 
-  if (!organizations) {
+  const { mutateAsync: setSelectedOrg } = useMutation({
+    mutationFn: setActiveOrganizationHttp,
+    onSuccess: (_, variables) => {
+      const { organizationId } = variables;
+
+      queryClient.setQueryData(["active-organization"], () => {
+        const selectedOrg = organizations.find(
+          (org) => org.id === organizationId,
+        );
+        return { organization: selectedOrg };
+      });
+    },
+  });
+
+  if (!data) {
     return null;
   }
 
@@ -36,8 +69,11 @@ export function OrganizationSwitcher() {
 
   if (!currentOrg) return null;
 
-  async function handleSetSelectedOrg(orgSlug: string) {
-    console.log({ orgSlug });
+  const { organizations } = data;
+  const { organization } = currentOrg;
+
+  async function handleSetSelectedOrg(organizationId: string) {
+    await setSelectedOrg({ organizationId });
   }
 
   return (
@@ -54,10 +90,10 @@ export function OrganizationSwitcher() {
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
-                  {currentOrg.name}'s workspace
+                  {organization.name}'s workspace
                 </span>
                 <span className="truncate text-xs text-muted-foreground">
-                  FREE
+                  {organization.membersCount} members
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
@@ -75,7 +111,7 @@ export function OrganizationSwitcher() {
             {organizations.map((org) => (
               <DropdownMenuItem
                 key={org.name}
-                onClick={() => handleSetSelectedOrg(org.slug)}
+                onClick={() => handleSetSelectedOrg(org.id)}
                 className="gap-2 p-2 cursor-pointer"
                 asChild
               >
@@ -89,14 +125,28 @@ export function OrganizationSwitcher() {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2 cursor-pointer">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                <PlusCircle className="size-4" />
-              </div>
-              <div className="font-medium text-muted-foreground">
-                Add organization
-              </div>
-            </DropdownMenuItem>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="flex items-center gap-2 p-2 cursor-pointer w-full">
+                  <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                    <PlusCircle className="size-4" />
+                  </div>
+                  <p className="text-muted-foreground font-medium">
+                    Create new
+                  </p>
+                </button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Organization</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your account and remove your data from our servers.
+                  </DialogDescription>
+                </DialogHeader>
+                <CreateOrganizationForm />
+              </DialogContent>
+            </Dialog>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

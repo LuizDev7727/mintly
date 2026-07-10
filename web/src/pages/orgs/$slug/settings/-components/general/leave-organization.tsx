@@ -7,7 +7,11 @@ import {
 } from "@/components/ui/card";
 import { ConfirmLeaveOrganizationDialog } from "./confirm-leave-organization-dialog";
 
-export function LeaveOrganization() {
+type LeaveOrganizationProps = {
+  isOwner: boolean;
+};
+
+export function LeaveOrganization({ isOwner }: LeaveOrganizationProps) {
   return (
     <Card className="bg-transparent shadow-none">
       <CardHeader className="border-b">
@@ -21,7 +25,7 @@ export function LeaveOrganization() {
         <p className="text-sm text-muted-foreground">
           You can be re-invited by an admin later.
         </p>
-        <ConfirmLeaveOrganizationDialog />
+        <ConfirmLeaveOrganizationDialog isOwner={isOwner} />
       </CardFooter>
     </Card>
   );

@@ -1,2 +1,0 @@
-ALTER TABLE "posts" ADD COLUMN "channel_id" text NOT NULL;--> statement-breakpoint
-ALTER TABLE "posts" ADD CONSTRAINT "posts_channel_id_channels_id_fk" FOREIGN KEY ("channel_id") REFERENCES "public"."channels"("id") ON DELETE cascade ON UPDATE no action;
