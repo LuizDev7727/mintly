@@ -1,11 +1,22 @@
 # React + TypeScript + Vite
 
-Mintly UI ideas
+[] - Aumentar o height do componente que diz que não tem nenhum project criada
+[] - Aumentar o height do componente que diz que não tem nenhum post criada
+[] - Atualizar o avatar da organização
+[] - Atualizar o nome da organização
+  [] - Verificar se o slug da organização já existe
+[] - Implementar o botão leave organization
+[] - Deletar a organização somente quem for owner da organização
+[] - Configurar billing email para a organização
+[] - Configurar método de pagamento
+[] - Implementar a tabela de invoices da organização com o banco de dados
+[] - Página específica do post
+[] - Upload das imagens que serão usadas como inspiração para a geração de thumbnails
+[] - Criação de posts
+[] - Criação de projects
 
-[] - Colocar na UI o plano atual junto com alguma informação do limite do plano
-[] - Estruturar melhor o card que mostra o channel
-[] - Colocar um botão dropdown que redireciona para criar post/membro/projects
-[] - Gerar uma UI de overview do canal
+[] - Erro na migration em produção, pois as organizações já existentes vão precisar de um owner id
+
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

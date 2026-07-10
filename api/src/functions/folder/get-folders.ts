@@ -2,7 +2,7 @@ import { db } from "@/infra/db/client.ts";
 import { foldersTable } from "@/infra/db/tables/folders.table.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { and, count, eq, isNull } from "drizzle-orm";
-import { ResourceNotFoundError } from "../errors/resource-not-found.error.ts";
+import { ResourceNotFoundError } from "../../errors/resource-not-found.error.ts";
 
 const PAGE_SIZE = 12;
 

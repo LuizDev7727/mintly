@@ -10,9 +10,9 @@ export const membersTable = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => uuidv7()),
-    organizationId: text("organization_id")
+    organizationSlug: text("organization_id")
       .notNull()
-      .references(() => organizationsTable.id, { onDelete: "cascade" }),
+      .references(() => organizationsTable.slug, { onDelete: "cascade" }),
     userId: text("user_id")
       .notNull()
       .references(() => usersTable.id, { onDelete: "cascade" }),
@@ -20,15 +20,15 @@ export const membersTable = pgTable(
     createdAt: timestamp("created_at").notNull(),
   },
   (table) => [
-    index("member_organizationId_idx").on(table.organizationId),
+    index("member_organizationSlug_idx").on(table.organizationSlug),
     index("member_userId_idx").on(table.userId),
   ],
 );
 
 export const memberRelations = relations(membersTable, ({ one }) => ({
   organization: one(organizationsTable, {
-    fields: [membersTable.organizationId],
-    references: [organizationsTable.id],
+    fields: [membersTable.organizationSlug],
+    references: [organizationsTable.slug],
   }),
   user: one(usersTable, {
     fields: [membersTable.userId],

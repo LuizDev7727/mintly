@@ -36,12 +36,13 @@ async function seedUser() {
     .insert(organizationsTable)
     .values({
       name: E2E_USER.name,
+      ownerId: user.id,
       slug: createSlug(E2E_USER.name),
     })
     .returning({ id: organizationsTable.id, slug: organizationsTable.slug });
 
   await db.insert(membersTable).values({
-    organizationId: organization.id,
+    organizationSlug: organization.slug,
     userId: user.id,
     role: "owner",
     createdAt: new Date(),

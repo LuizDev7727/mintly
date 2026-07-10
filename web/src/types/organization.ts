@@ -3,4 +3,6 @@ export type Organization = {
   name: string;
   slug: string;
   avatar: string | null;
+  billingEmail: string;
+  membersCount: number;
 };

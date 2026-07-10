@@ -1,7 +1,7 @@
-import { db } from "@/infra/db/client";
-import { channelsTable } from "@/infra/db/tables/channels.table";
+import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
+import { db } from "@/infra/db/client.ts";
+import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { eq } from "drizzle-orm";
-import { ResourceNotFoundError } from "@/functions/errors/resource-not-found.error";
 
 type UpdateChannelParams = {
   channelId: string;

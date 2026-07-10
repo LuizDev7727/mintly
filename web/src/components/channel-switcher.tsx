@@ -80,7 +80,7 @@ export function ChannelSwitcher() {
               >
                 <Link
                   to={"/orgs/$slug/channels/$channel"}
-                  params={{ slug, channel: channel.slug }}
+                  params={{ slug, channel: channel.id }}
                 >
                   <div className="flex size-6 items-center justify-center rounded-md border">
                     <TvMinimal className="size-3.5 shrink-0" />

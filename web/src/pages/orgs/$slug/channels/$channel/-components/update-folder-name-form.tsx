@@ -28,7 +28,7 @@ export function UpdateFolderNameForm({
     "folder_page",
     parseAsInteger.withDefault(0),
   );
-  const [currentFolderId] = useQueryState("folder");
+  const [currentFolderId] = useQueryState("folder_id");
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });

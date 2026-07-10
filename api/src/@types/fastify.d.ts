@@ -12,7 +12,9 @@ declare module "fastify" {
   }
 
   interface FastifyRequest {
-    session: Session;
+    session: Session & {
+      activeOrganizationId: string;
+    };
     user: User;
   }
 }

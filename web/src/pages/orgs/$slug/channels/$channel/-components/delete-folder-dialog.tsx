@@ -70,7 +70,11 @@ export function DeleteFolderDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button type="button" variant={"destructive"}>
+        <Button
+          type="button"
+          className="w-full flex justify-start text-red-400 hover:text-red-500"
+          variant={"ghost"}
+        >
           <Trash2 />
           Delete
         </Button>

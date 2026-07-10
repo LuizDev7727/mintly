@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { IntegrationsList } from "./-components/integrations-list";
+import { IntegrationListLoading } from "./-components/integration-list-loading";
 
 export const Route = createFileRoute(
   "/orgs/$slug/channels/$channel/integrations/",
@@ -27,7 +28,7 @@ function IntegrationsPage() {
         </p>
       </header>
 
-      <Suspense fallback={<p>Fetching integrations...</p>}>
+      <Suspense fallback={<IntegrationListLoading />}>
         <IntegrationsList />
       </Suspense>
     </div>
