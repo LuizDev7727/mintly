@@ -52,9 +52,9 @@ export function ConfirmDeleteChannelDialog(
           <DialogTitle>Delete Channel</DialogTitle>
           <DialogDescription>
             Are you sure you want to delete{" "}
-            <span className="font-medium">{name}</span> ? This will permanently
-            remove all projects, integrations, and data associated with it. This
-            action cannot be undone.
+            <span className="font-semibold">{name}</span> ? This will
+            permanently remove all projects, integrations, and data associated
+            with it. This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter showCloseButton>

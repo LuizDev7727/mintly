@@ -1,13 +1,13 @@
-import { describe, test, expect } from "vitest";
+﻿import { describe, test, expect } from "vitest";
 import request from "supertest";
 import { server } from "@/app.ts";
-import { authHeaders, testOrg } from "@/tests/setup.ts";
+import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
 import { faker } from "@faker-js/faker";
 
 describe("POST [/api/organizations/:orgSlug/channels]", () => {
   test("should return 201 with channelId", async () => {
     const response = await request(server.server)
-      .post(`/api/organizations/${testOrg.slug}/channels`)
+      .post(`/api/organizations/${testOrgSlug}/channels`)
       .set(authHeaders)
       .send({ name: faker.word.noun() });
 
@@ -18,7 +18,7 @@ describe("POST [/api/organizations/:orgSlug/channels]", () => {
 
   test("should return 400 when name is empty", async () => {
     const response = await request(server.server)
-      .post(`/api/organizations/${testOrg.slug}/channels`)
+      .post(`/api/organizations/${testOrgSlug}/channels`)
       .set(authHeaders)
       .send({ name: "" });
 
@@ -27,7 +27,7 @@ describe("POST [/api/organizations/:orgSlug/channels]", () => {
 
   test("should return 400 when body is missing", async () => {
     const response = await request(server.server)
-      .post(`/api/organizations/${testOrg.slug}/channels`)
+      .post(`/api/organizations/${testOrgSlug}/channels`)
       .set(authHeaders)
       .send({});
 

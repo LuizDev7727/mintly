@@ -15,24 +15,27 @@ export function PostsListEmpty() {
   const isRootFolder = currentFolderName === null;
 
   return (
-    <Empty className="border border-dashed">
+    <Empty className="h-full">
       <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <Image />
+        <EmptyMedia>
+          <Image className="size-4" />
         </EmptyMedia>
-        {isRootFolder && <EmptyTitle>No posts yet</EmptyTitle>}
-        {!isRootFolder && <EmptyTitle>This folder is empty</EmptyTitle>}
+        {isRootFolder ? (
+          <EmptyTitle>No posts yet</EmptyTitle>
+        ) : (
+          <EmptyTitle>This folder is empty</EmptyTitle>
+        )}
         {isRootFolder && (
           <EmptyDescription>
-            This channel doesn't have any posts yet.
-            {titleFilter && `filter by "${titleFilter}"`}
+            This channel doesn&apos;t have any posts yet
+            {titleFilter && ` matching "${titleFilter}"`}.
           </EmptyDescription>
         )}
         {!isRootFolder && (
           <EmptyDescription>
-            No posts found in "{currentFolderName}". Try another folder or
-            {titleFilter && `filter by "${titleFilter}"`}
-            move posts here.
+            No posts found in{" "}
+            <span className="font-semibold">{currentFolderName}</span>
+            {titleFilter && ` matching "${titleFilter}"`}.{" "}
           </EmptyDescription>
         )}
       </EmptyHeader>

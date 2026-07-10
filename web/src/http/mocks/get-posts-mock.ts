@@ -60,9 +60,7 @@ export const getPostsMock = http.get<
     let filtered = folderId ? posts.slice(0, 24) : posts;
 
     if (title) {
-      filtered = filtered.filter((p) =>
-        p.title.toLowerCase().includes(title),
-      );
+      filtered = filtered.filter((p) => p.title.toLowerCase().includes(title));
     }
 
     if (status) {
@@ -74,9 +72,10 @@ export const getPostsMock = http.get<
 
     return HttpResponse.json({
       posts: paginated,
-      total: filtered.length,
-      page,
-      limit,
+      meta: {
+        totalCount: filtered.length,
+        totalPages: Math.ceil(filtered.length / limit),
+      },
     });
   },
 );

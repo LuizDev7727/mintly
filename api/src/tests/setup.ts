@@ -2,9 +2,11 @@ import { beforeAll, afterAll } from "vitest";
 import { server } from "@/app.ts";
 import { test } from "@/lib/auth.ts";
 import { faker } from "@faker-js/faker";
+import { makeFakeOrganization } from "./factories/make-fake-organization.ts";
+import { makeFakeMember } from "./factories/make-fake-member.ts";
 
 export let testUser: ReturnType<typeof test.createUser>;
-export let testOrg: Record<string, unknown>;
+export let testOrgSlug: string;
 export let authHeaders: Record<string, string>;
 
 beforeAll(async () => {
@@ -14,28 +16,18 @@ beforeAll(async () => {
     email: faker.internet.email(),
     name: faker.person.fullName(),
   });
-  await test.saveUser(testUser);
-
-  if (!test.createOrganization || !test.saveOrganization || !test.addMember) {
-    throw new Error("Organization plugin not configured in testUtils");
-  }
+  testUser = await test.saveUser(testUser);
 
   const orgName = faker.company.name();
-  const org = test.createOrganization({
-    name: orgName,
-    slug: faker.helpers.slugify(orgName).toLowerCase(),
-  });
 
-  testOrg = await test.saveOrganization(org);
+  const { organizationSlug } = await makeFakeOrganization(testUser.id, { name: orgName })
 
-  await test.addMember({
-    userId: testUser.id,
-    organizationId: org.id as string,
-    role: "admin",
-  });
+  await makeFakeMember(organizationSlug, testUser.id)
 
   const headers = await test.getAuthHeaders({ userId: testUser.id });
   authHeaders = Object.fromEntries(headers.entries());
+
+  testOrgSlug = organizationSlug;
 });
 
 afterAll(async () => {

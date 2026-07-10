@@ -63,9 +63,9 @@ function ChannelProjectsPage() {
         </div>
       </div>
 
-      {isPostsEmpty ? (
-        <ProjectsEmpty />
-      ) : (
+      {isPostsEmpty && <ProjectsEmpty />}
+
+      {!isPostsEmpty && (
         <div className="flex flex-wrap gap-4">
           <ProjectCard
             title="Neymar - All FIFA World Cup Goals and Assists"
