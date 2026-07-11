@@ -2,12 +2,13 @@ import { deleteIntegration } from "@/functions/integration/delete-integration.ts
 import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { checkUserSession } from "../../middleware/check-user-session.ts";
 
 export const deleteIntegrationRoute: FastifyPluginAsyncZod = async (app) => {
   app.delete(
     "/api/integrations/:integrationId",
     {
-      preHandler: [],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           integrationId: z.string(),
