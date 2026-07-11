@@ -44,7 +44,6 @@ export const organizationRelations = relations(
     members: many(membersTable),
     invitations: many(invitationsTable),
     channels: many(channelsTable),
-    integrations: many(integrationsTable),
     owner: one(usersTable, {
       fields: [organizationsTable.ownerId],
       references: [usersTable.id],
