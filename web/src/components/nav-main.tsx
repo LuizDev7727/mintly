@@ -10,6 +10,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import {
+  Activity,
   ChartPieIcon,
   ChevronRight,
   Settings2Icon,
@@ -55,6 +56,18 @@ export function NavMain() {
             <NavLink to={"/orgs/$slug/usage"} params={{ slug }}>
               <ChartPieIcon />
               <span>Usage</span>
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            asChild
+          >
+            <NavLink to={"/orgs/$slug/activities"} params={{ slug }}>
+              <Activity />
+              <span>Activities</span>
             </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>

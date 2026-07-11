@@ -12,7 +12,7 @@ export function ThemeToggle() {
   return (
     <Toggle
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-      className="group size-8 rounded-full border-none text-muted-foreground shadow-none data-[state=on]:bg-transparent data-[state=on]:text-muted-foreground data-[state=on]:hover:bg-muted data-[state=on]:hover:text-foreground"
+      className="group cursor-pointer size-8 rounded-full border-none text-muted-foreground shadow-none data-[state=on]:bg-transparent data-[state=on]:text-muted-foreground data-[state=on]:hover:bg-muted data-[state=on]:hover:text-foreground"
       onPressedChange={handleThemeToggle}
       pressed={theme === "dark"}
       variant="outline"
