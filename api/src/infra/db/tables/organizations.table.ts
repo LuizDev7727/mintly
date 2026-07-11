@@ -12,6 +12,7 @@ import { channelsTable } from "./channels.table.ts";
 import { invitationsTable } from "./invitations.table.ts";
 import { membersTable } from "./members.table.ts";
 import { usersTable } from "./users.table.ts";
+import { integrationsTable } from "./integrations.table.ts";
 
 export const planEnum = pgEnum("plan", ["free", "pro"]);
 

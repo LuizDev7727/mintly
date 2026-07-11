@@ -6,6 +6,10 @@ const envSchema = z.object({
   DATABASE_URL: z.url().startsWith("postgresql://"),
   ALLOWED_ORIGIN: z.url(),
   BETTER_AUTH_URL: z.url(),
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
+  GOOGLE_REDIRECT_URI: z.url(),
+  GOOGLE_REDIRECT_CALLBACK_URI: z.url(),
 });
 
 export const env = envSchema.parse(process.env);
