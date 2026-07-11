@@ -3,6 +3,8 @@ import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
 import { organizationsTable } from "./organizations.table.ts";
 import { postsTable } from "./posts.table.ts";
+import { integrationsTable } from "./integrations.table.ts";
+import { foldersTable } from "./folders.table.ts";
 
 export const channelsTable = pgTable("channels", {
   id: text("id")
@@ -18,6 +20,8 @@ export const channelsTable = pgTable("channels", {
 
 export const channelsRelations = relations(channelsTable, ({ one, many }) => ({
   posts: many(postsTable),
+  integrations: many(integrationsTable),
+  folders: many(foldersTable),
   organization: one(organizationsTable, {
     fields: [channelsTable.organizationSlug],
     references: [organizationsTable.slug],
