@@ -8,7 +8,7 @@ export const getChannelsRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:orgSlug/channels",
     {
-      preHandler: [checkUserSession]
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           orgSlug: z.string(),
