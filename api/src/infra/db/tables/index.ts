@@ -1,4 +1,5 @@
 import { accountsTable } from "./accounts.table.ts";
+import { activitiesTable } from "./activities.table.ts";
 import { channelsTable, channelsRelations } from "./channels.table.ts";
 import { foldersTable, foldersRelations } from "./folders.table.ts";
 import { invitationsTable } from "./invitations.table.ts";
@@ -23,4 +24,5 @@ export const tables = {
   sessionsTable,
   usersTable,
   verificationsTable,
+  activitiesTable
 };

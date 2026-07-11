@@ -24,7 +24,6 @@ function OrganizationLayout() {
           <div className="flex items-center justify-between gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <div className="bg-zinc-900 w-4 rotate-90 h-px" />
-            {/*<Search />*/}
           </div>
           <div className="flex items-center gap-x-2">
             <SwitchViewMode />

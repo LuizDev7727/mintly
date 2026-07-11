@@ -42,6 +42,7 @@ import { updateOrganizationRoute } from "./infra/http/routes/organization/update
 import { requestYoutubeIntegrationUrlRoute } from "./infra/http/routes/integration/request-youtube-integration-url.route.ts";
 import { youtubeCallbackRoute } from "./infra/http/routes/integration/youtube-callback.route.ts";
 import { deleteIntegrationRoute } from "./infra/http/routes/integration/delete-integration.route.ts";
+import { getActivitiesRoute } from "./infra/http/routes/activity/get-activities.route.ts";
 
 export const server = fastify({
   logger: {
@@ -117,3 +118,5 @@ server.register(revokeInviteRoute);
 server.register(deleteIntegrationRoute)
 server.register(requestYoutubeIntegrationUrlRoute)
 server.register(youtubeCallbackRoute)
+
+server.register(getActivitiesRoute);

@@ -2,12 +2,13 @@ import { getChannels } from "@/functions/channel/get-channels.ts";
 import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { checkUserSession } from "../../middleware/check-user-session.ts";
 
 export const getChannelsRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:orgSlug/channels",
     {
-      preHandler: [],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           orgSlug: z.string(),
