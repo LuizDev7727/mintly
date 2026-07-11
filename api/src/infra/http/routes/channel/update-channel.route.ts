@@ -2,12 +2,13 @@ import { updateChannel } from "@/functions/channel/update-channel.ts";
 import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { checkUserSession } from "../../middleware/check-user-session.ts";
 
 export const updateChannelRoute: FastifyPluginAsyncZod = async (app) => {
   app.put(
     "/api/channels/:channelId",
     {
-      preHandler: [],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           channelId: z.string(),

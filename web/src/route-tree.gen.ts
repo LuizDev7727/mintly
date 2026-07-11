@@ -19,6 +19,7 @@ import { Route as AuthSignUpIndexRouteImport } from './pages/auth/sign-up/index'
 import { Route as OrgsSlugUsageIndexRouteImport } from './pages/orgs/$slug/usage/index'
 import { Route as OrgsSlugSettingsIndexRouteImport } from './pages/orgs/$slug/settings/index'
 import { Route as OrgsSlugMembersIndexRouteImport } from './pages/orgs/$slug/members/index'
+import { Route as OrgsSlugActivitiesIndexRouteImport } from './pages/orgs/$slug/activities/index'
 import { Route as OrgsSlugChannelsChannelLayoutRouteImport } from './pages/orgs/$slug/channels/$channel/layout'
 import { Route as OrgsSlugChannelsChannelIndexRouteImport } from './pages/orgs/$slug/channels/$channel/index'
 import { Route as OrgsSlugChannelsChannelSettingsIndexRouteImport } from './pages/orgs/$slug/channels/$channel/settings/index'
@@ -77,6 +78,11 @@ const OrgsSlugMembersIndexRoute = OrgsSlugMembersIndexRouteImport.update({
   path: '/members/',
   getParentRoute: () => OrgsSlugLayoutRoute,
 } as any)
+const OrgsSlugActivitiesIndexRoute = OrgsSlugActivitiesIndexRouteImport.update({
+  id: '/activities/',
+  path: '/activities/',
+  getParentRoute: () => OrgsSlugLayoutRoute,
+} as any)
 const OrgsSlugChannelsChannelLayoutRoute =
   OrgsSlugChannelsChannelLayoutRouteImport.update({
     id: '/channels/$channel',
@@ -129,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/auth/sign-up/': typeof AuthSignUpIndexRoute
   '/orgs/$slug/': typeof OrgsSlugIndexRoute
   '/orgs/$slug/channels/$channel': typeof OrgsSlugChannelsChannelLayoutRouteWithChildren
+  '/orgs/$slug/activities/': typeof OrgsSlugActivitiesIndexRoute
   '/orgs/$slug/members/': typeof OrgsSlugMembersIndexRoute
   '/orgs/$slug/settings/': typeof OrgsSlugSettingsIndexRoute
   '/orgs/$slug/usage/': typeof OrgsSlugUsageIndexRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/orgs': typeof OrgsIndexRoute
   '/auth/sign-up': typeof AuthSignUpIndexRoute
   '/orgs/$slug': typeof OrgsSlugIndexRoute
+  '/orgs/$slug/activities': typeof OrgsSlugActivitiesIndexRoute
   '/orgs/$slug/members': typeof OrgsSlugMembersIndexRoute
   '/orgs/$slug/settings': typeof OrgsSlugSettingsIndexRoute
   '/orgs/$slug/usage': typeof OrgsSlugUsageIndexRoute
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/auth/sign-up/': typeof AuthSignUpIndexRoute
   '/orgs/$slug/': typeof OrgsSlugIndexRoute
   '/orgs/$slug/channels/$channel': typeof OrgsSlugChannelsChannelLayoutRouteWithChildren
+  '/orgs/$slug/activities/': typeof OrgsSlugActivitiesIndexRoute
   '/orgs/$slug/members/': typeof OrgsSlugMembersIndexRoute
   '/orgs/$slug/settings/': typeof OrgsSlugSettingsIndexRoute
   '/orgs/$slug/usage/': typeof OrgsSlugUsageIndexRoute
@@ -186,6 +195,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up/'
     | '/orgs/$slug/'
     | '/orgs/$slug/channels/$channel'
+    | '/orgs/$slug/activities/'
     | '/orgs/$slug/members/'
     | '/orgs/$slug/settings/'
     | '/orgs/$slug/usage/'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/orgs'
     | '/auth/sign-up'
     | '/orgs/$slug'
+    | '/orgs/$slug/activities'
     | '/orgs/$slug/members'
     | '/orgs/$slug/settings'
     | '/orgs/$slug/usage'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up/'
     | '/orgs/$slug/'
     | '/orgs/$slug/channels/$channel'
+    | '/orgs/$slug/activities/'
     | '/orgs/$slug/members/'
     | '/orgs/$slug/settings/'
     | '/orgs/$slug/usage/'
@@ -309,6 +321,13 @@ declare module '@tanstack/react-router' {
       path: '/members'
       fullPath: '/orgs/$slug/members/'
       preLoaderRoute: typeof OrgsSlugMembersIndexRouteImport
+      parentRoute: typeof OrgsSlugLayoutRoute
+    }
+    '/orgs/$slug/activities/': {
+      id: '/orgs/$slug/activities/'
+      path: '/activities'
+      fullPath: '/orgs/$slug/activities/'
+      preLoaderRoute: typeof OrgsSlugActivitiesIndexRouteImport
       parentRoute: typeof OrgsSlugLayoutRoute
     }
     '/orgs/$slug/channels/$channel': {
@@ -408,6 +427,7 @@ const OrgsSlugChannelsChannelLayoutRouteWithChildren =
 interface OrgsSlugLayoutRouteChildren {
   OrgsSlugIndexRoute: typeof OrgsSlugIndexRoute
   OrgsSlugChannelsChannelLayoutRoute: typeof OrgsSlugChannelsChannelLayoutRouteWithChildren
+  OrgsSlugActivitiesIndexRoute: typeof OrgsSlugActivitiesIndexRoute
   OrgsSlugMembersIndexRoute: typeof OrgsSlugMembersIndexRoute
   OrgsSlugSettingsIndexRoute: typeof OrgsSlugSettingsIndexRoute
   OrgsSlugUsageIndexRoute: typeof OrgsSlugUsageIndexRoute
@@ -417,6 +437,7 @@ const OrgsSlugLayoutRouteChildren: OrgsSlugLayoutRouteChildren = {
   OrgsSlugIndexRoute: OrgsSlugIndexRoute,
   OrgsSlugChannelsChannelLayoutRoute:
     OrgsSlugChannelsChannelLayoutRouteWithChildren,
+  OrgsSlugActivitiesIndexRoute: OrgsSlugActivitiesIndexRoute,
   OrgsSlugMembersIndexRoute: OrgsSlugMembersIndexRoute,
   OrgsSlugSettingsIndexRoute: OrgsSlugSettingsIndexRoute,
   OrgsSlugUsageIndexRoute: OrgsSlugUsageIndexRoute,
