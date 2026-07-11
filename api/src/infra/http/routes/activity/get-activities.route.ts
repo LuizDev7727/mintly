@@ -2,12 +2,13 @@ import { getActivities } from "@/functions/activity/get-activities.ts";
 import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { checkUserSession } from "../../middleware/check-user-session.ts";
 
 export const getActivitiesRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:slug/activities",
     {
-      preHandler: [],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
