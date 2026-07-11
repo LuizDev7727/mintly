@@ -39,6 +39,9 @@ import { acceptInviteRoute } from "./infra/http/routes/invitation/accept-invite.
 import { declineInviteRoute } from "./infra/http/routes/invitation/decline-invite.route.ts";
 import { revokeInviteRoute } from "./infra/http/routes/organization/revoke-invite.route.ts";
 import { updateOrganizationRoute } from "./infra/http/routes/organization/update-organization.route.ts";
+import { requestYoutubeIntegrationUrlRoute } from "./infra/http/routes/integration/request-youtube-integration-url.route.ts";
+import { youtubeCallbackRoute } from "./infra/http/routes/integration/youtube-callback.route.ts";
+import { deleteIntegrationRoute } from "./infra/http/routes/integration/delete-integration.route.ts";
 
 export const server = fastify({
   logger: {
@@ -110,3 +113,7 @@ server.register(acceptInviteRoute);
 server.register(declineInviteRoute);
 server.register(revokeInviteRoute);
 // server.register(updateOrganizationRoute);
+
+server.register(deleteIntegrationRoute)
+server.register(requestYoutubeIntegrationUrlRoute)
+server.register(youtubeCallbackRoute)
