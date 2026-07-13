@@ -22,6 +22,27 @@
       "when": 1783784143156,
       "tag": "0002_smiling_satana",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783812882786,
+      "tag": "0003_round_bushwacker",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783813087423,
+      "tag": "0004_goofy_mordo",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783826283512,
+      "tag": "0005_burly_warpath",
+      "breakpoints": true
     }
   ]
 }

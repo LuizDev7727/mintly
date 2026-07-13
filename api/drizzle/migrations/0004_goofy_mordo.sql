@@ -1,0 +1,1 @@
+ALTER TABLE "inspirational_thumbnails" RENAME COLUMN "sizeInMs" TO "size_in_ms";

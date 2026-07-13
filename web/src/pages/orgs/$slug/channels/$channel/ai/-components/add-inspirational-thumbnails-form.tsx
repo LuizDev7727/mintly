@@ -1,6 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { DialogClose, DialogFooter } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
+} from "@/components/ui/attachment"
 import {
   inspirationalThumbnailsSchema,
   type InspirationalThumbnailsFormType,
@@ -8,18 +18,45 @@ import {
 import { compressImage } from "@/utils/compress-image";
 import { formatBytes } from "@/utils/format-bytes";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FileImage, Loader2, Trash, Upload } from "lucide-react";
+import { Ban, CheckIcon, CircleAlert, ClockIcon, FileImage, Loader2, Trash2, XIcon } from "lucide-react";
 import { useState, type ChangeEvent, type DragEvent } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { addInspirationalThumbnailHttp } from "@/http/inspirational-thumbnail/add-inspirational-thumbnail.http";
+import { uploadFile } from "@/utils/upload-file";
+import { useParams } from "@tanstack/react-router";
+import axios from "axios";
+import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
+import type { GetInspirationalThumbnailsHttpResponse } from "@/http/inspirational-thumbnail/get-inspirational-thumbnails.http";
+
+const LIMIT_FILE_SIZE = 1024 * 1024 * 10 // 10 MB
+
+export type UploadStatus = "pending" | "uploading" | "cancelled" | "completed" | "error";
+
+export type UploadEntry = {
+  status: UploadStatus;
+  progress: number;
+  abortController: AbortController;
+};
 
 export function AddInspirationalThumbnailsForm() {
+
+  const queryClient = useQueryClient();
   const [isDragging, setIsDragging] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
+
+  const [uploadProgressMap, setUploadProgressMap] = useState(
+    new Map<number, UploadEntry>(),
+  );
+
+  const { channel } = useParams({
+    from: "/orgs/$slug/channels/$channel"
+  })
 
   const {
     control,
     handleSubmit,
-    setValue,
+    reset,
     formState: { isSubmitting },
   } = useForm<InspirationalThumbnailsFormType>({
     resolver: zodResolver(inspirationalThumbnailsSchema),
@@ -44,7 +81,14 @@ export function AddInspirationalThumbnailsForm() {
     setIsConverting(true);
 
     for (let i = 0; i < files.length; i++) {
-      append({ file: await compressImage({ file: files[i] }) });
+      if (files[i].size > LIMIT_FILE_SIZE) {
+        toast("Please upload a file under 10MB.", {
+          description: `File: ${files[i].name} is too large`
+        })
+      }
+      else {
+        append({ file: await compressImage({ file: files[i] }) });
+      }
     }
 
     setIsConverting(false);
@@ -79,27 +123,121 @@ export function AddInspirationalThumbnailsForm() {
     }
   }
 
+  const { mutateAsync: addInspirationalThumbnail } = useMutation({
+    mutationFn: addInspirationalThumbnailHttp,
+    onSuccess: (data, variables) => {
+
+      const { inspirationalThumbnailId } = data;
+      const { file, key } = variables;
+
+      queryClient.setQueryData<InfiniteData<GetInspirationalThumbnailsHttpResponse>>(
+        ["inspirational-thumbnails", channel],
+        (old) => {
+          if (!old) {
+            return old;
+          }
+
+          const newInspirationalThumbnail = {
+            id: inspirationalThumbnailId,
+            name: file.name,
+            key,
+            sizeInMs: file.size,
+            url: URL.createObjectURL(file),
+          };
+
+          return {
+            ...old,
+            pages: old.pages.map((page, index) =>
+              index === 0
+                ? {
+                    ...page,
+                    inspirationalThumbnails: [
+                      newInspirationalThumbnail,
+                      ...page.inspirationalThumbnails,
+                    ],
+                  }
+                : page,
+            ),
+          };
+        },
+      );
+    },
+  })
+
   async function handleAddInspirationalThumbnails({
     inspirationalThumbnails,
   }: InspirationalThumbnailsFormType) {
-    console.log({ inspirationalThumbnails });
+    await Promise.all(
+      inspirationalThumbnails.map( async ({ file }, index) => {
+        const abortController = new AbortController();
+
+        setUploadProgressMap((prev) => {
+          const next = new Map(prev);
+          next.set(index, { status: "uploading", progress: 0, abortController });
+          return next;
+        });
+
+        try {
+          const { key } = await uploadFile({
+            file,
+            signal: abortController.signal,
+            onProgress: (progress) => {
+              setUploadProgressMap((prev) => {
+                const next = new Map(prev);
+                next.set(index, { status: "uploading", progress, abortController });
+                return next;
+              });
+            },
+          });
+
+          await addInspirationalThumbnail({
+            channelId: channel,
+            key,
+            file,
+          });
+
+          setUploadProgressMap((prev) => {
+            const next = new Map(prev);
+            next.set(index, { status: "completed", progress: 100, abortController });
+            return next;
+          });
+        } catch (error) {
+          // usuário cancelou este upload — os outros arquivos do lote seguem normalmente
+          if (axios.isCancel(error)) {
+            setUploadProgressMap((prev) => {
+              const next = new Map(prev);
+              next.set(index, { status: "cancelled", progress: 0, abortController });
+              return next;
+            });
+            return;
+          }
+
+          // erro de verdade (rede, R2, etc.) — não derruba os outros uploads do lote
+          setUploadProgressMap((prev) => {
+            const next = new Map(prev);
+            next.set(index, { status: "error", progress: 0, abortController });
+            return next;
+          });
+        }
+      })
+    )
+    reset({ inspirationalThumbnails: [] })
+    setUploadProgressMap(new Map())
   }
 
-  function handleDeleteAllInspirationalThumbnailsSelected() {
-    setValue("inspirationalThumbnails", []);
+  function handleRemoveSelectedFile(index: number) {
+    removeInspirationalThumbnail(index);
   }
 
-  const totalThumbnailsSize = inspirationalThubmanils.reduce(
-    (acc, thumbnail) => acc + thumbnail.file.size,
-    0,
-  );
+  function handleCancelUpload(index: number) {
+    uploadProgressMap.get(index)?.abortController.abort();
+  }
+
+  const inspirationalThumbnailsCount = inspirationalThubmanils.length;
 
   return (
-    <form
-      onSubmit={handleSubmit(handleAddInspirationalThumbnails)}
-      className="flex flex-col flex-1 min-h-0 overflow-hidden"
-    >
-      <div className="flex flex-col flex-1 min-h-0 gap-3 p-4 overflow-hidden">
+    <form onSubmit={handleSubmit(handleAddInspirationalThumbnails)} className="flex flex-col md:flex-row gap-4 w-full">
+      <div className="w-full">
         <input
           id="file"
           name="file"
@@ -118,7 +256,7 @@ export function AddInspirationalThumbnailsForm() {
           onDragLeave={handleDragLeave}
           data-dragging={isDragging}
           data-converting={isConverting}
-          className="shrink-0 flex flex-col items-center justify-center py-20 gap-4 text-center border border-input rounded-md border-dashed cursor-pointer transition-colors bg-secondary/20 hover:bg-secondary/40 dark:bg-zinc-900/20 hover:dark:bg-zinc-900/40 data-[dragging=true]:bg-primary/10 data-[dragging=true]:border-primary data-[dragging=true]:dark:bg-primary/10 data-[converting=true]:pointer-events-none data-[converting=true]:opacity-50"
+          className="shrink-0 flex flex-col items-center justify-center h-62.5 md:h-full gap-4 text-center border border-input rounded-md border-dashed cursor-pointer transition-colors bg-secondary/20 hover:bg-secondary/40 dark:bg-zinc-900/20 hover:dark:bg-zinc-900/40 data-[dragging=true]:bg-primary/10 data-[dragging=true]:border-primary data-[dragging=true]:dark:bg-primary/10 data-[converting=true]:pointer-events-none data-[converting=true]:opacity-50"
         >
           {isConverting ? (
             <>
@@ -150,80 +288,105 @@ export function AddInspirationalThumbnailsForm() {
             </>
           )}
         </label>
-
-        <div className="shrink-0 flex items-center justify-between">
-          <div className="flex items-center gap-x-2">
-            <div className="font-medium">
-              <h2>{inspirationalThubmanils.length} Files selected</h2>
-            </div>
-            <div className="size-1 rounded-full bg-zinc-700" />
-            <p className="text-muted-foreground text-sm">
-              {formatBytes(totalThumbnailsSize)}
-            </p>
-          </div>
-
-          <Button
-            type="button"
-            variant="destructive"
-            size="sm"
-            onClick={handleDeleteAllInspirationalThumbnailsSelected}
-            disabled={isFilesSelectedEmpty || isSubmitting || isConverting}
-          >
-            <Trash className="size-4" />
-            Delete All
-          </Button>
-        </div>
-
-        <div className="flex-1 min-h-0 overflow-y-auto">
-          <div className="space-y-2 pr-1">
-            {inspirationalThubmanils.map(({ id, file }, index) => (
-              <div
-                key={id}
-                className="flex items-center gap-3 rounded-lg border bg-muted/30 p-2"
-              >
-                <div className="shrink-0 rounded overflow-hidden bg-accent">
-                  <img
-                    alt={file.name}
-                    className="size-10 object-cover"
-                    src={URL.createObjectURL(file)}
-                  />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <p className="truncate text-sm font-medium">{file.name}</p>
-                  <div className="flex items-center gap-x-2">
-                    <p className="text-muted-foreground text-xs">
-                      {formatBytes(file.size)}
-                    </p>
-                    <div className="size-1 rounded-full bg-zinc-700" />
-                    <button
-                      type="button"
-                      aria-label="Remove file"
-                      className="shrink-0 cursor-pointer size-8 text-muted-foreground hover:text-destructive"
-                      onClick={() => removeInspirationalThumbnail(index)}
-                      disabled={isSubmitting}
-                    >
-                      <Trash className="size-3" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
-
-      <DialogFooter className="flex-row gap-2 border-t p-4">
-        <DialogClose asChild>
-          <Button type="button" variant="secondary" className="flex-1">
-            Cancel
+      <div className="w-full space-y-4">
+        <div className="flex items-center justify-between">
+          <h2>Files Selected</h2>
+          <Button disabled={isSubmitting || isConverting || isFilesSelectedEmpty}>
+            {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+            {inspirationalThumbnailsCount}
+            {" "}
+            Upload File(s)
           </Button>
-        </DialogClose>
-        <Button className="flex-1" disabled={isSubmitting || isConverting}>
-          {isSubmitting ? <Spinner /> : <Upload className="size-4" />}
-          Save
-        </Button>
-      </DialogFooter>
+        </div>
+        <Separator />
+        {
+          isFilesSelectedEmpty ?
+            (
+              <div className="h-62.5 flex items-center justify-center">
+                <p className="text-muted-foreground text-sm">No files selected</p>
+              </div>
+            ) : (
+              <ScrollArea className="h-62.5">
+                <div className="space-y-2">
+                  {
+                    inspirationalThubmanils.map(({ file }, index) => {
+
+                      const entry = uploadProgressMap.get(index);
+                      const status = entry?.status ?? "pending";
+                      const progress = entry?.progress ?? 0;
+
+                      const isUploading = status === "uploading";
+                      const hasUploadCompleted = status === "completed";
+                      const isCancelled = status === "cancelled";
+                      const hasFailed = status === "error";
+
+                      return (
+                        <Attachment key={index} className="w-full">
+                          <AttachmentMedia>
+                            {
+                              isUploading && <Spinner />
+                            }
+                            {
+                              status === "pending" && <ClockIcon />
+                            }
+                            {
+                              hasUploadCompleted && <CheckIcon />
+                            }
+                            {
+                              isCancelled && <Ban />
+                            }
+                            {
+                              hasFailed && <CircleAlert className="text-destructive" />
+                            }
+                          </AttachmentMedia>
+                          <AttachmentContent>
+                            <AttachmentTitle>{file.name}</AttachmentTitle>
+                            {
+                              isUploading &&
+                                <AttachmentDescription>Uploading - {progress}%</AttachmentDescription>
+                            }
+
+                            {
+                              status === "pending" && (
+                                <AttachmentDescription>Ready to upload</AttachmentDescription>
+                              )
+                            }
+
+                            {
+                              hasUploadCompleted && <AttachmentDescription>Uploaded · {formatBytes(file.size)}</AttachmentDescription>
+                            }
+
+                            {
+                              isCancelled && <AttachmentDescription>Upload cancelled</AttachmentDescription>
+                            }
+
+                            {
+                              hasFailed && <AttachmentDescription className="text-destructive">Upload failed</AttachmentDescription>
+                            }
+                          </AttachmentContent>
+                          <AttachmentActions>
+                            <AttachmentAction
+                              disabled={!isUploading}
+                              type="button"
+                              onClick={() => handleCancelUpload(index)}
+                              aria-label={`Cancel upload of ${file.name}`}
+                            >
+                              <XIcon />
+                            </AttachmentAction>
+                            <AttachmentAction type="button" disabled={isUploading} onClick={() => handleRemoveSelectedFile(index)} aria-label={`Remove ${file.name}`}>
+                              <Trash2 />
+                            </AttachmentAction>
+                          </AttachmentActions>
+                        </Attachment>
+                      )
+                    })
+                  }
+                </div>
+              </ScrollArea>
+            )
+        }
+      </div>
     </form>
   );
 }
