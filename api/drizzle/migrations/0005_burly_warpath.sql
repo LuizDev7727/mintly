@@ -1,0 +1,1 @@
+ALTER TABLE "inspirational_thumbnails" ADD COLUMN "key" varchar NOT NULL;
