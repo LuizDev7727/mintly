@@ -2,9 +2,6 @@ import { relations } from "drizzle-orm";
 import { pgTable, text, varchar, timestamp, pgEnum } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
 import { organizationsTable } from "./organizations.table.ts";
-import { postsTable } from "./posts.table.ts";
-import { integrationsTable } from "./integrations.table.ts";
-import { foldersTable } from "./folders.table.ts";
 import { usersTable } from "./users.table.ts";
 
 export const actionEnum = pgEnum("action", [
@@ -35,9 +32,6 @@ export const activitiesTable = pgTable("activities", {
 });
 
 export const activitiesRelations = relations(activitiesTable, ({ one, many }) => ({
-  posts: many(postsTable),
-  integrations: many(integrationsTable),
-  folders: many(foldersTable),
   organization: one(organizationsTable, {
     fields: [activitiesTable.organizationSlug],
     references: [organizationsTable.slug],

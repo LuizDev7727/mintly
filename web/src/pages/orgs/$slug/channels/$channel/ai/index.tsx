@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { NoInspirationalThumbnailsSet } from "./-components/no-inspirational-thumbnails-set";
-import { AddInspirationalThumbnailDialog } from "./-components/add-inspirational-thumbnail-dialog";
+import { Separator } from "@/components/ui/separator";
+import { AddInspirationalThumbnailsForm } from "./-components/add-inspirational-thumbnails-form";
+import { Suspense } from "react";
+import { InspirationalThumbnails } from "./-components/inspirational-thubmnails";
 
 export const Route = createFileRoute("/orgs/$slug/channels/$channel/ai/")({
   head: () => ({
@@ -15,6 +17,7 @@ export const Route = createFileRoute("/orgs/$slug/channels/$channel/ai/")({
 });
 
 function AIPage() {
+
   return (
     <div className="space-y-4 h-full">
       <header className="flex items-center justify-between">
@@ -24,25 +27,16 @@ function AIPage() {
             Set inspirational thumbnails to generate thubmnail
           </p>
         </div>
-        <AddInspirationalThumbnailDialog />
       </header>
 
-      <NoInspirationalThumbnailsSet />
+      <AddInspirationalThumbnailsForm/>
 
-      {/*<AddInspirationalThumbnailsForm />*/}
-      {/*<Separator />*/}
+      <Separator />
 
-      {/*<div className="space-y-2">
-        <div>
-          <h2 className="font-medium">Attached Files</h2>
-          <p className="text-muted-foreground text-sm">
-            Inspirational thumnails that have been attached to this channel
-          </p>
-        </div>
-        <InspirationalThumbnailCard />
-        <InspirationalThumbnailCard />
-        <InspirationalThumbnailCard />
-      </div>*/}
+      <Suspense fallback={<div>Loading...</div>}>
+        <InspirationalThumbnails/>
+      </Suspense>
+
     </div>
   );
 }

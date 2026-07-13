@@ -11,12 +11,10 @@
 [] - Configurar método de pagamento
 [] - Implementar a tabela de invoices da organização com o banco de dados
 [] - Página específica do post
-[] - Upload das imagens que serão usadas como inspiração para a geração de thumbnails
 [] - Criação de posts
 [] - Criação de projects
 
-[] - Erro na migration em produção, pois as organizações já existentes vão precisar de um owner id
-
+[] - Geração de pre-signed-url global tanto para posts, projects e inspirational thumbnails
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
