@@ -43,6 +43,12 @@ import { requestYoutubeIntegrationUrlRoute } from "./infra/http/routes/integrati
 import { youtubeCallbackRoute } from "./infra/http/routes/integration/youtube-callback.route.ts";
 import { deleteIntegrationRoute } from "./infra/http/routes/integration/delete-integration.route.ts";
 import { getActivitiesRoute } from "./infra/http/routes/activity/get-activities.route.ts";
+import { addInspirationalThumbnailRoute } from "./infra/http/routes/inspirational-thumbnail/add-inspirational-thumbnail.route.ts";
+import { getInspirationalThumbnailsRoute } from "./infra/http/routes/inspirational-thumbnail/get-inspirational-thumbnails.route.ts";
+import { deleteInspirationalThumbnailRoute } from "./infra/http/routes/inspirational-thumbnail/delete-inspirational-thumbnail.route.ts";
+import { presignUploadRoute } from "./infra/http/routes/upload/presign-upload.route.ts";
+import { completeMultipartUploadRoute } from "./infra/http/routes/upload/complete-multipart-upload.route.ts";
+import { abortMultipartUploadRoute } from "./infra/http/routes/upload/abort-multipart-upload.route.ts";
 
 export const server = fastify({
   logger: {
@@ -120,3 +126,11 @@ server.register(requestYoutubeIntegrationUrlRoute)
 server.register(youtubeCallbackRoute)
 
 server.register(getActivitiesRoute);
+
+server.register(addInspirationalThumbnailRoute);
+server.register(getInspirationalThumbnailsRoute);
+server.register(deleteInspirationalThumbnailRoute);
+
+server.register(presignUploadRoute);
+server.register(completeMultipartUploadRoute);
+server.register(abortMultipartUploadRoute);

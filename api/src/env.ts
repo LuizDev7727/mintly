@@ -10,6 +10,10 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string(),
   GOOGLE_REDIRECT_URI: z.url(),
   GOOGLE_REDIRECT_CALLBACK_URI: z.url(),
+  R2_ENDPOINT: z.url(),
+  R2_ACCESS_KEY_ID: z.string(),
+  R2_SECRET_ACCESS_KEY: z.string(),
+  R2_BUCKET_NAME: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
