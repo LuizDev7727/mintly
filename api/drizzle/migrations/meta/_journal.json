@@ -43,6 +43,13 @@
       "when": 1783826283512,
       "tag": "0005_burly_warpath",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1784051662338,
+      "tag": "0006_milky_spirit",
+      "breakpoints": true
     }
   ]
 }

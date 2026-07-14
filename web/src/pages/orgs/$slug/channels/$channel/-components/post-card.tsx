@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { Post } from "@/types/post";
 import { formatBytes } from "@/utils/format-bytes";
+import { formatDuration } from "@/utils/format-duration";
 import {
   AlertTriangle,
   Calendar,
@@ -34,7 +35,6 @@ const NETWORK_ICONS = {
 
 export function PostCard({ post }: PostCardProps) {
   const hasThumbnail = post.thumbnailUrl !== null;
-  const isMp4File = post.type === "video/mp4";
 
   const visibleNetworks = post.socialsToPost.slice(0, 2);
   const extraCount = post.socialsToPost.length - visibleNetworks.length;
@@ -120,7 +120,7 @@ export function PostCard({ post }: PostCardProps) {
             <Clock size={13} />
             Duration
           </p>
-          <p className="text-[13px]">{isMp4File ? "04:40" : "-"}</p>
+          <p className="text-[13px]">{post.duration ? formatDuration(post.duration) : "-"}</p>
         </div>
       </div>
 
@@ -155,7 +155,7 @@ export function PostCard({ post }: PostCardProps) {
               >
                 <div className="flex items-center gap-2">
                   {NETWORK_ICONS[network.social]}
-                  <p className="text-xs">{network.name}</p>
+                  <p className="text-xs">{network.socialName}</p>
                 </div>
                 {isLast && extraCount > 0 && (
                   <span className="shrink-0 rounded-full bg-[#0a0a0a] px-1.75 py-0.5 text-[11px] text-muted-foreground">

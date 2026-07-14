@@ -25,6 +25,7 @@ export const statusEnum = pgEnum("post_status", [
   "GENERATING_METADATA",
   "GENERATING_THUMBNAIL",
   "PUBLISHING",
+  "CANCELED",
 ]);
 
 export const postsTable = pgTable("posts", {

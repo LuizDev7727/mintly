@@ -14,6 +14,9 @@ const envSchema = z.object({
   R2_ACCESS_KEY_ID: z.string(),
   R2_SECRET_ACCESS_KEY: z.string(),
   R2_BUCKET_NAME: z.string(),
+  REPLICATE_API_TOKEN: z.string(),
+  GEMINI_API_KEY: z.string(),
+  TRIGGER_SECRET_KEY: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
