@@ -34,7 +34,7 @@ const posts: Post[] = Array.from({ length: 48 }, () => ({
     { length: faker.number.int({ min: 1, max: 2 }) },
     () => ({
       id: faker.string.uuid(),
-      name: faker.person.fullName(),
+      socialName: faker.person.fullName(),
       social: faker.helpers.arrayElement(SOCIALS),
     }),
   ),
