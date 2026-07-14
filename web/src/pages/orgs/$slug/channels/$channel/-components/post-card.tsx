@@ -35,7 +35,6 @@ const NETWORK_ICONS = {
 
 export function PostCard({ post }: PostCardProps) {
   const hasThumbnail = post.thumbnailUrl !== null;
-  const isMp4File = post.type === "video/mp4";
 
   const visibleNetworks = post.socialsToPost.slice(0, 2);
   const extraCount = post.socialsToPost.length - visibleNetworks.length;

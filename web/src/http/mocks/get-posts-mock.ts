@@ -14,6 +14,7 @@ const STATUSES: Post["status"][] = [
   "TRANSCRIBING",
   "SEO_GENERATING",
   "PUBLISHING",
+  "CANCELED",
 ];
 
 const SOCIALS = ["YOUTUBE", "TIKTOK"] as const;

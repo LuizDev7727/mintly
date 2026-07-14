@@ -14,7 +14,8 @@ export type Post = {
     | "GENERATING_THUMBNAIL"
     | "TRANSCRIBING"
     | "SEO_GENERATING"
-    | "PUBLISHING";
+    | "PUBLISHING"
+    | "CANCELED";
   duration: number | null;
   publishAt: Date | null;
   socialsToPost: { id: string; socialName: string; social: "YOUTUBE" | "TIKTOK" }[];
