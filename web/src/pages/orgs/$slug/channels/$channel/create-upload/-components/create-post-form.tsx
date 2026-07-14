@@ -5,14 +5,21 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { YoutubeIcon } from "@/components/youtube-icon";
+import { createPostsHttp } from "@/http/posts/create-posts.http";
 import {
   createPostSchema,
   type CreatePostsFormType,
 } from "@/schemas/posts/create-posts.schema";
 import type { Integration } from "@/types/integration";
 import { formatBytes } from "@/utils/format-bytes";
+import { formatDuration } from "@/utils/format-duration";
 import { getFileExtension } from "@/utils/get-file-extension";
+import { sanitizeFilename } from "@/utils/sanitize-filename";
+import { uploadFile } from "@/utils/upload-file";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import axios from "axios";
 import {
   Calendar,
   CirclePlus,
@@ -24,11 +31,20 @@ import {
   UploadCloudIcon,
   Video,
   X,
+  XIcon,
 } from "lucide-react";
 import { useState, type ChangeEvent, type DragEvent } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 
+export type UploadStatus =
+  | "pending"
+  | "uploading"
+  | "cancelled"
+  | "completed"
+  | "error";
+
 export type UploadEntry = {
+  status: UploadStatus;
   progress: number;
   abortController: AbortController;
 };
@@ -37,17 +53,43 @@ type CreatePostFormProps = {
   integrations: Integration[];
 };
 
+function getVideoDuration(file: File): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+
+    video.onloadedmetadata = () => {
+      URL.revokeObjectURL(video.src);
+      resolve(video.duration);
+    };
+
+    video.onerror = () => {
+      URL.revokeObjectURL(video.src);
+      reject(new Error('Não foi possível carregar o vídeo'));
+    };
+
+    video.src = URL.createObjectURL(file);
+  });
+}
+
+
 export function CreatePostForm({ integrations }: CreatePostFormProps) {
   const [isDragging, setIsDragging] = useState(false);
 
-  // const { slug: org, channel } = useParams({
-  //   from: "/orgs/$slug/channels/$channel",
-  // });
+  const [uploadProgressMap, setUploadProgressMap] = useState(
+    new Map<number, UploadEntry>(),
+  );
+
+  const { slug, channel } = useParams({
+    from: "/orgs/$slug/channels/$channel",
+  });
+  const navigate = useNavigate();
 
   const {
     control,
     register,
     watch,
+    handleSubmit,
     getValues,
     formState: { isSubmitting },
     setValue,
@@ -55,8 +97,6 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     resolver: zodResolver(createPostSchema),
     defaultValues: { posts: [] },
   });
-
-  const [uploadProgressMap] = useState(new Map<number, UploadEntry>());
 
   const {
     fields: posts,
@@ -70,14 +110,18 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     0,
   );
 
-  function addFiles(files: FileList | null) {
+  async function addFiles(files: FileList | null) {
     if (!files) {
       return;
     }
 
     for (const file of Array.from(files)) {
+
+      const duration = file.type === "video/mp4" ? await getVideoDuration(file) : null;
+
       addPost({
         file,
+        duration,
         scheduledTo: null,
         shouldGenerateThumbnail: false,
         shouldGenerateShorts: false,
@@ -129,6 +173,92 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     }
   }
 
+  const { mutateAsync: createPosts } = useMutation({
+    mutationFn: createPostsHttp,
+    onSuccess: () => {
+      navigate({ to: "/orgs/$slug/channels/$channel", params: { slug, channel } });
+    },
+  });
+
+  async function handleCreatePosts(formBody: CreatePostsFormType) {
+    const uploadResults = await Promise.all(
+      formBody.posts.map(async (post, index) => {
+        const abortController = new AbortController();
+
+        setUploadProgressMap((prev) => {
+          const next = new Map(prev);
+          next.set(index, { status: "uploading", progress: 0, abortController });
+          return next;
+        });
+
+        try {
+          const { key } = await uploadFile({
+            file: post.file,
+            signal: abortController.signal,
+            onProgress: (progress) => {
+              setUploadProgressMap((prev) => {
+                const next = new Map(prev);
+                const hasCompletedUpload = progress === 100;
+                next.set(index, { status: hasCompletedUpload ? "completed" : "uploading", progress, abortController });
+                return next;
+              });
+            },
+          });
+
+          return { post, key };
+        } catch (error) {
+          // usuário cancelou este upload — os outros arquivos do lote seguem normalmente
+          if (axios.isCancel(error)) {
+            setUploadProgressMap((prev) => {
+              const next = new Map(prev);
+              next.set(index, { status: "cancelled", progress: 0, abortController });
+              return next;
+            });
+            return null;
+          }
+
+          // erro de verdade (rede, R2, etc.) — não derruba os outros uploads do lote
+          setUploadProgressMap((prev) => {
+            const next = new Map(prev);
+            next.set(index, { status: "error", progress: 0, abortController });
+            return next;
+          });
+          return null;
+        }
+      }),
+    );
+
+    const uploadedPosts = uploadResults.filter(
+      (result): result is { post: CreatePostsFormType["posts"][number]; key: string } =>
+        result !== null,
+    );
+
+    if (uploadedPosts.length === 0) {
+      return;
+    }
+
+    await createPosts({
+      channelId: channel,
+      posts: uploadedPosts.map(({ post, key }) => ({
+        file: {
+          name: sanitizeFilename({ filename: post.file.name }),
+          key,
+          type: post.file.type,
+          size: post.file.size,
+          duration: post.duration,
+        },
+        shouldGenerateThumbnail: post.shouldGenerateThumbnail,
+        shouldGenerateShorts: post.shouldGenerateShorts,
+        scheduledTo: post.scheduledTo,
+        socialsToPost: post.socialsToPost,
+      })),
+    });
+  }
+
+  function handleCancelUpload(postIndex: number) {
+    uploadProgressMap.get(postIndex)?.abortController.abort();
+  }
+
   return (
     <div className="space-y-4">
       <input
@@ -165,7 +295,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
 
       <Separator />
 
-      <form className="space-y-4">
+      <form onSubmit={handleSubmit(handleCreatePosts)} className="space-y-4">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
             <div className="px-2.5 py-1.5 dark:bg-zinc-900/20 border dark:text-primary border-input rounded-md">
@@ -220,9 +350,12 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
             `posts.${postIndex}.shouldGenerateShorts`,
           );
           const socialsToPost = watch(`posts.${postIndex}.socialsToPost`);
-          const canGenerateThumbnail =
-            posts[postIndex].file.type === "video/mp4";
-          const canGenerateShorts = posts[postIndex].file.type === "video/mp4";
+          const isVideo = post.file.type === "video/mp4";
+
+          const hasSelectedScheduledDate = !!watch(`posts.${postIndex}.scheduledTo`);
+
+          const uploadEntry = uploadProgressMap.get(postIndex);
+          const isUploading = uploadEntry?.status === "uploading";
 
           return (
             <div
@@ -243,13 +376,11 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                       <Badge variant="outline" className="text-xs">
                         {getFileExtension(post.file.name)}
                       </Badge>
-                      <Badge
-                        variant="outline"
-                        className="text-xs border-blue-500/30 text-blue-400"
+                      {isVideo && <Badge
                       >
                         <FileVideo className="mr-1 size-3" />
-                        {post.file.type}
-                      </Badge>
+                        {formatDuration(post.duration!)}
+                      </Badge>}
                     </div>
                   </div>
                   <Button
@@ -257,6 +388,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                     variant="destructive"
                     size="sm"
                     className="w-fit shrink-0"
+                    disabled={isUploading}
                     onClick={() => removePost(postIndex)}
                   >
                     <Trash2 />
@@ -264,10 +396,28 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                   </Button>
                 </div>
 
-                {uploadProgressMap.has(postIndex) ? (
-                  <Progress
-                    value={uploadProgressMap.get(postIndex)!.progress}
-                  />
+                {uploadEntry ? (
+                  <div className="flex items-center gap-2">
+                    <Progress value={uploadEntry.progress} className="flex-1" />
+                    <span className="text-xs text-muted-foreground shrink-0">
+                      {uploadEntry.status === "uploading" &&
+                        `Uploading — ${uploadEntry.progress}%`}
+                      {uploadEntry.status === "completed" && "Uploaded"}
+                      {uploadEntry.status === "cancelled" && "Cancelled"}
+                      {uploadEntry.status === "error" && "Upload failed"}
+                    </span>
+                    {isUploading && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleCancelUpload(postIndex)}
+                        aria-label={`Cancel upload of ${post.file.name}`}
+                      >
+                        <XIcon className="size-4" />
+                      </Button>
+                    )}
+                  </div>
                 ) : (
                   <Separator />
                 )}
@@ -296,14 +446,14 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                           Generate Thumbnail
                         </span>
                         <span className="text-xs text-muted-foreground">
-                          {canGenerateThumbnail
+                          {isVideo
                             ? "AI-powered thumbnail creation"
                             : "Not available for image files"}
                         </span>
                       </div>
                       <Switch
                         checked={shouldGenerateThumbnail}
-                        disabled={!canGenerateThumbnail}
+                        disabled={!isVideo}
                         onCheckedChange={() =>
                           setValue(
                             `posts.${postIndex}.shouldGenerateThumbnail`,
@@ -325,14 +475,14 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                           Generate Shorts
                         </span>
                         <span className="text-xs text-muted-foreground">
-                          {canGenerateShorts
+                          {isVideo
                             ? "Extract best moments with AI"
                             : "Not available for image files"}
                         </span>
                       </div>
                       <Switch
                         checked={shouldGenerateShorts}
-                        disabled={!canGenerateShorts}
+                        disabled={!isVideo}
                         onCheckedChange={() =>
                           setValue(
                             `posts.${postIndex}.shouldGenerateShorts`,
@@ -389,7 +539,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                         {...register(`posts.${postIndex}.scheduledTo`)}
                         className="h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm text-foreground shadow-xs outline-none transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                       />
-                      {watch(`posts.${postIndex}.scheduledTo`) !== null && (
+                      {hasSelectedScheduledDate && (
                         <Button
                           type="button"
                           variant="ghost"
