@@ -14,10 +14,11 @@ export type Post = {
     | "GENERATING_THUMBNAIL"
     | "TRANSCRIBING"
     | "SEO_GENERATING"
-    | "PUBLISHING";
+    | "PUBLISHING"
+    | "CANCELED";
   duration: number | null;
   publishAt: Date | null;
-  socialsToPost: { id: string; name: string; social: "YOUTUBE" | "TIKTOK" }[];
+  socialsToPost: { id: string; socialName: string; social: "YOUTUBE" | "TIKTOK" }[];
   author: {
     name: string;
     avatarUrl: string | null;

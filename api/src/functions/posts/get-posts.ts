@@ -80,6 +80,7 @@ export async function getPosts(params: GetPostsParams) {
   ]);
 
   const totalPages = Math.ceil(totalPostsCount / PAGE_SIZE);
+
   return {
     posts,
     meta: {

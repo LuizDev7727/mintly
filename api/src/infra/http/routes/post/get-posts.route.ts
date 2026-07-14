@@ -39,6 +39,7 @@ export const getPostsRoute: FastifyPluginAsyncZod = async (app) => {
                   "TRANSCRIBING",
                   "SEO_GENERATING",
                   "PUBLISHING",
+                  "CANCELED",
                 ]),
                 duration: z.number().optional(),
                 publishedAt: z.string().optional(),

@@ -28,9 +28,12 @@ export async function uploadFile({
   const uploadedParts: { partNumber: number; eTag: string }[] = [];
 
   for (const { partNumber, url } of parts) {
-    const start = (partNumber - 1) * PART_SIZE;
-    const end = Math.min(start + PART_SIZE, file.size);
-    const chunk = file.slice(start, end);
+    const chunk = uploadId
+      ? file.slice(
+          (partNumber - 1) * PART_SIZE,
+          Math.min(partNumber * PART_SIZE, file.size),
+        )
+      : file;
 
     const response = await axios.put(url, chunk, {
       headers: { "Content-Type": file.type },

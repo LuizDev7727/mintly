@@ -4,6 +4,7 @@ export const createPostSchema = z.object({
   posts: z.array(
     z.object({
       file: z.file(),
+      duration: z.number().nullable(),
       scheduledTo: z
         .string()
         .nullable()
