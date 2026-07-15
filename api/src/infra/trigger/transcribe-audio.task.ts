@@ -8,29 +8,56 @@ import { db } from "../db/client.ts";
 
 export const transcribeAudioTask = schemaTask({
   id: "transcribe-audio",
-  schema: z.object({
-    audioUrl: z.url(),
-    postId: z.uuidv7(),
-  }),
+  schema: z.discriminatedUnion("type", [
+    z.object({
+      audioUrl: z.url(),
+      type: z.literal("post"),
+      postId: z.uuidv7(),
+    }),
+    z.object({
+      audioUrl: z.url(),
+      type: z.literal("project"),
+      projectId: z.uuidv7(),
+    }),
+  ]),
 
   onStart: async ({ payload }) => {
-    const { postId } = payload;
-    await db
+    const { type } = payload;
+
+    if (type === 'post') {
+      await db
       .update(postsTable)
       .set({
         status: "TRANSCRIBING",
       })
-      .where(eq(postsTable.id, postId));
+      .where(eq(postsTable.id, payload.postId));
+    } else {
+      await db
+      .update(postsTable)
+      .set({
+        status: "TRANSCRIBING",
+      })
+      .where(eq(postsTable.id, payload.projectId));
+    }
   },
 
   onFailure: async ({ payload }) => {
-    const { postId } = payload;
-    await db
+    const { type } = payload;
+    if (type === 'post') {
+      await db
       .update(postsTable)
       .set({
         status: "ERROR",
       })
-      .where(eq(postsTable.id, postId));
+      .where(eq(postsTable.id, payload.postId));
+    } else {
+      await db
+      .update(postsTable)
+      .set({
+        status: "ERROR",
+      })
+      .where(eq(postsTable.id, payload.projectId));
+    }
   },
 
   // Set an optional maxDuration to prevent tasks from running indefinitely
@@ -70,10 +97,14 @@ export const transcribeAudioTask = schemaTask({
 
     const result = await wait.forToken<Prediction>(token).unwrap();
 
-    const transcription = result.output.segments;
+    const segments = result.output.segments ?? [];
+    const allWords = segments.flatMap((s) => s.words ?? []);
+
+    const transcription = JSON.stringify(segments);
 
     return {
       transcription,
+      words: allWords,
     };
   },
 });

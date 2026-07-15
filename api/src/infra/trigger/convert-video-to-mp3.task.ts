@@ -11,6 +11,7 @@ import { postsTable } from "@/infra/db/tables/posts.table.ts";
 // import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { db } from "@/infra/db/client.ts";
 import { eq } from "drizzle-orm";
+import { projectsTable } from "../db/tables/projects.table.ts";
 
 export const convertVideoToMp3Task = schemaTask({
   id: "convert-video-to-mp3",
@@ -35,10 +36,10 @@ export const convertVideoToMp3Task = schemaTask({
         .set({ status: "ENCODING" })
         .where(eq(postsTable.id, payload.postId));
     } else {
-      // await db
-      //   .update(projectsTable)
-      //   .set({ status: "PROCESSING" })
-      //   .where(eq(projectsTable.id, payload.projectId));
+      await db
+        .update(projectsTable)
+        .set({ status: "PROCESSING" })
+        .where(eq(projectsTable.id, payload.projectId));
     }
   },
 
