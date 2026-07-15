@@ -1,0 +1,18 @@
+# Dependências instaladas na imagem do Modal (clip_processor.py).
+# Não é o requirements do venv local do LR-ASD (veja instructions.md para isso).
+
+boto3
+fastapi[standard]
+ffmpegcv
+numpy
+opencv-python
+pandas
+pysubs2
+python_speech_features
+requests
+scenedetect==0.5.6.1
+scikit-learn
+scipy
+torch
+torchvision
+tqdm
