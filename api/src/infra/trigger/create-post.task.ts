@@ -129,6 +129,7 @@ export const createPostTask = schemaTask({
     >("transcribe-audio", {
       audioUrl,
       postId,
+      type: "post",
     });
 
     const { ok: hasTranscribeAudioTaskCompleted } = transcribeAudioTaskResponse;

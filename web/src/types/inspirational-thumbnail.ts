@@ -3,4 +3,5 @@ export type InspirationalThumbnail = {
   name: string;
   sizeInMs: number;
   url: string;
+  createdAt: Date;
 };

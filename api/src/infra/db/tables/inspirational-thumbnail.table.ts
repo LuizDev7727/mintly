@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgEnum, pgTable, varchar, text, integer } from "drizzle-orm/pg-core";
+import { pgTable, varchar, text, integer, timestamp } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
 import { channelsTable } from "./channels.table.ts";
 
@@ -11,6 +11,7 @@ export const inspirationalThumbnailsTable = pgTable("inspirational_thumbnails", 
   key: varchar().notNull(),
   type: varchar().notNull(),
   sizeInMs: integer("size_in_ms").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
   channelId: text("channel_id")
     .notNull()
     .references(() => channelsTable.id, {
