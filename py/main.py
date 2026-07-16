@@ -400,27 +400,3 @@ class ClipProcessor:
             status_code=status.HTTP_202_ACCEPTED,
             content={"status": "ACCEPTED"},
         )
-
-
-@app.local_entrypoint()
-def main():
-    clip_processor = ClipProcessor()
-    url = clip_processor.process_clip_request.web_url
-
-    payload = {
-        "video_url": "https://pub-2f07862307a848f6a37eefd05ab02ea6.r2.dev/alfredo.mp4",
-        "callback_url": "https://young-aurora-75.webhook.cool",
-        "start_time": 0,
-        "end_time": 15,
-        "words": [],
-    }
-
-    response = requests.post(
-        url,
-        json=payload,
-        headers={"Content-Type": "application/json"},
-    )
-    response.raise_for_status()
-    # 202 Accepted — o processamento continua em background e o resultado
-    # final chega via POST em `callback_url`, não nesta resposta.
-    print(response.json())
