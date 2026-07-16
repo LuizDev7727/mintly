@@ -21,6 +21,7 @@ import { AuthenticateWithGoogle } from "../-components/authenticate-with-google"
 import { authClient } from "@/lib/auth";
 import { Spinner } from "@/components/ui/spinner";
 import { TogglePasswordVisibility } from "../-components/toggle-password-visibility";
+import { Separator } from "@/components/ui/separator";
 
 export const Route = createFileRoute("/auth/sign-up/")({
   head: () => ({
@@ -148,12 +149,14 @@ function SignUpPage() {
           </Field>
         </FieldGroup>
 
-        <AuthenticateWithGoogle />
-
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting && <Spinner />}
           Create account
         </Button>
+
+        <Separator/>
+
+        <AuthenticateWithGoogle />
       </form>
 
       <p className="text-center text-sm">
