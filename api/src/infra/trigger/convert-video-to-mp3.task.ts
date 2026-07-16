@@ -101,7 +101,7 @@ export const convertVideoToMp3Task = schemaTask({
       client: r2Client,
       params: {
         Bucket: BUCKET_NAME,
-        Key: `${basePathToSaveOnR2}/${audioId}.mp3`,
+        Key: `${audioId}.mp3`,
         Body: audioStream,
         ContentType: "audio/mpeg",
       },
@@ -117,7 +117,7 @@ export const convertVideoToMp3Task = schemaTask({
       r2Client,
       new GetObjectCommand({
         Bucket: BUCKET_NAME,
-        Key: `${basePathToSaveOnR2}/${audioId}.mp3`,
+        Key: `${audioId}.mp3`,
       }),
       { expiresIn: 60 * 60 }, // 1 hour
     );

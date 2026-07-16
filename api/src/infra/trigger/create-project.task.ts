@@ -6,6 +6,14 @@ import { projectsTable } from "../db/tables/projects.table.ts";
 import { transcribeAudioTask } from "./transcribe-audio.task.ts";
 import { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
 import { googleAi } from "@/lib/google.ts";
+import { Prediction } from "replicate";
+import { bestMomentsTable } from "../db/tables/best-moments.table.ts";
+import { env } from "@/env.ts";
+
+type ModalCallbackPayload = {
+  output_key: string;
+  status: string;
+};
 
 export const createProjectTask = schemaTask({
   id: "create-project",
@@ -156,6 +164,34 @@ export const createProjectTask = schemaTask({
     for (let i = 0; i < bestMoments.length; i++) {
       const { startTime, endTime, title, words } = bestMoments[i];
 
+      const token = await wait.createToken();
+
+      const callbackUrl = token.url;
+
+      await fetch(env.MODAL_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          video_url: videoUrl,
+          start_time: startTime,
+          end_time: endTime,
+          title: title,
+          callback_url: callbackUrl,
+          words: words
+        }),
+      })
+
+      const result = await wait.forToken<ModalCallbackPayload>(token).unwrap();
+
+      logger.log("Result: ", { result });
+
+      await db.insert(bestMomentsTable).values({
+        title: title,
+        storageKey: result.output_key,
+        projectId: projectId,
+      });
 
     }
 

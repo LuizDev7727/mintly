@@ -86,7 +86,7 @@ export const transcribeAudioTask = schemaTask({
           vad_offset: 0.363,
           diarization: false,
           temperature: 0,
-          align_output: false,
+          align_output: true,
           language_detection_min_prob: 0,
           language_detection_max_tries: 5,
         },
