@@ -20,6 +20,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth";
 import { toast } from "sonner";
 import { TogglePasswordVisibility } from "./-components/toggle-password-visibility";
+import { Separator } from "@/components/ui/separator";
 
 export const Route = createFileRoute("/auth/")({
   head: () => ({
@@ -118,9 +119,11 @@ function SignInPage() {
           {isSubmitting && <Spinner />}
           Log in
         </Button>
-      </form>
 
-      <AuthenticateWithGoogle />
+        <Separator />
+
+        <AuthenticateWithGoogle />
+      </form>
 
       <p className="text-center text-sm">
         Don't have an account?{" "}

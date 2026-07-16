@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import {
   SidebarInset,
   SidebarProvider,
@@ -9,9 +9,18 @@ import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SwitchViewMode } from "@/components/switch-view-mode";
 import { PendingInvites } from "@/components/pending-invites";
+import { authClient } from "@/lib/auth";
 
 export const Route = createFileRoute("/orgs/$slug")({
-  beforeLoad: () => {},
+  beforeLoad: async () => {
+    const { data: session } = await authClient.getSession();
+
+    const hasSession = session === null;
+
+    if (hasSession) {
+      throw redirect({ to: "/auth" });
+    }
+  },
   component: OrganizationLayout,
 });
 
