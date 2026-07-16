@@ -17,6 +17,7 @@ const envSchema = z.object({
   REPLICATE_API_TOKEN: z.string(),
   GEMINI_API_KEY: z.string(),
   TRIGGER_SECRET_KEY: z.string(),
+  MODAL_URL: z.url(),
 });
 
 export const env = envSchema.parse(process.env);
