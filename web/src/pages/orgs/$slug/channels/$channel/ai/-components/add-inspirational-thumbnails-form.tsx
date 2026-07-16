@@ -128,7 +128,7 @@ export function AddInspirationalThumbnailsForm() {
     onSuccess: (data, variables) => {
 
       const { inspirationalThumbnailId } = data;
-      const { file, key } = variables;
+      const { file } = variables;
 
       queryClient.setQueryData<InfiniteData<GetInspirationalThumbnailsHttpResponse>>(
         ["inspirational-thumbnails", channel],
@@ -140,9 +140,9 @@ export function AddInspirationalThumbnailsForm() {
           const newInspirationalThumbnail = {
             id: inspirationalThumbnailId,
             name: file.name,
-            key,
             sizeInMs: file.size,
             url: URL.createObjectURL(file),
+            createdAt: new Date(),
           };
 
           return {
