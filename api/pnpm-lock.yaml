@@ -42,8 +42,8 @@ importers:
         specifier: ^0.218.0
         version: 0.218.0(@opentelemetry/api@1.9.1)
       '@trigger.dev/sdk':
-        specifier: 4.5.3
-        version: 4.5.3(zod@4.4.3)
+        specifier: 4.5.4
+        version: 4.5.4(zod@4.4.3)
       better-auth:
         specifier: ^1.6.13
         version: 1.6.13(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.2)(pg@8.21.0))(pg@8.21.0)(vitest@4.1.8)
@@ -88,8 +88,8 @@ importers:
         specifier: ^1.58.0
         version: 1.58.0
       '@trigger.dev/build':
-        specifier: 4.5.3
-        version: 4.5.3(typescript@6.0.3)
+        specifier: 4.5.4
+        version: 4.5.4(typescript@6.0.3)
       '@types/supertest':
         specifier: ^7.2.0
         version: 7.2.0
@@ -1190,42 +1190,36 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@rolldown/binding-linux-arm64-musl@1.0.3':
     resolution: {integrity: sha512-VWkUHwWriDciit80wleYwKILoR/KMvxh/IdwS/paX+ZgpuRpCrKLUdadJbc0NpBEiyhpYawsJ73j9aCvOH+f7Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@rolldown/binding-linux-ppc64-gnu@1.0.3':
     resolution: {integrity: sha512-5f1laC0SlIR0yDbFCd8acUhvJIag6N3zC5P7oUPN6wX0aOma+uKJ0wBDH5aq7I1PVI2ttTlhJwzwRIBnLiSGEg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ppc64]
     os: [linux]
-    libc: [glibc]
 
   '@rolldown/binding-linux-s390x-gnu@1.0.3':
     resolution: {integrity: sha512-Iq4ko0r4XsgbrF/LunNgHtAGLRRVE2kXonAXQ/MV0mC6jQpMOhW1SvtZja2EhC/kd05++bP78dsqBeIQyYJ6Yg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [s390x]
     os: [linux]
-    libc: [glibc]
 
   '@rolldown/binding-linux-x64-gnu@1.0.3':
     resolution: {integrity: sha512-B8m6tD5+/N5FeNQFbKlLA/2yVq9ycQP1SeedyEYYKWBNR3ZQbkvIUcNnDNM03lO1l5F2roiiFJGgvoLLyZXtSg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@rolldown/binding-linux-x64-musl@1.0.3':
     resolution: {integrity: sha512-pSdpdUJHkuCxun9LE7jvgUB9qsRgaiyNNCX7m/AvHTcq67AiT/Yhoxvw5zPfhrM8k/BfP8ce/hMOpthKDpEUow==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@rolldown/binding-openharmony-arm64@1.0.3':
     resolution: {integrity: sha512-OXXS3RKJgX2uLwM+gYyuH5omcH8fL1LJs96pZGgtetVCahON57+d4SJHzTgZiOjxgGkSnpXpOsWuPDGAKAigEg==}
@@ -1331,16 +1325,16 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@trigger.dev/build@4.5.3':
-    resolution: {integrity: sha512-O4DtEgi2DYvopSpSApubrf4xajmarZI619LSB1IA5Bs93icIhkJqqQCQ1SHrh84NxJ46GTdpbUlBfE+jKokkrQ==}
+  '@trigger.dev/build@4.5.4':
+    resolution: {integrity: sha512-BhIuUE0sOQBOyygvp95MV6pf3QqY9XqkRpeG5WuvVRrzh1JDtBxyo9P1zQKTbDsMQ7W3s65m1Hm3cNQ31mlb/w==}
     engines: {node: '>=18.20.0'}
 
-  '@trigger.dev/core@4.5.3':
-    resolution: {integrity: sha512-xtVvpQIDKIKWcWW4obdb5pXlhTxVKQL3ZvRlcY8K1LARlNhn++j3j0O1KZN7llVF5Rd7tAGGgkBE7948IGuYXA==}
+  '@trigger.dev/core@4.5.4':
+    resolution: {integrity: sha512-+PqaL5ltwu523EYummK4spG76VeAD+GtoGCbjzGGD1A54EOFmamgfTKg25sgoWVpd2hyp1xno5gQrsjcpvH0IQ==}
     engines: {node: '>=18.20.0'}
 
-  '@trigger.dev/sdk@4.5.3':
-    resolution: {integrity: sha512-yzeeBk8V1px1fmOMmugXFlbkADyFnh3eJFRVuA3TKyUF4veZ1WgOWX7bzx0wBT5RnyLZmA6at/laXL8NmNmqaA==}
+  '@trigger.dev/sdk@4.5.4':
+    resolution: {integrity: sha512-Sig0/OdS6bAdpagJve2GNnvDX0139EjbMPePX0FaVwa2RjU0ff3f/y/LBunS/+rTVanK0xQ2E2RmdbYJasz66g==}
     engines: {node: '>=18.20.0'}
     peerDependencies:
       '@ai-sdk/otel': '>=1.0.0-0 <2'
@@ -2389,28 +2383,24 @@ packages:
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   lightningcss-linux-arm64-musl@1.32.0:
     resolution: {integrity: sha512-UpQkoenr4UJEzgVIYpI80lDFvRmPVg6oqboNHfoH4CQIfNA+HOrZ7Mo7KZP02dC6LjghPQJeBsvXhJod/wnIBg==}
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   lightningcss-linux-x64-gnu@1.32.0:
     resolution: {integrity: sha512-V7Qr52IhZmdKPVr+Vtw8o+WLsQJYCTd8loIfpDaMRWGUZfBOYEJeyJIkqGIDMZPwPx24pUMfwSxxI8phr/MbOA==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   lightningcss-linux-x64-musl@1.32.0:
     resolution: {integrity: sha512-bYcLp+Vb0awsiXg/80uCRezCYHNg1/l3mt0gzHnWV9XP1W5sKa5/TCdGWaR/zBM2PeF/HbsQv/j2URNOiVuxWg==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   lightningcss-win32-arm64-msvc@1.32.0:
     resolution: {integrity: sha512-8SbC8BR40pS6baCM8sbtYDSwEVQd4JlFTOlaD3gWGHfThTcABnNDBda6eTZeqbofalIJhFx0qKzgHJmcPTnGdw==}
@@ -3020,7 +3010,6 @@ packages:
   tsconfck@3.1.3:
     resolution: {integrity: sha512-ulNZP1SVpRDesxeMLON/LtWM8HIgAJEIVpVVhBM6gsmvQ8+Rh+ZG7FWGvHh7Ah3pRABwVJWklWCr/BTZSv0xnQ==}
     engines: {node: ^18 || >=20}
-    deprecated: unmaintained
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
@@ -4435,10 +4424,10 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@trigger.dev/build@4.5.3(typescript@6.0.3)':
+  '@trigger.dev/build@4.5.4(typescript@6.0.3)':
     dependencies:
       '@prisma/config': 6.19.3
-      '@trigger.dev/core': 4.5.3
+      '@trigger.dev/core': 4.5.4
       mlly: 1.8.2
       pkg-types: 1.3.1
       resolve: 1.22.12
@@ -4451,7 +4440,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@trigger.dev/core@4.5.3':
+  '@trigger.dev/core@4.5.4':
     dependencies:
       '@bugsnag/cuid': 3.2.2
       '@electric-sql/client': 1.0.14
@@ -4493,11 +4482,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@trigger.dev/sdk@4.5.3(zod@4.4.3)':
+  '@trigger.dev/sdk@4.5.4(zod@4.4.3)':
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/semantic-conventions': 1.41.1
-      '@trigger.dev/core': 4.5.3
+      '@trigger.dev/core': 4.5.4
       chalk: 5.6.2
       cronstrue: 2.59.0
       debug: 4.4.3

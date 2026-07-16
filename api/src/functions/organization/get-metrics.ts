@@ -1,7 +1,6 @@
 import { db } from "@/infra/db/client.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
-import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { count, eq } from "drizzle-orm";
 
 type GetMetricsProps = {

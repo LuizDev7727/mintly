@@ -9,7 +9,7 @@ import {
 import { formatBytes } from "@/utils/format-bytes";
 
 const chartData = [
-  { date: "2024-05-01", storage: 40_000_000 },
+  { date: "2024-05-01", storage: 140 },
   { date: "2024-05-02", storage: 52_000_000 },
   { date: "2024-05-03", storage: 58_000_000 },
   { date: "2024-05-04", storage: 71_000_000 },

@@ -11,6 +11,7 @@ import { postsTable } from "@/infra/db/tables/posts.table.ts";
 // import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { db } from "@/infra/db/client.ts";
 import { eq } from "drizzle-orm";
+import { projectsTable } from "../db/tables/projects.table.ts";
 
 export const convertVideoToMp3Task = schemaTask({
   id: "convert-video-to-mp3",
@@ -35,10 +36,10 @@ export const convertVideoToMp3Task = schemaTask({
         .set({ status: "ENCODING" })
         .where(eq(postsTable.id, payload.postId));
     } else {
-      // await db
-      //   .update(projectsTable)
-      //   .set({ status: "PROCESSING" })
-      //   .where(eq(projectsTable.id, payload.projectId));
+      await db
+        .update(projectsTable)
+        .set({ status: "PROCESSING" })
+        .where(eq(projectsTable.id, payload.projectId));
     }
   },
 
@@ -100,7 +101,7 @@ export const convertVideoToMp3Task = schemaTask({
       client: r2Client,
       params: {
         Bucket: BUCKET_NAME,
-        Key: `${basePathToSaveOnR2}/${audioId}.mp3`,
+        Key: `${audioId}.mp3`,
         Body: audioStream,
         ContentType: "audio/mpeg",
       },
@@ -116,7 +117,7 @@ export const convertVideoToMp3Task = schemaTask({
       r2Client,
       new GetObjectCommand({
         Bucket: BUCKET_NAME,
-        Key: `${basePathToSaveOnR2}/${audioId}.mp3`,
+        Key: `${audioId}.mp3`,
       }),
       { expiresIn: 60 * 60 }, // 1 hour
     );
