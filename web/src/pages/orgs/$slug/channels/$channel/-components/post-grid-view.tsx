@@ -3,6 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import type { Post } from "@/types/post";
 import { formatBytes } from "@/utils/format-bytes";
 import { formatDuration } from "@/utils/format-duration";
+import { Link, useParams } from "@tanstack/react-router";
 import { Calendar, Clock, Globe, HardDrive, Image, Trash2 } from "lucide-react";
 import { POST_NETWORK_ICONS } from "./post-network-icons";
 import { PostStatusBadge } from "./post-status-badge";
@@ -12,6 +13,10 @@ type PostGridViewProps = {
 };
 
 export function PostGridView({ posts }: PostGridViewProps) {
+  const { slug, channel } = useParams({
+    from: "/orgs/$slug/channels/$channel",
+  });
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {posts.map((post) => {
@@ -24,9 +29,11 @@ export function PostGridView({ posts }: PostGridViewProps) {
           post.status !== "PUBLISHED" && post.status !== "ERROR";
 
         return (
-          <div
+          <Link
             key={post.id}
-            className="w-full min-w-0 rounded-2xl border border-input p-4"
+            to="/orgs/$slug/channels/$channel/$postId"
+            params={{ slug, channel, postId: post.id }}
+            className="w-full min-w-0 cursor-pointer rounded-2xl border border-input p-4 transition-colors hover:bg-accent/50"
           >
             <header className="group relative mb-3 h-37.5 w-full shrink-0 overflow-hidden rounded-[10px] bg-[#242424]">
               {hasThumbnail ? (
@@ -49,7 +56,11 @@ export function PostGridView({ posts }: PostGridViewProps) {
             <div className="mb-3.5 flex h-7 shrink-0 items-center justify-between gap-2">
               <PostStatusBadge status={post.status} />
               {isPostProcessing && (
-                <Button type="button" variant={"destructive"}>
+                <Button
+                  type="button"
+                  variant={"destructive"}
+                  onClick={(event) => event.stopPropagation()}
+                >
                   <Trash2 size={13} />
                   Cancel
                 </Button>
@@ -131,7 +142,7 @@ export function PostGridView({ posts }: PostGridViewProps) {
               </div>
               <span className="text-xs text-muted-foreground">2 days ago</span>
             </footer>
-          </div>
+          </Link>
         );
       })}
     </div>
