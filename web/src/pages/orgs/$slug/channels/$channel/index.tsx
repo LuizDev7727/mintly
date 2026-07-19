@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { FoldersList } from "./-components/folders-list";
 import { CurrentFolderBadge } from "./-components/current-folder-badge";
-import { PostsList } from "./-components/posts-list";
+import { Posts } from "./-components/posts";
 
 export const Route = createFileRoute("/orgs/$slug/channels/$channel/")({
   head: () => ({
@@ -45,7 +45,7 @@ function ChannelPage() {
 
       <Separator />
 
-      <PostsList />
+      <Posts />
     </div>
   );
 }

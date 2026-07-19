@@ -2,6 +2,7 @@ import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { socialsToPostTable } from "@/infra/db/tables/socials-to-post.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
+import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { and, count, desc, eq, isNull, like, sql } from "drizzle-orm";
 
 type GetPostsParams = {
@@ -16,11 +17,11 @@ export async function getPosts(params: GetPostsParams) {
 
   const PAGE_SIZE = 10;
 
-  const [posts, [{ totalPostsCount }]] = await Promise.all([
+  const [result, [{ totalPostsCount }]] = await Promise.all([
     db
       .select({
         id: postsTable.id,
-        thumbnailUrl: postsTable.thumbnailStorageKey,
+        thumbnailStorageKey: postsTable.thumbnailStorageKey,
         title: postsTable.title,
         size: postsTable.size,
         status: postsTable.status,
@@ -80,6 +81,15 @@ export async function getPosts(params: GetPostsParams) {
   ]);
 
   const totalPages = Math.ceil(totalPostsCount / PAGE_SIZE);
+
+  const posts = await Promise.all(
+    result.map(async ({ thumbnailStorageKey, ...post }) => ({
+      ...post,
+      thumbnailUrl: thumbnailStorageKey
+        ? await generateSignedUrl({ key: thumbnailStorageKey })
+        : null,
+    })),
+  );
 
   return {
     posts,

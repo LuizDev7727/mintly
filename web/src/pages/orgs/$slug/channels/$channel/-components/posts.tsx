@@ -1,6 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { PostsFilter } from "./posts-filter";
-import { PostCard } from "./post-card";
 import { getPostsHttp } from "@/http/posts/get-posts.http";
 import { useParams } from "@tanstack/react-router";
 import { PostListLoading } from "./post-list-loading";
@@ -9,8 +8,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeftRight } from "lucide-react";
 import { PostsPagination } from "./posts-pagination";
 import { PostsListEmpty } from "./posts-list-empty";
+import { useViewMode } from "@/context/view-mode-context";
+import { PostGridView } from "./post-grid-view";
+import { PostListView } from "./post-list-view";
 
-export function PostsList() {
+export function Posts() {
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
@@ -20,6 +22,8 @@ export function PostsList() {
     "title_filter",
     parseAsString.withDefault(""),
   );
+
+  const { view } = useViewMode();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["posts", slug, channel, currentFolderId, titleFilter],
@@ -60,13 +64,8 @@ export function PostsList() {
 
       {isLoading && <PostListLoading />}
 
-      {!isPostsEmpty && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
-      )}
+      {!isPostsEmpty && view === "grid" && <PostGridView posts={posts} />}
+      {!isPostsEmpty && view === "list" && <PostListView posts={posts} />}
 
       {isPostsEmpty && !isLoading && <PostsListEmpty />}
     </div>
