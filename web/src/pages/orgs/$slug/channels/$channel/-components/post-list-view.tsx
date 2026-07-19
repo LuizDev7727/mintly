@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import type { Post } from "@/types/post";
 import { formatBytes } from "@/utils/format-bytes";
 import { formatDuration } from "@/utils/format-duration";
+import { Link, useParams } from "@tanstack/react-router";
 import { Image, Trash2 } from "lucide-react";
 import { POST_NETWORK_ICONS } from "./post-network-icons";
 import { PostStatusBadge } from "./post-status-badge";
@@ -11,6 +12,10 @@ type PostListViewProps = {
 };
 
 export function PostListView({ posts }: PostListViewProps) {
+  const { slug, channel } = useParams({
+    from: "/orgs/$slug/channels/$channel",
+  });
+
   return (
     <div className="space-y-2">
       {posts.map((post) => {
@@ -23,9 +28,11 @@ export function PostListView({ posts }: PostListViewProps) {
           post.status !== "PUBLISHED" && post.status !== "ERROR";
 
         return (
-          <div
+          <Link
             key={post.id}
-            className="flex items-center justify-between gap-3 rounded-lg border bg-transparent p-2 pe-3"
+            to="/orgs/$slug/channels/$channel/$postId"
+            params={{ slug, channel, postId: post.id }}
+            className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border bg-transparent p-2 pe-3 transition-colors hover:bg-accent/50"
           >
             <div className="flex min-w-0 items-center gap-3">
               <div className="aspect-video h-12 shrink-0 overflow-hidden rounded bg-[#242424]">
@@ -78,12 +85,17 @@ export function PostListView({ posts }: PostListViewProps) {
               </span>
 
               {isPostProcessing && (
-                <Button type="button" variant={"destructive"} size={"icon-sm"}>
+                <Button
+                  type="button"
+                  variant={"destructive"}
+                  size={"icon-sm"}
+                  onClick={(event) => event.stopPropagation()}
+                >
                   <Trash2 size={13} />
                 </Button>
               )}
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>

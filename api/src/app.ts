@@ -27,6 +27,7 @@ import { getFoldersRoute } from "./infra/http/routes/folder/get-folders.route.ts
 import { updateFolderRoute } from "./infra/http/routes/folder/update-folder.route.ts";
 import { getOrganizationMetricsRoute } from "./infra/http/routes/organization/get-metrics.route.ts";
 import { getPostsRoute } from "./infra/http/routes/post/get-posts.route.ts";
+import { getPostRoute } from "./infra/http/routes/post/get-post.route.ts";
 import { createPostsRoute } from "./infra/http/routes/post/create-posts.route.ts";
 import { getProjectsRoute } from "./infra/http/routes/project/get-projects.route.ts";
 import { createProjectRoute } from "./infra/http/routes/project/create-project.route.ts";
@@ -110,6 +111,7 @@ server.register(updateFolderRoute);
 server.register(getOrganizationMetricsRoute);
 
 server.register(getPostsRoute);
+server.register(getPostRoute);
 server.register(createPostsRoute);
 server.register(getProjectsRoute);
 server.register(createProjectRoute);
