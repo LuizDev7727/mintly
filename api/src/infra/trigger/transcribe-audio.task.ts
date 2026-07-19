@@ -97,10 +97,8 @@ export const transcribeAudioTask = schemaTask({
 
     const result = await wait.forToken<Prediction>(token).unwrap();
 
-    const segments = result.output.segments ?? [];
-    const allWords = segments.flatMap((s) => s.words ?? []);
-
-    const transcription = JSON.stringify(segments);
+    const transcription = result.output.segments;
+    const allWords = transcription.flatMap((s) => s.words ?? []);
 
     return {
       transcription,
