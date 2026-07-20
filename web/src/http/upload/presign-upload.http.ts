@@ -6,6 +6,11 @@ type PresignUploadHttpParams = {
     type: string;
     size: number;
   };
+  resume?: {
+    key: string;
+    uploadId: string;
+    partNumbers: number[];
+  };
 };
 
 export type PresignUploadHttpResponse = {
@@ -17,11 +22,11 @@ export type PresignUploadHttpResponse = {
 export async function presignUploadHttp(
   params: PresignUploadHttpParams,
 ): Promise<PresignUploadHttpResponse> {
-  const { file } = params;
+  const { file, resume } = params;
 
   const { data } = await api.post<PresignUploadHttpResponse>(
     "/uploads/presign",
-    { file },
+    { file, resume },
   );
 
   return data;

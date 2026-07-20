@@ -5,11 +5,13 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { YoutubeIcon } from "@/components/youtube-icon";
+import { abortMultipartUploadHttp } from "@/http/upload/abort-multipart-upload.http";
 import { createPostsHttp } from "@/http/posts/create-posts.http";
 import {
   createPostSchema,
   type CreatePostsFormType,
 } from "@/schemas/posts/create-posts.schema";
+import { findResumableUpload, removeResumableUpload } from "@/storage/resumable-upload-storage";
 import type { Integration } from "@/types/integration";
 import { formatBytes } from "@/utils/format-bytes";
 import { formatDuration } from "@/utils/format-duration";
@@ -257,6 +259,20 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
 
   function handleCancelUpload(postIndex: number) {
     uploadProgressMap.get(postIndex)?.abortController.abort();
+
+    const file = getValues(`posts.${postIndex}.file`);
+    const match = findResumableUpload({
+      name: file.name,
+      size: file.size,
+      lastModified: file.lastModified,
+    });
+
+    if (match) {
+      abortMultipartUploadHttp({ key: match.key, uploadId: match.uploadId }).catch(
+        () => {},
+      );
+      removeResumableUpload(match.key);
+    }
   }
 
   return (
