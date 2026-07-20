@@ -54,6 +54,7 @@ import { deleteInspirationalThumbnailRoute } from "./infra/http/routes/inspirati
 import { presignUploadRoute } from "./infra/http/routes/upload/presign-upload.route.ts";
 import { completeMultipartUploadRoute } from "./infra/http/routes/upload/complete-multipart-upload.route.ts";
 import { abortMultipartUploadRoute } from "./infra/http/routes/upload/abort-multipart-upload.route.ts";
+import { listMultipartUploadPartsRoute } from "./infra/http/routes/upload/list-multipart-upload-parts.route.ts";
 
 export const server = fastify({
   logger: {
@@ -144,3 +145,4 @@ server.register(deleteInspirationalThumbnailRoute);
 server.register(presignUploadRoute);
 server.register(completeMultipartUploadRoute);
 server.register(abortMultipartUploadRoute);
+server.register(listMultipartUploadPartsRoute);
