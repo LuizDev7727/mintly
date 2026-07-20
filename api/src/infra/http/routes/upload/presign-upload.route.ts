@@ -16,6 +16,13 @@ export const presignUploadRoute: FastifyPluginAsyncZod = async (app) => {
             type: z.string(),
             size: z.number(),
           }),
+          resume: z
+            .object({
+              key: z.string(),
+              uploadId: z.string(),
+              partNumbers: z.array(z.number()),
+            })
+            .optional(),
         }),
         response: {
           200: z.object({
@@ -32,12 +39,12 @@ export const presignUploadRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { file } = request.body;
+      const { file, resume } = request.body;
 
       const span = tracer.startSpan("presignUpload");
       span.setAttribute("file.name", file.name);
 
-      const result = await generateUploadSignedUrls({ file });
+      const result = await generateUploadSignedUrls({ file, resume });
 
       span.end();
 

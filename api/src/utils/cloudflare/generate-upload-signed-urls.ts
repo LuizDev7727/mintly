@@ -20,6 +20,11 @@ type GenerateUploadSignedUrlsParams = {
     type: string;
     size: number;
   };
+  resume?: {
+    key: string;
+    uploadId: string;
+    partNumbers: number[];
+  };
 };
 
 type GenerateUploadSignedUrlsResponse = {
@@ -31,7 +36,33 @@ type GenerateUploadSignedUrlsResponse = {
 export async function generateUploadSignedUrls({
   expiresIn,
   file,
+  resume,
 }: GenerateUploadSignedUrlsParams): Promise<GenerateUploadSignedUrlsResponse> {
+
+
+  if (resume) {
+    const { key, uploadId, partNumbers } = resume;
+
+    const parts = await Promise.all(
+      partNumbers.map(async (partNumber) => {
+        const url = await getSignedUrl(
+          r2Client,
+          new UploadPartCommand({
+            Bucket: BUCKET_NAME,
+            Key: key,
+            UploadId: uploadId,
+            PartNumber: partNumber,
+          }),
+          { expiresIn: expiresIn ?? 3600 },
+        );
+
+        return { partNumber, url };
+      }),
+    );
+
+    return { key, uploadId, parts };
+  }
+
   const key = `${uuidv7()}`;
 
   const exceedsMultipartThreshold = file.size > MULTIPART_THRESHOLD;
