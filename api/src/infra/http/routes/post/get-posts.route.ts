@@ -27,6 +27,7 @@ export const getPostsRoute: FastifyPluginAsyncZod = async (app) => {
                 thumbnailUrl: z.string().nullable(),
                 title: z.string(),
                 size: z.number(),
+                runId: z.string().nullable(),
                 mimeType: z.string(),
                 status: z.enum([
                   "PROCESSING",

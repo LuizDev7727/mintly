@@ -3,7 +3,7 @@ import { PostsFilter } from "./posts-filter";
 import { getPostsHttp } from "@/http/posts/get-posts.http";
 import { useParams } from "@tanstack/react-router";
 import { PostListLoading } from "./post-list-loading";
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftRight } from "lucide-react";
 import { PostsPagination } from "./posts-pagination";
@@ -17,6 +17,11 @@ export function Posts() {
     from: "/orgs/$slug/channels/$channel",
   });
 
+  const [currentPage] = useQueryState(
+    "post_page",
+    parseAsInteger.withDefault(0),
+  );
+
   const [currentFolderId] = useQueryState("folder_id");
   const [titleFilter] = useQueryState(
     "title_filter",
@@ -26,12 +31,13 @@ export function Posts() {
   const { view } = useViewMode();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["posts", slug, channel, currentFolderId, titleFilter],
+    queryKey: ["posts", slug, channel, currentFolderId, titleFilter, currentPage],
     queryFn: async () =>
       getPostsHttp({
         orgSlug: slug,
         channelSlug: channel,
         folderId: currentFolderId,
+        pageIndex: currentPage,
         titleFilter,
       }),
     placeholderData: keepPreviousData,
