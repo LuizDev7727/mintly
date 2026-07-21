@@ -50,7 +50,7 @@ function SignInPage() {
 
   async function handleSignIn(formBody: SignInFormType) {
     const { email, password } = formBody;
-    const { error } = await authClient.signIn.email({
+    await authClient.signIn.email({
       email,
       password,
       fetchOptions: {
@@ -58,12 +58,11 @@ function SignInPage() {
           toast("Logged in successfully!");
           navigate({ to: "/orgs", replace: true, reloadDocument: true });
         },
+        onError: async ({ error }) => {
+          toast.error(error.message);
+        },
       },
     });
-
-    if (error) {
-      toast.error(error.message);
-    }
   }
 
   return (

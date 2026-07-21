@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
-import { useQueryState } from "nuqs";
+import { useQueryState, debounce } from "nuqs";
 
 export function ProjectsFilter() {
   const [titleFilter, setTitleFilter] = useQueryState("title_filter", {
@@ -10,7 +10,9 @@ export function ProjectsFilter() {
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { value } = event.target;
-    setTitleFilter(value);
+    setTitleFilter(value, {
+      limitUrlUpdates: value !== "" ? debounce(500) : undefined,
+    });
   }
 
   function handleResetFilter() {

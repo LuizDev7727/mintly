@@ -21,6 +21,7 @@ export const getChannelsRoute: FastifyPluginAsyncZod = async (app) => {
                 slug: z.string(),
                 name: z.string(),
                 postsCount: z.number(),
+                integrationsCount: z.number(),
               }),
             ),
           }),

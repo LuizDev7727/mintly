@@ -130,7 +130,7 @@ server.register(getPendingInvitesRoute);
 server.register(acceptInviteRoute);
 server.register(declineInviteRoute);
 server.register(revokeInviteRoute);
-// server.register(updateOrganizationRoute);
+server.register(updateOrganizationRoute);
 
 server.register(deleteIntegrationRoute)
 server.register(requestYoutubeIntegrationUrlRoute)

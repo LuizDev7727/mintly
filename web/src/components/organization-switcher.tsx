@@ -29,30 +29,34 @@ import { getOrganizationsHttp } from "@/http/organization/get-organizations.http
 import { getActiveOrganizationHttp } from "@/http/organization/get-active-organization.http";
 import { setActiveOrganizationHttp } from "@/http/organization/set-active-organization.http";
 import { CreateOrganizationForm } from "./create-organization-form";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
 export function OrganizationSwitcher() {
+
   const queryClient = useQueryClient();
   const { isMobile } = useSidebar();
 
   const { data: currentOrg } = useQuery({
     queryKey: ["active-organization"],
     queryFn: getActiveOrganizationHttp,
+    refetchOnWindowFocus: false,
   });
 
   const { data, isPending: isLoading } = useQuery({
     queryKey: ["organizations"],
     queryFn: getOrganizationsHttp,
     enabled: !!currentOrg,
+    refetchOnWindowFocus: false,
   });
 
   const { mutateAsync: setSelectedOrg } = useMutation({
     mutationFn: setActiveOrganizationHttp,
     onSuccess: (_, variables) => {
-      const { organizationId } = variables;
+      const { organizationSlug } = variables;
 
       queryClient.setQueryData(["active-organization"], () => {
         const selectedOrg = organizations.find(
-          (org) => org.id === organizationId,
+          (org) => org.slug === organizationSlug,
         );
         return { organization: selectedOrg };
       });
@@ -72,8 +76,8 @@ export function OrganizationSwitcher() {
   const { organizations } = data;
   const { organization } = currentOrg;
 
-  async function handleSetSelectedOrg(organizationId: string) {
-    await setSelectedOrg({ organizationId });
+  async function handleSetSelectedOrg(organizationSlug: string) {
+    await setSelectedOrg({ organizationSlug });
   }
 
   return (
@@ -85,9 +89,14 @@ export function OrganizationSwitcher() {
               size="lg"
               className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Building className="size-4" />
-              </div>
+              {organization.logo ?
+                <Avatar>
+                  <AvatarImage src={organization.logo} />
+                </Avatar> :
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                  <Building className="size-4" />
+                </div>
+              }
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
                   {organization.name}'s workspace
@@ -111,7 +120,7 @@ export function OrganizationSwitcher() {
             {organizations.map((org) => (
               <DropdownMenuItem
                 key={org.name}
-                onClick={() => handleSetSelectedOrg(org.id)}
+                onClick={() => handleSetSelectedOrg(org.slug)}
                 className="gap-2 p-2 cursor-pointer"
                 asChild
               >

@@ -13,7 +13,7 @@ export const setActiveOrganizationRoute: FastifyPluginAsyncZod = async (
       preHandler: [checkUserSession],
       schema: {
         body: z.object({
-          organizationId: z.string(),
+          organizationSlug: z.string(),
         }),
         response: {
           200: z.void(),
@@ -21,13 +21,13 @@ export const setActiveOrganizationRoute: FastifyPluginAsyncZod = async (
       },
     },
     async (request, reply) => {
-      const { organizationId } = request.body;
+      const { organizationSlug } = request.body;
 
       const span = tracer.startSpan("get-active-organization");
-      span.setAttribute("organization-id", organizationId);
+      span.setAttribute("organization-slug", organizationSlug);
 
       await setActiveOrganization({
-        organizationId,
+        organizationSlug,
         sessionId: request.session.id,
       });
 
