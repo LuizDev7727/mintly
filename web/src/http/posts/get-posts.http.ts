@@ -5,7 +5,7 @@ type GetPostsParams = {
   orgSlug: string;
   channelSlug: string;
   folderId: string | null;
-  page?: number;
+  pageIndex: number;
   titleFilter: string | null;
   status?: Post["status"];
 };
@@ -21,10 +21,10 @@ export type GetPostsResponse = {
 export async function getPostsHttp(
   params: GetPostsParams,
 ): Promise<GetPostsResponse> {
-  const { orgSlug, channelSlug, folderId, page, titleFilter, status } = params;
+  const { orgSlug, channelSlug, folderId, pageIndex, titleFilter, status } = params;
   const { data } = await api.get<GetPostsResponse>(
     `/organizations/${orgSlug}/channels/${channelSlug}/posts`,
-    { params: { folderId, page, titleFilter, status } },
+    { params: { folderId, pageIndex, titleFilter, status } },
   );
   return data;
 }

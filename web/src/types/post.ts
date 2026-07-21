@@ -19,6 +19,7 @@ export type Post = {
   title: string;
   size: number;
   type: string;
+  runId: string;
   status:
     | "PROCESSING"
     | "SCHEDULED"

@@ -21,6 +21,7 @@ const SOCIALS = ["YOUTUBE", "TIKTOK"] as const;
 
 const posts: Post[] = Array.from({ length: 48 }, () => ({
   id: faker.string.uuid(),
+  runId: faker.string.uuid(),
   thumbnailUrl: faker.datatype.boolean()
     ? faker.image.urlPicsumPhotos({ width: 1280, height: 720 })
     : null,
