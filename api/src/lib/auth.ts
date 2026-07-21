@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { betterAuth } from "better-auth";
-import { organization } from "better-auth/plugins";
+import { organization, testUtils } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { sessionsTable } from "@/infra/db/tables/sessions.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
@@ -12,7 +12,6 @@ import { accountsTable } from "@/infra/db/tables/accounts.table.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
-import { testUtils } from "better-auth/plugins";
 import { createSlug } from "./create-slug.ts";
 
 export const auth = betterAuth({
@@ -34,6 +33,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    disableSignUp: true,
   },
   socialProviders: {
     google: {

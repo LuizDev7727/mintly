@@ -18,7 +18,7 @@ export function PostsPagination({ totalPages }: PostsPaginationProps) {
   );
 
   function goToFirstPage() {
-    setCurrentPage(1);
+    setCurrentPage(0);
   }
 
   function goToPreviousPage() {
@@ -30,12 +30,12 @@ export function PostsPagination({ totalPages }: PostsPaginationProps) {
   }
 
   function goToLastPage() {
-    setCurrentPage(totalPages);
+    setCurrentPage(Math.max(totalPages - 1, 0));
   }
 
-  const hasPreviousPage = currentPage > 1;
-  const hasNextPage = currentPage < totalPages;
-  const isFirstPage = currentPage === 1;
+  const hasPreviousPage = currentPage > 0;
+  const hasNextPage = currentPage < totalPages - 1;
+  const isFirstPage = currentPage === 0;
 
   return (
     <div className="flex items-center gap-x-2">

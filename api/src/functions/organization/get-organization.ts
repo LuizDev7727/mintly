@@ -2,6 +2,7 @@ import { db } from "@/infra/db/client.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { ResourceNotFoundError } from "../../errors/resource-not-found.error.ts";
+import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { count, eq } from "drizzle-orm";
 
 type GetOrganizationParams = {
@@ -11,7 +12,7 @@ type GetOrganizationParams = {
 export async function getOrganization({
   organizationSlug,
 }: GetOrganizationParams) {
-  const [organization] = await db
+  const [result] = await db
     .select({
       id: organizationsTable.id,
       name: organizationsTable.name,
@@ -28,11 +29,16 @@ export async function getOrganization({
     .where(eq(organizationsTable.slug, organizationSlug))
     .groupBy(organizationsTable.id);
 
-  if (!organization) {
+  if (!result) {
     throw new ResourceNotFoundError(
       `Organization with slug ${organizationSlug} not found`,
     );
   }
+
+  const organization = {
+    ...result,
+    logo: result.logo ? await generateSignedUrl({ key: result.logo }) : null,
+  };
 
   return {
     organization,

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RotateCcw, Search, X } from "lucide-react";
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsString, useQueryState, debounce } from "nuqs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import type { ChangeEvent } from "react";
@@ -28,7 +28,9 @@ export function PostsFilter() {
   }
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
-    setTitle(event.target.value);
+    setTitle(event.target.value, {
+      limitUrlUpdates: event.target.value !== '' ? debounce(500): undefined
+    });
   }
 
   const isFiltersEmpty = title.length === 0;

@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import type { Post } from "@/types/post";
-import { AlertTriangle, Calendar, Check, Loader2 } from "lucide-react";
+import { AlertTriangle, Ban, Calendar, Check, Loader2 } from "lucide-react";
 
 type PostStatusBadgeProps = {
   status: Post["status"];
@@ -26,6 +26,13 @@ export function PostStatusBadge({ status }: PostStatusBadgeProps) {
       return (
         <Badge variant={"scheduled"}>
           <Calendar size={13} />
+          {status}
+        </Badge>
+      );
+    case "CANCELED":
+      return (
+        <Badge variant={"secondary"}>
+          <Ban size={13} />
           {status}
         </Badge>
       );

@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CreditCard, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GeneralTab } from "./-components/general/general-tab";
-import { BillingTab } from "./-components/billing/billing-tab";
 import { getActiveOrganizationHttp } from "@/http/organization/get-active-organization.http";
 import { useQuery } from "@tanstack/react-query";
 
@@ -24,7 +23,6 @@ export const Route = createFileRoute("/orgs/$slug/settings/")({
 
 const navItems = [
   { id: "general", label: "General", icon: Settings },
-  { id: "billing", label: "Billing", icon: CreditCard },
 ] as const;
 
 function SettingsPage() {
@@ -55,6 +53,7 @@ function SettingsPage() {
               to="/orgs/$slug/settings"
               params={{ slug }}
               search={{ tab: id }}
+              data-tab={id}
               className={cn(
                 "flex shrink-0 items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors",
                 tab === id
@@ -69,13 +68,10 @@ function SettingsPage() {
         </nav>
 
         <div className="flex min-w-0 flex-1 flex-col gap-4">
-          {tab === "general" && (
-            <GeneralTab
-              name={organization!.name}
-              avatarUrl={organization!.logo}
-            />
-          )}
-          {tab === "billing" && <BillingTab />}
+          <GeneralTab
+            name={organization!.name}
+            avatarUrl={organization!.logo}
+          />
         </div>
       </div>
     </div>
