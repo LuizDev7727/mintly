@@ -23,11 +23,13 @@ import { toast } from "sonner";
 type UpdateOrganizationNameFormProps = {
   slug: string;
   name: string;
+  avatarUrl: string | null;
 };
 
 export function UpdateOrganizationNameForm({
   slug,
   name,
+  avatarUrl,
 }: UpdateOrganizationNameFormProps) {
   const queryClient = useQueryClient();
 
@@ -63,7 +65,7 @@ export function UpdateOrganizationNameForm({
   });
 
   async function onSubmit(formBody: UpdateOrganizationFormType) {
-    await mutateAsync({ slug, name: formBody.name });
+    await mutateAsync({ slug, name: formBody.name, avatarKey: avatarUrl });
   }
 
   return (

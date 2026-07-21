@@ -29,6 +29,7 @@ import { getOrganizationMetricsRoute } from "./infra/http/routes/organization/ge
 import { getPostsRoute } from "./infra/http/routes/post/get-posts.route.ts";
 import { getPostRoute } from "./infra/http/routes/post/get-post.route.ts";
 import { createPostsRoute } from "./infra/http/routes/post/create-posts.route.ts";
+import { cancelPostRoute } from "./infra/http/routes/post/cancel-post.route.ts";
 import { getProjectsRoute } from "./infra/http/routes/project/get-projects.route.ts";
 import { createProjectRoute } from "./infra/http/routes/project/create-project.route.ts";
 import { getBestMomentsRoute } from "./infra/http/routes/best-moment/get-best-moments.route.ts";
@@ -114,6 +115,7 @@ server.register(getOrganizationMetricsRoute);
 server.register(getPostsRoute);
 server.register(getPostRoute);
 server.register(createPostsRoute);
+server.register(cancelPostRoute);
 server.register(getProjectsRoute);
 server.register(createProjectRoute);
 server.register(getBestMomentsRoute);
@@ -130,7 +132,7 @@ server.register(getPendingInvitesRoute);
 server.register(acceptInviteRoute);
 server.register(declineInviteRoute);
 server.register(revokeInviteRoute);
-// server.register(updateOrganizationRoute);
+server.register(updateOrganizationRoute);
 
 server.register(deleteIntegrationRoute)
 server.register(requestYoutubeIntegrationUrlRoute)

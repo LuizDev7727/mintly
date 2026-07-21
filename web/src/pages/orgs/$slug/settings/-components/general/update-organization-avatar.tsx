@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Upload, X } from "lucide-react";
+import { Save, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,6 +11,12 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/utils/get-initials";
+import { uploadFile } from "@/utils/upload-file";
+import { Spinner } from "@/components/ui/spinner";
+import { updateOrganizationHttp } from "@/http/organization/update-organization.http";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 type UpdateOrganizationAvatarProps = {
   name: string;
@@ -19,11 +25,17 @@ type UpdateOrganizationAvatarProps = {
 
 export function UpdateOrganizationAvatar({
   name,
-  avatarUrl,
+  avatarUrl: initialAvatarUrl,
 }: UpdateOrganizationAvatarProps) {
+
+  const queryClient = useQueryClient()
+  const { slug } = useParams({
+    from: "/orgs/$slug",
+  })
   // State to store the desired crop area in pixels
 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(avatarUrl);
+  const [fileSelected, setFileSelected] = useState<File | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -31,11 +43,40 @@ export function UpdateOrganizationAvatar({
     if (!file) {
       return;
     }
-    setPreviewUrl(URL.createObjectURL(file));
+    setFileSelected(file);
+  }
+
+  const { mutateAsync: updateOrganization } = useMutation({
+    mutationFn: updateOrganizationHttp,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["active-organization"] })
+      toast("Organization avatar updated successfully")
+    }
+  })
+
+  async function handleUpdateAvatar() {
+    if (!fileSelected) {
+      return;
+    }
+
+    setIsSaving(true);
+
+    const { key } = await uploadFile({
+      file: fileSelected,
+      signal: new AbortController().signal,
+      onProgress: (progress) => {
+        const hasUploadCompleted = progress === 100;
+        if (hasUploadCompleted) {
+          setIsSaving(false);
+        }
+      },
+    });
+
+    await updateOrganization({ slug, name, avatarKey: key });
   }
 
   function handleRemove() {
-    setPreviewUrl(null);
+    setFileSelected(null);
     if (inputRef.current) {
       inputRef.current.value = "";
     }
@@ -52,7 +93,8 @@ export function UpdateOrganizationAvatar({
       </CardHeader>
       <CardContent className="flex items-center gap-4 pt-6">
         <Avatar className="size-14 rounded-lg">
-          <AvatarImage src={previewUrl ?? undefined} />
+          {fileSelected && <AvatarImage src={URL.createObjectURL(fileSelected)} />}
+          {!fileSelected && <AvatarImage src={initialAvatarUrl ?? undefined} />}
           <AvatarFallback className="rounded-lg text-base">
             {getInitials(name)}
           </AvatarFallback>
@@ -67,7 +109,7 @@ export function UpdateOrganizationAvatar({
             <Upload className="size-4" />
             Upload
           </Button>
-          {previewUrl && (
+          {fileSelected && (
             <Button
               type="button"
               variant="ghost"
@@ -91,7 +133,10 @@ export function UpdateOrganizationAvatar({
         <p className="text-sm text-muted-foreground">
           Recommended: square image, at least 256×256px.
         </p>
-        <Button size="sm" disabled={!previewUrl}>
+        <Button size="sm" disabled={!fileSelected} onClick={handleUpdateAvatar}>
+          {
+            isSaving ? <Spinner /> : <Save />
+          }
           Save
         </Button>
       </CardFooter>

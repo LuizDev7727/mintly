@@ -1,10 +1,29 @@
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
+import { cancelPostHttp } from "@/http/posts/cancel-post.http";
+import type { GetPostsResponse } from "@/http/posts/get-posts.http";
 import type { Post } from "@/types/post";
 import { formatBytes } from "@/utils/format-bytes";
 import { formatDuration } from "@/utils/format-duration";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import { Calendar, Clock, Globe, HardDrive, Image, Trash2 } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Eye,
+  Globe,
+  HardDrive,
+  Image,
+  MoreHorizontal,
+  Trash2,
+} from "lucide-react";
 import { POST_NETWORK_ICONS } from "./post-network-icons";
 import { PostStatusBadge } from "./post-status-badge";
 
@@ -17,6 +36,33 @@ export function PostGridView({ posts }: PostGridViewProps) {
     from: "/orgs/$slug/channels/$channel",
   });
 
+  const queryClient = useQueryClient();
+
+  const { mutateAsync: cancelPost, isPending: isCancellingPost } = useMutation({
+    mutationFn: cancelPostHttp,
+    onSuccess: (_, variables) => {
+      queryClient.setQueriesData<GetPostsResponse>(
+        { queryKey: ["posts", slug, channel], exact: false },
+        (old) => {
+          if (!old) return old;
+
+          return {
+            ...old,
+            posts: old.posts.map((post) =>
+              post.id === variables.postId
+                ? { ...post, status: "CANCELED" as const }
+                : post,
+            ),
+          };
+        },
+      );
+    },
+  });
+
+  function handleCancelPost(post: Post) {
+    cancelPost({ postId: post.id, runId: post.runId });
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {posts.map((post) => {
@@ -26,16 +72,16 @@ export function PostGridView({ posts }: PostGridViewProps) {
         const extraCount = post.socialsToPost.length - visibleNetworks.length;
 
         const isPostProcessing =
-          post.status !== "PUBLISHED" && post.status !== "ERROR";
+          post.status !== "PUBLISHED" &&
+          post.status !== "ERROR" &&
+          post.status !== "CANCELED";
 
         return (
-          <Link
+          <div
             key={post.id}
-            to="/orgs/$slug/channels/$channel/$postId"
-            params={{ slug, channel, postId: post.id }}
-            className="w-full min-w-0 cursor-pointer rounded-2xl border border-input p-4 transition-colors hover:bg-accent/50"
+            className="w-full min-w-0 rounded-2xl border border-input p-4"
           >
-            <header className="group relative mb-3 h-37.5 w-full shrink-0 overflow-hidden rounded-[10px] bg-[#242424]">
+            <header className="relative mb-3 h-37.5 w-full shrink-0 overflow-hidden rounded-[10px] bg-[#242424]">
               {hasThumbnail ? (
                 <img
                   src={post.thumbnailUrl ?? ""}
@@ -49,9 +95,33 @@ export function PostGridView({ posts }: PostGridViewProps) {
               )}
             </header>
 
-            <p className="mb-2.5 line-clamp-1 shrink-0 text-sm font-semibold leading-snug">
-              {post.title}
-            </p>
+            <div className="mb-2.5 flex items-start justify-between gap-2">
+              <p className="line-clamp-1 min-w-0 flex-1 text-sm font-semibold leading-snug">
+                {post.title}
+              </p>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="shrink-0 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+                  >
+                    <MoreHorizontal className="size-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/orgs/$slug/channels/$channel/$postId"
+                      params={{ slug, channel, postId: post.id }}
+                    >
+                      <Eye className="size-4" />
+                      View details
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
 
             <div className="mb-3.5 flex h-7 shrink-0 items-center justify-between gap-2">
               <PostStatusBadge status={post.status} />
@@ -59,9 +129,14 @@ export function PostGridView({ posts }: PostGridViewProps) {
                 <Button
                   type="button"
                   variant={"destructive"}
-                  onClick={(event) => event.stopPropagation()}
+                  disabled={isCancellingPost}
+                  onClick={() => handleCancelPost(post)}
                 >
-                  <Trash2 size={13} />
+                  {isCancellingPost ? (
+                    <Spinner className="size-3.5" />
+                  ) : (
+                    <Trash2 size={13} />
+                  )}
                   Cancel
                 </Button>
               )}
@@ -142,7 +217,7 @@ export function PostGridView({ posts }: PostGridViewProps) {
               </div>
               <span className="text-xs text-muted-foreground">2 days ago</span>
             </footer>
-          </Link>
+          </div>
         );
       })}
     </div>

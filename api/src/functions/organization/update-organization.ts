@@ -1,23 +1,22 @@
-import { OrganizationAlreadyCreatedError } from "@/errors/organization-already-created.ts";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
-import { channelsTable } from "@/infra/db/tables/channels.table.ts";
-import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
-import { createSlug } from "@/lib/create-slug.ts";
+import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
 import { eq } from "drizzle-orm";
 
 type UpdateOrganizationProps = {
   slug: string;
-  newName: string;
+  name: string;
+  avatarKey: string | null;
 };
 
 export async function updateOrganization({
   slug,
-  newName,
+  name,
+  avatarKey,
 }: UpdateOrganizationProps) {
   const [currentOrganization] = await db
-    .select({ slug: organizationsTable.slug })
+    .select({ name: organizationsTable.name, logo: organizationsTable.logo })
     .from(organizationsTable)
     .where(eq(organizationsTable.slug, slug));
 
@@ -25,30 +24,20 @@ export async function updateOrganization({
     throw new ResourceNotFoundError(`Organization with slug ${slug} not found`);
   }
 
-  const newSlugToTake = createSlug(newName);
+  const hasAvatarChanged = avatarKey !== currentOrganization.logo;
 
-  const [organizationWithSameSlug] = await db
-    .select()
-    .from(organizationsTable)
-    .where(eq(organizationsTable.slug, newSlugToTake));
-
-  if (organizationWithSameSlug) {
-    throw new OrganizationAlreadyCreatedError();
+  if (avatarKey && hasAvatarChanged) {
+    // checks if the avatar is uploaded on R2 by key
+    await checkFileExists({ key: avatarKey })
   }
 
-  await db.transaction(async (tx) => {
-    await tx
-      .update(organizationsTable)
-      .set({ name: newName, slug: newSlugToTake })
-      .where(eq(organizationsTable.slug, slug));
-
-    await tx
-      .update(channelsTable)
-      .set({ organizationSlug: newSlugToTake })
-      .where(eq(channelsTable.organizationSlug, slug));
-    await tx
-      .update(membersTable)
-      .set({ organizationSlug: newSlugToTake })
-      .where(eq(membersTable.organizationSlug, slug));
-  });
+  await db
+    .update(organizationsTable)
+    .set({
+      name: name,
+      logo: avatarKey,
+    })
+    .where(
+      eq(organizationsTable.slug, slug),
+    )
 }

@@ -12,6 +12,7 @@ export function GeneralTab({ name, avatarUrl }: GeneralTabProps) {
       {/*<UpdateOrganizationNameForm
         slug={organization!.slug}
         name={organization!.name}
+        avatarUrl={avatarUrl}
       />
       <LeaveOrganization isOwner={isOwner} />
       {isOwner && <DeleteOrganization />}*/}

@@ -16,6 +16,7 @@ export const updateOrganizationRoute: FastifyPluginAsyncZod = async (app) => {
         }),
         body: z.object({
           name: z.string().min(1).max(32),
+          avatarKey: z.string().nullable(),
         }),
         response: {
           204: z.never(),
@@ -24,7 +25,7 @@ export const updateOrganizationRoute: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { slug } = request.params;
-      const { name } = request.body;
+      const { name, avatarKey } = request.body;
 
       await checkMembership({
         organizationSlug: slug,
@@ -34,7 +35,7 @@ export const updateOrganizationRoute: FastifyPluginAsyncZod = async (app) => {
       const span = tracer.startSpan("update-organization");
       span.setAttribute("organization-slug", slug);
 
-      await updateOrganization({ slug, newName: name });
+      await updateOrganization({ slug, name, avatarKey });
 
       span.end();
 

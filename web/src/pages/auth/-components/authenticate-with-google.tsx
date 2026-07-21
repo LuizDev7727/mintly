@@ -14,6 +14,7 @@ export function AuthenticateWithGoogle() {
         {
           provider: "google",
           callbackURL: `${window.location.origin}/orgs`,
+          errorCallbackURL: `${window.location.origin}/auth`,
         },
         {
           onError: ({ error }) => {

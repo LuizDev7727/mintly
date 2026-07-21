@@ -1,13 +1,17 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { getChannelsHttp } from "@/http/channel/get-channels.http";
+import { useViewMode } from "@/context/view-mode-context";
 import { ChannelsListEmpty } from "./channel-list-empty";
-import { ChannelCard } from "./channel-card";
+import { ChannelGridView } from "./channel-grid-view";
+import { ChannelListView } from "./channel-list-view";
 
 export function ChannelsList() {
   const { slug } = useParams({
     from: "/orgs/$slug",
   });
+
+  const { view } = useViewMode();
 
   const { data } = useSuspenseQuery({
     queryKey: ["channels", slug],
@@ -23,19 +27,9 @@ export function ChannelsList() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {channels.map((channel) => (
-        <ChannelCard
-          key={channel.id}
-          id={channel.id}
-          slug={channel.slug}
-          title={channel.name}
-          postsCount={channel.postsCount}
-          integrationsCount={channel.integrationsCount}
-          totalSize={channel.totalPostsSize}
-          postsSize={channel.postsSize}
-        />
-      ))}
-    </div>
+    <>
+      {view === "grid" && <ChannelGridView channels={channels} />}
+      {view === "list" && <ChannelListView channels={channels} />}
+    </>
   );
 }
