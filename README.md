@@ -2,6 +2,9 @@
 
 Mintly é uma plataforma SaaS para criadores de conteúdo agendarem, publicarem e acompanharem posts em múltiplas redes sociais a partir de um único lugar — e gerarem automaticamente clipes de "melhores momentos" prontos para Reels/Shorts/TikTok a partir de vídeos longos, usando um pipeline de IA.
 
+
+<img width="1920" height="1080" alt="mintly-github-banner" src="https://github.com/user-attachments/assets/20bbb856-67b2-49e3-87e7-c819c4eeb1b4" />
+
 ## Principais funcionalidades
 
 ### Criação de posts para múltiplas redes sociais
