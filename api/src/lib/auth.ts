@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { betterAuth } from "better-auth";
-import { organization, testUtils } from "better-auth/plugins";
+import { customSession, organization, testUtils } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { sessionsTable } from "@/infra/db/tables/sessions.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
@@ -12,6 +12,7 @@ import { accountsTable } from "@/infra/db/tables/accounts.table.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
+import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { createSlug } from "./create-slug.ts";
 
 export const auth = betterAuth({
@@ -33,7 +34,6 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    disableSignUp: true,
   },
   socialProviders: {
     google: {
@@ -49,6 +49,15 @@ export const auth = betterAuth({
     defaultCookieAttributes: {
       sameSite: env.NODE_ENV === "production" ? "none" : "lax",
       secure: env.NODE_ENV === "production",
+    },
+  },
+  user: {
+    additionalFields: {
+      bio: {
+        type: "string",
+        required: false,
+        input: true,
+      },
     },
   },
   databaseHooks: {
@@ -96,7 +105,18 @@ export const auth = betterAuth({
       },
     },
   },
-  plugins: [testUtils(), organization()],
+  plugins: [
+    testUtils(),
+    organization(),
+    customSession(async ({ user, session }) => {
+      const image =
+        user.image && !user.image.startsWith("http")
+          ? await generateSignedUrl({ key: user.image })
+          : user.image;
+
+      return { user: { ...user, image }, session };
+    }),
+  ],
 });
 
 const ctx = await auth.$context;
