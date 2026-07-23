@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   BoltIcon,
   BookOpenIcon,
@@ -11,6 +12,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -19,6 +27,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UpdateProfileForm } from "@/components/profile/update-profile-form";
 import { authClient } from "@/lib/auth";
 
 function getInitials(name: string) {
@@ -32,13 +41,15 @@ function getInitials(name: string) {
 
 export function Profile() {
   const { data: session } = authClient.useSession();
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   if (!session) return null;
 
   const { user } = session;
 
   return (
-    <DropdownMenu>
+    <>
+      <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className="h-auto p-0 hover:bg-transparent" variant="ghost">
           <Avatar>
@@ -82,9 +93,9 @@ export function Profile() {
             <PinIcon aria-hidden="true" className="opacity-60" size={16} />
             <span>Option 4</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setIsEditProfileOpen(true)}>
             <UserPenIcon aria-hidden="true" className="opacity-60" size={16} />
-            <span>Option 5</span>
+            <span>Edit profile</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -93,6 +104,28 @@ export function Profile() {
           <span>Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
-    </DropdownMenu>
+      </DropdownMenu>
+      <Dialog onOpenChange={setIsEditProfileOpen} open={isEditProfileOpen}>
+        <DialogContent
+          className="flex flex-col gap-0 overflow-y-visible p-0 sm:max-w-lg [&>button:last-child]:top-3.5"
+        >
+          <DialogHeader className="contents space-y-0 text-left">
+            <DialogTitle className="border-b px-6 py-4 text-base">
+              Edit profile
+            </DialogTitle>
+          </DialogHeader>
+          <DialogDescription className="sr-only">
+            Make changes to your profile here. You can change your photo,
+            name and biography.
+          </DialogDescription>
+          <UpdateProfileForm
+            bio={user.bio ?? null}
+            logo={user.image ?? null}
+            name={user.name}
+            onSuccess={() => setIsEditProfileOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
