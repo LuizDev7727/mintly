@@ -15,16 +15,11 @@ vi.mock("sonner", () => ({
   toast: vi.fn(),
 }));
 
-function renderForm(onSuccess = vi.fn()) {
+function renderForm() {
   render(
     <Dialog open>
       <DialogContent>
-        <UpdateProfileForm
-          bio="Original bio"
-          logo={null}
-          name="Matt Welsh"
-          onSuccess={onSuccess}
-        />
+        <UpdateProfileForm bio="Original bio" logo={null} name="Matt Welsh" />
       </DialogContent>
     </Dialog>,
   );
@@ -37,8 +32,7 @@ describe("UpdateProfileForm", () => {
 
   it("should submit the updated name and bio", async () => {
     const user = userEvent.setup();
-    const onSuccess = vi.fn();
-    renderForm(onSuccess);
+    renderForm();
 
     const nameInput = screen.getByLabelText("Name");
     await user.clear(nameInput);
@@ -49,7 +43,6 @@ describe("UpdateProfileForm", () => {
     expect(updateUserMock).toHaveBeenCalledWith(
       expect.objectContaining({ name: "New Name", bio: "Original bio" }),
     );
-    expect(onSuccess).toHaveBeenCalled();
   });
 
   it("should show a validation error and not submit when name is cleared", async () => {
