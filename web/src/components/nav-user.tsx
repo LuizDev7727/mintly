@@ -1,4 +1,4 @@
-import { BadgeCheck, ChevronsUpDown, CreditCard, LogOut } from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -19,6 +19,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth";
 import { getInitials } from "@/utils/get-initials";
+import { UpdateProfileDialog } from "./update-profile-dialog";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -97,14 +98,11 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
+              <UpdateProfileDialog
+                bio={session?.user.bio ?? null}
+                logo={session?.user.image ?? null}
+                name={session?.user.name ?? ""}
+              />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

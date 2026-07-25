@@ -80,6 +80,18 @@ jobs:
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           BETTER_AUTH_URL: http://localhost:3000
           ALLOWED_ORIGIN: http://localhost:5173
+          GOOGLE_CLIENT_ID: test-google-client-id
+          GOOGLE_CLIENT_SECRET: test-google-client-secret
+          GOOGLE_REDIRECT_URI: http://localhost:3000/api/integrations/youtube/callback
+          GOOGLE_REDIRECT_CALLBACK_URI: http://localhost:5173
+          R2_ENDPOINT: http://localhost:9000
+          R2_ACCESS_KEY_ID: test-r2-access-key-id
+          R2_SECRET_ACCESS_KEY: test-r2-secret-access-key
+          R2_BUCKET_NAME: test-bucket
+          REPLICATE_API_TOKEN: test-replicate-token
+          GEMINI_API_KEY: test-gemini-api-key
+          TRIGGER_SECRET_KEY: test-trigger-secret-key
+          MODAL_URL: http://localhost:9001
 
   test-e2e:
     needs: [detect, test-api]
@@ -144,6 +156,18 @@ jobs:
           DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
           BETTER_AUTH_URL: http://localhost:3000
           ALLOWED_ORIGIN: http://localhost:4173
+          GOOGLE_CLIENT_ID: test-google-client-id
+          GOOGLE_CLIENT_SECRET: test-google-client-secret
+          GOOGLE_REDIRECT_URI: http://localhost:3000/api/integrations/youtube/callback
+          GOOGLE_REDIRECT_CALLBACK_URI: http://localhost:5173
+          R2_ENDPOINT: http://localhost:9000
+          R2_ACCESS_KEY_ID: test-r2-access-key-id
+          R2_SECRET_ACCESS_KEY: test-r2-secret-access-key
+          R2_BUCKET_NAME: test-bucket
+          REPLICATE_API_TOKEN: test-replicate-token
+          GEMINI_API_KEY: test-gemini-api-key
+          TRIGGER_SECRET_KEY: test-trigger-secret-key
+          MODAL_URL: http://localhost:9001
 
       - name: Start API
         env:
@@ -159,6 +183,18 @@ jobs:
             -e NODE_ENV=production \
             -e OTEL_SERVICE_NAME=mintly-api-e2e \
             -e OTEL_TRACES_EXPORTER=none \
+            -e GOOGLE_CLIENT_ID=test-google-client-id \
+            -e GOOGLE_CLIENT_SECRET=test-google-client-secret \
+            -e GOOGLE_REDIRECT_URI=http://localhost:3000/api/integrations/youtube/callback \
+            -e GOOGLE_REDIRECT_CALLBACK_URI=http://localhost:4173 \
+            -e R2_ENDPOINT=http://localhost:9000 \
+            -e R2_ACCESS_KEY_ID=test-r2-access-key-id \
+            -e R2_SECRET_ACCESS_KEY=test-r2-secret-access-key \
+            -e R2_BUCKET_NAME=test-bucket \
+            -e REPLICATE_API_TOKEN=test-replicate-token \
+            -e GEMINI_API_KEY=test-gemini-api-key \
+            -e TRIGGER_SECRET_KEY=test-trigger-secret-key \
+            -e MODAL_URL=http://localhost:9001 \
             mintly-api
 
       - name: Wait for API
