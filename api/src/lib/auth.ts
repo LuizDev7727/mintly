@@ -109,12 +109,13 @@ export const auth = betterAuth({
     testUtils(),
     organization(),
     customSession(async ({ user, session }) => {
-      const image =
-        user.image && !user.image.startsWith("http")
+
+      const avatarUrl =
+        user.image
           ? await generateSignedUrl({ key: user.image })
           : user.image;
 
-      return { user: { ...user, image }, session };
+      return { user: { ...user, image: avatarUrl }, session };
     }),
   ],
 });

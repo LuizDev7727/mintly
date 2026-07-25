@@ -21,14 +21,6 @@ import { uploadFile } from "@/utils/upload-file";
 
 const BIO_MAX_LENGTH = 160;
 
-function ProfileBg() {
-  return (
-    <div className="h-32">
-      <div className="relative flex size-full items-center justify-center overflow-hidden bg-primary" />
-    </div>
-  );
-}
-
 type ProfileAvatarProps = {
   name: string;
   logo: string | null;
@@ -93,14 +85,12 @@ type UpdateProfileFormProps = {
   name: string;
   logo: string | null;
   bio: string | null;
-  onSuccess: () => void;
 };
 
 export function UpdateProfileForm({
   name,
   logo,
   bio,
-  onSuccess,
 }: UpdateProfileFormProps) {
   const id = useId();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -121,13 +111,17 @@ export function UpdateProfileForm({
   const bioValue = watch("bio") ?? "";
 
   async function onSubmit(formBody: UpdateProfileFormType) {
-    const image = avatarFile
-      ? (await uploadFile({
-          file: avatarFile,
-          signal: new AbortController().signal,
-          onProgress: () => {},
-        })).key
-      : undefined;
+
+    let image: string | undefined = undefined;
+
+    if (avatarFile) {
+      const { key } = await uploadFile({
+        file: avatarFile,
+        signal: new AbortController().signal,
+        onProgress: () => {},
+      });
+      image = key;
+    }
 
     await authClient.updateUser({
       name: formBody.name,
@@ -136,13 +130,14 @@ export function UpdateProfileForm({
     });
 
     toast("Profile updated successfully");
-    onSuccess();
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="overflow-y-auto">
-        <ProfileBg />
+        <div className="h-32">
+          <div className="relative flex size-full items-center justify-center overflow-hidden bg-primary" />
+        </div>
         <ProfileAvatar
           logo={logo}
           name={name}
