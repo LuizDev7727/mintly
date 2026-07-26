@@ -18,6 +18,9 @@ const envSchema = z.object({
   GEMINI_API_KEY: z.string(),
   TRIGGER_SECRET_KEY: z.string(),
   MODAL_URL: z.url(),
+  TIKTOK_CLIENT_KEY: z.string(),
+  TIKTOK_CLIENT_SECRET: z.string(),
+  TIKTOK_REDIRECT_URI: z.url(),
 });
 
 export const env = envSchema.parse(process.env);

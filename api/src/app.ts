@@ -56,6 +56,8 @@ import { presignUploadRoute } from "./infra/http/routes/upload/presign-upload.ro
 import { completeMultipartUploadRoute } from "./infra/http/routes/upload/complete-multipart-upload.route.ts";
 import { abortMultipartUploadRoute } from "./infra/http/routes/upload/abort-multipart-upload.route.ts";
 import { listMultipartUploadPartsRoute } from "./infra/http/routes/upload/list-multipart-upload-parts.route.ts";
+import { requestTiktokIntegrationUrlRoute } from "./infra/http/routes/integration/request-tiktok-integration-url.route.ts";
+import { tiktokCallbackRoute } from "./infra/http/routes/integration/tiktok-callback.route.ts";
 
 export const server = fastify({
   logger: {
@@ -137,6 +139,8 @@ server.register(updateOrganizationRoute);
 server.register(deleteIntegrationRoute)
 server.register(requestYoutubeIntegrationUrlRoute)
 server.register(youtubeCallbackRoute)
+server.register(requestTiktokIntegrationUrlRoute)
+server.register(tiktokCallbackRoute)
 
 server.register(getActivitiesRoute);
 

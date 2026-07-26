@@ -10,9 +10,11 @@ import { Separator } from "@/components/ui/separator";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 import { ConfirmDisconnectDialog } from "./confirm-disconnect-dialog";
 import { TiktokIcon } from "./provider-icons";
 import { deleteIntegrationHttp } from "@/http/integration/delete-ingration.http";
+import { requestTiktokIntegrationUrlHttp } from "@/http/integration/request-tiktok-integration-url.http";
 import type { Integration } from "@/types/integration";
 
 interface TiktokIntegrationCardProps {
@@ -22,6 +24,7 @@ interface TiktokIntegrationCardProps {
 export function TiktokIntegrationCard({
   integration,
 }: TiktokIntegrationCardProps) {
+  const { channel } = useParams({ from: "/orgs/$slug/channels/$channel" });
   const queryClient = useQueryClient();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -32,7 +35,12 @@ export function TiktokIntegrationCard({
     },
   });
 
-  async function handleConnect() {}
+  async function handleConnect() {
+    const { url } = await requestTiktokIntegrationUrlHttp({
+      channelId: channel,
+    });
+    window.location.href = url;
+  }
 
   return (
     <div className="h-full">
@@ -101,7 +109,7 @@ export function TiktokIntegrationCard({
             <Badge>Connected</Badge>
           </div>
         ) : (
-          <Button variant="outline" className="w-full" disabled={true} onClick={handleConnect}>
+          <Button variant="outline" className="w-full" onClick={handleConnect}>
             Connect
           </Button>
         )}
