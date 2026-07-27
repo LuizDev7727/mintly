@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Project } from "@/types/project";
-import { StatusBadge } from "./status-badge";
+import { ProjectsStatusBadge } from "./projects-status-badge";
 import { getInitials } from "@/utils/get-initials";
 import { dayjs } from "@/lib/dayjs";
 import { Link, useParams } from "@tanstack/react-router";
@@ -45,7 +45,7 @@ export function ProjectsListView({ projects }: ProjectsListViewProps) {
             </div>
 
             <div className="flex shrink-0 items-center gap-3">
-              <StatusBadge status={project.status} />
+              <ProjectsStatusBadge status={project.status} />
 
               <Avatar className="size-6">
                 <AvatarImage
