@@ -60,7 +60,7 @@ export function Projects() {
   }
 
   return (
-    <div>
+    <div className="space-y-4">
 
       <div className="flex items-center gap-x-2">
         <ProjectsFilter />

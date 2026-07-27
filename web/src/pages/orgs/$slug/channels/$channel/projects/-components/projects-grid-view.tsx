@@ -9,7 +9,7 @@ import { dayjs } from "@/lib/dayjs";
 import type { Project } from "@/types/project";
 import { getInitials } from "@/utils/get-initials";
 import { Link, useParams } from "@tanstack/react-router";
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { Image, MoreHorizontal, Trash2 } from "lucide-react";
 import { ProjectsStatusBadge } from "./projects-status-badge";
 
 type ProjectsGridViewProps = {
@@ -38,14 +38,18 @@ export function ProjectsGridView({ projects }: ProjectsGridViewProps) {
             )}
             {/* Thumbnail */}
             <div className="relative aspect-video w-full overflow-hidden bg-muted">
-              <img
-                src={
-                  project.thumbnailUrl ??
-                  "https://picsum.photos/seed/NWbJM2B/640/480"
-                }
-                alt={project.title}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
+              {
+                project.thumbnailUrl ?
+                  <img
+                    src={project.thumbnailUrl}
+                    alt={project.title}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  :
+                  <div className="absolute inset-0 flex items-center justify-center text-[#888888]">
+                    <Image size={30} strokeWidth={1.5} />
+                  </div>
+              }
 
               {/* Status badge — top left */}
               <div className="absolute left-2.5 top-2.5">
