@@ -8,12 +8,14 @@ import { eq } from "drizzle-orm";
 import { generateThubmnailTask } from "./generate-thumbnail.task.ts";
 import { db } from "@/infra/db/client.ts";
 import { uploadPostToYoutubeTask } from "./upload-post-to-youtube.task.ts";
+import { uploadPostToTiktokTask } from "./upload-post-to-tiktok.task.ts";
 
 export const createPostTask = schemaTask({
   id: "process-post",
   schema: z.object({
     post: z.object({
       fileUrl: z.url(),
+      size: z.number(),
       shouldGenerateThumbnail: z.boolean(),
       shouldGenerateShorts: z.boolean(),
       scheduledTo: z
@@ -100,6 +102,7 @@ export const createPostTask = schemaTask({
       shouldGenerateThumbnail,
       socialsToPost,
       fileUrl,
+      size
     } = post;
 
     logger.log("Video Url: ", { fileUrl });
@@ -177,6 +180,18 @@ export const createPostTask = schemaTask({
               description: postDescription,
               tags,
               videoUrl: fileUrl,
+              postId,
+            },
+          );
+          break;
+
+        case "TIKTOK":
+          await tasks.trigger<typeof uploadPostToTiktokTask>(
+            "upload-post-to-tiktok",
+            {
+              title: newPostTitle,
+              fileSizeInBytes: size,
+              fileUrl,
               postId,
             },
           );
