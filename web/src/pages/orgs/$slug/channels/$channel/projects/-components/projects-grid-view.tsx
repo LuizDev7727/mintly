@@ -5,13 +5,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 import { dayjs } from "@/lib/dayjs";
 import type { Project } from "@/types/project";
 import { getInitials } from "@/utils/get-initials";
 import { Link, useParams } from "@tanstack/react-router";
 import { MoreHorizontal, Trash2 } from "lucide-react";
-import { STATUS_CONFIG, StatusBadge } from "./status-badge";
+import { ProjectsStatusBadge } from "./projects-status-badge";
 
 type ProjectsGridViewProps = {
   projects: Project[];
@@ -25,7 +24,6 @@ export function ProjectsGridView({ projects }: ProjectsGridViewProps) {
   return (
     <div className="flex flex-wrap gap-4">
       {projects.map((project) => {
-        const config = STATUS_CONFIG[project.status];
         const isProcessing = project.status === "PROCESSING";
 
         return (
@@ -36,12 +34,7 @@ export function ProjectsGridView({ projects }: ProjectsGridViewProps) {
             className="group relative w-75 cursor-pointer overflow-hidden rounded-2xl border bg-card transition-shadow hover:shadow-md"
           >
             {isProcessing && (
-              <div
-                className={cn(
-                  "absolute bottom-0 inset-x-0 h-0.5 animate-pulse z-10",
-                  config.progressClassName,
-                )}
-              />
+              <div className="absolute bottom-0 inset-x-0 h-0.5 z-10 animate-pulse bg-amber-400" />
             )}
             {/* Thumbnail */}
             <div className="relative aspect-video w-full overflow-hidden bg-muted">
@@ -56,7 +49,7 @@ export function ProjectsGridView({ projects }: ProjectsGridViewProps) {
 
               {/* Status badge — top left */}
               <div className="absolute left-2.5 top-2.5">
-                <StatusBadge status={project.status} />
+                <ProjectsStatusBadge status={project.status} />
               </div>
 
               {/* Clip count — bottom right */}
