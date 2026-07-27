@@ -74,6 +74,7 @@ export async function createPosts(params:CreatePostsParams) {
         shouldGenerateThumbnail,
         socialsToPost: socialsToPost,
         fileUrl,
+        size: file.size,
       },
       postId: postInsertedId,
     });
