@@ -2,6 +2,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
@@ -20,7 +21,7 @@ export function NavChannels() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
             asChild
           >
             <NavLink
@@ -36,7 +37,7 @@ export function NavChannels() {
 
         <SidebarMenuItem>
           <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
             asChild
           >
             <NavLink
@@ -51,7 +52,7 @@ export function NavChannels() {
 
         <SidebarMenuItem>
           <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
             asChild
           >
             <NavLink
@@ -66,7 +67,7 @@ export function NavChannels() {
 
         <SidebarMenuItem>
           <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
             asChild
           >
             <NavLink
@@ -77,11 +78,12 @@ export function NavChannels() {
               <span>Integrations</span>
             </NavLink>
           </SidebarMenuButton>
+          <SidebarMenuBadge>2</SidebarMenuBadge>
         </SidebarMenuItem>
 
         <SidebarMenuItem>
           <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
             asChild
           >
             <NavLink

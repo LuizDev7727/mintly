@@ -97,7 +97,7 @@ export function OrganizationSwitcher() {
                   <Building className="size-4" />
                 </div>
               }
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className="grid flex-1 text-left text-sm leading-tight transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0">
                 <span className="truncate font-medium">
                   {organization.name}'s workspace
                 </span>
@@ -105,7 +105,7 @@ export function OrganizationSwitcher() {
                   {organization.membersCount} members
                 </span>
               </div>
-              <ChevronsUpDown className="ml-auto" />
+              <ChevronsUpDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

@@ -65,7 +65,7 @@ export function FoldersList() {
         </div>
         <div className="flex items-center gap-x-2">
           <CreateFolderDialog />
-          <div className="bg-zinc-900 w-4 rotate-90 h-px" />
+          <div className="bg-border w-4 rotate-90 h-px" />
           <FoldersPagination
             isLoading={isLoading}
             totalPages={totalPages}

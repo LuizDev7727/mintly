@@ -9,5 +9,6 @@ export type Member = {
     name: string;
     email: string;
     avatarUrl: string | null;
+    bio: string | null;
   };
 };

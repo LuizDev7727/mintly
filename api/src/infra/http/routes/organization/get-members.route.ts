@@ -25,6 +25,7 @@ export const getMembersRoute: FastifyPluginAsyncZod = async (app) => {
                   name: z.string(),
                   email: z.string(),
                   avatarUrl: z.string().nullable(),
+                  bio: z.string().nullable(),
                 }),
               }),
             ),
