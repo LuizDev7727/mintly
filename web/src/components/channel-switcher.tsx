@@ -52,7 +52,7 @@ export function ChannelSwitcher() {
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 <TvMinimal className="size-4" />
               </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className="grid flex-1 text-left text-sm leading-tight transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0">
                 <span className="truncate font-medium">
                   {currentChannel!.name}
                 </span>
@@ -60,7 +60,7 @@ export function ChannelSwitcher() {
                   {currentChannel!.postsCount} posts
                 </span>
               </div>
-              <ChevronsUpDown className="ml-auto" />
+              <ChevronsUpDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

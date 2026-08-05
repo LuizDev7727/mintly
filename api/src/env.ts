@@ -21,6 +21,7 @@ const envSchema = z.object({
   TIKTOK_CLIENT_KEY: z.string(),
   TIKTOK_CLIENT_SECRET: z.string(),
   TIKTOK_REDIRECT_URI: z.url(),
+  RESEND_API_KEY: z.string()
 });
 
 export const env = envSchema.parse(process.env);

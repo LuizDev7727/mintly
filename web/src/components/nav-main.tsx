@@ -1,8 +1,11 @@
+import { Suspense } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -24,6 +27,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
+import { getChannelsHttp } from "@/http/channel/get-channels.http";
+import { getMembersHttp } from "@/http/organization/get-members.http";
 
 export function NavMain() {
   const { slug } = useParams({ from: "/orgs/$slug" });
@@ -34,7 +39,7 @@ export function NavMain() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
             asChild
           >
             <NavLink
@@ -46,11 +51,14 @@ export function NavMain() {
               <span>Channels</span>
             </NavLink>
           </SidebarMenuButton>
+          <Suspense fallback={null}>
+            <ChannelsCountBadge slug={slug} />
+          </Suspense>
         </SidebarMenuItem>
 
         <SidebarMenuItem>
           <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
             asChild
           >
             <NavLink to={"/orgs/$slug/usage"} params={{ slug }}>
@@ -62,7 +70,7 @@ export function NavMain() {
 
         <SidebarMenuItem>
           <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
             asChild
           >
             <NavLink to={"/orgs/$slug/activities"} params={{ slug }}>
@@ -74,7 +82,7 @@ export function NavMain() {
 
         <SidebarMenuItem>
           <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
             asChild
           >
             <NavLink to={"/orgs/$slug/members"} params={{ slug }}>
@@ -82,12 +90,15 @@ export function NavMain() {
               <span>Members</span>
             </NavLink>
           </SidebarMenuButton>
+          <Suspense fallback={null}>
+            <MembersCountBadge slug={slug} />
+          </Suspense>
         </SidebarMenuItem>
 
         <Collapsible>
           <SidebarMenuItem>
             <SidebarMenuButton
-              className="data-[current=true]:bg-sidebar-primary/10 data-[current=true]:text-sidebar-primary data-[current=true]:font-medium"
+              className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
               asChild
             >
               <NavLink to={"/orgs/$slug/settings"} params={{ slug }}>
@@ -132,4 +143,22 @@ export function NavMain() {
       </SidebarMenu>
     </SidebarGroup>
   );
+}
+
+function ChannelsCountBadge({ slug }: { slug: string }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ["channels", slug],
+    queryFn: () => getChannelsHttp({ orgSlug: slug }),
+  });
+
+  return <SidebarMenuBadge>{data.channels.length}</SidebarMenuBadge>;
+}
+
+function MembersCountBadge({ slug }: { slug: string }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ["members", slug],
+    queryFn: () => getMembersHttp({ orgSlug: slug }),
+  });
+
+  return <SidebarMenuBadge>{data.members.length}</SidebarMenuBadge>;
 }
