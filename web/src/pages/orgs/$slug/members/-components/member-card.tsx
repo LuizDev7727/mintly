@@ -7,6 +7,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Member } from "@/types/member";
 import { getInitials } from "@/utils/get-initials";
 
@@ -18,17 +23,15 @@ export function MemberCard({ member }: MemberCardProps) {
   const isOwner = member.role === "owner";
   return (
     <div className="w-90 rounded-md p-4 border">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-2">
-          <div className="relative">
-            <Avatar className={"data-[pending=true]:opacity-60"}>
-              {member.user.avatarUrl && (
-                <AvatarImage src={member.user.avatarUrl} />
-              )}
-              <AvatarFallback>{getInitials(member.user.name)}</AvatarFallback>
-            </Avatar>
-          </div>
-          <div>
+      <div className="flex items-start justify-between gap-x-2">
+        <div className="flex items-start gap-x-2 min-w-0">
+          <Avatar className={"data-[pending=true]:opacity-60"}>
+            {member.user.avatarUrl && (
+              <AvatarImage src={member.user.avatarUrl} />
+            )}
+            <AvatarFallback>{getInitials(member.user.name)}</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
             <div className="flex items-center gap-x-2">
               <h3 className="truncate text-sm font-semibold leading-tight text-foreground">
                 {member.user.name}
@@ -39,20 +42,30 @@ export function MemberCard({ member }: MemberCardProps) {
               <Mail className="size-3 shrink-0" />
               <p className="truncate line-clamp-1">{member.user.email}</p>
             </div>
+            {member.user.bio && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="mt-1 text-sm text-muted-foreground line-clamp-2 cursor-default">
+                    {member.user.bio}
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-64">
+                  {member.user.bio}
+                </TooltipContent>
+              </Tooltip>
+            )}
           </div>
         </div>
         {!isOwner && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="flex justify-end">
-                <Button
-                  className="bg-transparent!"
-                  variant={"outline"}
-                  size={"sm"}
-                >
-                  <MoreHorizontal />
-                </Button>
-              </div>
+              <Button
+                className="bg-transparent! shrink-0"
+                variant={"outline"}
+                size={"sm"}
+              >
+                <MoreHorizontal />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
@@ -66,7 +79,6 @@ export function MemberCard({ member }: MemberCardProps) {
           </DropdownMenu>
         )}
       </div>
-      <div className="flex items-center justify-between"></div>
     </div>
   );
 }

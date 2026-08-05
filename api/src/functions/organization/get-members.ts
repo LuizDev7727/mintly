@@ -10,10 +10,6 @@ type GetMembersParams = {
 };
 
 export async function getMembers({ orgSlug }: GetMembersParams) {
-  const [{ organizationId }] = await db
-    .select({ organizationId: organizationsTable.id })
-    .from(organizationsTable)
-    .where(eq(organizationsTable.slug, orgSlug));
 
   const [members, pendingInvites] = await Promise.all([
     db
@@ -26,6 +22,7 @@ export async function getMembers({ orgSlug }: GetMembersParams) {
           name: usersTable.name,
           email: usersTable.email,
           avatarUrl: usersTable.image,
+          bio: usersTable.bio,
         },
       })
       .from(membersTable)

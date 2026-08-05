@@ -13,6 +13,8 @@ import { ChannelSwitcher } from "./channel-switcher";
 import { NavChannels } from "./nav-channels";
 import { NavUser } from "./nav-user";
 import { NavSecondary } from "./nav-secondary";
+import { Separator } from "./ui/separator";
+import { StarredFolders } from "./starred-folders";
 
 type AppSidebarProps = ComponentProps<typeof Sidebar>;
 
@@ -33,6 +35,16 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       <SidebarContent>
         <NavMain />
         {isChannelRoute && <NavChannels />}
+        {
+          isChannelRoute && (
+            <>
+              <div className="px-4">
+                <Separator />
+              </div>
+              <StarredFolders />
+            </>
+          )
+        }
         <NavSecondary />
       </SidebarContent>
       <SidebarFooter>
