@@ -28,7 +28,7 @@ export const createInviteMemberRoute: FastifyPluginAsyncZod = async (
     async (request, reply) => {
       const { slug } = request.params;
       const { email } = request.body;
-      const { id: inviterId } = request.user;
+      const inviter = request.user;
 
       const span = tracer.startSpan("create-invite-member");
       span.setAttribute("organization-slug", slug);
@@ -37,7 +37,10 @@ export const createInviteMemberRoute: FastifyPluginAsyncZod = async (
       const { inviteId } = await createInviteMember({
         orgSlug: slug,
         email,
-        inviterId,
+        inviter: {
+          id: inviter.id,
+          name: inviter.name
+        }
       });
 
       span.end();

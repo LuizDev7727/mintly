@@ -1,12 +1,17 @@
 import { db } from "@/infra/db/client.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
+import { resend } from "@/lib/resend.ts";
+import InviteMemberTemplate from "@/utils/resend/templates/invite-member-template.tsx";
 import { eq } from "drizzle-orm";
 
 type CreateInviteMemberParams = {
   orgSlug: string;
   email: string;
-  inviterId: string;
+  inviter: {
+    id: string
+    name: string
+  }
 };
 
 type CreateInviteMemberResponse = {
@@ -18,10 +23,10 @@ const INVITE_EXPIRES_IN_DAYS = 7;
 export async function createInviteMember(
   params: CreateInviteMemberParams,
 ): Promise<CreateInviteMemberResponse> {
-  const { orgSlug, email, inviterId } = params;
+  const { orgSlug, email, inviter } = params;
 
-  const [{ organizationSlug }] = await db
-    .select({ organizationSlug: organizationsTable.slug })
+  const [{ organizationSlug, organizationName }] = await db
+    .select({ organizationSlug: organizationsTable.slug, organizationName: organizationsTable.name })
     .from(organizationsTable)
     .where(eq(organizationsTable.slug, orgSlug));
 
@@ -34,9 +39,16 @@ export async function createInviteMember(
       organizationSlug,
       email,
       expiresAt,
-      inviterId,
+      inviterId: inviter.id,
     })
     .returning({ inviteId: invitationsTable.id });
+
+  await resend.emails.send({
+    from: "luiz.antonioq2003@gmail.com",
+    to: "luiz.antonio999@hotmail.com",
+    react: InviteMemberTemplate({ inviter, organization: { name: organizationName } }),
+    subject: "",
+  })
 
   return { inviteId };
 }
