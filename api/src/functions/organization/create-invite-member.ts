@@ -6,7 +6,10 @@ import { eq } from "drizzle-orm";
 type CreateInviteMemberParams = {
   orgSlug: string;
   email: string;
-  inviterId: string;
+  inviter: {
+    id: string
+    name: string
+  }
 };
 
 type CreateInviteMemberResponse = {
@@ -18,7 +21,7 @@ const INVITE_EXPIRES_IN_DAYS = 7;
 export async function createInviteMember(
   params: CreateInviteMemberParams,
 ): Promise<CreateInviteMemberResponse> {
-  const { orgSlug, email, inviterId } = params;
+  const { orgSlug, email, inviter } = params;
 
   const [{ organizationSlug }] = await db
     .select({ organizationSlug: organizationsTable.slug })
@@ -34,7 +37,7 @@ export async function createInviteMember(
       organizationSlug,
       email,
       expiresAt,
-      inviterId,
+      inviterId: inviter.id,
     })
     .returning({ inviteId: invitationsTable.id });
 

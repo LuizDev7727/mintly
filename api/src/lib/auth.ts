@@ -14,6 +14,8 @@ import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { createSlug } from "./create-slug.ts";
+import { resend } from "./resend.ts";
+import WelcomeTemplate from "@/utils/resend/templates/welcome-template.tsx";
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
@@ -61,6 +63,18 @@ export const auth = betterAuth({
     },
   },
   databaseHooks: {
+    user: {
+      create: {
+        after: async (user, data) => {
+          // await resend.emails.send({
+          //   from: "Acme <onboarding@example.com>",
+          //   to: user.email,
+          //   react: WelcomeTemplate({ name: user.name }),
+          //   subject: `Welcome to Mintly, ${user.name}!`,
+          // })
+        },
+      },
+    },
     session: {
       create: {
         before: async (session, data) => {
