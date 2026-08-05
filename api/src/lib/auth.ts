@@ -66,12 +66,12 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user, data) => {
-          await resend.emails.send({
-            from: "Acme <onboarding@example.com>",
-            to: user.email,
-            react: WelcomeTemplate({ name: user.name }),
-            subject: `Welcome to Mintly, ${user.name}!`,
-          })
+          // await resend.emails.send({
+          //   from: "Acme <onboarding@example.com>",
+          //   to: user.email,
+          //   react: WelcomeTemplate({ name: user.name }),
+          //   subject: `Welcome to Mintly, ${user.name}!`,
+          // })
         },
       },
     },
