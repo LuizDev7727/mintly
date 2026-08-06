@@ -4,7 +4,7 @@ import { tracer } from "../../tracer/tracer.ts";
 import { connectTikTok } from "@/functions/integration/connect-tiktok.ts";
 import { env } from "@/env.ts";
 
-const FRONTEND_URL = env.TIKTOK_REDIRECT_URI;
+const FRONTEND_URL = env.TIKTOK_REDIRECT_CALLBACK_URI;
 
 export const tiktokCallbackRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
