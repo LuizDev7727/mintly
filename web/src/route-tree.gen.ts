@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './pages/__root'
+import { Route as TermsOfServiceRouteImport } from './pages/terms-of-service'
+import { Route as PrivacyPolicyRouteImport } from './pages/privacy-policy'
 import { Route as AuthLayoutRouteImport } from './pages/auth/layout'
 import { Route as IndexRouteImport } from './pages/index'
 import { Route as OrgsIndexRouteImport } from './pages/orgs/index'
@@ -30,6 +32,16 @@ import { Route as OrgsSlugChannelsChannelAiIndexRouteImport } from './pages/orgs
 import { Route as OrgsSlugChannelsChannelPostIdIndexRouteImport } from './pages/orgs/$slug/channels/$channel/$postId/index'
 import { Route as OrgsSlugChannelsChannelProjectsProjectIdIndexRouteImport } from './pages/orgs/$slug/channels/$channel/projects/$projectId/index'
 
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -143,6 +155,8 @@ const OrgsSlugChannelsChannelProjectsProjectIdIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/orgs/$slug': typeof OrgsSlugLayoutRouteWithChildren
   '/auth/': typeof AuthIndexRoute
   '/orgs/': typeof OrgsIndexRoute
@@ -164,6 +178,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/auth': typeof AuthIndexRoute
   '/orgs': typeof OrgsIndexRoute
   '/auth/sign-up': typeof AuthSignUpIndexRoute
@@ -185,6 +201,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/orgs/$slug': typeof OrgsSlugLayoutRouteWithChildren
   '/auth/': typeof AuthIndexRoute
   '/orgs/': typeof OrgsIndexRoute
@@ -209,6 +227,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/privacy-policy'
+    | '/terms-of-service'
     | '/orgs/$slug'
     | '/auth/'
     | '/orgs/'
@@ -230,6 +250,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/privacy-policy'
+    | '/terms-of-service'
     | '/auth'
     | '/orgs'
     | '/auth/sign-up'
@@ -250,6 +272,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/privacy-policy'
+    | '/terms-of-service'
     | '/orgs/$slug'
     | '/auth/'
     | '/orgs/'
@@ -273,12 +297,28 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  TermsOfServiceRoute: typeof TermsOfServiceRoute
   OrgsSlugLayoutRoute: typeof OrgsSlugLayoutRouteWithChildren
   OrgsIndexRoute: typeof OrgsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -496,6 +536,8 @@ const OrgsSlugLayoutRouteWithChildren = OrgsSlugLayoutRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
+  TermsOfServiceRoute: TermsOfServiceRoute,
   OrgsSlugLayoutRoute: OrgsSlugLayoutRouteWithChildren,
   OrgsIndexRoute: OrgsIndexRoute,
 }
