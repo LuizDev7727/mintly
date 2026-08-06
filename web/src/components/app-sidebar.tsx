@@ -48,7 +48,6 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         <NavSecondary />
       </SidebarContent>
       <SidebarFooter>
-        {/*<ThemeToggle />*/}
         <NavUser />
       </SidebarFooter>
       <SidebarRail />

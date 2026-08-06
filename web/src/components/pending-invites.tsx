@@ -88,7 +88,7 @@ export function PendingInvites() {
           size="icon-sm"
           variant="ghost"
         >
-          <Bell size={16} />
+          <Bell size={16} className="text-muted-foreground" />
           {unreadCount > 0 && (
             <Badge className="-top-2 -translate-x-1/2 absolute left-full min-w-5 px-1">
               {unreadCount > 99 ? "99+" : unreadCount}
