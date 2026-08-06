@@ -59,27 +59,29 @@ const features = [
 function HomePage() {
   return (
     <div className="w-full">
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link to="/" className="flex items-center gap-2 font-medium">
-            Mintly
-          </Link>
+      <div id="home" className="absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-size-[3rem_3rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] h-full" />
 
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" asChild>
-              <Link to="/auth">Sign in</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/auth/sign-up">
-                Get started
-                <ArrowRight />
-              </Link>
-            </Button>
+      <main className="mx-auto w-full z-0 relative">
+        <header className="top-0 z-50">
+          <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+            <Link to="/" className="flex items-center gap-2 font-medium">
+              Mintly
+            </Link>
+
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" asChild>
+                <Link to="/auth">Sign in</Link>
+              </Button>
+              <Button asChild>
+                <Link to="/auth/sign-up">
+                  Get started
+                  <ArrowRight />
+                </Link>
+              </Button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main>
         <section className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-6 py-24 text-center">
           <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-balance md:text-6xl">
             Schedule, publish, and track your content across every channel
