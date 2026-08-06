@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import { Folder, MoreHorizontal, Star, Trash2 } from "lucide-react";
+import { Folder, MoreHorizontal, Trash2 } from "lucide-react";
 import type { GetStarredFoldersResponse } from "@/http/folder/get-starred-folders.http";
 import { getStarredFoldersHttp } from "@/http/folder/get-starred-folders.http";
 import { removeStarredFolderHttp } from "@/http/folder/remove-starred-folder.http";
