@@ -8,6 +8,7 @@ import {
 import type { Folder } from "@/types/folder";
 import { useQueryState } from "nuqs";
 import { DeleteFolderDialog } from "./delete-folder-dialog";
+import { StarFolderButton } from "./star-folder-button";
 import { UpdateFolderNameDialog } from "./update-folder-name-dialog";
 
 type FolderCardProps = {
@@ -46,6 +47,12 @@ export function FolderCard({ folder }: FolderCardProps) {
           <MoreHorizontal className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <StarFolderButton
+            folderId={folder.id}
+            folderTitle={folder.title}
+            folderPostsCount={folder.postsCount}
+          />
+          <DropdownMenuSeparator />
           <UpdateFolderNameDialog
             folderId={folder.id}
             folderName={folder.title}
