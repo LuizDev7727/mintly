@@ -132,3 +132,32 @@
     @apply bg-primary text-primary-foreground;
   }
 }
+
+/* Circular theme-toggle View Transition (see components/theme-toggle.tsx).
+   Disables the browser's default cross-fade so only the JS-driven
+   clip-path animation on ::view-transition-new(root) is visible. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+  /* Pinned synchronously so the new theme stays hidden until the JS
+     animation takes over after transition.ready resolves. */
+  clip-path: var(--theme-vt-clip-from, none);
+}
+
+/* Scoped to the theme toggle — the toggle sets the data-attribute and the
+   variable only during a theme toggle, so this doesn't affect other
+   view transitions the app might use elsewhere. Without this, the browser's
+   default 0.25s transition-group duration can tear down the pseudo-elements
+   before our clip-path animation finishes. */
+html[data-theme-vt="active"]::view-transition-group(root) {
+  animation-duration: var(--theme-toggle-vt-duration);
+}
