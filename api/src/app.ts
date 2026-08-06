@@ -25,6 +25,9 @@ import { createFolderRoute } from "./infra/http/routes/folder/create-folder.rout
 import { deleteFolderRoute } from "./infra/http/routes/folder/delete-folder.route.ts";
 import { getFoldersRoute } from "./infra/http/routes/folder/get-folders.route.ts";
 import { updateFolderRoute } from "./infra/http/routes/folder/update-folder.route.ts";
+import { getStarredFoldersRoute } from "./infra/http/routes/folder/get-starred-folders.route.ts";
+import { setStarredFolderRoute } from "./infra/http/routes/folder/set-starred-folder.route.ts";
+import { removeStarredFolderRoute } from "./infra/http/routes/folder/remove-starred-folder.route.ts";
 import { getOrganizationMetricsRoute } from "./infra/http/routes/organization/get-metrics.route.ts";
 import { getPostsRoute } from "./infra/http/routes/post/get-posts.route.ts";
 import { getPostRoute } from "./infra/http/routes/post/get-post.route.ts";
@@ -112,6 +115,9 @@ server.register(createFolderRoute);
 server.register(deleteFolderRoute);
 server.register(getFoldersRoute);
 server.register(updateFolderRoute);
+server.register(getStarredFoldersRoute);
+server.register(setStarredFolderRoute);
+server.register(removeStarredFolderRoute);
 server.register(getOrganizationMetricsRoute);
 
 server.register(getPostsRoute);

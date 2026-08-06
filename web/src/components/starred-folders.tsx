@@ -1,5 +1,9 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import { Folder, MoreHorizontal } from "lucide-react";
+import { Folder, MoreHorizontal, Trash2 } from "lucide-react";
+import type { GetStarredFoldersResponse } from "@/http/folder/get-starred-folders.http";
+import { getStarredFoldersHttp } from "@/http/folder/get-starred-folders.http";
+import { removeStarredFolderHttp } from "@/http/folder/remove-starred-folder.http";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,20 +15,10 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuBadge,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "./ui/sidebar";
-
-// TODO: hardcoded until starred folders are wired to the backend.
-const STARRED_FOLDERS = [
-  { id: "1", name: "How to build SaaS", clipCount: 12 },
-  { id: "2", name: "Product launches", clipCount: 24 },
-  { id: "3", name: "Q3 customer success stories", clipCount: 16 },
-  { id: "4", name: "Tutorials", clipCount: 12 },
-  { id: "5", name: "Webinars", clipCount: 8 },
-  { id: "6", name: "Raw footage", clipCount: 47 },
-];
 
 const MAX_VISIBLE_FOLDERS = 4;
 
@@ -32,9 +26,58 @@ export function StarredFolders() {
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
+  const queryClient = useQueryClient();
 
-  const visibleFolders = STARRED_FOLDERS.slice(0, MAX_VISIBLE_FOLDERS);
-  const overflowFolders = STARRED_FOLDERS.slice(MAX_VISIBLE_FOLDERS);
+  const starredFoldersQueryKey = ["starred-folders", slug, channel];
+
+  const { data, isLoading } = useQuery({
+    queryKey: starredFoldersQueryKey,
+    queryFn: () =>
+      getStarredFoldersHttp({ orgSlug: slug, channelId: channel }),
+  });
+
+  const { mutate: removeStarredFolder } = useMutation({
+    mutationFn: removeStarredFolderHttp,
+    onSuccess: (_data, variables) => {
+      queryClient.setQueryData<GetStarredFoldersResponse>(
+        starredFoldersQueryKey,
+        (old) => {
+          if (!old) {
+            return old;
+          }
+
+          return {
+            folders: old.folders.filter(
+              (folder) => folder.id !== variables.folderId,
+            ),
+          };
+        },
+      );
+    },
+  });
+
+  function handleRemoveStarredFolder(folderId: string) {
+    removeStarredFolder({ orgSlug: slug, channelId: channel, folderId });
+  }
+
+  if (isLoading) {
+    return null;
+  }
+
+  const folders = data?.folders ?? [];
+
+  const isStarredFoldersEmpty = folders.length === 0;
+
+  if (isStarredFoldersEmpty) {
+    return (
+      <SidebarGroup>
+        <SidebarGroupLabel>Starred Folders</SidebarGroupLabel>
+      </SidebarGroup>
+    );
+  }
+
+  const visibleFolders = folders.slice(0, MAX_VISIBLE_FOLDERS);
+  const overflowFolders = folders.slice(MAX_VISIBLE_FOLDERS);
 
   return (
     <SidebarGroup>
@@ -43,7 +86,7 @@ export function StarredFolders() {
         {visibleFolders.map((folder) => (
           <SidebarMenuItem key={folder.id}>
             <SidebarMenuButton
-              className="pr-8 data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
+              className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
               asChild
             >
               <Link
@@ -51,10 +94,15 @@ export function StarredFolders() {
                 params={{ slug, channel }}
               >
                 <Folder />
-                <span className="truncate">{folder.name}</span>
+                <span className="truncate">{folder.title}</span>
               </Link>
             </SidebarMenuButton>
-            <SidebarMenuBadge>{folder.clipCount}</SidebarMenuBadge>
+            <SidebarMenuAction
+              onClick={() => handleRemoveStarredFolder(folder.id)}
+            >
+              <Trash2 />
+              <span className="sr-only">Remove starred folder</span>
+            </SidebarMenuAction>
           </SidebarMenuItem>
         ))}
 
@@ -72,20 +120,27 @@ export function StarredFolders() {
                   More starred folders
                 </DropdownMenuLabel>
                 {overflowFolders.map((folder) => (
-                  <DropdownMenuItem key={folder.id} asChild>
+                  <DropdownMenuItem
+                    key={folder.id}
+                    className="justify-between gap-2"
+                    onSelect={(event) => event.preventDefault()}
+                  >
                     <Link
                       to={"/orgs/$slug/channels/$channel"}
                       params={{ slug, channel }}
-                      className="justify-between gap-2"
+                      className="flex min-w-0 flex-1 items-center gap-2"
                     >
-                      <span className="flex min-w-0 items-center gap-2">
-                        <Folder className="size-4 shrink-0" />
-                        <span className="truncate">{folder.name}</span>
-                      </span>
-                      <span className="shrink-0 text-xs text-muted-foreground">
-                        {folder.clipCount}
-                      </span>
+                      <Folder className="size-4 shrink-0" />
+                      <span className="truncate">{folder.title}</span>
                     </Link>
+                    <button
+                      type="button"
+                      className="shrink-0 rounded p-1 text-muted-foreground hover:text-destructive"
+                      onClick={() => handleRemoveStarredFolder(folder.id)}
+                    >
+                      <Trash2 className="size-3.5" />
+                      <span className="sr-only">Remove starred folder</span>
+                    </button>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
