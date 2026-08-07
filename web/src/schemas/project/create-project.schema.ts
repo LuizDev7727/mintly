@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-const MAX_FILE_SIZE_BYTES = 256 * 1024 * 1024;
-
 export const createProjectSchema = z.object({
   file: z
     .file()
