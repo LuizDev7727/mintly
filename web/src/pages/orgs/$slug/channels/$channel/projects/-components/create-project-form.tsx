@@ -194,6 +194,9 @@ export function CreateProjectForm() {
             <p className="mb-1.5 font-medium text-sm">
               Drop your video here or click to browse
             </p>
+            <p className="text-xs text-muted-foreground">
+              Video files up to 256MB
+            </p>
           </div>
         </div>
       )}
