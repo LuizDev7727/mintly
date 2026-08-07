@@ -9,11 +9,18 @@ import {
 import { Bot, Settings, Workflow, Video, Clapperboard } from "lucide-react";
 import { useParams } from "@tanstack/react-router";
 import { NavLink } from "./nav-link";
+import { getIntegrationsHttp } from "@/http/integration/get-integrations.http";
+import { useQuery } from "@tanstack/react-query";
 
 export function NavChannels() {
-  const { slug, channel } = useParams({ strict: false });
+  const { slug, channel } = useParams({
+    from: "/orgs/$slug/channels/$channel"
+  });
 
-  if (!slug || !channel) return null;
+  const { data: integrationsData } = useQuery({
+    queryKey: ["integrations", slug],
+    queryFn: () => getIntegrationsHttp({ channelId: channel }),
+  });
 
   return (
     <SidebarGroup>
@@ -78,7 +85,9 @@ export function NavChannels() {
               <span>Integrations</span>
             </NavLink>
           </SidebarMenuButton>
-          <SidebarMenuBadge>2</SidebarMenuBadge>
+          {
+            integrationsData && <SidebarMenuBadge>{integrationsData.integrations.length}</SidebarMenuBadge>
+          }
         </SidebarMenuItem>
 
         <SidebarMenuItem>

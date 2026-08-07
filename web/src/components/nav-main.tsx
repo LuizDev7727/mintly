@@ -1,5 +1,4 @@
-import { Suspense } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -33,6 +32,16 @@ import { getMembersHttp } from "@/http/organization/get-members.http";
 export function NavMain() {
   const { slug } = useParams({ from: "/orgs/$slug" });
 
+  const { data: channelsData } = useQuery({
+    queryKey: ["channels", slug],
+    queryFn: () => getChannelsHttp({ orgSlug: slug }),
+  });
+
+  const { data: membersData } = useQuery({
+    queryKey: ["members", slug],
+    queryFn: () => getMembersHttp({ orgSlug: slug }),
+  });
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Organization</SidebarGroupLabel>
@@ -51,9 +60,9 @@ export function NavMain() {
               <span>Channels</span>
             </NavLink>
           </SidebarMenuButton>
-          <Suspense fallback={null}>
-            <ChannelsCountBadge slug={slug} />
-          </Suspense>
+          {
+            channelsData && <SidebarMenuBadge>{channelsData.channels.length}</SidebarMenuBadge>
+          }
         </SidebarMenuItem>
 
         <SidebarMenuItem>
@@ -90,9 +99,9 @@ export function NavMain() {
               <span>Members</span>
             </NavLink>
           </SidebarMenuButton>
-          <Suspense fallback={null}>
-            <MembersCountBadge slug={slug} />
-          </Suspense>
+          {
+            membersData && <SidebarMenuBadge>{membersData.members.length}</SidebarMenuBadge>
+          }
         </SidebarMenuItem>
 
         <Collapsible>
@@ -143,22 +152,4 @@ export function NavMain() {
       </SidebarMenu>
     </SidebarGroup>
   );
-}
-
-function ChannelsCountBadge({ slug }: { slug: string }) {
-  const { data } = useSuspenseQuery({
-    queryKey: ["channels", slug],
-    queryFn: () => getChannelsHttp({ orgSlug: slug }),
-  });
-
-  return <SidebarMenuBadge>{data.channels.length}</SidebarMenuBadge>;
-}
-
-function MembersCountBadge({ slug }: { slug: string }) {
-  const { data } = useSuspenseQuery({
-    queryKey: ["members", slug],
-    queryFn: () => getMembersHttp({ orgSlug: slug }),
-  });
-
-  return <SidebarMenuBadge>{data.members.length}</SidebarMenuBadge>;
 }

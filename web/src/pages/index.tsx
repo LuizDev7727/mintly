@@ -153,6 +153,14 @@ function HomePage() {
             <img src="/logo.svg" alt="" className="size-5" />
             Mintly Inc.
           </div>
+          <div className="flex items-center gap-4">
+            <Link to="/terms-of-service" className="hover:text-foreground">
+              Terms of Service
+            </Link>
+            <Link to="/privacy-policy" className="hover:text-foreground">
+              Privacy Policy
+            </Link>
+          </div>
           <p>© {new Date().getFullYear()} Mintly. All rights reserved.</p>
         </div>
       </footer>
