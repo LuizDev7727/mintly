@@ -34,8 +34,10 @@ import { getPostRoute } from "./infra/http/routes/post/get-post.route.ts";
 import { createPostsRoute } from "./infra/http/routes/post/create-posts.route.ts";
 import { cancelPostRoute } from "./infra/http/routes/post/cancel-post.route.ts";
 import { getProjectsRoute } from "./infra/http/routes/project/get-projects.route.ts";
+import { getProjectRoute } from "./infra/http/routes/project/get-project.route.ts";
 import { createProjectRoute } from "./infra/http/routes/project/create-project.route.ts";
 import { getBestMomentsRoute } from "./infra/http/routes/best-moment/get-best-moments.route.ts";
+import { sendBestMomentToSocialMediaRoute } from "./infra/http/routes/best-moment/send-best-moment-to-social-media.route.ts";
 import { getIntegrationsRoute } from "./infra/http/routes/integration/get-integrations.route.ts";
 import { getOrganizationsRoute } from "./infra/http/routes/organization/get-organizations.route.ts";
 import { getActiveOrganizationRoute } from "./infra/http/routes/organization/get-active-organization.route.ts";
@@ -125,8 +127,10 @@ server.register(getPostRoute);
 server.register(createPostsRoute);
 server.register(cancelPostRoute);
 server.register(getProjectsRoute);
+server.register(getProjectRoute);
 server.register(createProjectRoute);
 server.register(getBestMomentsRoute);
+server.register(sendBestMomentToSocialMediaRoute);
 
 server.register(getIntegrationsRoute);
 

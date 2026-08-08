@@ -1,11 +1,19 @@
+import { TiktokIcon, YoutubeIcon } from "@/components/provider-icons";
 import { dayjs } from "@/lib/dayjs";
 import type { BestMoment } from "@/types/best-moment";
+import type { Integration } from "@/types/integration";
 
 type BestMomentGridViewProps = {
   bestMoments: BestMoment[];
+  integrations: Integration[];
+  onPostBestMoment: (bestMomentId: string, integration: Integration) => void;
 };
 
-export function BestMomentGridView({ bestMoments }: BestMomentGridViewProps) {
+export function BestMomentGridView({
+  bestMoments,
+  integrations,
+  onPostBestMoment,
+}: BestMomentGridViewProps) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {bestMoments.map((bestMoment) => (
@@ -22,7 +30,7 @@ export function BestMomentGridView({ bestMoments }: BestMomentGridViewProps) {
             />
           </div>
 
-          <div className="flex items-start justify-between gap-2 p-3">
+          <div className="space-y-2 p-3">
             <div className="min-w-0">
               <h3 className="line-clamp-2 text-sm font-medium leading-snug">
                 {bestMoment.title}
@@ -32,6 +40,27 @@ export function BestMomentGridView({ bestMoments }: BestMomentGridViewProps) {
               </p>
             </div>
 
+            {integrations.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                {integrations.map((integration) => (
+                  <button
+                    key={integration.id}
+                    type="button"
+                    onClick={() =>
+                      onPostBestMoment(bestMoment.id, integration)
+                    }
+                    className="cursor-pointer inline-flex max-w-full items-center gap-1.5 rounded-full border bg-background px-2 py-1 text-xs transition-colors hover:bg-accent hover:text-accent-foreground"
+                  >
+                    {integration.provider === "YOUTUBE" ? (
+                      <YoutubeIcon className="size-3.5 shrink-0" />
+                    ) : (
+                      <TiktokIcon className="size-3 shrink-0" />
+                    )}
+                    <span className="truncate">{integration.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       ))}
