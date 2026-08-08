@@ -33,8 +33,9 @@ export type Post = {
     | "PUBLISHING"
     | "CANCELED";
   duration: number | null;
-  publishAt: Date | null;
-  socialsToPost: { id: string; socialName: string; social: "YOUTUBE" | "TIKTOK" }[];
+  createdAt: string;
+  publishAt: string | null;
+  socialsToPost: { id: string; socialName: string; social: "YOUTUBE" | "TIKTOK"; avatarUrl: string | null }[];
   author: {
     name: string;
     avatarUrl: string | null;
