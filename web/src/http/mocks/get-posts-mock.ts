@@ -40,6 +40,7 @@ const posts: Post[] = Array.from({ length: 48 }, () => ({
       id: faker.string.uuid(),
       socialName: faker.person.fullName(),
       social: faker.helpers.arrayElement(SOCIALS),
+      avatarUrl: faker.datatype.boolean() ? faker.image.avatar() : null,
     }),
   ),
   author: {
