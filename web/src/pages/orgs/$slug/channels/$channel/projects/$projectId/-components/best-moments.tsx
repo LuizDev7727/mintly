@@ -18,7 +18,7 @@ import { useParams } from "@tanstack/react-router";
 
 export function BestMoments() {
 
-  const { _, channel, projectId } = useParams({
+  const { channel, projectId } = useParams({
     from:"/orgs/$slug/channels/$channel/projects/$projectId/"
   })
 

@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { getProjectHttp } from "@/http/projects/get-project.http";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import axios from "axios";
-import { ArrowLeft, CloudUpload } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Suspense } from "react";
 import { BestMomentsLoading } from "./-components/best-moments-loading";
 import { BestMoments } from "./-components/best-moments";
