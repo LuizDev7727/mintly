@@ -43,9 +43,11 @@ export const getPostsRoute: FastifyPluginAsyncZod = async (app) => {
                   "CANCELED",
                 ]),
                 duration: z.number().optional(),
-                publishedAt: z.string().optional(),
+                createdAt: z.date(),
+                publishAt: z.date().nullable(),
                 socialsToPost: z.array(
                   z.object({
+                    id: z.string(),
                     social: z.enum(["YOUTUBE", "TIKTOK"]),
                     socialName: z.string(),
                   }),

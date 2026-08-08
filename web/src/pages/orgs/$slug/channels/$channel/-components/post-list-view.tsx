@@ -8,6 +8,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { cancelPostHttp } from "@/http/posts/cancel-post.http";
 import type { GetPostsResponse } from "@/http/posts/get-posts.http";
+import { dayjs } from "@/lib/dayjs";
 import type { Post } from "@/types/post";
 import { formatBytes } from "@/utils/format-bytes";
 import { formatDuration } from "@/utils/format-duration";
@@ -118,7 +119,7 @@ export function PostListView({ posts }: PostListViewProps) {
               </span>
 
               <span className="text-xs text-muted-foreground">
-                {post.publishAt ? post.publishAt.toLocaleDateString() : "Now"}
+                {post.publishAt ? dayjs(post.publishAt).format("MMM D") : "Now"}
               </span>
 
               {isPostProcessing && (

@@ -30,7 +30,10 @@ const posts: Post[] = Array.from({ length: 48 }, () => ({
   type: faker.helpers.arrayElement(["video/mp4", "image/png", "image/jpeg"]),
   status: faker.helpers.arrayElement(STATUSES),
   duration: faker.number.int({ min: 0, max: 3600 }),
-  publishAt: faker.datatype.boolean() ? faker.date.future() : null,
+  createdAt: faker.date.recent().toISOString(),
+  publishAt: faker.datatype.boolean()
+    ? faker.date.future().toISOString()
+    : null,
   socialsToPost: Array.from(
     { length: faker.number.int({ min: 1, max: 2 }) },
     () => ({
