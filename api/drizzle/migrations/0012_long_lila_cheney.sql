@@ -1,0 +1,1 @@
+ALTER TABLE "socials_to_post" ADD COLUMN "avatar_url" varchar;

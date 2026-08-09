@@ -34,6 +34,7 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
                       id: z.string(),
                       name: z.string(),
                       provider: z.enum(["YOUTUBE", "TIKTOK"]),
+                      avatarUrl: z.string().nullable(),
                     }),
                   )
                   .min(1, {

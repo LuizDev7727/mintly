@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { ConfirmDisconnectDialog } from "./confirm-disconnect-dialog";
-import { YoutubeIcon } from "./provider-icons";
+import { YoutubeIcon } from "@/components/provider-icons";
 import { deleteIntegrationHttp } from "@/http/integration/delete-ingration.http";
 import { requestYoutubeIntegrationUrlHttp } from "@/http/integration/request-youtube-integration-url.http";
 import type { Integration } from "@/types/integration";

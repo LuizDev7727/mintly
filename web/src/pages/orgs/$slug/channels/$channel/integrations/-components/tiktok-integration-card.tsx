@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { ConfirmDisconnectDialog } from "./confirm-disconnect-dialog";
-import { TiktokIcon } from "./provider-icons";
+import { TiktokIcon } from "@/components/provider-icons";
 import { deleteIntegrationHttp } from "@/http/integration/delete-ingration.http";
 import { requestTiktokIntegrationUrlHttp } from "@/http/integration/request-tiktok-integration-url.http";
 import type { Integration } from "@/types/integration";

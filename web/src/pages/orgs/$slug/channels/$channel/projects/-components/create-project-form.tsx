@@ -9,6 +9,7 @@ import {
   type CreateProjectFormType,
 } from "@/schemas/project/create-project.schema";
 import type { Project } from "@/types/project";
+import { formatBytes } from "@/utils/format-bytes";
 import { uploadFile } from "@/utils/upload-file";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,11 +20,6 @@ import { parseAsString, useQueryState } from "nuqs";
 import { useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-function formatSize(bytes: number): string {
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 function formatType(file: File): string {
   return (
@@ -149,7 +145,7 @@ export function CreateProjectForm() {
               {file.name}
             </p>
             <p className="text-xs text-muted-foreground">
-              {formatType(file)} · {formatSize(file.size)}
+              {formatType(file)} · {formatBytes(file.size)}
             </p>
           </div>
           {isSubmitting ? (
@@ -193,9 +189,6 @@ export function CreateProjectForm() {
             </div>
             <p className="mb-1.5 font-medium text-sm">
               Drop your video here or click to browse
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Video files up to 256MB
             </p>
           </div>
         </div>

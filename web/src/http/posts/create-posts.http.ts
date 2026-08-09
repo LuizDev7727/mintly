@@ -1,3 +1,4 @@
+import type { Integration } from "@/types/integration";
 import { api } from "../api";
 
 type CreatePostsParams = {
@@ -13,11 +14,7 @@ type CreatePostsParams = {
     shouldGenerateThumbnail: boolean;
     shouldGenerateShorts: boolean;
     scheduledTo: string | null;
-    socialsToPost: {
-      id: string;
-      name: string;
-      provider: "YOUTUBE" | "TIKTOK";
-    }[];
+    socialsToPost: Integration[];
   }[];
 };
 

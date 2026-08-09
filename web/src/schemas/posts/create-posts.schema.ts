@@ -21,6 +21,7 @@ export const createPostSchema = z.object({
             id: z.uuidv7(),
             name: z.string(),
             provider: z.enum(["YOUTUBE", "TIKTOK"]),
+            avatarUrl: z.string().nullable(),
           }),
         )
         .min(1, { error: "Post needs at least one integration selected" }),
