@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,8 +10,8 @@ import { dayjs } from "@/lib/dayjs";
 import type { Project } from "@/types/project";
 import { getInitials } from "@/utils/get-initials";
 import { Link, useParams } from "@tanstack/react-router";
-import { Image, MoreHorizontal, Trash2 } from "lucide-react";
-import { ProjectsStatusBadge } from "./projects-status-badge";
+import { Eye, ImageIcon, MoreHorizontal, Trash2 } from "lucide-react";
+import { ProjectStatusBadge } from "./project-status-badge";
 
 type ProjectsGridViewProps = {
   projects: Project[];
@@ -22,96 +23,90 @@ export function ProjectsGridView({ projects }: ProjectsGridViewProps) {
   });
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {projects.map((project) => {
-        const isProcessing = project.status === "PROCESSING";
-
         return (
-          <Link
+          <div
             key={project.id}
-            to="/orgs/$slug/channels/$channel/projects/$projectId"
-            params={{ slug, channel, projectId: project.id }}
-            className="group relative w-75 cursor-pointer overflow-hidden rounded-2xl border bg-card transition-shadow hover:shadow-md"
+            className="rounded-lg border border-border bg-sidebar p-2.5 text-card-foreground"
           >
-            {isProcessing && (
-              <div className="absolute bottom-0 inset-x-0 h-0.5 z-10 animate-pulse bg-amber-400" />
-            )}
-            {/* Thumbnail */}
-            <div className="relative aspect-video w-full overflow-hidden bg-muted">
+            <div className="relative aspect-video overflow-hidden rounded-md bg-muted">
               {
-                project.thumbnailUrl ?
-                  <img
-                    src={project.thumbnailUrl}
-                    alt={project.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
+                project.thumbnailUrl !== null ?
+                  <img src={project.thumbnailUrl} alt={project.title} className="h-full w-full object-cover" />
                   :
-                  <div className="absolute inset-0 flex items-center justify-center text-[#888888]">
-                    <Image size={30} strokeWidth={1.5} />
+                  <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                    <ImageIcon size={28} />
                   </div>
               }
 
-              {/* Status badge — top left */}
-              <div className="absolute left-2.5 top-2.5">
-                <ProjectsStatusBadge status={project.status} />
-              </div>
+              <ProjectStatusBadge status={project.status} />
 
-              {/* Clip count — bottom right */}
-              {!isProcessing && (
-                <div className="absolute bottom-2 right-2 rounded-md bg-black/70 px-1.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
-                  {project.clipCount} clips
-                </div>
-              )}
+              {/* Clip count */}
+              <span className="absolute bottom-1.5 right-1.5 rounded bg-black/75 px-1.5 py-0.5 text-[11px] font-semibold text-white">
+                {project.clipCount} clips
+              </span>
             </div>
 
-            {/* Content */}
-            <div className="p-3">
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="line-clamp-2 flex-1 text-sm font-medium leading-snug">
+            {/* Linha inferior: avatar + texto + menu */}
+            <div className="flex items-start gap-2.5 pt-2.5">
+              <Avatar size="sm">
+                {project.owner.avatarUrl && (
+                  <AvatarImage
+                    src={project.owner.avatarUrl}
+                    alt={project.owner.name}
+                  />
+                )}
+                <AvatarFallback>
+                  {getInitials(project.owner.name)}
+                </AvatarFallback>
+              </Avatar>
+
+              {/* Título + meta */}
+              <div className="min-w-0 flex-1">
+                <p className="line-clamp-1 text-sm font-semibold leading-snug text-card-foreground">
                   {project.title}
-                </h3>
+                </p>
+                <div className="mt-0.75 flex flex-wrap items-center gap-1 text-[12.5px] text-muted-foreground">
+                  <span>{project.owner.name}</span>
+                  <span>•</span>
+                  <span>{dayjs(project.createdAt).fromNow()}</span>
+                </div>
+              </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      onClick={(event) => event.stopPropagation()}
-                      className="mt-0.5 shrink-0 rounded-md p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-accent hover:text-foreground group-hover:opacity-100"
+              {/* Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="shrink-0 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+                  >
+                    <MoreHorizontal className="size-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Button
+                      type="button"
+                      variant={"destructive"}
                     >
-                      <MoreHorizontal className="size-4" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem className="text-destructive focus:text-destructive">
-                      <Trash2 className="size-4" />
+                      <Trash2 size={13} />
                       Delete project
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              {/* Creator + Date */}
-              <div className="mt-2.5 flex items-center gap-2">
-                <Avatar className="size-5">
-                  {project.owner.avatarUrl && (
-                    <AvatarImage
-                      src={project.owner.avatarUrl}
-                      alt={project.owner.name}
-                    />
-                  )}
-                  <AvatarFallback className="text-[10px]">
-                    {getInitials(project.owner.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-xs text-muted-foreground">
-                  {project.owner.name}
-                </span>
-                <span className="text-muted-foreground/40 text-xs">·</span>
-                <span className="text-xs text-muted-foreground">
-                  {dayjs(project.createdAt).format("MMM D, YYYY")}
-                </span>
-              </div>
+                    </Button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/orgs/$slug/channels/$channel/projects/$projectId"
+                      params={{ slug, channel, projectId: project.id }}
+                    >
+                      <Eye className="size-4" />
+                      View details
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          </Link>
+          </div>
         );
       })}
     </div>
