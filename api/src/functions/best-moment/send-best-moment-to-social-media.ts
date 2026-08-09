@@ -66,6 +66,7 @@ export async function sendBestMomentToSocialMedia(params: SendBestMomentToSocial
       social: socialMediaSelected,
       socialName: integration.name,
       postId: post.id,
+      avatarUrl: integration.avatarUrl
     })
 
   switch (socialMediaSelected) {

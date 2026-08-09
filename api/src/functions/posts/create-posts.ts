@@ -22,6 +22,7 @@ type CreatePostsParams = {
       id: string;
       name: string;
       provider: "YOUTUBE" | "TIKTOK";
+      avatarUrl: string | null;
     }[]
   }[];
   ownerId: string
@@ -57,6 +58,7 @@ export async function createPosts(params:CreatePostsParams) {
         postId: postInsertedId,
         social: social.provider,
         socialName: social.name,
+        avatarUrl: social.avatarUrl,
       });
     }
 
