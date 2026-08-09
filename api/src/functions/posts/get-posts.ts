@@ -31,13 +31,14 @@ export async function getPosts(params: GetPostsParams) {
         createdAt: postsTable.createdAt,
         publishAt: postsTable.scheduledTo,
         socialsToPost: sql<
-          { id: string; social: "YOUTUBE" | "TIKTOK"; socialName: string }[]
+          { id: string; social: "YOUTUBE" | "TIKTOK"; socialName: string; avatarUrl: string | null }[]
         >`
                     json_agg(
                       json_build_object(
                         'id', ${socialsToPostTable.id},
                         'social', ${socialsToPostTable.social},
-                        'socialName', ${socialsToPostTable.socialName}
+                        'socialName', ${socialsToPostTable.socialName},
+                        'avatarUrl', ${socialsToPostTable.avatarUrl}
                       )
                     )
                   `.as("socialsToPost"),

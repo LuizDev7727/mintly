@@ -1,3 +1,5 @@
+import type { Integration } from "./integration";
+
 export type PostDetails = {
   title: string;
   thumbnailUrl: string | null;
@@ -35,7 +37,7 @@ export type Post = {
   duration: number | null;
   createdAt: string;
   publishAt: string | null;
-  socialsToPost: { id: string; socialName: string; social: "YOUTUBE" | "TIKTOK"; avatarUrl: string | null }[];
+  socialsToPost: Integration[];
   author: {
     name: string;
     avatarUrl: string | null;
