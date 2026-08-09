@@ -1,14 +1,14 @@
 import { Badge } from "@/components/ui/badge";
-import type { Post } from "@/types/post";
+import type { Project } from "@/types/project";
 import { AlertTriangle, Ban, Calendar, Check, Loader2 } from "lucide-react";
 
-type PostStatusBadgeProps = {
-  status: Post["status"];
+type ProjectStatusBadgeProps = {
+  status: Project["status"];
 };
 
-export function PostStatusBadge({ status }: PostStatusBadgeProps) {
+export function ProjectStatusBadge({ status }: ProjectStatusBadgeProps) {
   switch (status) {
-    case "PUBLISHED":
+    case "SUCCESS":
       return (
         <Badge className="absolute left-2 top-2 inline-flex items-center gap-1">
           <Check size={13} />

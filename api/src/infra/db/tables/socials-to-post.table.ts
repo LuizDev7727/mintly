@@ -11,6 +11,7 @@ export const socialsToPostTable = pgTable("socials_to_post", {
     .$defaultFn(() => uuidv7()),
   social: socialEnum().notNull(),
   socialName: varchar("social_name").notNull(),
+  avatarUrl: varchar("avatar_url"),
   postId: text("post_id")
     .notNull()
     .references(() => postsTable.id, {
