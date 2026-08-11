@@ -2,11 +2,13 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 
 import { ThemeToggle } from "./theme-toggle";
+import { PendingInvites } from "./pending-invites";
 
 export function NavSecondary() {
   const { state } = useSidebar();
@@ -17,13 +19,19 @@ export function NavSecondary() {
           <SidebarMenuItem>
             <div
               data-sidebar={state}
-              className="flex items-center justify-between px-2 py-1 data-[sidebar=collapsed]:px-0"
+              className="flex items-center data-[sidebar=collapsed]:px-0"
             >
-              {state === "expanded" && (
-                <span className="text-xs text-muted-foreground">Theme</span>
-              )}
               <ThemeToggle />
+              {state === "expanded" && (
+                <span className="">Appearance</span>
+              )}
             </div>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton>
+              <PendingInvites/>
+              <span>Notifications</span>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroupContent>

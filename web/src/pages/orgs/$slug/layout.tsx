@@ -8,9 +8,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SwitchViewMode } from "@/components/switch-view-mode";
-import { PendingInvites } from "@/components/pending-invites";
 import { authClient } from "@/lib/auth";
 import { MembersAvatarsGroup } from "@/components/members-avatars-group";
+import { Search } from "@/components/search";
+import { NavigationBreadcrumb } from "@/components/navigation-breadcrumb";
 
 export const Route = createFileRoute("/orgs/$slug")({
   beforeLoad: async () => {
@@ -31,16 +32,15 @@ function OrganizationLayout() {
       <AppSidebar />
       <SidebarInset>
         <header className="flex items-center justify-between bg-sidebar h-16 shrink-0 gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 pr-4">
-          <div className="flex items-center justify-between gap-2 px-4">
+          <div className="flex items-center justify-between gap-2 px-2">
             <SidebarTrigger className="-ml-1" />
             {/*<div className="bg-border w-4 rotate-90 h-px" />*/}
+            {/*<NavigationBreadcrumb />*/}
           </div>
           <div className="flex items-center gap-x-2">
-            <MembersAvatarsGroup/>
+            <MembersAvatarsGroup />
             <div className="bg-border w-4 rotate-90 h-px" />
             <SwitchViewMode />
-            <div className="bg-border w-4 rotate-90 h-px" />
-            <PendingInvites />
           </div>
         </header>
         <Separator />

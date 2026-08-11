@@ -81,20 +81,20 @@ export function PendingInvites() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
+        <button
           aria-label="Open notifications"
-          className="relative"
+          className="relative px-0.5"
           disabled={isLoading}
-          size="icon-sm"
-          variant="ghost"
+          // size="icon-sm"
+          // variant="ghost"
         >
-          <Bell size={16} className="text-muted-foreground" />
+          <Bell size={16} />
           {unreadCount > 0 && (
             <Badge className="-top-2 -translate-x-1/2 absolute left-full min-w-5 px-1">
               {unreadCount > 99 ? "99+" : unreadCount}
             </Badge>
           )}
-        </Button>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="ml-4 p-1">
         <div className="flex items-baseline justify-between px-3 pt-2">
