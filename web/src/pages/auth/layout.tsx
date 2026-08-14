@@ -53,14 +53,7 @@ function AuthLayout() {
 
       </div>
       <div className="relative z-10 flex flex-col gap-4 bg-background p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Button variant={'outline'} asChild>
-            <Link to="/">
-              <ArrowLeft className="size-4"/>
-              <p>Back to Home</p>
-            </Link>
-          </Button>
-        </div>
+        <div className="flex justify-center gap-2 md:justify-start"/>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
             <Outlet />
