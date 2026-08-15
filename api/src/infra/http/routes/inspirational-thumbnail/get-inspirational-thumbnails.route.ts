@@ -24,7 +24,7 @@ export const getInspirationalThumbnailsRoute: FastifyPluginAsyncZod = async (
               z.object({
                 id: z.string(),
                 name: z.string(),
-                sizeInMs: z.number(),
+                sizeInBytes: z.number(),
                 url: z.url(),
               }),
             ),

@@ -22,7 +22,7 @@ export async function getInspirationalThumbnails(params: GetInspirationalThumbna
     id: inspirationalThumbnailsTable.id,
     name: inspirationalThumbnailsTable.name,
     key: inspirationalThumbnailsTable.key,
-    sizeInMs: inspirationalThumbnailsTable.sizeInMs,
+    sizeInBytes: inspirationalThumbnailsTable.sizeInBytes,
   })
     .from(inspirationalThumbnailsTable)
     .where(

@@ -30,7 +30,7 @@ export function InspirationalThumbnailListView({
                 {thumbnail.name}
               </p>
               <p className="text-muted-foreground text-xs">
-                {formatBytes(thumbnail.sizeInMs)}
+                {formatBytes(thumbnail.sizeInBytes)}
               </p>
             </div>
           </div>
