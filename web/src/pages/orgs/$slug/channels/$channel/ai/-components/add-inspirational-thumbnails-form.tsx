@@ -140,7 +140,7 @@ export function AddInspirationalThumbnailsForm() {
           const newInspirationalThumbnail = {
             id: inspirationalThumbnailId,
             name: file.name,
-            sizeInMs: file.size,
+            sizeInBytes: file.size,
             url: URL.createObjectURL(file),
             createdAt: new Date(),
           };
