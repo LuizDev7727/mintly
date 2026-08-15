@@ -10,8 +10,6 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SwitchViewMode } from "@/components/switch-view-mode";
 import { authClient } from "@/lib/auth";
 import { MembersAvatarsGroup } from "@/components/members-avatars-group";
-import { Search } from "@/components/search";
-import { NavigationBreadcrumb } from "@/components/navigation-breadcrumb";
 
 export const Route = createFileRoute("/orgs/$slug")({
   beforeLoad: async () => {

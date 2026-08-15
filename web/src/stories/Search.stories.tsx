@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import Search from "@/components/search";
+import { Search } from "@/components/search";
 
 const meta = {
   title: "Components/Search",

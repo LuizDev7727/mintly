@@ -1,8 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth";
-import { Link, redirect } from "@tanstack/react-router";
+import { redirect } from "@tanstack/react-router";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   beforeLoad: async () => {
