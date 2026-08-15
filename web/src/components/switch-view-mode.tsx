@@ -5,10 +5,10 @@ export function SwitchViewMode() {
   const { view, setView } = useViewMode();
 
   return (
-    <div className="p-1 flex items-center bg-card rounded-[8px] border border-border">
+    <div className="p-1 flex items-center bg-card rounded-md border border-border">
       <button
         data-current={view === "grid"}
-        className="cursor-pointer px-2 py-1 data-[current=true]:bg-primary rounded-md"
+        className="cursor-pointer px-2 py-1 data-[current=true]:bg-primary rounded-sm"
         onClick={() => setView("grid")}
       >
         <LayoutGrid
@@ -18,7 +18,7 @@ export function SwitchViewMode() {
       </button>
       <button
         data-current={view === "list"}
-        className="cursor-pointer px-2 py-1 data-[current=true]:bg-primary rounded-md"
+        className="cursor-pointer px-2 py-1 data-[current=true]:bg-primary rounded-sm"
         onClick={() => setView("list")}
       >
         <TextAlignJustify

@@ -1,12 +1,33 @@
 import {
-  ArrowUpRightIcon,
-  CircleFadingPlusIcon,
-  FileInputIcon,
+  BellIcon,
+  CalculatorIcon,
+  CalendarIcon,
+  ClipboardPasteIcon,
+  CodeIcon,
+  CopyIcon,
+  CreditCardIcon,
+  FileTextIcon,
+  FolderIcon,
   FolderPlusIcon,
+  HelpCircleIcon,
+  HomeIcon,
+  ImageIcon,
+  InboxIcon,
+  LayoutGridIcon,
+  ListIcon,
+  PlusIcon,
+  ScissorsIcon,
   SearchIcon,
-} from "lucide-react";
+  SettingsIcon,
+  TrashIcon,
+  UserIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
+} from "lucide-react"
 
+import { Button } from "@/components/ui/button"
 import {
+  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -15,104 +36,149 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from "@/components/ui/command";
-import { useEffect, useState } from "react";
+} from "@/components/ui/command"
+import { useState } from "react"
+import { Kbd } from "./ui/kbd"
 
-export default function Search() {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
-      }
-    };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
+export function Search() {
+  const [open, setOpen] = useState(false)
 
   return (
-    <>
-      <button
-        className="w-full cursor-pointer inline-flex h-9 rounded-md border border-input bg-background px-3 py-2 text-foreground text-sm shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        onClick={() => setOpen(true)}
-        type="button"
-      >
-        <span className="flex grow items-center">
-          <SearchIcon
-            aria-hidden="true"
-            className="-ms-1 me-3 text-muted-foreground/80 size-4"
-          />
-          <span className="font-normal text-muted-foreground/70">Search</span>
-        </span>
-        <kbd className="-me-1 ms-12 inline-flex h-5 max-h-full items-center rounded border bg-background px-1 font-[inherit] font-medium text-[0.625rem] text-muted-foreground/70">
-          ⌘K
-        </kbd>
-      </button>
-      <CommandDialog onOpenChange={setOpen} open={open}>
-        <CommandInput placeholder="Type a command or search..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Quick start">
-            <CommandItem>
-              <FolderPlusIcon
-                aria-hidden="true"
-                className="opacity-60"
-                size={16}
-              />
-              <span>New folder</span>
-              <CommandShortcut className="justify-center">⌘N</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <FileInputIcon
-                aria-hidden="true"
-                className="opacity-60"
-                size={16}
-              />
-              <span>Import document</span>
-              <CommandShortcut className="justify-center">⌘I</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <CircleFadingPlusIcon
-                aria-hidden="true"
-                className="opacity-60"
-                size={16}
-              />
-              <span>Add block</span>
-              <CommandShortcut className="justify-center">⌘B</CommandShortcut>
-            </CommandItem>
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Navigation">
-            <CommandItem>
-              <ArrowUpRightIcon
-                aria-hidden="true"
-                className="opacity-60"
-                size={16}
-              />
-              <span>Go to dashboard</span>
-            </CommandItem>
-            <CommandItem>
-              <ArrowUpRightIcon
-                aria-hidden="true"
-                className="opacity-60"
-                size={16}
-              />
-              <span>Go to apps</span>
-            </CommandItem>
-            <CommandItem>
-              <ArrowUpRightIcon
-                aria-hidden="true"
-                className="opacity-60"
-                size={16}
-              />
-              <span>Go to connections</span>
-            </CommandItem>
-          </CommandGroup>
-        </CommandList>
+    <div className="flex flex-col gap-4">
+      <Button onClick={() => setOpen(true)} variant="outline" className="w-52">
+        <SearchIcon  className="size-4" />
+        Search files...
+        <Kbd className="ml-auto">⌘K</Kbd>
+      </Button>
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <Command>
+          <CommandInput placeholder="Type a command or search..." />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup heading="Navigation">
+              <CommandItem>
+                <HomeIcon />
+                <span>Home</span>
+                <CommandShortcut>⌘H</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <InboxIcon />
+                <span>Inbox</span>
+                <CommandShortcut>⌘I</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <FileTextIcon />
+                <span>Documents</span>
+                <CommandShortcut>⌘D</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <FolderIcon />
+                <span>Folders</span>
+                <CommandShortcut>⌘F</CommandShortcut>
+              </CommandItem>
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="Actions">
+              <CommandItem>
+                <PlusIcon />
+                <span>New File</span>
+                <CommandShortcut>⌘N</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <FolderPlusIcon />
+                <span>New Folder</span>
+                <CommandShortcut>⇧⌘N</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <CopyIcon />
+                <span>Copy</span>
+                <CommandShortcut>⌘C</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <ScissorsIcon />
+                <span>Cut</span>
+                <CommandShortcut>⌘X</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <ClipboardPasteIcon />
+                <span>Paste</span>
+                <CommandShortcut>⌘V</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <TrashIcon />
+                <span>Delete</span>
+                <CommandShortcut>⌫</CommandShortcut>
+              </CommandItem>
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="View">
+              <CommandItem>
+                <LayoutGridIcon />
+                <span>Grid View</span>
+              </CommandItem>
+              <CommandItem>
+                <ListIcon />
+                <span>List View</span>
+              </CommandItem>
+              <CommandItem>
+                <ZoomInIcon />
+                <span>Zoom In</span>
+                <CommandShortcut>⌘+</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <ZoomOutIcon />
+                <span>Zoom Out</span>
+                <CommandShortcut>⌘-</CommandShortcut>
+              </CommandItem>
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="Account">
+              <CommandItem>
+                <UserIcon />
+                <span>Profile</span>
+                <CommandShortcut>⌘P</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <CreditCardIcon />
+                <span>Billing</span>
+                <CommandShortcut>⌘B</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <SettingsIcon />
+                <span>Settings</span>
+                <CommandShortcut>⌘S</CommandShortcut>
+              </CommandItem>
+              <CommandItem>
+                <BellIcon />
+                <span>Notifications</span>
+              </CommandItem>
+              <CommandItem>
+                <HelpCircleIcon />
+                <span>Help & Support</span>
+              </CommandItem>
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="Tools">
+              <CommandItem>
+                <CalculatorIcon />
+                <span>Calculator</span>
+              </CommandItem>
+              <CommandItem>
+                <CalendarIcon />
+                <span>Calendar</span>
+              </CommandItem>
+              <CommandItem>
+                <ImageIcon />
+                <span>Image Editor</span>
+              </CommandItem>
+              <CommandItem>
+                <CodeIcon />
+                <span>Code Editor</span>
+              </CommandItem>
+            </CommandGroup>
+          </CommandList>
+        </Command>
       </CommandDialog>
-    </>
-  );
+    </div>
+  )
 }

@@ -1,7 +1,7 @@
 export type InspirationalThumbnail = {
   id: string;
   name: string;
-  sizeInMs: number;
+  sizeInBytes: number;
   url: string;
   createdAt: Date;
 };

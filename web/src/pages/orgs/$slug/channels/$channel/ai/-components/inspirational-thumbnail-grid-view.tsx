@@ -28,7 +28,7 @@ export function InspirationalThumbnailGridView({
                 {thumbnail.name}
               </p>
               <p className="truncate text-xs text-muted-foreground">
-                {formatBytes(thumbnail.sizeInMs)}
+                {formatBytes(thumbnail.sizeInBytes)}
               </p>
             </div>
 
