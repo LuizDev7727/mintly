@@ -29,6 +29,11 @@ const envSchema = z.object({
   QSTASH_NEXT_SIGNING_KEY: z.string(),
   QSTASH_TOPIC_URL: z.url(),
   AES_ENCRYPTION_KEY: z.string(),
+  INSTAGRAM_APP_ID: z.string(),
+  INSTAGRAM_APP_SECRET: z.string(),
+  INSTAGRAM_ACCESS_TOKEN: z.string(),
+  INSTAGRAM_REDIRECT_URI: z.url(),
+  INSTAGRAM_REDIRECT_CALLBACK_URI: z.url(),
 });
 
 export const env = envSchema.parse(process.env);

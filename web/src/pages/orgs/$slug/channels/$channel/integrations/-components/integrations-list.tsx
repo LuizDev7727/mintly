@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { YoutubeIntegrationCard } from "./youtube-integration-card";
 import { TiktokIntegrationCard } from "./tiktok-integration-card";
+import { InstagramIntegrationCard } from "./instagram-integration-card";
 
 export function IntegrationsList() {
   const { slug, channel } = useParams({
@@ -23,11 +24,14 @@ export function IntegrationsList() {
     integrations.find((i) => i.provider === "YOUTUBE");
   const tiktokIntegration =
     integrations.find((i) => i.provider === "TIKTOK");
+  const instagramIntegration =
+    integrations.find((i) => i.provider === "INSTAGRAM");
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <YoutubeIntegrationCard integration={youtubeIntegration} />
       <TiktokIntegrationCard integration={tiktokIntegration} />
+      <InstagramIntegrationCard integration={instagramIntegration} />
     </div>
   );
 }

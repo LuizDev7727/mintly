@@ -1,4 +1,3 @@
-import { getFolders } from "@/functions/folder/get-folders.ts";
 import { getIntegrations } from "@/functions/integration/get-integrations.ts";
 import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
@@ -21,7 +20,7 @@ export const getIntegrationsRoute: FastifyPluginAsyncZod = async (app) => {
                 id: z.string(),
                 name: z.string(),
                 avatarUrl: z.string().nullable(),
-                provider: z.enum(["YOUTUBE", "TIKTOK"]),
+                provider: z.enum(["YOUTUBE", "TIKTOK", "INSTAGRAM"]),
               }),
             ),
           }),

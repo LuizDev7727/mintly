@@ -20,7 +20,7 @@ export const createPostSchema = z.object({
           z.object({
             id: z.uuidv7(),
             name: z.string(),
-            provider: z.enum(["YOUTUBE", "TIKTOK"]),
+            provider: z.enum(["YOUTUBE", "TIKTOK", "INSTAGRAM"]),
             avatarUrl: z.string().nullable(),
           }),
         )
