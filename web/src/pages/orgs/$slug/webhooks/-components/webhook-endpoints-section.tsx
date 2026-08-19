@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { formatDistanceToNow } from "date-fns"
 import { Eye, Globe, KeyRound, MoreHorizontal, Pencil, Trash } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -9,51 +10,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import type { WebhookSummary } from "@/http/webhook/get-webhooks-overview.http"
 import { CreateWebhookDialog } from "./create-webhook-dialog"
 import { WebhookDeliveriesSheet } from "./webhook-deliveries-sheet"
 import { WebhookSigningSecretDialog } from "./webhook-signing-secret-dialog"
 
-type WebhookEndpoint = {
-  id: string
-  url: string
-  events: string[]
-  active: boolean
-  signingSecret: string
-  lastDelivery: { status: "success" | "failed"; timestamp: string } | null
+interface WebhookEndpointsSectionProps {
+  webhooks: WebhookSummary[]
 }
 
-const WEBHOOK_ENDPOINTS: WebhookEndpoint[] = [
-  {
-    id: "1",
-    url: "https://api.myapp.com/webhooks/mintly",
-    events: ["post.published", "post.failed"],
-    active: true,
-    signingSecret: "whsec_8gK2pXmZ4vB7hL3nJ6qT1cR9wF5s",
-    lastDelivery: { status: "success", timestamp: "5 minutes ago" },
-  },
-  {
-    id: "2",
-    url: "https://hooks.zapier.com/hooks/catch/123456/abcdef",
-    events: ["project.completed"],
-    active: true,
-    signingSecret: "whsec_4dN7yQ2wE9tR6uI3oP1aS8fG5hJ0k",
-    lastDelivery: { status: "success", timestamp: "1 hour ago" },
-  },
-  {
-    id: "3",
-    url: "https://staging.myapp.dev/webhooks",
-    events: ["channel.connected", "channel.disconnected"],
-    active: false,
-    signingSecret: "whsec_1zX5cV8bN2mK9jH6gF3dS0aQ7wE4r",
-    lastDelivery: { status: "failed", timestamp: "2 days ago" },
-  },
-]
-
-export function WebhookEndpointsSection() {
+export function WebhookEndpointsSection({
+  webhooks,
+}: WebhookEndpointsSectionProps) {
   const [secretDialogEndpoint, setSecretDialogEndpoint] =
-    useState<WebhookEndpoint | null>(null)
+    useState<WebhookSummary | null>(null)
   const [deliveriesEndpoint, setDeliveriesEndpoint] =
-    useState<WebhookEndpoint | null>(null)
+    useState<WebhookSummary | null>(null)
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 rounded-xl border border-border bg-card p-4">
@@ -63,7 +35,12 @@ export function WebhookEndpointsSection() {
       </div>
 
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
-        {WEBHOOK_ENDPOINTS.map((endpoint) => (
+        {webhooks.length === 0 && (
+          <p className="py-6 text-center text-xs text-muted-foreground">
+            No webhook endpoints created yet.
+          </p>
+        )}
+        {webhooks.map((endpoint) => (
           <div key={endpoint.id} className="rounded-md border p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
@@ -73,9 +50,6 @@ export function WebhookEndpointsSection() {
                 </span>
               </div>
               <div className="flex shrink-0 items-center gap-1">
-                <Badge variant={endpoint.active ? "default" : "outline"}>
-                  {endpoint.active ? "Active" : "Disabled"}
-                </Badge>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon-sm">
@@ -115,26 +89,30 @@ export function WebhookEndpointsSection() {
             </div>
 
             <div className="mt-2 flex flex-wrap gap-1">
-              {endpoint.events.map((event) => (
-                <Badge key={event} variant="outline" className="font-mono text-[10px]">
-                  {event}
+              {endpoint.triggers.map((trigger) => (
+                <Badge key={trigger} variant="outline" className="font-mono text-[10px]">
+                  {trigger}
                 </Badge>
               ))}
             </div>
 
             <p className="mt-2 text-xs text-muted-foreground">
               Last delivery:{" "}
-              {endpoint.lastDelivery ? (
+              {endpoint.lastLog ? (
                 <span
                   className={cn(
-                    endpoint.lastDelivery.status === "failed" &&
-                      "text-destructive",
+                    endpoint.lastLog.status === "FAILED" && "text-destructive",
                   )}
                 >
-                  {endpoint.lastDelivery.status === "failed"
+                  {endpoint.lastLog.status === "FAILED"
                     ? "Failed"
-                    : "Success"}{" "}
-                  · {endpoint.lastDelivery.timestamp}
+                    : endpoint.lastLog.status === "PENDING"
+                      ? "Pending"
+                      : "Success"}{" "}
+                  ·{" "}
+                  {formatDistanceToNow(new Date(endpoint.lastLog.createdAt), {
+                    addSuffix: true,
+                  })}
                 </span>
               ) : (
                 "No deliveries yet"

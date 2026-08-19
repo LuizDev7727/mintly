@@ -5,11 +5,16 @@ import { Button } from "@/components/ui/button"
 import { CopyButton } from "@/components/ui/copy-button"
 import { RegenerateApiKeyDialog } from "./regenerate-api-key-dialog"
 
-const API_KEY = "live_just_testing"
-const MASKED_API_KEY = `${API_KEY.slice(0, 12)}${"•".repeat(16)}${API_KEY.slice(-4)}`
+interface ApiKeySectionProps {
+  apiKey: string | null
+}
 
-export function ApiKeySection() {
+export function ApiKeySection({ apiKey }: ApiKeySectionProps) {
   const [visible, setVisible] = useState(false)
+
+  const maskedApiKey = apiKey
+    ? `${apiKey.slice(0, 12)}${"•".repeat(16)}${apiKey.slice(-4)}`
+    : ""
 
   return (
     <div className="space-y-3 rounded-xl border border-border bg-card p-4">
@@ -18,50 +23,49 @@ export function ApiKeySection() {
         <Badge variant="secondary">Production</Badge>
       </div>
 
-      <div className="flex items-center gap-1.5">
-        <code className="flex-1 truncate rounded-md border bg-muted/50 px-2.5 py-1.5 font-mono text-xs">
-          {visible ? API_KEY : MASKED_API_KEY}
-        </code>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-sm"
-          onClick={() => setVisible((prev) => !prev)}
-          aria-label={visible ? "Hide API key" : "Reveal API key"}
-        >
-          {visible ? <EyeOff /> : <Eye />}
-        </Button>
-      </div>
+      {apiKey ? (
+        <>
+          <div className="flex items-center gap-1.5">
+            <code className="flex-1 truncate rounded-md border bg-muted/50 px-2.5 py-1.5 font-mono text-xs">
+              {visible ? apiKey : maskedApiKey}
+            </code>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              onClick={() => setVisible((prev) => !prev)}
+              aria-label={visible ? "Hide API key" : "Reveal API key"}
+            >
+              {visible ? <EyeOff /> : <Eye />}
+            </Button>
+          </div>
 
-      <div className="grid grid-cols-3 gap-2 text-xs">
-        <div className="space-y-0.5">
-          <p className="text-muted-foreground">Created</p>
-          <p className="font-medium text-foreground">Jan 12, 2026</p>
+          <div className="flex gap-2 pt-1">
+            <CopyButton
+              value={apiKey}
+              variant="default"
+              size="sm"
+              className="flex-1 justify-center"
+            >
+              Copy Key
+            </CopyButton>
+            <RegenerateApiKeyDialog
+              triggerLabel="Regenerate Key"
+              className="flex-1 justify-center"
+            />
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-col items-center gap-2 rounded-md border border-dashed p-4 text-center">
+          <p className="text-xs text-muted-foreground">
+            No API key generated for this organization yet.
+          </p>
+          <RegenerateApiKeyDialog
+            triggerLabel="Generate Key"
+            variant="default"
+          />
         </div>
-        <div className="space-y-0.5">
-          <p className="text-muted-foreground">Last Used</p>
-          <p className="font-medium text-foreground">2 hours ago</p>
-        </div>
-        <div className="space-y-0.5">
-          <p className="text-muted-foreground">Permissions</p>
-          <p className="font-medium text-foreground">Full Access</p>
-        </div>
-      </div>
-
-      <div className="flex gap-2 pt-1">
-        <CopyButton
-          value={API_KEY}
-          variant="default"
-          size="sm"
-          className="flex-1 justify-center"
-        >
-          Copy Key
-        </CopyButton>
-        <RegenerateApiKeyDialog
-          triggerLabel="Regenerate Key"
-          className="flex-1 justify-center"
-        />
-      </div>
+      )}
     </div>
   )
 }

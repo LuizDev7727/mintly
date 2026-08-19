@@ -29,6 +29,10 @@ import { getStarredFoldersRoute } from "./infra/http/routes/folder/get-starred-f
 import { setStarredFolderRoute } from "./infra/http/routes/folder/set-starred-folder.route.ts";
 import { removeStarredFolderRoute } from "./infra/http/routes/folder/remove-starred-folder.route.ts";
 import { getOrganizationMetricsRoute } from "./infra/http/routes/organization/get-metrics.route.ts";
+import { getWebhooksOverviewRoute } from "./infra/http/routes/webhook/get-webhooks-overview.route.ts";
+import { getAvailableEventsRoute } from "./infra/http/routes/webhook/get-available-events.route.ts";
+import { createWebhookRoute } from "./infra/http/routes/webhook/create-webhook.route.ts";
+import { handleWebhookEventRoute } from "./infra/http/routes/webhook/handle-webhook-event.route.ts";
 import { getPostsRoute } from "./infra/http/routes/post/get-posts.route.ts";
 import { getPostRoute } from "./infra/http/routes/post/get-post.route.ts";
 import { createPostsRoute } from "./infra/http/routes/post/create-posts.route.ts";
@@ -121,6 +125,10 @@ server.register(getStarredFoldersRoute);
 server.register(setStarredFolderRoute);
 server.register(removeStarredFolderRoute);
 server.register(getOrganizationMetricsRoute);
+server.register(getWebhooksOverviewRoute);
+server.register(getAvailableEventsRoute);
+server.register(createWebhookRoute);
+server.register(handleWebhookEventRoute);
 
 server.register(getPostsRoute);
 server.register(getPostRoute);

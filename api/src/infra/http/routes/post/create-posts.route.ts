@@ -4,6 +4,7 @@ import { createActivity } from "@/utils/create-activity.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../middleware/check-user-session.ts";
+import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
 
 export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -73,6 +74,14 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
             : `Created ${posts.length} posts`,
         orgSlug: activeOrganizationId,
       });
+
+      await publishWebhookEvents({
+        orgSlug: activeOrganizationId,
+        trigger: "post.created",
+        events: [{
+          message: "Post(s) created successfully."
+        }]
+      })
 
       span.end();
 
