@@ -148,6 +148,20 @@
       "when": 1787084193796,
       "tag": "0020_premium_quentin_quire",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1787150229400,
+      "tag": "0021_zippy_morgan_stark",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1787150386034,
+      "tag": "0022_closed_princess_powerful",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,7 @@ import { pgEnum, pgTable, varchar, text, integer } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
 import { channelsTable } from "./channels.table.ts";
 
-export const providerEnum = pgEnum("provider", ["YOUTUBE", "TIKTOK"]);
+export const providerEnum = pgEnum("provider", ["YOUTUBE", "TIKTOK", "INSTAGRAM"]);
 
 export const integrationsTable = pgTable("integrations", {
   id: text("id")
