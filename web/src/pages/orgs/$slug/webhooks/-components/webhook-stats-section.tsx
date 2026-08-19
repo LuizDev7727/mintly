@@ -9,64 +9,64 @@ import {
 } from "lucide-react"
 import { Line, LineChart, ResponsiveContainer } from "recharts"
 import { cn } from "@/lib/utils"
+import type { GetWebhooksOverviewResponse } from "@/http/webhook/get-webhooks-overview.http"
 
-type Stat = {
-  label: string
-  value: string
-  icon: typeof Send
-  iconClassName: string
-  trend: { direction: "up" | "down"; label: string }
-  sparklineColor: string
-  sparkline: number[]
-}
+type MetricKey = keyof GetWebhooksOverviewResponse["metrics"]
 
-const STATS: Stat[] = [
+const METRIC_ORDER: MetricKey[] = [
+  "totalDeliveries",
+  "successful",
+  "failed",
+  "pending",
+  "retryRate",
+]
+
+const METRIC_CONFIG: Record<
+  MetricKey,
   {
+    label: string
+    icon: typeof Send
+    iconClassName: string
+    sparklineColor: string
+    formatValue: (value: number) => string
+  }
+> = {
+  totalDeliveries: {
     label: "Total Deliveries",
-    value: "458",
     icon: Send,
     iconClassName: "bg-sky-500/10 text-sky-500",
-    trend: { direction: "up", label: "12% from yesterday" },
     sparklineColor: "#0ea5e9",
-    sparkline: [12, 18, 14, 22, 19, 26, 24, 30, 27, 34],
+    formatValue: (value) => String(value),
   },
-  {
+  successful: {
     label: "Successful",
-    value: "424",
     icon: CheckCircle2,
     iconClassName: "bg-lime-300/10 text-lime-500",
-    trend: { direction: "up", label: "15% from yesterday" },
     sparklineColor: "#bef264",
-    sparkline: [10, 16, 13, 20, 18, 24, 22, 28, 25, 32],
+    formatValue: (value) => String(value),
   },
-  {
+  failed: {
     label: "Failed",
-    value: "29",
     icon: XCircle,
     iconClassName: "bg-destructive/10 text-destructive",
-    trend: { direction: "down", label: "8% from yesterday" },
     sparklineColor: "#ef4444",
-    sparkline: [8, 5, 9, 4, 7, 3, 6, 2, 5, 3],
+    formatValue: (value) => String(value),
   },
-  {
+  pending: {
     label: "Pending",
-    value: "5",
     icon: Clock,
     iconClassName: "bg-amber-500/10 text-amber-500",
-    trend: { direction: "up", label: "2% from yesterday" },
     sparklineColor: "#f59e0b",
-    sparkline: [3, 4, 2, 5, 3, 6, 4, 5, 4, 5],
+    formatValue: (value) => String(value),
   },
-  {
+  retryRate: {
     label: "Retry Rate",
-    value: "50%",
     icon: RotateCw,
     iconClassName: "bg-violet-500/10 text-violet-500",
-    trend: { direction: "down", label: "5% from yesterday" },
     sparklineColor: "#8b5cf6",
-    sparkline: [60, 55, 58, 52, 54, 48, 51, 47, 49, 50],
+    formatValue: (value) => `${value}%`,
   },
-]
+}
 
 function Sparkline({ data, color }: { data: number[]; color: string }) {
   return (
@@ -87,46 +87,52 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
   )
 }
 
-export function WebhookStatsSection() {
+interface WebhookStatsSectionProps {
+  metrics: GetWebhooksOverviewResponse["metrics"]
+}
+
+export function WebhookStatsSection({ metrics }: WebhookStatsSectionProps) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-      {STATS.map((stat) => {
-        const Icon = stat.icon
-        const TrendIcon =
-          stat.trend.direction === "up" ? ArrowUpRight : ArrowDownRight
+      {METRIC_ORDER.map((key) => {
+        const config = METRIC_CONFIG[key]
+        const metric = metrics[key]
+        const Icon = config.icon
+        const direction = metric.trend >= 0 ? "up" : "down"
+        const TrendIcon = direction === "up" ? ArrowUpRight : ArrowDownRight
 
         return (
           <div
-            key={stat.label}
+            key={key}
             className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4"
           >
             <div
               className={cn(
                 "flex size-8 items-center justify-center rounded-md",
-                stat.iconClassName,
+                config.iconClassName,
               )}
             >
               <Icon className="size-4" />
             </div>
 
             <div>
-              <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-              <p className="text-sm text-muted-foreground">{stat.label}</p>
+              <p className="text-2xl font-bold text-foreground">
+                {config.formatValue(metric.value)}
+              </p>
+              <p className="text-sm text-muted-foreground">{config.label}</p>
             </div>
 
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <TrendIcon
                 className={cn(
                   "size-3",
-                  stat.trend.direction === "up"
-                    ? "text-primary"
-                    : "text-destructive",
+                  direction === "up" ? "text-primary" : "text-destructive",
                 )}
               />
-              {stat.trend.label}
+              {Math.abs(metric.trend)}% from yesterday
             </div>
 
-            <Sparkline data={stat.sparkline} color={stat.sparklineColor} />
+            <Sparkline data={metric.sparkline} color={config.sparklineColor} />
           </div>
         )
       })}

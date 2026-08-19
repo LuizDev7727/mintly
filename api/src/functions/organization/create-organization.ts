@@ -2,6 +2,7 @@ import { OrganizationAlreadyCreatedError } from "@/errors/organization-already-c
 import { db } from "@/infra/db/client.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
+import { encrypt } from "@/utils/crypto/encrypt.ts";
 import { eq } from "drizzle-orm";
 
 type CreateOrganizationParams = {
@@ -24,7 +25,12 @@ export async function createOrganization(params: CreateOrganizationParams) {
 
   const [newOrganization] = await db
     .insert(organizationsTable)
-    .values({ ownerId: userId, name, slug })
+    .values({
+      ownerId: userId,
+      name,
+      slug,
+      apiKey: await encrypt(slug),
+    })
     .returning({ id: organizationsTable.id });
 
   await db.insert(membersTable).values({

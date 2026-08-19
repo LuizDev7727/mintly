@@ -1,0 +1,1 @@
+ALTER TABLE "webhook_logs" RENAME COLUMN "errorReason" TO "error_reason";

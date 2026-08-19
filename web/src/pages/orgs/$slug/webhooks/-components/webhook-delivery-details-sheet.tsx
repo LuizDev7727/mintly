@@ -1,3 +1,4 @@
+import { formatDistanceToNow } from "date-fns"
 import { Badge } from "@/components/ui/badge"
 import { CodeBlock } from "@/components/ui/code-block"
 import { CopyButton } from "@/components/ui/copy-button"
@@ -8,7 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import type { QueueItem } from "./recent-deliveries-section"
+import type { RecentDelivery } from "@/http/webhook/get-webhooks-overview.http"
 
 function DetailRows({ data }: { data: { key: string; value: string }[] }) {
   return (
@@ -29,7 +30,7 @@ function DetailRows({ data }: { data: { key: string; value: string }[] }) {
 }
 
 interface WebhookDeliveryDetailsSheetProps {
-  item: QueueItem | null
+  item: RecentDelivery | null
   onOpenChange: (open: boolean) => void
 }
 
@@ -41,16 +42,25 @@ export function WebhookDeliveryDetailsSheet({
     ? [
         { key: "Method", value: item.method },
         { key: "Status Code", value: String(item.statusCode) },
-        { key: "Content-Type", value: "application/json" },
+        { key: "Content-Type", value: item.contentType ?? "—" },
         {
           key: "Content-Length",
-          value: `${item.requestBody.length} bytes`,
+          value:
+            item.contentLength !== null
+              ? `${item.contentLength} bytes`
+              : "—",
         },
+        { key: "IP", value: item.ip },
+        { key: "Path", value: item.pathname },
       ]
     : []
 
   const headerRows = item
     ? Object.entries(item.headers).map(([key, value]) => ({ key, value }))
+    : []
+
+  const queryParamRows = item?.queryParams
+    ? Object.entries(item.queryParams).map(([key, value]) => ({ key, value }))
     : []
 
   return (
@@ -60,12 +70,14 @@ export function WebhookDeliveryDetailsSheet({
           <div className="flex items-center gap-2">
             <Badge>{item?.method}</Badge>
             <SheetTitle className="truncate font-mono text-sm font-normal">
-              {item?.targetUrl}
+              {item?.url}
             </SheetTitle>
           </div>
           <SheetDescription>
-            Event <span className="font-mono text-foreground">{item?.event}</span>{" "}
-            · {item?.timestamp}
+            {item &&
+              formatDistanceToNow(new Date(item.createdAt), {
+                addSuffix: true,
+              })}
           </SheetDescription>
         </SheetHeader>
 
@@ -77,16 +89,29 @@ export function WebhookDeliveryDetailsSheet({
 
           <div className="space-y-2">
             <h3 className="text-sm font-medium">Headers</h3>
-            <DetailRows data={headerRows} />
+            {headerRows.length > 0 ? (
+              <DetailRows data={headerRows} />
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                No headers recorded for this delivery.
+              </p>
+            )}
           </div>
 
-          {item && (
+          {queryParamRows.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">Query Parameters</h3>
+              <DetailRows data={queryParamRows} />
+            </div>
+          )}
+
+          {item?.body && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium">Request Body</h3>
-                <CopyButton value={item.requestBody} />
+                <CopyButton value={item.body} />
               </div>
-              <CodeBlock code={item.requestBody} language="json" />
+              <CodeBlock code={item.body} language="json" />
             </div>
           )}
         </div>
