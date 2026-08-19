@@ -14,8 +14,7 @@ import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { createSlug } from "./create-slug.ts";
-import { resend } from "./resend.ts";
-import WelcomeTemplate from "@/utils/resend/templates/welcome-template.tsx";
+import { encrypt } from "@/utils/crypto/encrypt.ts";
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
@@ -96,6 +95,7 @@ export const auth = betterAuth({
               name: user.name,
               slug: orgSlug,
               createdAt: new Date(),
+              apiKey: await encrypt(orgSlug),
               ownerId: session.userId,
             });
 

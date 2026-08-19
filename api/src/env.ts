@@ -23,6 +23,12 @@ const envSchema = z.object({
   TIKTOK_REDIRECT_URI: z.url(),
   RESEND_API_KEY: z.string(),
   TIKTOK_REDIRECT_CALLBACK_URI: z.url(),
+  QSTASH_URL: z.url(),
+  QSTASH_TOKEN: z.string(),
+  QSTASH_CURRENT_SIGNING_KEY: z.string(),
+  QSTASH_NEXT_SIGNING_KEY: z.string(),
+  QSTASH_TOPIC_URL: z.url(),
+  AES_ENCRYPTION_KEY: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
