@@ -24,7 +24,7 @@ export async function addInspirationalThumbnail(
       name,
       channelId,
       key,
-      sizeInMs: size,
+      sizeInBytes: size,
       type,
     })
     .returning({ id: inspirationalThumbnailsTable.id });

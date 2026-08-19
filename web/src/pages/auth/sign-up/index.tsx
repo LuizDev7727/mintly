@@ -71,7 +71,10 @@ function SignUpPage() {
 
   return (
     <div className="w-full space-y-6">
-      <div className="space-y-2 text-center">
+      <div className="flex flex-col items-center space-y-2 text-center">
+        <Link to="/" className="w-fit rounded-full p-4 border">
+          <img src="/logo.svg" className="size-8"/>
+        </Link>
         <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-muted-foreground text-sm">
           Enter your details below to get started

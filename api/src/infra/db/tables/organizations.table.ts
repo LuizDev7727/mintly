@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
+  json,
   pgEnum,
   pgTable,
   text,
@@ -14,6 +15,7 @@ import { membersTable } from "./members.table.ts";
 import { usersTable } from "./users.table.ts";
 import { integrationsTable } from "./integrations.table.ts";
 import { activitiesTable } from "./activities.table.ts";
+import { webhooksTable } from "./webhooks.table.ts";
 
 export const planEnum = pgEnum("plan", ["free", "pro"]);
 
@@ -30,6 +32,10 @@ export const organizationsTable = pgTable(
     plan: planEnum("plan").notNull().default("free"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     metadata: text("metadata"),
+    apiKey: json('api_key').$type<{
+      ciphertext: string
+      iv: string
+    }>(),
     ownerId: text("owner_id")
       .notNull()
       .references(() => usersTable.id, {
@@ -45,6 +51,7 @@ export const organizationRelations = relations(
     members: many(membersTable),
     invitations: many(invitationsTable),
     channels: many(channelsTable),
+    webhooks: many(webhooksTable),
     integrations: many(integrationsTable),
     activities: many(activitiesTable),
     owner: one(usersTable, {

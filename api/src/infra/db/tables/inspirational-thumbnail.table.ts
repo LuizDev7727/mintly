@@ -10,7 +10,7 @@ export const inspirationalThumbnailsTable = pgTable("inspirational_thumbnails", 
   name: varchar().notNull(),
   key: varchar().notNull(),
   type: varchar().notNull(),
-  sizeInMs: integer("size_in_ms").notNull(),
+  sizeInBytes: integer("size_in_bytes").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   channelId: text("channel_id")
     .notNull()

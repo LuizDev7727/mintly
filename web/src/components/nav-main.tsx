@@ -18,6 +18,7 @@ import {
   Settings2Icon,
   TvMinimal,
   UsersIcon,
+  Webhook,
 } from "lucide-react";
 import { Link, useParams } from "@tanstack/react-router";
 import { NavLink } from "./nav-link";
@@ -75,6 +76,19 @@ export function NavMain() {
               <span>Usage</span>
             </NavLink>
           </SidebarMenuButton>
+        </SidebarMenuItem>
+
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
+            asChild
+          >
+            <NavLink to={"/orgs/$slug/webhooks"} params={{ slug }}>
+              <Webhook />
+              <span>API & Webhooks</span>
+            </NavLink>
+          </SidebarMenuButton>
+          <SidebarMenuBadge>Beta</SidebarMenuBadge>
         </SidebarMenuItem>
 
         <SidebarMenuItem>

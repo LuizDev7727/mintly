@@ -123,7 +123,7 @@ export function ThemeToggle() {
     <Toggle
       ref={buttonRef}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
-      className="group cursor-pointer size-8 rounded-full border-none text-muted-foreground shadow-none data-[state=on]:bg-transparent data-[state=on]:text-muted-foreground data-[state=on]:hover:bg-muted data-[state=on]:hover:text-foreground"
+      className="group p-0 cursor-pointer size-8 rounded-full border-none shadow-none data-[state=on]:bg-transparent data-[state=on]:hover:bg-muted"
       onPressedChange={handleThemeToggle}
       pressed={isDark}
       variant="outline"

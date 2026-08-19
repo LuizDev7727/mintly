@@ -1,6 +1,7 @@
 import { db } from "@/infra/db/client.ts";
 import { activitiesTable } from "@/infra/db/tables/activities.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
+import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { and, desc, eq, lt } from "drizzle-orm";
 
 type GetActivitiesParams = {
@@ -40,7 +41,7 @@ export async function getActivities(
 ): Promise<GetActivitiesResponse> {
   const { orgSlug, cursor } = params;
 
-  const result = await db
+  const resultQuery = await db
     .select({
       id: activitiesTable.id,
       action: activitiesTable.action,
@@ -62,9 +63,19 @@ export async function getActivities(
     .orderBy(desc(activitiesTable.id))
     .limit(PAGE_SIZE + 1);
 
-  const hasMore = result.length > PAGE_SIZE;
-  const activities = hasMore ? result.slice(0, PAGE_SIZE) : result;
-  const nextCursor = hasMore ? activities[activities.length - 1].id : null;
+  const hasMore = resultQuery.length > PAGE_SIZE;
+  const result = hasMore ? resultQuery.slice(0, PAGE_SIZE) : resultQuery;
+  const nextCursor = hasMore ? result[result.length - 1].id : null;
+
+  const activities = await Promise.all(
+    result.map(async (activity) => ({
+      ...activity,
+      author: {
+        name: activity.author.name,
+        avatarUrl: activity.author.avatarUrl ? await generateSignedUrl({ key: activity.author.avatarUrl }) : null,
+      },
+    })),
+  );
 
   return {
     activities,
