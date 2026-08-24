@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "mintly": {
+      "command": "node",
+      "args": ["./mcp/build/index.js"],
+      "env": {
+        "MINTLY_API_KEY": "",
+        "MINTLY_API_URL": "http://localhost:3000"
+      }
+    }
+  }
+}

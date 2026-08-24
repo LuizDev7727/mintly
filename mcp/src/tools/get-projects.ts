@@ -2,6 +2,7 @@ import { Project } from "../types/project.js";
 
 type GetProjectsParams = {
   channelId: string;
+  apiKey: string;
 }
 
 export type GetProjectsResponse = {
@@ -9,8 +10,9 @@ export type GetProjectsResponse = {
 }
 
 export async function getProjects(
-  { channelId }: GetProjectsParams
+  { channelId, apiKey }: GetProjectsParams
 ): Promise<GetProjectsResponse> {
+
   return {
     projects: [
       {

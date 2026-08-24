@@ -16,5 +16,11 @@ declare module "fastify" {
       activeOrganizationId: string;
     };
     user: User;
+    organization: {
+      id: string;
+      slug: string;
+      name: string;
+      ownerId: string;
+    };
   }
 }

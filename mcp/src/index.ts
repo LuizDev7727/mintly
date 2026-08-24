@@ -4,6 +4,7 @@ import { z } from "zod"
 import { getProjectsContract } from "./contracts/get-projects-contract.js";
 import { getProjects } from "./tools/get-projects.js";
 import { Project } from "./types/project.js";
+import { env } from "./env.js";
 
 function formatProject(project: Project): string {
   return [
@@ -33,7 +34,8 @@ function buildMcpServer() {
     async ({ channelId }) => {
 
       const { projects } = await getProjects({
-        channelId: channelId
+        channelId: channelId,
+        apiKey: env.MINTLY_API_KEY,
       })
 
       const isProjectEmpty = projects.length === 0;
