@@ -7,9 +7,9 @@ import {
   Send,
   XCircle,
 } from "lucide-react"
-import { Line, LineChart, ResponsiveContainer } from "recharts"
 import { cn } from "@/lib/utils"
 import type { GetWebhooksOverviewResponse } from "@/http/webhook/get-webhooks-overview.http"
+import { Sparkline } from "@/components/sparkline"
 
 type MetricKey = keyof GetWebhooksOverviewResponse["metrics"]
 
@@ -68,25 +68,6 @@ const METRIC_CONFIG: Record<
   },
 }
 
-function Sparkline({ data, color }: { data: number[]; color: string }) {
-  return (
-    <ResponsiveContainer width="100%" height={32}>
-      <LineChart
-        data={data.map((value, index) => ({ index, value }))}
-        margin={{ top: 2, right: 0, bottom: 0, left: 0 }}
-      >
-        <Line
-          type="monotone"
-          dataKey="value"
-          stroke={color}
-          strokeWidth={1.5}
-          dot={false}
-        />
-      </LineChart>
-    </ResponsiveContainer>
-  )
-}
-
 interface WebhookStatsSectionProps {
   metrics: GetWebhooksOverviewResponse["metrics"]
 }
@@ -104,32 +85,34 @@ export function WebhookStatsSection({ metrics }: WebhookStatsSectionProps) {
         return (
           <div
             key={key}
-            className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4"
+            className="rounded-lg border dark:bg-zinc-900/20 overflow-hidden"
           >
-            <div
-              className={cn(
-                "flex size-8 items-center justify-center rounded-md",
-                config.iconClassName,
-              )}
-            >
-              <Icon className="size-4" />
-            </div>
-
-            <div>
-              <p className="text-2xl font-bold text-foreground">
-                {config.formatValue(metric.value)}
-              </p>
-              <p className="text-sm text-muted-foreground">{config.label}</p>
-            </div>
-
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <TrendIcon
+            <div className="px-5 pt-5 space-y-3">
+              <div
                 className={cn(
-                  "size-3",
-                  direction === "up" ? "text-primary" : "text-destructive",
+                  "flex size-8 items-center justify-center rounded-md",
+                  config.iconClassName,
                 )}
-              />
-              {Math.abs(metric.trend)}% from yesterday
+              >
+                <Icon className="size-4" />
+              </div>
+
+              <div>
+                <p className="text-2xl font-bold text-foreground">
+                  {config.formatValue(metric.value)}
+                </p>
+                <p className="text-sm text-muted-foreground">{config.label}</p>
+              </div>
+
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <TrendIcon
+                  className={cn(
+                    "size-3",
+                    direction === "up" ? "text-primary" : "text-destructive",
+                  )}
+                />
+                {Math.abs(metric.trend)}% from yesterday
+              </div>
             </div>
 
             <Sparkline data={metric.sparkline} color={config.sparklineColor} />
