@@ -19,6 +19,7 @@ import {
   TvMinimal,
   UsersIcon,
   Webhook,
+  LayoutDashboard
 } from "lucide-react";
 import { Link, useParams } from "@tanstack/react-router";
 import { NavLink } from "./nav-link";
@@ -27,16 +28,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-import { getChannelsHttp } from "@/http/channel/get-channels.http";
 import { getMembersHttp } from "@/http/organization/get-members.http";
 
 export function NavMain() {
   const { slug } = useParams({ from: "/orgs/$slug" });
-
-  const { data: channelsData } = useQuery({
-    queryKey: ["channels", slug],
-    queryFn: () => getChannelsHttp({ orgSlug: slug }),
-  });
 
   const { data: membersData } = useQuery({
     queryKey: ["members", slug],
@@ -57,13 +52,22 @@ export function NavMain() {
               params={{ slug }}
               activeOptions={{ exact: true }}
             >
+              <LayoutDashboard/>
+              <span>Overview</span>
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
+            asChild
+          >
+            <NavLink to={"/orgs/$slug/channels"} params={{ slug }}>
               <TvMinimal />
               <span>Channels</span>
             </NavLink>
           </SidebarMenuButton>
-          {
-            channelsData && <SidebarMenuBadge>{channelsData.channels.length}</SidebarMenuBadge>
-          }
         </SidebarMenuItem>
 
         <SidebarMenuItem>

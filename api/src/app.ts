@@ -28,7 +28,7 @@ import { updateFolderRoute } from "./infra/http/routes/internal/folder/update-fo
 import { getStarredFoldersRoute } from "./infra/http/routes/internal/folder/get-starred-folders.route.ts";
 import { setStarredFolderRoute } from "./infra/http/routes/internal/folder/set-starred-folder.route.ts";
 import { removeStarredFolderRoute } from "./infra/http/routes/internal/folder/remove-starred-folder.route.ts";
-import { getOrganizationMetricsRoute } from "./infra/http/routes/internal/organization/get-metrics.route.ts";
+import { getOrganizationOverviewRoute } from "./infra/http/routes/internal/organization/get-overview.route.ts";
 import { getWebhooksOverviewRoute } from "./infra/http/routes/internal/webhook/get-webhooks-overview.route.ts";
 import { getAvailableEventsRoute } from "./infra/http/routes/internal/webhook/get-available-events.route.ts";
 import { createWebhookRoute } from "./infra/http/routes/internal/webhook/create-webhook.route.ts";
@@ -127,7 +127,7 @@ server.register(updateFolderRoute);
 server.register(getStarredFoldersRoute);
 server.register(setStarredFolderRoute);
 server.register(removeStarredFolderRoute);
-server.register(getOrganizationMetricsRoute);
+server.register(getOrganizationOverviewRoute);
 server.register(getWebhooksOverviewRoute);
 server.register(getAvailableEventsRoute);
 server.register(createWebhookRoute);

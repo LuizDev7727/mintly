@@ -10,22 +10,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-import type { WebhookSummary } from "@/http/webhook/get-webhooks-overview.http"
+import type { Webhook } from "@/types/webhook"
 import { CreateWebhookDialog } from "./create-webhook-dialog"
 import { WebhookDeliveriesSheet } from "./webhook-deliveries-sheet"
 import { WebhookSigningSecretDialog } from "./webhook-signing-secret-dialog"
 
 interface WebhookEndpointsSectionProps {
-  webhooks: WebhookSummary[]
+  webhooks: Webhook[]
 }
 
 export function WebhookEndpointsSection({
   webhooks,
 }: WebhookEndpointsSectionProps) {
   const [secretDialogEndpoint, setSecretDialogEndpoint] =
-    useState<WebhookSummary | null>(null)
+    useState<Webhook | null>(null)
   const [deliveriesEndpoint, setDeliveriesEndpoint] =
-    useState<WebhookSummary | null>(null)
+    useState<Webhook | null>(null)
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 rounded-xl border border-border bg-card p-4">

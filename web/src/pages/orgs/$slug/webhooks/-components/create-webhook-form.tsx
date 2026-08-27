@@ -17,10 +17,8 @@ import {
 } from "@/schemas/webhook/create-webhook.schema"
 import { getAvailableEventsHttp } from "@/http/webhook/get-available-events.http"
 import { createWebhookHttp } from "@/http/webhook/create-webhook.http"
-import type {
-  GetWebhooksOverviewResponse,
-  WebhookSummary,
-} from "@/http/webhook/get-webhooks-overview.http"
+import type { GetWebhooksOverviewResponse } from "@/http/webhook/get-webhooks-overview.http"
+import type { Webhook } from "@/types/webhook"
 
 export function CreateWebhookForm() {
   const { slug } = useParams({ from: "/orgs/$slug" })
@@ -75,7 +73,7 @@ export function CreateWebhookForm() {
         (old) => {
           if (!old) return old
 
-          const newWebhook: WebhookSummary = {
+          const newWebhook: Webhook = {
             id: data.id,
             url: variables.url,
             triggers: variables.triggers,
