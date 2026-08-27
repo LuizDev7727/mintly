@@ -31,7 +31,7 @@ function OverviewPage() {
 
   const { overview } = data;
 
-  const { channelsCount, membersCount, usage, storage, channels, recentActivities, webhooks } = overview;
+  const { channelsCount, membersCount, usage, storage, recentActivities, webhooks } = overview;
   const { totalUsage } = usage;
 
 
