@@ -44,7 +44,7 @@ function AuthLayout() {
         </div>
 
         <img
-          src="/dashboard-app.svg"
+          src="/dashboard-app-preview.svg"
           alt="Mintly dashboard"
           className="scale-125 rounded-l-sm absolute mt-10 left-40 top-85"
         />
