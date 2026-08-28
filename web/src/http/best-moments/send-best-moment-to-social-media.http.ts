@@ -1,6 +1,7 @@
 import { api } from "../api";
 
 type SendBestMomentToSocialMediaParams = {
+  orgSlug: string;
   channelId: string;
   bestMomentId: string;
   integrationId: string;
@@ -9,9 +10,9 @@ type SendBestMomentToSocialMediaParams = {
 export async function sendBestMomentToSocialMediaHttp(
   params: SendBestMomentToSocialMediaParams,
 ): Promise<void> {
-  const { channelId, bestMomentId, integrationId } = params;
+  const { orgSlug, channelId, bestMomentId, integrationId } = params;
   await api.post(
-    `/channels/${channelId}/best-moments/${bestMomentId}/send`,
+    `/organizations/${orgSlug}/channels/${channelId}/best-moments/${bestMomentId}/send`,
     { integrationId },
   );
 }

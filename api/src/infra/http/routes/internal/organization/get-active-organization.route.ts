@@ -10,7 +10,9 @@ export const getActiveOrganizationRoute: FastifyPluginAsyncZod = async (
   app.get(
     "/api/organization/active",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         response: {
           200: z.object({

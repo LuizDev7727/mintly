@@ -5,16 +5,20 @@ import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
 import { createActivity } from "@/utils/create-activity.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const addInspirationalThumbnailRoute: FastifyPluginAsyncZod = async (
   app,
 ) => {
   app.post(
-    "/api/channels/:channelId/inspirational-thumbnails",
+    "/api/organizations/:slug/channels/:channelId/inspirational-thumbnails",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
+          slug: z.string(),
           channelId: z.string(),
         }),
         body: z.object({
@@ -31,12 +35,15 @@ export const addInspirationalThumbnailRoute: FastifyPluginAsyncZod = async (
       },
     },
     async (request, reply) => {
-      const { channelId } = request.params;
+      const { slug, channelId } = request.params;
       const { name, type, size, key } = request.body;
+      const { id: userId } = request.user;
 
       const span = tracer.startSpan("addInspirationalThumbnail");
       span.setAttribute("channel.id", channelId);
       span.setAttribute("file.name", name);
+
+      await checkMembership({ organizationSlug: slug, userId });
 
       await checkFileExists({ key });
 
@@ -50,9 +57,9 @@ export const addInspirationalThumbnailRoute: FastifyPluginAsyncZod = async (
 
       await createActivity({
         action: "UPLOAD_INSPIRATIONAL_THUMBNAIL",
-        authorId: request.user.id,
+        authorId: userId,
         description: `Uploaded inspirational thumbnail ${name}`,
-        orgSlug: request.session.activeOrganizationId,
+        orgSlug: slug,
       })
 
       span.end();

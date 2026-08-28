@@ -81,6 +81,8 @@ export function UpdateFolderNameForm({
 
   async function handleUpdateFolder(formBody: UpdateFolderFormType) {
     await mutateAsync({
+      orgSlug: slug,
+      channelId: channel,
       folderId,
       title: formBody.name,
     });

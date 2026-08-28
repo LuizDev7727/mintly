@@ -24,7 +24,7 @@ interface YoutubeIntegrationCardProps {
 export function YoutubeIntegrationCard({
   integration,
 }: YoutubeIntegrationCardProps) {
-  const { channel } = useParams({ from: "/orgs/$slug/channels/$channel" });
+  const { slug, channel } = useParams({ from: "/orgs/$slug/channels/$channel" });
   const queryClient = useQueryClient();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -37,6 +37,7 @@ export function YoutubeIntegrationCard({
 
   async function handleConnect() {
     const { url } = await requestYoutubeIntegrationUrlHttp({
+      orgSlug: slug,
       channelId: channel,
     });
     window.location.href = url;
@@ -76,6 +77,8 @@ export function YoutubeIntegrationCard({
                   integrationName="YouTube"
                   onConfirm={async () => {
                     await deleteIntegration({
+                      orgSlug: slug,
+                      channelId: channel,
                       integrationId: integration.id,
                     });
                   }}

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { getWebhooksOverviews } from "@/functions/webhook/get-webhooks-overviews.ts";
 import { tracer } from "../../../tracer/tracer.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 const metricSchema = z.object({
   value: z.number(),
@@ -46,7 +47,9 @@ export const getWebhooksOverviewRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:slug/webhooks/metrics",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -69,9 +72,12 @@ export const getWebhooksOverviewRoute: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { slug } = request.params;
+      const { id: userId } = request.user;
 
       const span = tracer.startSpan("get-webhooks-overview");
       span.setAttribute("organization-slug", slug);
+
+      await checkMembership({ organizationSlug: slug, userId });
 
       const { metrics, recentDeliveries, webhooks, apiKey } =
         await getWebhooksOverviews({ orgSlug: slug });

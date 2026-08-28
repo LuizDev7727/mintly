@@ -19,7 +19,7 @@ export function NavChannels() {
 
   const { data: integrationsData } = useQuery({
     queryKey: ["integrations", channel],
-    queryFn: () => getIntegrationsHttp({ channelId: channel }),
+    queryFn: () => getIntegrationsHttp({ orgSlug: slug, channelId: channel }),
   });
 
   return (

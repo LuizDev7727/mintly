@@ -1,6 +1,8 @@
 import { api } from "../api";
 
 type GetProjectParams = {
+  orgSlug: string;
+  channelId: string;
   projectId: string;
 };
 
@@ -15,9 +17,9 @@ export type GetProjectResponse = {
 export async function getProjectHttp(
   params: GetProjectParams,
 ): Promise<GetProjectResponse> {
-  const { projectId } = params;
+  const { orgSlug, channelId, projectId } = params;
   const { data } = await api.get<GetProjectResponse>(
-    `/projects/${projectId}`,
+    `/organizations/${orgSlug}/channels/${channelId}/projects/${projectId}`,
   );
   return data;
 }

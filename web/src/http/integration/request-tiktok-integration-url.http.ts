@@ -1,6 +1,7 @@
 import { api } from "../api";
 
 type RequestTiktokIntegrationUrlParams = {
+  orgSlug: string;
   channelId: string;
 };
 
@@ -11,10 +12,10 @@ type RequestTiktokIntegrationUrlResponse = {
 export async function requestTiktokIntegrationUrlHttp(
   params: RequestTiktokIntegrationUrlParams,
 ): Promise<RequestTiktokIntegrationUrlResponse> {
-  const { channelId } = params;
+  const { orgSlug, channelId } = params;
 
   const { data } = await api.get<RequestTiktokIntegrationUrlResponse>(
-    `/channels/${channelId}/integrations/tiktok/request-url`,
+    `/organizations/${orgSlug}/channels/${channelId}/integrations/tiktok/request-url`,
   );
 
   const { url } = data;

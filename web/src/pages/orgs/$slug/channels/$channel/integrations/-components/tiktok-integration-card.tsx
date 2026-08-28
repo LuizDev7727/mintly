@@ -24,7 +24,7 @@ interface TiktokIntegrationCardProps {
 export function TiktokIntegrationCard({
   integration,
 }: TiktokIntegrationCardProps) {
-  const { channel } = useParams({ from: "/orgs/$slug/channels/$channel" });
+  const { slug, channel } = useParams({ from: "/orgs/$slug/channels/$channel" });
   const queryClient = useQueryClient();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -37,6 +37,7 @@ export function TiktokIntegrationCard({
 
   async function handleConnect() {
     const { url } = await requestTiktokIntegrationUrlHttp({
+      orgSlug: slug,
       channelId: channel,
     });
     window.location.href = url;
@@ -76,6 +77,8 @@ export function TiktokIntegrationCard({
                   integrationName="TikTok"
                   onConfirm={async () => {
                     await deleteIntegration({
+                      orgSlug: slug,
+                      channelId: channel,
                       integrationId: integration.id,
                     });
                   }}

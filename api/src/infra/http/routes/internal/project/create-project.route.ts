@@ -5,14 +5,18 @@ import { trace } from "@opentelemetry/api";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
-    "/api/channels/:channelId/projects",
+    "/api/organizations/:slug/channels/:channelId/projects",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
+          slug: z.string(),
           channelId: z.string(),
         }),
         body: z.object({
@@ -29,25 +33,27 @@ export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { channelId } = request.params;
+      const { slug, channelId } = request.params;
       const { file } = request.body;
-      const { activeOrganizationId } = request.session;
+      const { id: userId } = request.user;
 
       const span = tracer.startSpan("createProject");
       span.setAttribute("channel.id", channelId);
       span.setAttribute("file.name", file.name);
 
+      await checkMembership({ organizationSlug: slug, userId });
+
       const { projectId } = await createProject({
         channelId,
-        ownerId: request.user.id,
+        ownerId: userId,
         file,
       });
 
       await createActivity({
         action: "CREATED_PROJECT",
-        authorId: request.user.id,
+        authorId: userId,
         description: `Created project ${file.name}`,
-        orgSlug: activeOrganizationId,
+        orgSlug: slug,
       });
 
       span.end();

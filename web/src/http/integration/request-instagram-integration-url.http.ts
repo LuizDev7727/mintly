@@ -1,6 +1,7 @@
 import { api } from "../api";
 
 type RequestInstagramIntegrationUrlParams = {
+  orgSlug: string;
   channelId: string;
 };
 
@@ -11,10 +12,10 @@ type RequestInstagramIntegrationUrlResponse = {
 export async function requestInstagramIntegrationUrlHttp(
   params: RequestInstagramIntegrationUrlParams,
 ): Promise<RequestInstagramIntegrationUrlResponse> {
-  const { channelId } = params;
+  const { orgSlug, channelId } = params;
 
   const { data } = await api.get<RequestInstagramIntegrationUrlResponse>(
-    `/channels/${channelId}/integrations/instagram/request-url`,
+    `/organizations/${orgSlug}/channels/${channelId}/integrations/instagram/request-url`,
   );
 
   const { url } = data;

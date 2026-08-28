@@ -14,6 +14,7 @@ export function IntegrationsList() {
     queryKey: ["integrations", slug, channel],
     queryFn: () =>
       getIntegrationsHttp({
+        orgSlug: slug,
         channelId: channel,
       }),
   });

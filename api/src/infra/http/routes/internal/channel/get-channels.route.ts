@@ -3,15 +3,18 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const getChannelsRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
-    "/api/organizations/:orgSlug/channels",
+    "/api/organizations/:slug/channels",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
-          orgSlug: z.string(),
+          slug: z.string(),
         }),
         response: {
           200: z.object({
@@ -30,12 +33,18 @@ export const getChannelsRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { orgSlug } = request.params;
+      const { slug } = request.params;
+      const { id: userId } = request.user;
 
       const span = tracer.startSpan("get-channels");
-      span.setAttribute("org.slug", orgSlug);
+      span.setAttribute("org.slug", slug);
 
-      const { channels } = await getChannels({ orgSlug });
+      await checkMembership({
+        organizationSlug: slug,
+        userId,
+      })
+
+      const { channels } = await getChannels({ orgSlug: slug });
 
       span.end();
 

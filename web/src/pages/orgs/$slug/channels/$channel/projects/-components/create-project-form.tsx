@@ -116,7 +116,7 @@ export function CreateProjectForm() {
         onProgress: setUploadProgress,
       });
 
-      await createProject({ channelId: channel, key, file });
+      await createProject({ orgSlug: slug, channelId: channel, key, file });
 
       reset({ file: undefined });
     } catch (error) {

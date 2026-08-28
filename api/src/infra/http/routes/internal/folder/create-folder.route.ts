@@ -4,15 +4,18 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const createFolderRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
-    "/api/organizations/:orgSlug/channels/:channelId/folders",
+    "/api/organizations/:slug/channels/:channelId/folders",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
-          orgSlug: z.string(),
+          slug: z.string(),
           channelId: z.string(),
         }),
         body: z.object({
@@ -27,12 +30,18 @@ export const createFolderRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { channelId } = request.params;
+      const { slug, channelId } = request.params;
       const { title, parentId } = request.body;
+      const { id: userId } = request.user;
 
       const span = tracer.startSpan("create-folder");
       span.setAttribute("channel.id", channelId);
       span.setAttribute("channel.parent-id", parentId ?? "No parent selected");
+
+      await checkMembership({
+        organizationSlug: slug,
+        userId
+      })
 
       const { folderId } = await createFolder({ title, channelId, parentId });
 

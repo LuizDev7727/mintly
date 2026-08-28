@@ -3,6 +3,7 @@ import request from "supertest";
 import { server } from "@/app.ts";
 import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
 import { faker } from "@faker-js/faker";
+import { uuidv7 } from "uuidv7";
 
 let channelId: string;
 
@@ -15,7 +16,7 @@ beforeAll(async () => {
   channelId = res.body.channelId;
 });
 
-describe("DELETE [/api/folders/:folderId]", () => {
+describe("DELETE [/api/organizations/:slug/channels/:channelId/folders/:folderId]", () => {
   test("should return 204 when folder is deleted", async () => {
     const folderRes = await request(server.server)
       .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders`)
@@ -23,7 +24,9 @@ describe("DELETE [/api/folders/:folderId]", () => {
       .send({ title: faker.word.noun(), parentId: null });
 
     const response = await request(server.server)
-      .delete(`/api/folders/${folderRes.body.folderId}`)
+      .delete(
+        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${folderRes.body.folderId}`,
+      )
       .set(authHeaders);
 
     expect(response.status).toEqual(204);
@@ -31,7 +34,9 @@ describe("DELETE [/api/folders/:folderId]", () => {
 
   test("should return 404 for non-existent folder", async () => {
     const response = await request(server.server)
-      .delete(`/api/folders/${faker.string.uuid()}`)
+      .delete(
+        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${uuidv7()}`,
+      )
       .set(authHeaders);
 
     expect(response.status).toEqual(404);
