@@ -1,6 +1,8 @@
 import { api } from "../api";
 
 type CancelPostHttpParams = {
+  orgSlug: string;
+  channelId: string;
   postId: string;
   runId: string;
 };
@@ -8,6 +10,9 @@ type CancelPostHttpParams = {
 export async function cancelPostHttp(
   params: CancelPostHttpParams,
 ): Promise<void> {
-  const { postId, runId } = params;
-  await api.put(`/posts/${postId}/cancel`, { runId });
+  const { orgSlug, channelId, postId, runId } = params;
+  await api.put(
+    `/organizations/${orgSlug}/channels/${channelId}/posts/${postId}/cancel`,
+    { runId },
+  );
 }

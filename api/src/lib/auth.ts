@@ -15,6 +15,7 @@ import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { createSlug } from "./create-slug.ts";
 import { encrypt } from "@/utils/crypto/encrypt.ts";
+import { hashApiKey } from "@/utils/crypto/hash-api-key.ts";
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
@@ -96,6 +97,7 @@ export const auth = betterAuth({
               slug: orgSlug,
               createdAt: new Date(),
               apiKey: await encrypt(orgSlug),
+              apiKeyHash: await hashApiKey(orgSlug),
               ownerId: session.userId,
             });
 

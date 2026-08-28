@@ -40,8 +40,7 @@ export function CreateChannelForm() {
         avatar: null,
         postsCount: 0,
         integrationsCount: 0,
-        postsSize: [],
-        totalPostsSize: 0,
+        postsSeries: [],
       };
 
       queryClient.setQueryData<GetChannelsResponse>(

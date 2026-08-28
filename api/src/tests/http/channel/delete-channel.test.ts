@@ -15,10 +15,10 @@ beforeAll(async () => {
   channelId = response.body.channelId;
 });
 
-describe("DELETE [/api/channels/:channelId]", () => {
+describe("DELETE [/api/organizations/:slug/channels/:channelId]", () => {
   test("should return 204 when channel is deleted", async () => {
     const response = await request(server.server)
-      .delete(`/api/channels/${channelId}`)
+      .delete(`/api/organizations/${testOrgSlug}/channels/${channelId}`)
       .set(authHeaders);
 
     expect(response.status).toEqual(204);
@@ -26,7 +26,9 @@ describe("DELETE [/api/channels/:channelId]", () => {
 
   test("should return 404 for non-existent channel", async () => {
     const response = await request(server.server)
-      .delete(`/api/channels/${faker.string.uuid()}`)
+      .delete(
+        `/api/organizations/${testOrgSlug}/channels/${faker.string.uuid()}`,
+      )
       .set(authHeaders);
 
     expect(response.status).toEqual(404);

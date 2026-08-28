@@ -2,6 +2,7 @@ import type { InspirationalThumbnail } from "@/types/inspirational-thumbnail";
 import { api } from "../api";
 
 type GetInspirationalThumbnailsHttpParams = {
+  orgSlug: string;
   channelId: string;
   cursor?: string;
 };
@@ -14,10 +15,10 @@ export type GetInspirationalThumbnailsHttpResponse = {
 export async function getInspirationalThumbnailsHttp(
   params: GetInspirationalThumbnailsHttpParams,
 ): Promise<GetInspirationalThumbnailsHttpResponse> {
-  const { channelId, cursor } = params;
+  const { orgSlug, channelId, cursor } = params;
 
   const { data } = await api.get<GetInspirationalThumbnailsHttpResponse>(
-    `/channels/${channelId}/inspirational-thumbnails`,
+    `/organizations/${orgSlug}/channels/${channelId}/inspirational-thumbnails`,
     { params: cursor ? { cursor } : undefined },
   );
 

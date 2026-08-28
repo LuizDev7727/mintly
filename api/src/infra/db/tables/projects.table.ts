@@ -28,11 +28,9 @@ export const projectsTable = pgTable("projects", {
     .references(() => channelsTable.id, {
       onDelete: "cascade",
     }),
-  ownerId: text("owner_id")
-    .notNull()
-    .references(() => usersTable.id, {
-      onDelete: "set null",
-    }),
+  ownerId: text("owner_id").references(() => usersTable.id, {
+    onDelete: "set null",
+  }),
 });
 
 export const projectsRelations = relations(projectsTable, ({ one, many }) => ({

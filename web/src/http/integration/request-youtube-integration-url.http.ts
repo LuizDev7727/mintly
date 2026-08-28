@@ -1,6 +1,7 @@
 import { api } from "../api";
 
 type RequestYoutubeIntegrationUrlParams = {
+  orgSlug: string;
   channelId: string;
 };
 
@@ -11,10 +12,10 @@ type RequestYoutubeIntegrationUrlResponse = {
 export async function requestYoutubeIntegrationUrlHttp(
   params: RequestYoutubeIntegrationUrlParams,
 ): Promise<RequestYoutubeIntegrationUrlResponse> {
-  const { channelId } = params;
+  const { orgSlug, channelId } = params;
 
   const { data } = await api.get<RequestYoutubeIntegrationUrlResponse>(
-    `/channels/${channelId}/integrations/youtube/request-url`,
+    `/organizations/${orgSlug}/channels/${channelId}/integrations/youtube/request-url`,
   );
 
   const { url } = data;

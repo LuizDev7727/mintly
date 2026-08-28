@@ -14,7 +14,7 @@ export function CreateChannelDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="mt-1">
+        <Button variant={'outline'} className={"mt-1"}>
           <Plus className="size-4" />
           Create new channel
         </Button>

@@ -3,6 +3,7 @@ import { db } from "@/infra/db/client.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { encrypt } from "@/utils/crypto/encrypt.ts";
+import { hashApiKey } from "@/utils/crypto/hash-api-key.ts";
 import { eq } from "drizzle-orm";
 
 type CreateOrganizationParams = {
@@ -30,6 +31,7 @@ export async function createOrganization(params: CreateOrganizationParams) {
       name,
       slug,
       apiKey: await encrypt(slug),
+      apiKeyHash: await hashApiKey(slug),
     })
     .returning({ id: organizationsTable.id });
 

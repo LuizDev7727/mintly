@@ -12,13 +12,13 @@ import { useParams } from "@tanstack/react-router";
 import { Calendar, Clock, HardDrive, Image } from "lucide-react";
 
 export function PostDetails() {
-  const { postId } = useParams({
+  const { slug, channel, postId } = useParams({
     from: "/orgs/$slug/channels/$channel/$postId/",
   });
 
   const { data: post } = useSuspenseQuery({
     queryKey: ["post", postId],
-    queryFn: () => getPostHttp({ postId }),
+    queryFn: () => getPostHttp({ orgSlug: slug, channelId: channel, postId }),
   });
 
   const hasThumbnail = post.thumbnailUrl !== null;

@@ -22,7 +22,7 @@ export function InspirationalThumbnails() {
 
   const queryClient = useQueryClient()
 
-  const { channel } = useParams({ from: "/orgs/$slug/channels/$channel" });
+  const { slug, channel } = useParams({ from: "/orgs/$slug/channels/$channel" });
   const [selectedRows, setSelectedRow] = useQueryState('rows', parseAsArrayOf(parseAsString).withDefault([]))
 
   const { view } = useViewMode();
@@ -35,6 +35,7 @@ export function InspirationalThumbnails() {
       queryKey: ["inspirational-thumbnails", channel],
       queryFn: ({ pageParam }) =>
         getInspirationalThumbnailsHttp({
+          orgSlug: slug,
           channelId: channel,
           cursor: pageParam,
         }),
@@ -108,6 +109,8 @@ export function InspirationalThumbnails() {
   async function handleDeleteAllSelectedRows() {
     for (let i = 0; i < selectedRows.length; i++) {
       await removeInspirationalThumbnail({
+        orgSlug: slug,
+        channelId: channel,
         inspirationalThumbnailId: selectedRows[i],
       });
     }

@@ -1,9 +1,10 @@
-﻿import { describe, test, expect, beforeAll } from "vitest";
+import { describe, test, expect, beforeAll } from "vitest";
 import request from "supertest";
 import { server } from "@/app.ts";
 import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
 import { faker } from "@faker-js/faker";
 
+let channelId: string;
 let folderId: string;
 
 beforeAll(async () => {
@@ -12,20 +13,22 @@ beforeAll(async () => {
     .set(authHeaders)
     .send({ name: faker.word.noun() });
 
+  channelId = channelRes.body.channelId;
+
   const folderRes = await request(server.server)
-    .post(
-      `/api/organizations/${testOrgSlug}/channels/${channelRes.body.channelId}/folders`,
-    )
+    .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders`)
     .set(authHeaders)
     .send({ title: faker.word.noun(), parentId: null });
 
   folderId = folderRes.body.folderId;
 });
 
-describe("PUT [/api/folders/:folderId]", () => {
+describe("PUT [/api/organizations/:slug/channels/:channelId/folders/:folderId]", () => {
   test("should return 204 when title is updated", async () => {
     const response = await request(server.server)
-      .put(`/api/folders/${folderId}`)
+      .put(
+        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${folderId}`,
+      )
       .set(authHeaders)
       .send({ title: faker.word.noun() });
 
@@ -34,7 +37,9 @@ describe("PUT [/api/folders/:folderId]", () => {
 
   test("should return 400 when title is empty", async () => {
     const response = await request(server.server)
-      .put(`/api/folders/${folderId}`)
+      .put(
+        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${folderId}`,
+      )
       .set(authHeaders)
       .send({ title: "" });
 
@@ -43,7 +48,9 @@ describe("PUT [/api/folders/:folderId]", () => {
 
   test("should return 404 for non-existent folder", async () => {
     const response = await request(server.server)
-      .put(`/api/folders/${faker.string.uuid()}`)
+      .put(
+        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${faker.string.uuid()}`,
+      )
       .set(authHeaders)
       .send({ title: faker.word.noun() });
 

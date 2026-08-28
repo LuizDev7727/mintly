@@ -20,3 +20,32 @@ export function TiktokIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+export function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="instagram-gradient" cx="30%" cy="107%" r="150%">
+          <stop offset="0%" stopColor="#fdf497" />
+          <stop offset="5%" stopColor="#fdf497" />
+          <stop offset="45%" stopColor="#fd5949" />
+          <stop offset="60%" stopColor="#d6249f" />
+          <stop offset="90%" stopColor="#285AEB" />
+        </radialGradient>
+      </defs>
+      <rect width="24" height="24" rx="6" fill="url(#instagram-gradient)" />
+      <rect
+        x="6"
+        y="6"
+        width="12"
+        height="12"
+        rx="4"
+        stroke="#fff"
+        strokeWidth="1.5"
+        fill="none"
+      />
+      <circle cx="12" cy="12" r="3.2" stroke="#fff" strokeWidth="1.5" fill="none" />
+      <circle cx="15.6" cy="8.4" r="0.9" fill="#fff" />
+    </svg>
+  );
+}
