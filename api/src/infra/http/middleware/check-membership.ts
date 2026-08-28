@@ -3,17 +3,20 @@ import { db } from "@/infra/db/client.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { and, eq } from "drizzle-orm";
 
-type CheckMembershipParams = {
+type CheckMembershipProps = {
   organizationSlug: string;
-  userId: string;
-};
+  userId: string
+}
 
-export async function checkMembership({
-  organizationSlug,
-  userId,
-}: CheckMembershipParams) {
+export async function checkMembership(props: CheckMembershipProps) {
+
+  const { organizationSlug, userId } = props;
+
   const [membership] = await db
-    .select({ id: membersTable.id })
+    .select({
+      id: membersTable.id,
+      role: membersTable.role,
+    })
     .from(membersTable)
     .where(
       and(

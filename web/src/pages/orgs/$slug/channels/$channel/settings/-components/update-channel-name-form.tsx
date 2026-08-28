@@ -74,6 +74,7 @@ export function UpdateChannelNameForm({
 
   async function handleUpdateChannel(formBody: UpdateChannelFormType) {
     await mutateAsync({
+      orgSlug: slug,
       id,
       name: formBody.name,
     });

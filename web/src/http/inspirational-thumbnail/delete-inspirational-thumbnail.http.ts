@@ -1,13 +1,17 @@
 import { api } from "../api";
 
 type DeleteInspirationalThumbnailHttpParams = {
+  orgSlug: string;
+  channelId: string;
   inspirationalThumbnailId: string;
 };
 
 export async function deleteInspirationalThumbnailHttp(
   params: DeleteInspirationalThumbnailHttpParams,
 ): Promise<void> {
-  const { inspirationalThumbnailId } = params;
+  const { orgSlug, channelId, inspirationalThumbnailId } = params;
 
-  await api.delete(`/inspirational-thumbnails/${inspirationalThumbnailId}`);
+  await api.delete(
+    `/organizations/${orgSlug}/channels/${channelId}/inspirational-thumbnails/${inspirationalThumbnailId}`,
+  );
 }

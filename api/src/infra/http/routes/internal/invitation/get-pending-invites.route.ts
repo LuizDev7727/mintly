@@ -8,7 +8,9 @@ export const getPendingInvitesRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/invitations/pending",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         response: {
           200: z.object({

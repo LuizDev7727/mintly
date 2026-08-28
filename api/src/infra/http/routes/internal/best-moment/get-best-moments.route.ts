@@ -3,14 +3,19 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const getBestMomentsRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
-    "/api/projects/:projectId/best-moments",
+    "/api/organizations/:slug/channels/:id/projects/:projectId/best-moments",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
+          slug: z.string(),
+          id: z.uuidv7(),
           projectId: z.string(),
         }),
         querystring: z.object({
@@ -32,8 +37,14 @@ export const getBestMomentsRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { projectId } = request.params;
+      const { slug, projectId } = request.params;
       const { cursor } = request.query;
+      const { id: userId } = request.user;
+
+      await checkMembership({
+        organizationSlug: slug,
+        userId
+      })
 
       const span = tracer.startSpan("getBestMoments");
       span.setAttribute("project.id", projectId);

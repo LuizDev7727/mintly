@@ -28,6 +28,7 @@ function CreateUploadPage() {
     queryKey: ["integrations", slug, channel],
     queryFn: () =>
       getIntegrationsHttp({
+        orgSlug: slug,
         channelId: channel,
       }),
   });

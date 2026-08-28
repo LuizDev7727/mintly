@@ -3,15 +3,18 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const getFoldersRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
-    "/api/organizations/:orgSlug/channels/:channelId/folders",
+    "/api/organizations/:slug/channels/:channelId/folders",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
-          orgSlug: z.string(),
+          slug: z.string(),
           channelId: z.string(),
         }),
         querystring: z.object({
@@ -44,10 +47,17 @@ export const getFoldersRoute: FastifyPluginAsyncZod = async (app) => {
     async (request, reply) => {
       const { channelId } = request.params;
       const { pageIndex, folderId } = request.query;
+      const { slug } = request.params;
+      const { id: userId } = request.user;
 
       const span = tracer.startSpan("get-folders");
       span.setAttribute("channel.id", channelId);
       span.setAttribute("folder.name", folderId ?? "No selected folder");
+
+      await checkMembership({
+        organizationSlug: slug,
+        userId
+      })
 
       const { folders, parent, meta } = await getFolders({
         channelId,

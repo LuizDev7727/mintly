@@ -5,15 +5,18 @@ import { tracer } from "../../../tracer/tracer.ts";
 import { createChannel } from "@/functions/channel/create-channel.ts";
 import { createActivity } from "@/utils/create-activity.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const createChannelRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
-    "/api/organizations/:orgSlug/channels",
+    "/api/organizations/:slug/channels",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
-          orgSlug: z.string(),
+          slug: z.string(),
         }),
         body: z.object({
           name: z.string().min(1),
@@ -26,15 +29,20 @@ export const createChannelRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { orgSlug } = request.params;
+      const { slug } = request.params;
       const { name } = request.body;
       const { id } = request.user;
       const { activeOrganizationId } = request.session;
 
-      const span = tracer.startSpan("create-channel");
-      span.setAttribute("org.slug", orgSlug);
+      await checkMembership({
+        organizationSlug: slug,
+        userId: id,
+      });
 
-      const { channelId } = await createChannel({ orgSlug, name });
+      const span = tracer.startSpan("create-channel");
+      span.setAttribute("org.slug", slug);
+
+      const { channelId } = await createChannel({ orgSlug: slug, name });
 
       await createActivity({
         action: "CREATED_CHANNEL",

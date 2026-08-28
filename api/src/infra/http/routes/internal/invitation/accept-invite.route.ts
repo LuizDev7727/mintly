@@ -8,7 +8,9 @@ export const acceptInviteRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/invitations/:inviteId/accept",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
           inviteId: z.string(),

@@ -5,14 +5,18 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
-    "/api/channels/:channelId/posts",
+    "/api/organizations/:slug/channels/:channelId/posts",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
+          slug: z.string(),
           channelId: z.string(),
         }),
         body: z.object({
@@ -51,32 +55,34 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { channelId } = request.params;
+      const { slug, channelId } = request.params;
       const { posts } = request.body;
-      const { activeOrganizationId } = request.session;
+      const { id: userId } = request.user;
 
       const span = tracer.startSpan("createPosts");
       span.setAttribute("channel.id", channelId);
       span.setAttribute("posts.count", posts.length);
 
+      await checkMembership({ organizationSlug: slug, userId });
+
       await createPosts({
         posts,
-        ownerId: request.user.id,
+        ownerId: userId,
         channelId,
       });
 
       await createActivity({
         action: "CREATED_POST",
-        authorId: request.user.id,
+        authorId: userId,
         description:
           posts.length === 1
             ? `Created post ${posts[0].file.name}`
             : `Created ${posts.length} posts`,
-        orgSlug: activeOrganizationId,
+        orgSlug: slug,
       });
 
       await publishWebhookEvents({
-        orgSlug: activeOrganizationId,
+        orgSlug: slug,
         trigger: "post.created",
         events: [{
           message: "Post(s) created successfully."

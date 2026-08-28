@@ -8,7 +8,9 @@ export const declineInviteRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/invitations/:inviteId/decline",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
           inviteId: z.string(),

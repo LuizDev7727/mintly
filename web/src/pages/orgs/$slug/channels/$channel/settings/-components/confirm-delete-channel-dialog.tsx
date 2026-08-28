@@ -36,7 +36,7 @@ export function ConfirmDeleteChannelDialog(
   });
 
   async function handleDeleteChannel() {
-    await mutateAsync({ channelId: id });
+    await mutateAsync({ orgSlug: slug, channelId: id });
   }
 
   return (

@@ -3,15 +3,20 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const deleteFolderRoute: FastifyPluginAsyncZod = async (app) => {
   app.delete(
-    "/api/folders/:folderId",
+    "/api/organizations/:slug/channels/:channelId/folders/:folderId",
     {
-      preHandler: [checkUserSession],
+      preHandler: [
+        checkUserSession,
+      ],
       schema: {
         params: z.object({
-          folderId: z.string(),
+          slug: z.string(),
+          channelId: z.uuidv7(),
+          folderId: z.uuidv7(),
         }),
         response: {
           204: z.never(),
@@ -19,10 +24,16 @@ export const deleteFolderRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { folderId } = request.params;
+      const { slug, channelId, folderId } = request.params;
+      const { id: userId } = request.user
 
       const span = tracer.startSpan("delete-folder");
       span.setAttribute("folder.id", folderId);
+
+      await checkMembership({
+        organizationSlug: slug,
+        userId
+      })
 
       await deleteFolder({ folderId });
 

@@ -24,7 +24,7 @@ interface InstagramIntegrationCardProps {
 export function InstagramIntegrationCard({
   integration,
 }: InstagramIntegrationCardProps) {
-  const { channel } = useParams({ from: "/orgs/$slug/channels/$channel" });
+  const { slug, channel } = useParams({ from: "/orgs/$slug/channels/$channel" });
   const queryClient = useQueryClient();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -37,6 +37,7 @@ export function InstagramIntegrationCard({
 
   async function handleConnect() {
     const { url } = await requestInstagramIntegrationUrlHttp({
+      orgSlug: slug,
       channelId: channel,
     });
     window.location.href = url;
@@ -76,6 +77,8 @@ export function InstagramIntegrationCard({
                   integrationName="Instagram"
                   onConfirm={async () => {
                     await deleteIntegration({
+                      orgSlug: slug,
+                      channelId: channel,
                       integrationId: integration.id,
                     });
                   }}

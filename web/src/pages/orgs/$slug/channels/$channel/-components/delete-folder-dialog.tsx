@@ -65,7 +65,7 @@ export function DeleteFolderDialog({
   });
 
   async function handleDeleteFolder() {
-    await mutateAsync({ folderId });
+    await mutateAsync({ orgSlug: slug, channelId: channel, folderId });
   }
   return (
     <Dialog>

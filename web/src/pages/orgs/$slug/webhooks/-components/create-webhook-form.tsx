@@ -25,8 +25,8 @@ export function CreateWebhookForm() {
   const queryClient = useQueryClient()
 
   const { data: availableEvents, isPending: isLoadingEvents } = useQuery({
-    queryKey: ["webhook-available-events"],
-    queryFn: getAvailableEventsHttp,
+    queryKey: ["webhook-available-events", slug],
+    queryFn: () => getAvailableEventsHttp({ orgSlug: slug }),
   })
 
   const {
