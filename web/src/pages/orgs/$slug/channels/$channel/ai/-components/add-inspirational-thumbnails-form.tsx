@@ -49,7 +49,7 @@ export function AddInspirationalThumbnailsForm() {
     new Map<number, UploadEntry>(),
   );
 
-  const { channel } = useParams({
+  const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel"
   })
 
@@ -191,6 +191,7 @@ export function AddInspirationalThumbnailsForm() {
           });
 
           await addInspirationalThumbnail({
+            orgSlug: slug,
             channelId: channel,
             key,
             file,

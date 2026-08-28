@@ -66,7 +66,12 @@ export function PostGridView({ posts }: PostGridViewProps) {
   });
 
   function handleCancelPost(post: Post) {
-    cancelPost({ postId: post.id, runId: post.runId });
+    cancelPost({
+      orgSlug: slug,
+      channelId: channel,
+      postId: post.id,
+      runId: post.runId,
+    });
   }
 
   return (

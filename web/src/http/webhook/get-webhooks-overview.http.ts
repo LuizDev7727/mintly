@@ -1,3 +1,4 @@
+import type { Webhook, WebhookLogStatus } from "@/types/webhook";
 import { api } from "../api";
 
 type GetWebhooksOverviewParams = {
@@ -9,8 +10,6 @@ type Metric = {
   trend: number;
   sparkline: number[];
 };
-
-export type WebhookLogStatus = "PENDING" | "SUCCESS" | "FAILED";
 
 export type RecentDelivery = {
   id: string;
@@ -28,18 +27,6 @@ export type RecentDelivery = {
   createdAt: string;
 };
 
-export type WebhookSummary = {
-  id: string;
-  url: string;
-  triggers: string[];
-  signingSecret: string;
-  createdAt: string;
-  lastLog: {
-    status: WebhookLogStatus;
-    createdAt: string;
-  } | null;
-};
-
 export type GetWebhooksOverviewResponse = {
   metrics: {
     totalDeliveries: Metric;
@@ -49,7 +36,7 @@ export type GetWebhooksOverviewResponse = {
     retryRate: Metric;
   };
   recentDeliveries: RecentDelivery[];
-  webhooks: WebhookSummary[];
+  webhooks: Webhook[];
   apiKey: string | null;
 };
 

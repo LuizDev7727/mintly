@@ -12,6 +12,7 @@ export type GetChannelsResponse = {
 export async function getChannelsHttp(
   params: GetChannelsParams,
 ): Promise<GetChannelsResponse> {
+
   const { orgSlug } = params;
   const { data } = await api.get<GetChannelsResponse>(
     `/organizations/${orgSlug}/channels`,

@@ -240,6 +240,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     }
 
     await createPosts({
+      orgSlug: slug,
       channelId: channel,
       posts: uploadedPosts.map(({ post, key }) => ({
         file: {

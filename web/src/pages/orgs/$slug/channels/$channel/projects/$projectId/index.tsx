@@ -23,7 +23,11 @@ export const Route = createFileRoute(
   }),
   loader: async ({ params }) => {
     try {
-      const project = await getProjectHttp({ projectId: params.projectId });
+      const project = await getProjectHttp({
+        orgSlug: params.slug,
+        channelId: params.channel,
+        projectId: params.projectId,
+      });
       return { project };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {

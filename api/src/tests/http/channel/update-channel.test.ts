@@ -15,10 +15,10 @@ beforeAll(async () => {
   channelId = response.body.channelId;
 });
 
-describe("PUT [/api/channels/:channelId]", () => {
+describe("PUT [/api/organizations/:slug/channels/:channelId]", () => {
   test("should return 204 when name is updated", async () => {
     const response = await request(server.server)
-      .put(`/api/channels/${channelId}`)
+      .put(`/api/organizations/${testOrgSlug}/channels/${channelId}`)
       .set(authHeaders)
       .send({ name: faker.word.noun() });
 
@@ -27,7 +27,7 @@ describe("PUT [/api/channels/:channelId]", () => {
 
   test("should return 400 when name is empty", async () => {
     const response = await request(server.server)
-      .put(`/api/channels/${channelId}`)
+      .put(`/api/organizations/${testOrgSlug}/channels/${channelId}`)
       .set(authHeaders)
       .send({ name: "" });
 
@@ -36,7 +36,9 @@ describe("PUT [/api/channels/:channelId]", () => {
 
   test("should return 404 for non-existent channel", async () => {
     const response = await request(server.server)
-      .put(`/api/channels/${faker.string.uuid()}`)
+      .put(
+        `/api/organizations/${testOrgSlug}/channels/${faker.string.uuid()}`,
+      )
       .set(authHeaders)
       .send({ name: faker.word.noun() });
 

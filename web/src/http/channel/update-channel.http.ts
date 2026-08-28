@@ -1,6 +1,7 @@
 import { api } from "../api";
 
 type UpdateChannelParams = {
+  orgSlug: string;
   id: string;
   name: string;
 };
@@ -8,6 +9,6 @@ type UpdateChannelParams = {
 export async function updateChannelHttp(
   params: UpdateChannelParams,
 ): Promise<void> {
-  const { id, name } = params;
-  await api.put(`/channels/${id}`, { name });
+  const { orgSlug, id, name } = params;
+  await api.put(`/organizations/${orgSlug}/channels/${id}`, { name });
 }

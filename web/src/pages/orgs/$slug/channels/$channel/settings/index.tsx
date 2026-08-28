@@ -37,13 +37,13 @@ function ChannelSettingsPage() {
 }
 
 function ChannelSettingsContent() {
-  const { channel: channelId } = useParams({
+  const { slug, channel: channelId } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
 
   const { data: channel } = useSuspenseQuery({
     queryKey: ["channel", channelId],
-    queryFn: () => getChannelHttp({ channelId }),
+    queryFn: () => getChannelHttp({ orgSlug: slug, channelId }),
   });
 
   return (

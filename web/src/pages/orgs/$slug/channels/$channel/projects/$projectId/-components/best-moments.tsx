@@ -18,7 +18,7 @@ import { useParams } from "@tanstack/react-router";
 
 export function BestMoments() {
 
-  const { channel, projectId } = useParams({
+  const { slug, channel, projectId } = useParams({
     from:"/orgs/$slug/channels/$channel/projects/$projectId/"
   })
 
@@ -32,6 +32,8 @@ export function BestMoments() {
       queryKey: ["best-moments", projectId],
       queryFn: ({ pageParam }) =>
         getBestMomentsHttp({
+          orgSlug: slug,
+          channelId: channel,
           projectId,
           cursor: pageParam,
         }),
@@ -42,7 +44,7 @@ export function BestMoments() {
 
   const { data: integrationsData } = useSuspenseQuery({
     queryKey: ["integrations", channel],
-    queryFn: () => getIntegrationsHttp({ channelId: channel }),
+    queryFn: () => getIntegrationsHttp({ orgSlug: slug, channelId: channel }),
   });
 
   const bestMoments = data.pages.flatMap((page) => page.bestMoments);
@@ -82,6 +84,7 @@ export function BestMoments() {
 
   async function handlePostBestMoment(bestMomentId: string, integration: Integration) {
     await sendBestMomentToSocialMedia({
+      orgSlug: slug,
       bestMomentId,
       channelId: channel,
       integrationId: integration.id

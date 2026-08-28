@@ -51,7 +51,12 @@ export function PostListView({ posts }: PostListViewProps) {
   });
 
   function handleCancelPost(post: Post) {
-    cancelPost({ postId: post.id, runId: post.runId });
+    cancelPost({
+      orgSlug: slug,
+      channelId: channel,
+      postId: post.id,
+      runId: post.runId,
+    });
   }
 
   return (
