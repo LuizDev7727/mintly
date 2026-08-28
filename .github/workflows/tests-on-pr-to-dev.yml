@@ -92,6 +92,22 @@ jobs:
           GEMINI_API_KEY: test-gemini-api-key
           TRIGGER_SECRET_KEY: test-trigger-secret-key
           MODAL_URL: http://localhost:9001
+          TIKTOK_CLIENT_KEY: test-tiktok-client-key
+          TIKTOK_CLIENT_SECRET: test-tiktok-client-secret
+          TIKTOK_REDIRECT_URI: http://localhost:3000/api/integrations/tiktok/callback
+          TIKTOK_REDIRECT_CALLBACK_URI: http://localhost:5173
+          RESEND_API_KEY: test-resend-api-key
+          QSTASH_URL: http://localhost:9002
+          QSTASH_TOKEN: test-qstash-token
+          QSTASH_CURRENT_SIGNING_KEY: test-qstash-current-signing-key
+          QSTASH_NEXT_SIGNING_KEY: test-qstash-next-signing-key
+          QSTASH_TOPIC_URL: http://localhost:9002/topic
+          AES_ENCRYPTION_KEY: "/+2d/XzxCFOZi5XpinEsp08TbICfZndLvJaVKLQh4bY="
+          INSTAGRAM_APP_ID: test-instagram-app-id
+          INSTAGRAM_APP_SECRET: test-instagram-app-secret
+          INSTAGRAM_ACCESS_TOKEN: test-instagram-access-token
+          INSTAGRAM_REDIRECT_URI: http://localhost:3000/api/integrations/instagram/callback
+          INSTAGRAM_REDIRECT_CALLBACK_URI: http://localhost:5173
 
   test-e2e:
     needs: [detect, test-api]
@@ -168,6 +184,22 @@ jobs:
           GEMINI_API_KEY: test-gemini-api-key
           TRIGGER_SECRET_KEY: test-trigger-secret-key
           MODAL_URL: http://localhost:9001
+          TIKTOK_CLIENT_KEY: test-tiktok-client-key
+          TIKTOK_CLIENT_SECRET: test-tiktok-client-secret
+          TIKTOK_REDIRECT_URI: http://localhost:3000/api/integrations/tiktok/callback
+          TIKTOK_REDIRECT_CALLBACK_URI: http://localhost:5173
+          RESEND_API_KEY: test-resend-api-key
+          QSTASH_URL: http://localhost:9002
+          QSTASH_TOKEN: test-qstash-token
+          QSTASH_CURRENT_SIGNING_KEY: test-qstash-current-signing-key
+          QSTASH_NEXT_SIGNING_KEY: test-qstash-next-signing-key
+          QSTASH_TOPIC_URL: http://localhost:9002/topic
+          AES_ENCRYPTION_KEY: "/+2d/XzxCFOZi5XpinEsp08TbICfZndLvJaVKLQh4bY="
+          INSTAGRAM_APP_ID: test-instagram-app-id
+          INSTAGRAM_APP_SECRET: test-instagram-app-secret
+          INSTAGRAM_ACCESS_TOKEN: test-instagram-access-token
+          INSTAGRAM_REDIRECT_URI: http://localhost:3000/api/integrations/instagram/callback
+          INSTAGRAM_REDIRECT_CALLBACK_URI: http://localhost:5173
 
       - name: Start API
         env:
@@ -195,6 +227,22 @@ jobs:
             -e GEMINI_API_KEY=test-gemini-api-key \
             -e TRIGGER_SECRET_KEY=test-trigger-secret-key \
             -e MODAL_URL=http://localhost:9001 \
+            -e TIKTOK_CLIENT_KEY=test-tiktok-client-key \
+            -e TIKTOK_CLIENT_SECRET=test-tiktok-client-secret \
+            -e TIKTOK_REDIRECT_URI=http://localhost:3000/api/integrations/tiktok/callback \
+            -e TIKTOK_REDIRECT_CALLBACK_URI=http://localhost:4173 \
+            -e RESEND_API_KEY=test-resend-api-key \
+            -e QSTASH_URL=http://localhost:9002 \
+            -e QSTASH_TOKEN=test-qstash-token \
+            -e QSTASH_CURRENT_SIGNING_KEY=test-qstash-current-signing-key \
+            -e QSTASH_NEXT_SIGNING_KEY=test-qstash-next-signing-key \
+            -e QSTASH_TOPIC_URL=http://localhost:9002/topic \
+            -e AES_ENCRYPTION_KEY="/+2d/XzxCFOZi5XpinEsp08TbICfZndLvJaVKLQh4bY=" \
+            -e INSTAGRAM_APP_ID=test-instagram-app-id \
+            -e INSTAGRAM_APP_SECRET=test-instagram-app-secret \
+            -e INSTAGRAM_ACCESS_TOKEN=test-instagram-access-token \
+            -e INSTAGRAM_REDIRECT_URI=http://localhost:3000/api/integrations/instagram/callback \
+            -e INSTAGRAM_REDIRECT_CALLBACK_URI=http://localhost:4173 \
             mintly-api
 
       - name: Wait for API
