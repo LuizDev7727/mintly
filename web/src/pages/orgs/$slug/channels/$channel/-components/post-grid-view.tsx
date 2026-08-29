@@ -32,12 +32,19 @@ import { PostStatusBadge } from "./post-status-badge";
 import { getInitials } from "@/utils/get-initials";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 
 type PostGridViewProps = {
   posts: Post[];
 };
 
 export function PostGridView({ posts }: PostGridViewProps) {
+
+  const [postsSelected, setPostsSelected] = useQueryState(
+    "rows",
+    parseAsArrayOf(parseAsString).withDefault([])
+  )
+
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
@@ -74,6 +81,15 @@ export function PostGridView({ posts }: PostGridViewProps) {
     });
   }
 
+  function handleSetSelected(post: Post) {
+    setPostsSelected((prev) => {
+      if (prev.includes(post.id)) {
+        return prev.filter((id) => id !== post.id);
+      }
+      return [...prev, post.id];
+    });
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {posts.map((post) => {
@@ -86,7 +102,9 @@ export function PostGridView({ posts }: PostGridViewProps) {
         return (
           <div
             key={post.id}
-            className="rounded-lg border border-border bg-sidebar p-2.5 text-card-foreground"
+            onClick={() => handleSetSelected(post)}
+            data-selected={postsSelected.includes(post.id)}
+            className="cursor-pointer rounded-lg border border-border data-[selected=true]:border-primary bg-sidebar p-2.5 text-card-foreground"
           >
             <div className="relative aspect-video overflow-hidden rounded-md bg-muted">
               {

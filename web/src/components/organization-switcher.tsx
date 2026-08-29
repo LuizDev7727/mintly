@@ -63,7 +63,7 @@ export function OrganizationSwitcher() {
     },
   });
 
-  if (!data || isActiveOrgLoading || isOrganizationsLoading) {
+  if (!data|| !currentOrg || isActiveOrgLoading || isOrganizationsLoading) {
     return <OrganizationSwitcherLoading />;
   }
 
