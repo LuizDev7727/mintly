@@ -11,6 +11,7 @@ import { PostsListEmpty } from "./posts-list-empty";
 import { useViewMode } from "@/context/view-mode-context";
 import { PostGridView } from "./post-grid-view";
 import { PostListView } from "./post-list-view";
+import { PostsLoading } from "./posts-loading";
 
 export function Posts() {
   const { slug, channel } = useParams({
@@ -47,8 +48,8 @@ export function Posts() {
     return <div>Error: {error?.message}</div>;
   }
 
-  if (!data) {
-    return null;
+  if (!data || isLoading) {
+    return <PostsLoading />
   }
 
   const { posts, meta } = data;
@@ -67,8 +68,6 @@ export function Posts() {
           Move to folder
         </Button>
       </div>
-
-      {isLoading && <PostListLoading />}
 
       {!isPostsEmpty && view === "grid" && <PostGridView posts={posts} />}
       {!isPostsEmpty && view === "list" && <PostListView posts={posts} />}

@@ -11,7 +11,7 @@ import type { Project } from "@/types/project";
 import { getInitials } from "@/utils/get-initials";
 import { Link, useParams } from "@tanstack/react-router";
 import { Eye, ImageIcon, MoreHorizontal, Trash2 } from "lucide-react";
-import { ProjectStatusBadge } from "./project-status-badge";
+import { ProjectStatusBadge } from "./projects-status-badge";
 
 type ProjectsGridViewProps = {
   projects: Project[];
