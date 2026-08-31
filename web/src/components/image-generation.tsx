@@ -24,7 +24,6 @@ export interface ImageGenerationProps {
   /** Accessible description. Defaults to a description derived from prompt. */
   label?: string;
   prompt?: string;
-  resolution?: string;
   /** CSS aspect ratio reserved before generated media is available. */
   aspectRatio?: CSSProperties["aspectRatio"];
   size?: "compact" | "fluid";
@@ -249,7 +248,6 @@ export function ImageGeneration({
   status = "generating",
   label,
   prompt,
-  resolution = "1024 × 1024",
   aspectRatio = "1 / 1",
   size = "compact",
   interactive = true,
