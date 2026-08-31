@@ -33,6 +33,7 @@ import { getInitials } from "@/utils/get-initials";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+import { ImageGeneration } from "@/components/image-generation";
 
 type PostGridViewProps = {
   posts: Post[];
@@ -108,8 +109,14 @@ export function PostGridView({ posts }: PostGridViewProps) {
           >
             <div className="relative aspect-video overflow-hidden rounded-md bg-muted">
               {
-                post.thumbnailUrl !== null ?
-                  <img src={post.thumbnailUrl} alt={post.title} className="h-full w-full object-cover" />
+                post.status === "GENERATING_THUMBNAIL" ?
+                  <ImageGeneration>
+                    <img
+                      src={post.thumbnailUrl ?? ""}
+                      alt={post.title}
+                      className="h-full w-full object-cover"
+                    />
+                  </ImageGeneration>
                   :
                   <div className="flex h-full w-full items-center justify-center text-muted-foreground">
                     <ImageIcon size={28} />
