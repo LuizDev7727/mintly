@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(["production", "development", "test"]).default("development"),
+  NODE_ENV: z.enum([
+    "production",
+    "development",
+    "test",
+  ]).default("development"),
   PORT: z.coerce.number().default(3000),
   DATABASE_URL: z.url().startsWith("postgresql://"),
   ALLOWED_ORIGIN: z.url(),
@@ -30,6 +34,10 @@ const envSchema = z.object({
   QSTASH_NEXT_SIGNING_KEY: z.string(),
   QSTASH_TOPIC_URL: z.url(),
   AES_ENCRYPTION_KEY: z.string(),
+  INFISICAL_CLIENT_ID: z.string(),
+  INFISICAL_CLIENT_SECRET: z.string(),
+  INFISICAL_PROJECT_ID: z.string(),
+  INFISICAL_ENVIRONMENT: z.string(),
   INSTAGRAM_APP_ID: z.string(),
   INSTAGRAM_APP_SECRET: z.string(),
   INSTAGRAM_ACCESS_TOKEN: z.string(),
@@ -38,3 +46,4 @@ const envSchema = z.object({
 });
 
 export const env = envSchema.parse(process.env);
+export type Env = z.infer<typeof envSchema>;
