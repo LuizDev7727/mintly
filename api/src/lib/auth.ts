@@ -6,6 +6,7 @@ import { sessionsTable } from "@/infra/db/tables/sessions.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { verificationsTable } from "@/infra/db/tables/verifications.table.ts";
 import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { db } from "@/infra/db/client.ts";
 import { tables } from "@/infra/db/tables/index.ts";
 import { accountsTable } from "@/infra/db/tables/accounts.table.ts";
@@ -18,8 +19,8 @@ import { encrypt } from "@/utils/crypto/encrypt.ts";
 import { hashApiKey } from "@/utils/crypto/hash-api-key.ts";
 
 export const auth = betterAuth({
-  baseURL: env.BETTER_AUTH_URL,
-  trustedOrigins: [env.ALLOWED_ORIGIN],
+  baseURL: await getInfisicalSecret({ secretName: "BETTER_AUTH_URL" }),
+  trustedOrigins: [await getInfisicalSecret({ secretName: "ALLOWED_ORIGIN" })],
   database: drizzleAdapter(db, {
     provider: "pg",
     usePlural: true,
@@ -39,8 +40,8 @@ export const auth = betterAuth({
   },
   socialProviders: {
     google: {
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      clientId: await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_ID" }),
+      clientSecret: await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_SECRET" }),
     }
   },
   advanced: {

@@ -36,7 +36,7 @@ export const requestInstagramIntegrationUrlRoute: FastifyPluginAsyncZod = async 
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      const { url } = requestInstagramIntegrationUrl({
+      const { url } = await requestInstagramIntegrationUrl({
         orgSlug: slug,
         channelId,
       });

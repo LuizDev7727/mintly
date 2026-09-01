@@ -1,4 +1,4 @@
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 type RequestYoutubeIntegrationUrlParams = {
   orgSlug: string;
@@ -16,14 +16,14 @@ const SCOPES = [
   "https://www.googleapis.com/auth/youtube.upload",
 ];
 
-export function requestYoutubeIntegrationUrl({
+export async function requestYoutubeIntegrationUrl({
   orgSlug,
   channelId,
-}: RequestYoutubeIntegrationUrlParams): RequestYoutubeIntegrationUrlResponse {
+}: RequestYoutubeIntegrationUrlParams): Promise<RequestYoutubeIntegrationUrlResponse> {
   const googleURL = new URL("o/oauth2/v2/auth", "https://accounts.google.com");
 
-  googleURL.searchParams.set("client_id", env.GOOGLE_CLIENT_ID);
-  googleURL.searchParams.set("redirect_uri", env.GOOGLE_REDIRECT_URI);
+  googleURL.searchParams.set("client_id", await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_ID" }));
+  googleURL.searchParams.set("redirect_uri", await getInfisicalSecret({ secretName: "GOOGLE_REDIRECT_URI" }));
   googleURL.searchParams.set("response_type", "code");
   googleURL.searchParams.set("include_granted_scopes", "true");
   googleURL.searchParams.set("state", [orgSlug, channelId].join(","));

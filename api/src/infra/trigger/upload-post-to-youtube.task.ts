@@ -1,4 +1,4 @@
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { logger, schemaTask } from "@trigger.dev/sdk";
 import { google } from "googleapis";
 import { z } from "zod";
@@ -86,9 +86,9 @@ export const uploadPostToYoutubeTask = schemaTask({
     logger.log("Vídeo salvo em arquivo temporário:", { output_path });
 
     const tmpOauthClient = new google.auth.OAuth2({
-      client_id: env.GOOGLE_CLIENT_ID,
-      client_secret: env.GOOGLE_CLIENT_SECRET,
-      redirectUri: env.GOOGLE_REDIRECT_URI,
+      client_id: await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_ID" }),
+      client_secret: await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_SECRET" }),
+      redirectUri: await getInfisicalSecret({ secretName: "GOOGLE_REDIRECT_URI" }),
     });
 
     const youtube = google.youtube({

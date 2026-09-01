@@ -1,5 +1,7 @@
 import { defineConfig } from "@trigger.dev/sdk";
 import { ffmpeg } from "@trigger.dev/build/extensions/core";
+import { syncEnvVars } from "@trigger.dev/build/extensions/core";
+import { infisical } from "@/lib/infisical.ts";
 
 export default defineConfig({
   project: "proj_nzoodvxxkshyumjxnzmn",
@@ -21,6 +23,25 @@ export default defineConfig({
   },
   dirs: ["src/infra/trigger"],
   build: {
-    extensions: [ffmpeg()],
+    extensions: [
+      ffmpeg(),
+      syncEnvVars(async (ctx) => {
+
+        await infisical.auth().universalAuth.login({
+          clientId: process.env.INFISICAL_CLIENT_ID!,
+          clientSecret: process.env.INFISICAL_CLIENT_SECRET!,
+        });
+
+        const { secrets } = await infisical.secrets().listSecrets({
+          environment: "prod",
+          projectId: process.env.INFISICAL_PROJECT_ID!,
+        });
+
+        return secrets.map((secret) => ({
+          name: secret.secretKey,
+          value: secret.secretValue,
+        }));
+      }),
+    ],
   },
 });

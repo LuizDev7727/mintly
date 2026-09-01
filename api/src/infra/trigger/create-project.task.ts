@@ -8,7 +8,7 @@ import { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
 import { googleAi } from "@/lib/google.ts";
 import { Prediction } from "replicate";
 import { bestMomentsTable } from "../db/tables/best-moments.table.ts";
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 type ModalCallbackPayload = {
   output_key: string;
@@ -168,7 +168,7 @@ export const createProjectTask = schemaTask({
 
       const callbackUrl = token.url;
 
-      await fetch(env.MODAL_URL, {
+      await fetch(await getInfisicalSecret({ secretName: "MODAL_URL" }), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
