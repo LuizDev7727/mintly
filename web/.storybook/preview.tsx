@@ -4,6 +4,8 @@ import { initialize, mswLoader } from "msw-storybook-addon";
 import { handlers } from "../src/http/mocks/handlers";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "../src/components/theme-provider";
+import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
+import { TooltipProvider } from "../src/components/ui/tooltip";
 import {
   createMemoryHistory,
   createRootRoute,
@@ -23,7 +25,11 @@ const withProviders: Decorator = (Story) => {
       component: () => (
         <ThemeProvider defaultTheme="system" storageKey="mintly-ui-theme">
           <QueryClientProvider client={queryClient}>
-            <Story />
+            <NuqsAdapter>
+              <TooltipProvider>
+                <Story />
+              </TooltipProvider>
+            </NuqsAdapter>
           </QueryClientProvider>
         </ThemeProvider>
       ),

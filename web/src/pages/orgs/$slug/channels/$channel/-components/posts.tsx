@@ -2,15 +2,14 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { PostsFilter } from "./posts-filter";
 import { getPostsHttp } from "@/http/posts/get-posts.http";
 import { useParams } from "@tanstack/react-router";
-import { PostListLoading } from "./post-list-loading";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
-import { Button } from "@/components/ui/button";
-import { ArrowLeftRight } from "lucide-react";
 import { PostsPagination } from "./posts-pagination";
 import { PostsListEmpty } from "./posts-list-empty";
 import { useViewMode } from "@/context/view-mode-context";
 import { PostGridView } from "./post-grid-view";
 import { PostListView } from "./post-list-view";
+import { PostsLoading } from "./posts-loading";
+import { MoveToFolderButton } from "./move-to-folder-button";
 
 export function Posts() {
   const { slug, channel } = useParams({
@@ -47,8 +46,8 @@ export function Posts() {
     return <div>Error: {error?.message}</div>;
   }
 
-  if (!data) {
-    return null;
+  if (!data || isLoading) {
+    return <PostsLoading />
   }
 
   const { posts, meta } = data;
@@ -62,13 +61,8 @@ export function Posts() {
         <div className="bg-border w-4 rotate-90 h-px" />
         <PostsPagination totalPages={totalPages} />
         <div className="bg-border w-4 rotate-90 h-px" />
-        <Button>
-          <ArrowLeftRight className="size-4" />
-          Move to folder
-        </Button>
+        <MoveToFolderButton/>
       </div>
-
-      {isLoading && <PostListLoading />}
 
       {!isPostsEmpty && view === "grid" && <PostGridView posts={posts} />}
       {!isPostsEmpty && view === "list" && <PostListView posts={posts} />}

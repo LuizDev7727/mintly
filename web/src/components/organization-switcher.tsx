@@ -17,13 +17,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "./ui/sidebar";
+import { OrganizationSwitcherLoading } from "./organization-switcher-loading";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getOrganizationsHttp } from "@/http/organization/get-organizations.http";
 import { getActiveOrganizationHttp } from "@/http/organization/get-active-organization.http";
@@ -36,13 +36,13 @@ export function OrganizationSwitcher() {
   const queryClient = useQueryClient();
   const { isMobile } = useSidebar();
 
-  const { data: currentOrg } = useQuery({
+  const { data: currentOrg, isLoading: isActiveOrgLoading } = useQuery({
     queryKey: ["active-organization"],
     queryFn: getActiveOrganizationHttp,
     refetchOnWindowFocus: false,
   });
 
-  const { data, isPending: isLoading } = useQuery({
+  const { data, isLoading: isOrganizationsLoading } = useQuery({
     queryKey: ["organizations"],
     queryFn: getOrganizationsHttp,
     enabled: !!currentOrg,
@@ -63,15 +63,9 @@ export function OrganizationSwitcher() {
     },
   });
 
-  if (!data) {
-    return null;
+  if (!data|| !currentOrg || isActiveOrgLoading || isOrganizationsLoading) {
+    return <OrganizationSwitcherLoading />;
   }
-
-  if (isLoading) {
-    return <Skeleton className="h-6 w-40" />;
-  }
-
-  if (!currentOrg) return null;
 
   const { organizations } = data;
   const { organization } = currentOrg;

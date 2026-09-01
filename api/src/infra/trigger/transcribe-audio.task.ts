@@ -1,10 +1,27 @@
 import { logger, wait, schemaTask } from "@trigger.dev/sdk";
 import { z } from "zod";
-import { replicate } from "@/lib/replicate.ts";
-import type { Prediction } from "replicate";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { eq } from "drizzle-orm";
 import { db } from "../db/client.ts";
+import { env } from "@/env.ts";
+
+type ModalTranscribeAudioCallbackPayload = {
+  status: "SUCCESS" | "ERROR";
+  segments?: {
+    start: number;
+    end: number;
+    text: string;
+    avg_logprob: number;
+    words: {
+      word: string;
+      start: number;
+      end: number;
+      score: number;
+    }[];
+  }[];
+  language?: string;
+  error?: string;
+}
 
 export const transcribeAudioTask = schemaTask({
   id: "transcribe-audio",
@@ -74,30 +91,22 @@ export const transcribeAudioTask = schemaTask({
       timeout: "10m",
     });
 
-    await replicate.run(
-      "victor-upmeet/whisperx-a40-large:1395a1d7aa48a01094887250475f384d4bae08fd0616f9c405bb81d4174597ea",
-      {
-        input: {
-          debug: false,
-          language: "pt",
-          vad_onset: 0.5,
-          audio_file: audioUrl,
-          batch_size: 64,
-          vad_offset: 0.363,
-          diarization: false,
-          temperature: 0,
-          align_output: true,
-          language_detection_min_prob: 0,
-          language_detection_max_tries: 5,
-        },
-        webhook: token.url,
-        webhook_events_filter: ["completed"],
+    await fetch(env.MODAL_TRANSCRIBE_AUDIO_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({
+        audio_url: audioUrl,
+        callback_url: token.url,
+      }),
+    })
 
-    const result = await wait.forToken<Prediction>(token).unwrap();
+    const result = await wait.forToken<ModalTranscribeAudioCallbackPayload>(token).unwrap();
 
-    const transcription = result.output.segments;
+    logger.log("Result: ", { result });
+
+    const transcription = result.segments ?? [];
     const allWords = transcription.flatMap((s) => s.words ?? []);
 
     return {

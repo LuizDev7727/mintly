@@ -75,7 +75,7 @@ export function PostListView({ posts }: PostListViewProps) {
         return (
           <div
             key={post.id}
-            className="flex items-center justify-between gap-3 rounded-lg border bg-transparent p-2 pe-3"
+            className="relative flex items-center justify-between gap-3 rounded-lg border bg-sidebar p-2 pe-3"
           >
             <div className="flex min-w-0 items-center gap-3">
               <div className="aspect-video h-12 shrink-0 overflow-hidden rounded bg-[#242424]">
