@@ -8,7 +8,7 @@ import { db } from "@/infra/db/client.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
 import { eq } from "drizzle-orm";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 export const uploadPostToTiktokTask = schemaTask({
   id: "upload-post-to-tiktok",
@@ -111,8 +111,8 @@ export const uploadPostToTiktokTask = schemaTask({
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
-          client_key: env.TIKTOK_CLIENT_KEY,
-          client_secret: env.TIKTOK_CLIENT_SECRET,
+          client_key: await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_KEY" }),
+          client_secret: await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_SECRET" }),
           refresh_token,
           grant_type: "refresh_token",
         }),

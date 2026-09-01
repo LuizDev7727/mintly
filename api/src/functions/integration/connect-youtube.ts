@@ -1,5 +1,5 @@
 import { db } from "@/infra/db/client.ts";
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -13,9 +13,9 @@ export async function connectYoutube(params: ConnectYoutubeParams) {
   const { channelId, code } = params;
 
   const googleOauthUrl = new URL("https://oauth2.googleapis.com/token");
-  googleOauthUrl.searchParams.set("client_id", env.GOOGLE_CLIENT_ID);
-  googleOauthUrl.searchParams.set("client_secret", env.GOOGLE_CLIENT_SECRET);
-  googleOauthUrl.searchParams.set("redirect_uri", env.GOOGLE_REDIRECT_URI);
+  googleOauthUrl.searchParams.set("client_id", await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_ID" }));
+  googleOauthUrl.searchParams.set("client_secret", await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_SECRET" }));
+  googleOauthUrl.searchParams.set("redirect_uri", await getInfisicalSecret({ secretName: "GOOGLE_REDIRECT_URI" }));
   googleOauthUrl.searchParams.set("grant_type", "authorization_code");
   googleOauthUrl.searchParams.set("access_type", "offline");
   googleOauthUrl.searchParams.set("prompt", "consent");

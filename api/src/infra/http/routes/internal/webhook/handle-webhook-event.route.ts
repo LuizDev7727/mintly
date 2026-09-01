@@ -1,14 +1,14 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { Receiver } from "@upstash/qstash";
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { handleWebhookEvent } from "@/webhooks/handle-webhook-event.ts";
 import { webhookEventSchema } from "@/webhooks/webhook-event.ts";
 import { tracer } from "../../../tracer/tracer.ts";
 
 const receiver = new Receiver({
-  currentSigningKey: env.QSTASH_CURRENT_SIGNING_KEY,
-  nextSigningKey: env.QSTASH_NEXT_SIGNING_KEY,
+  currentSigningKey: await getInfisicalSecret({ secretName: "QSTASH_CURRENT_SIGNING_KEY" }),
+  nextSigningKey: await getInfisicalSecret({ secretName: "QSTASH_NEXT_SIGNING_KEY" }),
 });
 
 export const handleWebhookEventRoute: FastifyPluginAsyncZod = async (app) => {

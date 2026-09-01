@@ -1,5 +1,5 @@
 import { db } from "@/infra/db/client.ts";
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -38,11 +38,11 @@ export async function connectTikTok(params: ConnectTikTokParams) {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
-        client_key: env.TIKTOK_CLIENT_KEY,
-        client_secret: env.TIKTOK_CLIENT_SECRET,
+        client_key: await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_KEY" }),
+        client_secret: await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_SECRET" }),
         code,
         grant_type: "authorization_code",
-        redirect_uri: env.TIKTOK_REDIRECT_URI,
+        redirect_uri: await getInfisicalSecret({ secretName: "TIKTOK_REDIRECT_URI" }),
       }),
     },
   );

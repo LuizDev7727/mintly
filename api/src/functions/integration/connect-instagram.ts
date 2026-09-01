@@ -1,4 +1,4 @@
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { db } from "@/infra/db/client.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
 import { and, eq } from "drizzle-orm";
@@ -40,10 +40,10 @@ export async function connectInstagram(params: ConnectInstagramParams) {
   const { code, channelId } = params;
 
   const shortTokenParams = new URLSearchParams({
-    client_id: env.INSTAGRAM_APP_ID,
-    client_secret: env.INSTAGRAM_APP_SECRET,
+    client_id: await getInfisicalSecret({ secretName: "INSTAGRAM_APP_ID" }),
+    client_secret: await getInfisicalSecret({ secretName: "INSTAGRAM_APP_SECRET" }),
     grant_type: 'authorization_code',
-    redirect_uri: env.INSTAGRAM_REDIRECT_URI,
+    redirect_uri: await getInfisicalSecret({ secretName: "INSTAGRAM_REDIRECT_URI" }),
     code: code,
   });
 
@@ -64,7 +64,7 @@ export async function connectInstagram(params: ConnectInstagramParams) {
   // 2. Trocar o token de curta duração por um de LONGA duração (válido por 60 dias)
   const longTokenUrl = new URL('https://graph.instagram.com/access_token');
   longTokenUrl.searchParams.set('grant_type', 'ig_exchange_token');
-  longTokenUrl.searchParams.set('client_secret', env.INSTAGRAM_APP_SECRET);
+  longTokenUrl.searchParams.set('client_secret', await getInfisicalSecret({ secretName: "INSTAGRAM_APP_SECRET" }));
   longTokenUrl.searchParams.set('access_token', shortLivedToken);
 
   const longTokenResponse = await fetch(longTokenUrl.toString());

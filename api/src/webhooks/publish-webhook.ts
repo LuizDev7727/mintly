@@ -2,6 +2,7 @@ import { WebhookEvent } from "./webhook-event.ts"
 import { getOrganizationWebhooksForTrigger } from "./get-organization-webhooks-for-trigger.ts"
 import { env } from "@/env.ts"
 import { qstash } from "@/lib/qstash.ts"
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts"
 
 export type PublishWebhookEventsParams = Parameters<typeof publishWebhookEvents>
 
@@ -38,9 +39,9 @@ export async function publishWebhookEvents<T extends WebhookEvent['trigger']>({
 
   await Promise.all(
     organizationWebhooksForTrigger.flatMap(async (webhook) => {
-      return events.map((payload) => {
+      return events.map(async (payload) => {
         return qstash.publishJSON({
-          topic: env.QSTASH_TOPIC_URL,
+          topic: await getInfisicalSecret({ secretName: "QSTASH_TOPIC_URL" }),
           contentBasedDeduplication: true,
           body: {
             deliverTo: webhook.url,

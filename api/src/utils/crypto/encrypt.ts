@@ -1,8 +1,8 @@
-import { env } from "@/env.ts"
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts"
 
 export async function encrypt(plaintext: string) {
 
-  const key = env.AES_ENCRYPTION_KEY;
+  const key = await getInfisicalSecret({ secretName: "AES_ENCRYPTION_KEY" });
 
   const iv = crypto.getRandomValues(new Uint8Array(12))
 

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { eq } from "drizzle-orm";
 import { db } from "../db/client.ts";
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 type ModalTranscribeAudioCallbackPayload = {
   status: "SUCCESS" | "ERROR";
@@ -91,7 +91,7 @@ export const transcribeAudioTask = schemaTask({
       timeout: "10m",
     });
 
-    await fetch(env.MODAL_TRANSCRIBE_AUDIO_URL, {
+    await fetch(await getInfisicalSecret({ secretName: "MODAL_TRANSCRIBE_AUDIO_URL" }), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

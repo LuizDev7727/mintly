@@ -1,11 +1,11 @@
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 export async function decrypt(
   ciphertext: string,
   iv: string,
 ) {
 
-  const key = env.AES_ENCRYPTION_KEY;
+  const key = await getInfisicalSecret({ secretName: "AES_ENCRYPTION_KEY" });
 
   const rawKey = Uint8Array.from(atob(key), (c) => c.charCodeAt(0))
   const rawIV = Uint8Array.from(atob(iv), (c) => c.charCodeAt(0))

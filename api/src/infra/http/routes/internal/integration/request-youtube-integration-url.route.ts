@@ -36,7 +36,7 @@ export const requestYoutubeIntegrationUrlRoute: FastifyPluginAsyncZod = async (
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      const { url } = requestYoutubeIntegrationUrl({
+      const { url } = await requestYoutubeIntegrationUrl({
         orgSlug: slug,
         channelId,
       });

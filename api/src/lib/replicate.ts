@@ -1,6 +1,6 @@
 import Replicate from "replicate";
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 export const replicate = new Replicate({
-  auth: env.REPLICATE_API_TOKEN,
+  auth: await getInfisicalSecret({ secretName: "REPLICATE_API_TOKEN" }),
 });
