@@ -1,10 +1,10 @@
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { connectInstagram } from "@/functions/integration/connect-instagram.ts";
 import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 
-const FRONTEND_URL = env.INSTAGRAM_REDIRECT_CALLBACK_URI;
+const FRONTEND_URL = await getInfisicalSecret({ secretName: "INSTAGRAM_REDIRECT_CALLBACK_URI" });
 
 export const instagramCallbackRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(

@@ -2,9 +2,9 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { tracer } from "../../../tracer/tracer.ts";
 import { connectTikTok } from "@/functions/integration/connect-tiktok.ts";
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
-const FRONTEND_URL = env.TIKTOK_REDIRECT_CALLBACK_URI;
+const FRONTEND_URL = await getInfisicalSecret({ secretName: "TIKTOK_REDIRECT_CALLBACK_URI" });
 
 export const tiktokCallbackRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
