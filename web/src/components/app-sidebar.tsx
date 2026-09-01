@@ -34,10 +34,13 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
-        {isChannelRoute && <NavChannels />}
         {
           isChannelRoute && (
             <>
+              <div className="px-4">
+                <Separator />
+              </div>
+              <NavChannels />
               <div className="px-4">
                 <Separator />
               </div>

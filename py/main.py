@@ -47,7 +47,7 @@ image = (
     .run_commands(
         [
             "mkdir -p /usr/share/fonts/truetype/custom",
-            "wget -O /usr/share/fonts/truetype/custom/Anton-Regular.ttf "
+            "wget -O /usr/share/fonts/truetype/custom/Anton-Regular.ttf",
             "https://github.com/google/fonts/raw/main/ofl/anton/Anton-Regular.ttf",
             "fc-cache -f -v",
         ]

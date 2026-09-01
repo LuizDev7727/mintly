@@ -37,6 +37,7 @@ import { getPostsRoute } from "./infra/http/routes/internal/post/get-posts.route
 import { getPostRoute } from "./infra/http/routes/internal/post/get-post.route.ts";
 import { createPostsRoute } from "./infra/http/routes/internal/post/create-posts.route.ts";
 import { cancelPostRoute } from "./infra/http/routes/internal/post/cancel-post.route.ts";
+import { movePostsToFolderRoute } from "./infra/http/routes/internal/post/move-posts-to-folder.route.ts";
 import { getProjectsRoute } from "./infra/http/routes/internal/project/get-projects.route.ts";
 import { getProjectRoute } from "./infra/http/routes/internal/project/get-project.route.ts";
 import { createProjectRoute } from "./infra/http/routes/internal/project/create-project.route.ts";
@@ -137,6 +138,7 @@ server.register(getPostsRoute);
 server.register(getPostRoute);
 server.register(createPostsRoute);
 server.register(cancelPostRoute);
+server.register(movePostsToFolderRoute);
 server.register(getProjectsRoute);
 server.register(getProjectRoute);
 server.register(createProjectRoute);

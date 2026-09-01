@@ -1,60 +1,54 @@
-import { Badge, type badgeVariants } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import type { Project } from "@/types/project";
-import type { VariantProps } from "class-variance-authority";
-import {
-  Ban,
-  Clock,
-  Loader2,
-  Sparkles,
-  TriangleAlert,
-} from "lucide-react";
+import { AlertTriangle, Ban, Calendar, Check, Loader2 } from "lucide-react";
 
-export type ProjectStatus = Project["status"];
-
-export const STATUS_CONFIG: Record<
-  ProjectStatus,
-  {
-    label: string;
-    icon: React.ElementType;
-    variant: NonNullable<VariantProps<typeof badgeVariants>["variant"]>;
-  }
-> = {
-  PROCESSING: {
-    label: "Processing",
-    icon: Loader2,
-    variant: "processing",
-  },
-  SCHEDULED: {
-    label: "Scheduled",
-    icon: Clock,
-    variant: "scheduled",
-  },
-  ERROR: {
-    label: "Error",
-    icon: TriangleAlert,
-    variant: "destructive",
-  },
-  CANCELED: {
-    label: "Canceled",
-    icon: Ban,
-    variant: "canceled",
-  },
-  SUCCESS: {
-    label: "Done",
-    icon: Sparkles,
-    variant: "success",
-  },
+type ProjectStatusBadgeProps = {
+  status: Project["status"];
 };
 
-export function ProjectsStatusBadge({ status }: { status: ProjectStatus }) {
-  const config = STATUS_CONFIG[status];
-  const Icon = config.icon;
-
-  return (
-    <Badge variant={config.variant}>
-      <Icon className={cn(status === "PROCESSING" && "animate-spin")} />
-      {config.label}
-    </Badge>
-  );
+export function ProjectStatusBadge({ status }: ProjectStatusBadgeProps) {
+  switch (status) {
+    case "SUCCESS":
+      return (
+        <Badge className="absolute left-2 top-2 inline-flex items-center gap-1">
+          <Check size={13} />
+          {status}
+        </Badge>
+      );
+    case "ERROR":
+      return (
+        <Badge variant={"destructive"} className="absolute left-2 top-2 inline-flex items-center gap-1">
+          <AlertTriangle size={13} />
+          {status}
+        </Badge>
+      );
+    case "SCHEDULED":
+      return (
+        <Badge variant={"scheduled"} className="absolute left-2 top-2 inline-flex items-center gap-1">
+          <Calendar size={13} />
+          {status}
+        </Badge>
+      );
+    case "CANCELED":
+      return (
+        <Badge variant={"secondary"} className="absolute left-2 top-2 inline-flex items-center gap-1">
+          <Ban size={13} />
+          {status}
+        </Badge>
+      );
+    case "PROCESSING":
+      return (
+        <Badge variant={"processing"} className="absolute left-2 top-2 inline-flex items-center gap-1">
+          <Loader2 size={13} className="animate-spin" />
+          {status}
+        </Badge>
+      );
+    default:
+      return (
+        <Badge className="absolute left-2 top-2 inline-flex items-center gap-1">
+          <Loader2 size={13} className="animate-spin" />
+          {status}
+        </Badge>
+      );
+  }
 }
