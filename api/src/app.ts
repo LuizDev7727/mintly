@@ -13,6 +13,7 @@ import { fastifyCors } from "@fastify/cors";
 import fastifyCookie from "@fastify/cookie";
 import scalarAPIReference from "@scalar/fastify-api-reference";
 import { env } from "./env.ts";
+import { getInfisicalSecret } from "./utils/infisical/get-infisical-secret.ts";
 import { errorHandler } from "./infra/http/routes/error-handler.ts";
 import { getHealthRoute } from "./infra/http/routes/internal/health/get-health.route.ts";
 import { authRoute } from "./infra/http/routes/internal/auth/auth.route.ts";
@@ -107,7 +108,7 @@ if (env.NODE_ENV === "development") {
 server.register(fastifyCookie);
 
 server.register(fastifyCors, {
-  origin: env.ALLOWED_ORIGIN,
+  origin: await getInfisicalSecret({ secretName: "ALLOWED_ORIGIN" }),
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   credentials: true,

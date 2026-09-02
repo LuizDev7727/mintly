@@ -1,11 +1,11 @@
-import { env } from "@/env.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 type RequestTiktokIntegrationUrlProps = {
   orgSlug: string;
   channelId: string;
 };
 
-export function requestTiktokIntegrationUrl({
+export async function requestTiktokIntegrationUrl({
   orgSlug,
   channelId,
 }: RequestTiktokIntegrationUrlProps) {
@@ -13,9 +13,9 @@ export function requestTiktokIntegrationUrl({
 
   const scopes = ["user.info.basic", "video.upload", "video.publish"];
 
-  tiktokURL.searchParams.set("client_key", env.TIKTOK_CLIENT_KEY);
+  tiktokURL.searchParams.set("client_key", await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_KEY" }));
   tiktokURL.searchParams.set("scope", scopes.join(","));
-  tiktokURL.searchParams.set("redirect_uri", env.TIKTOK_REDIRECT_URI);
+  tiktokURL.searchParams.set("redirect_uri", await getInfisicalSecret({ secretName: "TIKTOK_REDIRECT_URI" }));
   tiktokURL.searchParams.set("response_type", "code");
   tiktokURL.searchParams.set("state", [orgSlug, channelId].join(","));
 
