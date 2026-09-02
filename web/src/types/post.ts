@@ -38,7 +38,7 @@ export type Post = {
   socialsToPost: {
     id: string;
     socialName: string;
-    social: "YOUTUBE" | "TIKTOK";
+    social: "YOUTUBE" | "TIKTOK" | "INSTAGRAM";
     avatarUrl: string | null;
   }[];
   author: {

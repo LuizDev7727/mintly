@@ -3,7 +3,7 @@ import { pgEnum, pgTable, text, varchar } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
 import { postsTable } from "./posts.table.ts";
 
-export const socialEnum = pgEnum("social_type", ["YOUTUBE", "TIKTOK"]);
+export const socialEnum = pgEnum("social_type", ["YOUTUBE", "TIKTOK", "INSTAGRAM"]);
 
 export const socialsToPostTable = pgTable("socials_to_post", {
   id: text("id")
