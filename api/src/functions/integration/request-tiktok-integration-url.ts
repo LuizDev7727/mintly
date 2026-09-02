@@ -11,7 +11,7 @@ export async function requestTiktokIntegrationUrl({
 }: RequestTiktokIntegrationUrlProps) {
   const tiktokURL = new URL("https://www.tiktok.com/v2/auth/authorize/");
 
-  const scopes = ["user.info.basic", "video.upload", "video.publish"];
+  const scopes = ["user.info.basic", "video.publish"];
 
   tiktokURL.searchParams.set("client_key", await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_KEY" }));
   tiktokURL.searchParams.set("scope", scopes.join(","));

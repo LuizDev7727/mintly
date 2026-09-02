@@ -13,7 +13,7 @@
     "db:seed": "dotenv -e .env tsx src/infra/db/seed.ts",
     "test": "dotenv -e .env vitest run",
     "test:ui": "dotenv -e .env vitest --ui",
-    "trigger:dev": "pnpm dlx trigger.dev@latest dev"
+    "trigger:dev": "dotenv -e .env -- pnpm dlx trigger.dev@latest dev"
   },
   "keywords": [],
   "author": "",
@@ -33,7 +33,7 @@
     "@opentelemetry/instrumentation-pg": "^0.70.0",
     "@opentelemetry/sdk-node": "^0.218.0",
     "@react-email/components": "^1.0.12",
-    "@trigger.dev/sdk": "4.5.11",
+    "@trigger.dev/sdk": "4.5.15",
     "@upstash/qstash": "^2.11.3",
     "better-auth": "^1.6.13",
     "drizzle-kit": "^0.31.10",
@@ -55,7 +55,7 @@
     "@faker-js/faker": "^10.4.0",
     "@fastify/swagger": "^9.7.0",
     "@scalar/fastify-api-reference": "^1.58.0",
-    "@trigger.dev/build": "4.5.11",
+    "@trigger.dev/build": "4.5.15",
     "@types/react": "^19.2.18",
     "@types/supertest": "^7.2.0",
     "@vitest/coverage-v8": "^4.1.8",
