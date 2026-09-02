@@ -1,0 +1,1 @@
+ALTER TYPE "public"."social_type" ADD VALUE 'INSTAGRAM';
