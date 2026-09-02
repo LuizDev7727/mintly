@@ -21,7 +21,7 @@ type CreatePostsParams = {
     socialsToPost: {
       id: string;
       name: string;
-      provider: "YOUTUBE" | "TIKTOK";
+      provider: "YOUTUBE" | "TIKTOK" | "INSTAGRAM";
       avatarUrl: string | null;
     }[]
   }[];

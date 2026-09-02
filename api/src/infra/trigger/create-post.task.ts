@@ -9,6 +9,7 @@ import { generateThubmnailTask } from "./generate-thumbnail.task.ts";
 import { db } from "@/infra/db/client.ts";
 import { uploadPostToYoutubeTask } from "./upload-post-to-youtube.task.ts";
 import { uploadPostToTiktokTask } from "./upload-post-to-tiktok.task.ts";
+import { uploadPostToInstagramTask } from "./upload-post-to-instagram.task.ts";
 
 export const createPostTask = schemaTask({
   id: "process-post",
@@ -33,7 +34,7 @@ export const createPostTask = schemaTask({
           z.object({
             id: z.string(),
             name: z.string(),
-            provider: z.enum(["YOUTUBE", "TIKTOK"]),
+            provider: z.enum(["YOUTUBE", "TIKTOK", "INSTAGRAM"]),
           }),
         )
         .min(1, { error: "Post needs at least one integration selected" }),
@@ -180,6 +181,18 @@ export const createPostTask = schemaTask({
               description: postDescription,
               tags,
               videoUrl: fileUrl,
+              postId,
+            },
+          );
+          break;
+
+        case "INSTAGRAM":
+          await tasks.trigger<typeof uploadPostToInstagramTask>(
+            "upload-post-to-instagram",
+            {
+              title: newPostTitle,
+              fileUrl,
+              fileSizeInBytes: size,
               postId,
             },
           );

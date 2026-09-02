@@ -51,7 +51,7 @@ export const getPostsRoute: FastifyPluginAsyncZod = async (app) => {
                 socialsToPost: z.array(
                   z.object({
                     id: z.string(),
-                    social: z.enum(["YOUTUBE", "TIKTOK"]),
+                    social: z.enum(["YOUTUBE", "TIKTOK", "INSTAGRAM"]),
                     socialName: z.string(),
                     avatarUrl: z.string().nullable(),
                   }),

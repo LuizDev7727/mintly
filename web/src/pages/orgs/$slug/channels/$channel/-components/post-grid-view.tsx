@@ -109,7 +109,7 @@ export function PostGridView({ posts }: PostGridViewProps) {
           >
             <div className="relative aspect-video overflow-hidden rounded-md bg-muted">
               {
-                post.status === "GENERATING_THUMBNAIL" ?
+                post.status === "GENERATING_THUMBNAIL" && (
                   <ImageGeneration>
                     <img
                       src={post.thumbnailUrl ?? ""}
@@ -117,10 +117,21 @@ export function PostGridView({ posts }: PostGridViewProps) {
                       className="h-full w-full object-cover"
                     />
                   </ImageGeneration>
-                  :
+                )
+              }
+
+              {
+                post.thumbnailUrl === null ? (
                   <div className="flex h-full w-full items-center justify-center text-muted-foreground">
                     <ImageIcon size={28} />
                   </div>
+                ) : (
+                  <img
+                    src={post.thumbnailUrl}
+                    alt={post.title}
+                    className="h-full w-full object-cover"
+                  />
+                )
               }
 
               <PostStatusBadge status={post.status} />
