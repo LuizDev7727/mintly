@@ -48,8 +48,8 @@ importers:
         specifier: ^1.0.12
         version: 1.0.12(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@trigger.dev/sdk':
-        specifier: 4.5.15
-        version: 4.5.15(react@19.2.8)(zod@4.4.3)
+        specifier: 4.5.16
+        version: 4.5.16(react@19.2.8)(zod@4.4.3)
       '@upstash/qstash':
         specifier: ^2.11.3
         version: 2.11.3
@@ -109,8 +109,8 @@ importers:
         specifier: ^1.58.0
         version: 1.58.0
       '@trigger.dev/build':
-        specifier: 4.5.15
-        version: 4.5.15(typescript@6.0.3)
+        specifier: 4.5.16
+        version: 4.5.16(typescript@6.0.3)
       '@types/react':
         specifier: ^19.2.18
         version: 19.2.18
@@ -1783,8 +1783,8 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@trigger.dev/build@4.5.15':
-    resolution: {integrity: sha512-J4kScB5mgt/Mg2TKkVLgHHf6PudQxS7TT1Ts9FIs5Be/O/3+6d+P/VwTyAe+QEy0U1Rdb1hjROsf7kOW8FK5Pw==}
+  '@trigger.dev/build@4.5.16':
+    resolution: {integrity: sha512-iy/KJylq3BdNlDt3++HhkncPRDHzkuNOnK1SxhkTtRc1Hj+kV5zNtaBuTxrxUCyS1hwOLLbQl7rBaSPoGzSyUg==}
     engines: {node: '>=18.20.0'}
     peerDependencies:
       '@typescript/typescript6': ^6.0.0
@@ -1795,12 +1795,12 @@ packages:
       typescript:
         optional: true
 
-  '@trigger.dev/core@4.5.15':
-    resolution: {integrity: sha512-ejwc3J1VdzNhUfB16gmdis3iu6G9kx4Xlp4W/GKbiZGPzMXFKP9dVqdYxTrtqde0cnmjwo/9ASGQp5taMBfXKA==}
+  '@trigger.dev/core@4.5.16':
+    resolution: {integrity: sha512-7Gcv8rl+DnPxvguiWSp+KUeA7HVM9Xp46YYEeBGgViahL/Ml3WIv2hXXEiHrP8L3aM9C9YtStmmRmz5yOzW4fw==}
     engines: {node: '>=18.20.0'}
 
-  '@trigger.dev/sdk@4.5.15':
-    resolution: {integrity: sha512-6ZwL6bZEfmO2aW8ye6JLS43yimC3likqjHymgf/abHWSBjsp6xaHdsicma9yxRbxOEWAesHNrzoR6e+YPIgXpg==}
+  '@trigger.dev/sdk@4.5.16':
+    resolution: {integrity: sha512-YjHz3Zv/yyLAS6tqFZMTVD2yTP6FopbPaLgtECLUqYx/pV2LQftgs7XI5o6NvtJxaDDLEz2wHqegCte1Ww2lKg==}
     engines: {node: '>=18.20.0'}
     peerDependencies:
       '@ai-sdk/otel': '>=1.0.0-0 <2'
@@ -3056,11 +3056,6 @@ packages:
 
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
-
-  nanoid@3.3.12:
-    resolution: {integrity: sha512-ZB9RH/39qpq5Vu6Y+NmUaFhQR6pp+M2Xt76XBnEwDaGcVAqhlvxrl3B2bKS5D3NH3QR76v3aSrKaF/Kiy7lEtQ==}
-    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
 
   nanoid@3.3.18:
     resolution: {integrity: sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w==}
@@ -5631,10 +5626,10 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@trigger.dev/build@4.5.15(typescript@6.0.3)':
+  '@trigger.dev/build@4.5.16(typescript@6.0.3)':
     dependencies:
       '@prisma/config': 6.19.3
-      '@trigger.dev/core': 4.5.15
+      '@trigger.dev/core': 4.5.16
       mlly: 1.8.2
       pkg-types: 1.3.1
       tinyglobby: 0.2.17
@@ -5647,7 +5642,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@trigger.dev/core@4.5.15':
+  '@trigger.dev/core@4.5.16':
     dependencies:
       '@bugsnag/cuid': 3.2.2
       '@electric-sql/client': 1.0.14
@@ -5685,11 +5680,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@trigger.dev/sdk@4.5.15(react@19.2.8)(zod@4.4.3)':
+  '@trigger.dev/sdk@4.5.16(react@19.2.8)(zod@4.4.3)':
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/semantic-conventions': 1.41.1
-      '@trigger.dev/core': 4.5.15
+      '@trigger.dev/core': 4.5.16
       uncrypto: 0.1.3
       zod: 4.4.3
     optionalDependencies:
@@ -6909,8 +6904,6 @@ snapshots:
 
   ms@2.1.3: {}
 
-  nanoid@3.3.12: {}
-
   nanoid@3.3.18: {}
 
   nanoid@5.1.11: {}
@@ -7084,7 +7077,7 @@ snapshots:
 
   postcss@8.5.15:
     dependencies:
-      nanoid: 3.3.12
+      nanoid: 3.3.18
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
