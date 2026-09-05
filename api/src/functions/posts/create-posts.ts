@@ -47,6 +47,7 @@ export async function createPosts(params:CreatePostsParams) {
       duration: Math.round(file.duration ?? 0),
       title: file.name,
       mimeType: file.type,
+      status: scheduledToDate ? "SCHEDULED" : "PROCESSING",
       size: file.size,
       scheduledTo: scheduledToDate,
       ownerId,

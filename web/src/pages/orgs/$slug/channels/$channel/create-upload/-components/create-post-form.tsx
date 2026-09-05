@@ -93,12 +93,14 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     watch,
     handleSubmit,
     getValues,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
     setValue,
   } = useForm<CreatePostsFormType>({
     resolver: zodResolver(createPostSchema),
     defaultValues: { posts: [] },
   });
+
+  console.log({ errors })
 
   const {
     fields: posts,
@@ -252,7 +254,9 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
         },
         shouldGenerateThumbnail: post.shouldGenerateThumbnail,
         shouldGenerateShorts: post.shouldGenerateShorts,
-        scheduledTo: post.scheduledTo,
+        scheduledTo: post.scheduledTo
+          ? new Date(post.scheduledTo).toISOString()
+          : null,
         socialsToPost: post.socialsToPost,
       })),
     });
