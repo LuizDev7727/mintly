@@ -41,6 +41,7 @@ import { cancelPostRoute } from "./infra/http/routes/internal/post/cancel-post.r
 import { movePostsToFolderRoute } from "./infra/http/routes/internal/post/move-posts-to-folder.route.ts";
 import { getProjectsRoute } from "./infra/http/routes/internal/project/get-projects.route.ts";
 import { getProjectRoute } from "./infra/http/routes/internal/project/get-project.route.ts";
+import { searchResourcesRoute } from "./infra/http/routes/internal/search/search-resources.route.ts";
 import { createProjectRoute } from "./infra/http/routes/internal/project/create-project.route.ts";
 import { getBestMomentsRoute } from "./infra/http/routes/internal/best-moment/get-best-moments.route.ts";
 import { sendBestMomentToSocialMediaRoute } from "./infra/http/routes/internal/best-moment/send-best-moment-to-social-media.route.ts";
@@ -142,6 +143,7 @@ server.register(cancelPostRoute);
 server.register(movePostsToFolderRoute);
 server.register(getProjectsRoute);
 server.register(getProjectRoute);
+server.register(searchResourcesRoute);
 server.register(createProjectRoute);
 server.register(getBestMomentsRoute);
 server.register(sendBestMomentToSocialMediaRoute);

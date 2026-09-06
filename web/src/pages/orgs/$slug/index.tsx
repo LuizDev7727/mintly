@@ -82,7 +82,7 @@ function OverviewPage() {
             </div>
             <p className="text-2xl font-bold">{formattedUsage}</p>
           </div>
-          <Sparkline data={[10, 20, 600, 1000, 840, 40]} color={"#bef264"} />
+          <Sparkline data={usage.series} color={"#bef264"} />
         </div>
         <div className="rounded-lg border dark:bg-zinc-900/20 overflow-hidden">
           <div className="px-5 pt-5 space-y-3">
