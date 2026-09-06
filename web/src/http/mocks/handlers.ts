@@ -12,6 +12,7 @@ import { createChannelMock } from "./create-channel-mock";
 import { getProjectsMock } from "./get-projects-mock";
 import { createProjectMock } from "./create-project-mock";
 import { getBestMomentsMock } from "./get-best-moments-mock";
+import { getSearchResultsMock } from "./get-search-results-mock";
 
 export const handlers = [
   getOrganizationsMock,
@@ -28,4 +29,5 @@ export const handlers = [
   getProjectsMock,
   createProjectMock,
   getBestMomentsMock,
+  getSearchResultsMock,
 ];
