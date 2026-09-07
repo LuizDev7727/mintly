@@ -47,6 +47,9 @@ const posts: Post[] = Array.from({ length: 48 }, () => ({
     name: faker.person.fullName(),
     avatarUrl: null,
   },
+  realtimeToken: faker.datatype.boolean()
+    ? faker.string.alphanumeric(32)
+    : null,
 }));
 
 export const getPostsMock = http.get<

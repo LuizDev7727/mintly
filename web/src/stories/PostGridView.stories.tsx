@@ -60,6 +60,7 @@ const basePost: Post = {
     name: "Luiz Antônio",
     avatarUrl: null,
   },
+  realtimeToken: null,
 };
 
 const posts: Post[] = [

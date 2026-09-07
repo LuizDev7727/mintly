@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
 import { Progress } from "@/components/ui/progress";
 import { createProjectHttp } from "@/http/projects/create-project.http";
-import { authClient } from "@/lib/auth";
 import {
   createProjectSchema,
   type CreateProjectFormType,
