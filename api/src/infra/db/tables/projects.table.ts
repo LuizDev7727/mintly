@@ -10,7 +10,7 @@ import { tsVector } from "./columns/ts-vector.column.ts";
 export const projectStatusEnum = pgEnum("project_status", [
   "SUCCESS",
   "PROCESSING",
-  "SCHEDULED",
+  "ENCODING",
   "ERROR",
   "CANCELED",
 ]);
@@ -25,7 +25,7 @@ export const projectsTable = pgTable(
     thumbnailUrl: varchar("thumbnail_url"),
     runId: text("run_id"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
-    status: projectStatusEnum().notNull().default("PROCESSING"),
+    status: projectStatusEnum().notNull().default("ENCODING"),
     channelId: text("channel_id")
       .notNull()
       .references(() => channelsTable.id, {

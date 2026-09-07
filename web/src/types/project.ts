@@ -2,7 +2,9 @@ export type Project = {
   id: string;
   title: string;
   thumbnailUrl: string | null;
-  status: "SUCCESS" | "PROCESSING" | "SCHEDULED" | "ERROR" | "CANCELED";
+  status: "SUCCESS" | "PROCESSING" | "ENCODING" | "ERROR" | "CANCELED";
+  runId: string;
+  realtimeToken: string | null;
   createdAt: string;
   clipCount: number;
   owner: {
