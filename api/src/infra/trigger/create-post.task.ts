@@ -1,4 +1,4 @@
-import { logger, schemaTask, tasks, wait } from "@trigger.dev/sdk";
+import { logger, metadata, schemaTask, tasks, wait } from "@trigger.dev/sdk";
 import { z } from "zod";
 import { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
 import { transcribeAudioTask } from "./transcribe-audio.task.ts";
@@ -17,6 +17,7 @@ export const createPostTask = schemaTask({
     post: z.object({
       fileUrl: z.url(),
       size: z.number(),
+      duration: z.number(),
       shouldGenerateThumbnail: z.boolean(),
       shouldGenerateShorts: z.boolean(),
       scheduledTo: z
@@ -53,6 +54,7 @@ export const createPostTask = schemaTask({
 
   onSuccess: async ({ payload }) => {
     const { postId } = payload;
+    metadata.set("status", "PUBLISHED");
     await db
       .update(postsTable)
       .set({
@@ -63,6 +65,7 @@ export const createPostTask = schemaTask({
 
   onFailure: async ({ payload }) => {
     const { postId } = payload;
+    metadata.set("status", "ERROR");
     await db
       .update(postsTable)
       .set({
@@ -73,6 +76,7 @@ export const createPostTask = schemaTask({
 
   onCancel: async ({ payload }) => {
     const { postId } = payload;
+    metadata.set("status", "CANCELED");
     await db
       .update(postsTable)
       .set({
@@ -84,13 +88,17 @@ export const createPostTask = schemaTask({
   // Set an optional maxDuration to prevent tasks from running indefinitely
   maxDuration: 300, // Stop executing after 300 secs (5 mins) of compute
   run: async (payload, { ctx }) => {
+    metadata.set("status", "PROCESSING");
+
     const scheduledPostTo = payload.post.scheduledTo;
 
     if (scheduledPostTo) {
       logger.log("Waiting for scheduled post to: ", { scheduledPostTo });
+      metadata.set("status", "SCHEDULED");
       await wait.until({
         date: new Date(scheduledPostTo),
       });
+      metadata.set("status", "PROCESSING");
     }
 
     // The payload contains the last run timestamp that you can use to check if this is the first run
@@ -103,12 +111,15 @@ export const createPostTask = schemaTask({
       shouldGenerateThumbnail,
       socialsToPost,
       fileUrl,
-      size
+      size,
+      duration,
     } = post;
 
     logger.log("Video Url: ", { fileUrl });
     logger.log("Sould generate thumbnail: ", { shouldGenerateThumbnail });
     logger.log("Sould generate shorts: ", { shouldGenerateShorts });
+
+    metadata.set("status", "ENCODING");
 
     const convertVideoToMp3TaskResponse = await tasks.triggerAndWait<
       typeof convertVideoToMp3Task
@@ -117,6 +128,7 @@ export const createPostTask = schemaTask({
       basePathToSaveOnR2: "posthub/posts",
       type: "post",
       postId,
+      duration,
     });
 
     const { ok: hasConvertVideoTop3TaskCompleted } =
@@ -127,6 +139,8 @@ export const createPostTask = schemaTask({
     }
 
     const { audioUrl } = convertVideoToMp3TaskResponse.output;
+
+    metadata.set("status", "TRANSCRIBING");
 
     const transcribeAudioTaskResponse = await tasks.triggerAndWait<
       typeof transcribeAudioTask
@@ -146,6 +160,8 @@ export const createPostTask = schemaTask({
 
     logger.log("Transcription: ", { transcription });
 
+    metadata.set("status", "SEO_GENERATING");
+
     const seoEnrichmentResponse = await tasks.triggerAndWait<
       typeof seoEnrichmentTask
     >("seo-enrichment", {
@@ -164,12 +180,15 @@ export const createPostTask = schemaTask({
     } = seoEnrichmentResponse.output;
 
     if (shouldGenerateThumbnail) {
+      metadata.set("status", "GENERATING_THUMBNAIL");
       await tasks.trigger<typeof generateThubmnailTask>("generate-thumbnail", {
         postId,
         videoUrl: fileUrl,
         postDescription,
       });
     }
+
+    metadata.set("status", "PUBLISHING");
 
     for (const social of socialsToPost) {
       switch(social.provider) {

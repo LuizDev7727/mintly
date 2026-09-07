@@ -2,13 +2,10 @@ import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
 import { Progress } from "@/components/ui/progress";
 import { createProjectHttp } from "@/http/projects/create-project.http";
-import type { GetProjectsResponse } from "@/http/projects/get-projects.http";
-import { authClient } from "@/lib/auth";
 import {
   createProjectSchema,
   type CreateProjectFormType,
 } from "@/schemas/project/create-project.schema";
-import type { Project } from "@/types/project";
 import { formatBytes } from "@/utils/format-bytes";
 import { uploadFile } from "@/utils/upload-file";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +13,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import axios from "axios";
 import { Loader2, Scissors, Video, X } from "lucide-react";
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -31,7 +28,6 @@ function formatType(file: File): string {
 
 export function CreateProjectForm() {
   const queryClient = useQueryClient();
-  const { data: session } = authClient.useSession();
 
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
@@ -39,6 +35,11 @@ export function CreateProjectForm() {
   const [titleFilter] = useQueryState(
     "title_filter",
     parseAsString.withDefault(""),
+  );
+
+  const [currentPage] = useQueryState(
+    "project_page",
+    parseAsInteger.withDefault(0),
   );
 
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -57,40 +58,10 @@ export function CreateProjectForm() {
 
   const { mutateAsync: createProject } = useMutation({
     mutationFn: createProjectHttp,
-    onSuccess: (data, variables) => {
-      const { projectId } = data;
-      const { file } = variables;
-
-      queryClient.setQueryData<GetProjectsResponse>(
-        ["projects", slug, channel, titleFilter],
-        (old) => {
-          if (!old) {
-            return old;
-          }
-
-          const newProject: Project = {
-            id: projectId,
-            title: file.name,
-            thumbnailUrl: null,
-            status: "PROCESSING",
-            createdAt: new Date().toISOString(),
-            clipCount: 0,
-            owner: {
-              name: session?.user.name ?? "",
-              avatarUrl: session?.user.image ?? null,
-            },
-          };
-
-          return {
-            ...old,
-            projects: [newProject, ...old.projects],
-            meta: {
-              ...old.meta,
-              totalCount: old.meta.totalCount + 1,
-            },
-          };
-        },
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["projects", slug, channel, titleFilter, currentPage],
+      });
     },
   });
 
