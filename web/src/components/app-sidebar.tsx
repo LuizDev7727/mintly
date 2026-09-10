@@ -50,9 +50,9 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         }
         <NavSecondary />
       </SidebarContent>
-      <SidebarFooter>
+      {/*<SidebarFooter>
         <NavUser />
-      </SidebarFooter>
+      </SidebarFooter>*/}
       <SidebarRail />
     </Sidebar>
   );

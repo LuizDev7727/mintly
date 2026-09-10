@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  ArrowDownRight,
   ArrowUpRight,
   CalendarRangeIcon,
   CircleDollarSign,
@@ -19,6 +20,9 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { StorageChart } from "./-components/storage-chart";
 import { CostsChart } from "./-components/costs-chart";
+import { useQuery } from "@tanstack/react-query";
+import { getUsageHttp } from "@/http/organization/get-usage.http";
+import { formatBytes } from "@/utils/format-bytes";
 
 export const Route = createFileRoute("/orgs/$slug/usage/")({
   head: () => ({
@@ -33,11 +37,32 @@ export const Route = createFileRoute("/orgs/$slug/usage/")({
   component: OrgUsagePage,
 });
 
+const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+});
+
 function OrgUsagePage() {
+  const { slug } = Route.useParams();
+
   const [date, setDate] = useState<DateRange | undefined>({
     from: subMonths(new Date(), 1),
     to: new Date(),
   });
+
+  const { data } = useQuery({
+    queryKey: ["usage", slug, date?.from, date?.to],
+    queryFn: () =>
+      getUsageHttp({
+        orgSlug: slug,
+        startDate: date!.from!,
+        endDate: date!.to!,
+      }),
+    enabled: Boolean(date?.from && date?.to),
+  });
+
+  const costs = data?.costs;
+  const storage = data?.storage;
 
   return (
     <div className="space-y-8">
@@ -64,15 +89,23 @@ function OrgUsagePage() {
                 Costs
               </span>
             </div>
-            <Badge variant={"destructive"}>
-              <ArrowUpRight className="size-3 shrink-0" />
-              15.4% vs last month
+            <Badge variant={(costs?.changePercentage ?? 0) > 0 ? "destructive" : "default"}>
+              {(costs?.changePercentage ?? 0) >= 0 ? (
+                <ArrowUpRight className="size-3 shrink-0" />
+              ) : (
+                <ArrowDownRight className="size-3 shrink-0" />
+              )}
+              {Math.abs(costs?.changePercentage ?? 0).toFixed(1)}% vs last month
             </Badge>
           </div>
-          <p className="text-2xl font-bold text-foreground">R$ 90,00</p>
+          <p className="text-2xl font-bold text-foreground">
+            {currencyFormatter.format((costs?.currentCents ?? 0) / 100)}
+          </p>
           <p className="text-xs text-muted-foreground">
             Last month:{" "}
-            <span className="font-medium text-foreground">R$ 78,00</span>
+            <span className="font-medium text-foreground">
+              {currencyFormatter.format((costs?.previousCents ?? 0) / 100)}
+            </span>
           </p>
         </div>
 
@@ -88,14 +121,22 @@ function OrgUsagePage() {
               </span>
             </div>
             <Badge>
-              <ArrowUpRight className="size-3 shrink-0" />
-              3.2% vs last month
+              {(storage?.changePercentage ?? 0) >= 0 ? (
+                <ArrowUpRight className="size-3 shrink-0" />
+              ) : (
+                <ArrowDownRight className="size-3 shrink-0" />
+              )}
+              {Math.abs(storage?.changePercentage ?? 0).toFixed(1)}% vs last month
             </Badge>
           </div>
-          <p className="text-2xl font-bold text-foreground">90 TB</p>
+          <p className="text-2xl font-bold text-foreground">
+            {formatBytes(storage?.currentBytes ?? 0)}
+          </p>
           <p className="text-xs text-muted-foreground">
             Last month:{" "}
-            <span className="font-medium text-foreground">87.2 TB</span>
+            <span className="font-medium text-foreground">
+              {formatBytes(storage?.previousBytes ?? 0)}
+            </span>
           </p>
         </div>
       </div>
@@ -140,12 +181,12 @@ function OrgUsagePage() {
 
       <div className="space-y-4">
         <div>
-          <h2 className="text-lg font-medium">Costs</h2>
+          <h2 className="text-lg font-medium">Usage</h2>
           <p className="text-sm text-muted-foreground">
-            Daily spend for the selected period.
+            Daily usage for the selected period.
           </p>
         </div>
-        <CostsChart />
+        <CostsChart data={data?.series ?? []} />
       </div>
 
       <Separator />
@@ -157,7 +198,7 @@ function OrgUsagePage() {
             Cumulative storage used for the selected period.
           </p>
         </div>
-        <StorageChart />
+        <StorageChart data={data?.storageSeries ?? []} />
       </div>
     </div>
   );

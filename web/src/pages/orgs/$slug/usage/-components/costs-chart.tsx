@@ -1,57 +1,48 @@
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import {
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
 
-const chartData = [
-  { date: "2024-05-01", cost: 12 },
-  { date: "2024-05-02", cost: 18 },
-  { date: "2024-05-03", cost: 9 },
-  { date: "2024-05-04", cost: 24 },
-  { date: "2024-05-05", cost: 15 },
-  { date: "2024-05-06", cost: 21 },
-  { date: "2024-05-07", cost: 20 },
-  { date: "2024-05-08", cost: 11 },
-  { date: "2024-05-09", cost: 19 },
-  { date: "2024-05-10", cost: 26 },
-  { date: "2024-05-11", cost: 14 },
-  { date: "2024-05-12", cost: 8 },
-  { date: "2024-05-13", cost: 22 },
-  { date: "2024-05-14", cost: 17 },
-  { date: "2024-05-15", cost: 29 },
-  { date: "2024-05-16", cost: 13 },
-  { date: "2024-05-17", cost: 20 },
-  { date: "2024-05-18", cost: 25 },
-  { date: "2024-05-19", cost: 10 },
-  { date: "2024-05-20", cost: 16 },
-  { date: "2024-05-21", cost: 23 },
-  { date: "2024-05-22", cost: 27 },
-  { date: "2024-05-23", cost: 12 },
-  { date: "2024-05-24", cost: 19 },
-  { date: "2024-05-25", cost: 15 },
-  { date: "2024-05-26", cost: 21 },
-  { date: "2024-05-27", cost: 28 },
-  { date: "2024-05-28", cost: 17 },
-  { date: "2024-05-29", cost: 9 },
-  { date: "2024-05-30", cost: 24 },
-];
+type CostsChartProps = {
+  data: {
+    date: string;
+    clipRendered: number;
+    thumbnailGenerated: number;
+    seoGenerated: number;
+    audioTranscribed: number;
+    bestMomentsGenerated: number;
+  }[];
+};
 
 const chartConfig = {
-  cost: {
-    label: "Cost",
+  clipRendered: {
+    label: "Clip Rendered",
     color: "var(--chart-1)",
+  },
+  thumbnailGenerated: {
+    label: "Thumbnail Generated",
+    color: "var(--chart-2)",
+  },
+  seoGenerated: {
+    label: "SEO Generated",
+    color: "var(--chart-3)",
+  },
+  audioTranscribed: {
+    label: "Audio Transcribed",
+    color: "var(--chart-4)",
+  },
+  bestMomentsGenerated: {
+    label: "Best Moments Generated",
+    color: "var(--chart-5)",
   },
 } satisfies ChartConfig;
 
-const currencyFormatter = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
-
-export function CostsChart() {
+export function CostsChart({ data }: CostsChartProps) {
   return (
     <div className="bg-card border border-border p-4 rounded-md">
       <ChartContainer
@@ -60,7 +51,7 @@ export function CostsChart() {
       >
         <BarChart
           accessibilityLayer
-          data={chartData}
+          data={data}
           barCategoryGap="15%"
           margin={{
             left: 0,
@@ -93,26 +84,46 @@ export function CostsChart() {
                     year: "numeric",
                   })
                 }
-                formatter={(value) => (
-                  <div className="flex w-full items-center justify-between gap-4">
-                    <div className="flex items-center gap-1.5">
-                      <div
-                        className="h-2.5 w-2.5 shrink-0"
-                        style={{ backgroundColor: "var(--color-cost)" }}
-                      />
-                      <span className="text-muted-foreground">Cost</span>
-                    </div>
-                    <span className="font-mono font-medium tabular-nums text-foreground">
-                      {currencyFormatter.format(Number(value))}
-                    </span>
-                  </div>
-                )}
               />
             }
           />
+          <ChartLegend
+            payload={Object.entries(chartConfig).map(([key, value]) => ({
+              value: value.label,
+              dataKey: key,
+              type: "square",
+              color: `var(--color-${key})`,
+            }))}
+            content={<ChartLegendContent />}
+          />
           <Bar
-            dataKey="cost"
-            fill="var(--color-cost)"
+            dataKey="clipRendered"
+            stackId="cost"
+            fill="var(--color-clipRendered)"
+            maxBarSize={96}
+          />
+          <Bar
+            dataKey="thumbnailGenerated"
+            stackId="cost"
+            fill="var(--color-thumbnailGenerated)"
+            maxBarSize={96}
+          />
+          <Bar
+            dataKey="seoGenerated"
+            stackId="cost"
+            fill="var(--color-seoGenerated)"
+            maxBarSize={96}
+          />
+          <Bar
+            dataKey="audioTranscribed"
+            stackId="cost"
+            fill="var(--color-audioTranscribed)"
+            maxBarSize={96}
+          />
+          <Bar
+            dataKey="bestMomentsGenerated"
+            stackId="cost"
+            fill="var(--color-bestMomentsGenerated)"
             radius={[4, 4, 0, 0]}
             maxBarSize={96}
           />

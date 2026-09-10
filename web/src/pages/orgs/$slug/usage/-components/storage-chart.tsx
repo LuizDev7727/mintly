@@ -8,38 +8,12 @@ import {
 } from "@/components/ui/chart";
 import { formatBytes } from "@/utils/format-bytes";
 
-const chartData = [
-  { date: "2024-05-01", storage: 140 },
-  { date: "2024-05-02", storage: 52_000_000 },
-  { date: "2024-05-03", storage: 58_000_000 },
-  { date: "2024-05-04", storage: 71_000_000 },
-  { date: "2024-05-05", storage: 79_000_000 },
-  { date: "2024-05-06", storage: 88_000_000 },
-  { date: "2024-05-07", storage: 96_000_000 },
-  { date: "2024-05-08", storage: 108_000_000 },
-  { date: "2024-05-09", storage: 121_000_000 },
-  { date: "2024-05-10", storage: 129_000_000 },
-  { date: "2024-05-11", storage: 138_000_000 },
-  { date: "2024-05-12", storage: 152_000_000 },
-  { date: "2024-05-13", storage: 165_000_000 },
-  { date: "2024-05-14", storage: 178_000_000 },
-  { date: "2024-05-15", storage: 184_000_000 },
-  { date: "2024-05-16", storage: 197_000_000 },
-  { date: "2024-05-17", storage: 213_000_000 },
-  { date: "2024-05-18", storage: 226_000_000 },
-  { date: "2024-05-19", storage: 234_000_000 },
-  { date: "2024-05-20", storage: 249_000_000 },
-  { date: "2024-05-21", storage: 262_000_000 },
-  { date: "2024-05-22", storage: 275_000_000 },
-  { date: "2024-05-23", storage: 289_000_000 },
-  { date: "2024-05-24", storage: 301_000_000 },
-  { date: "2024-05-25", storage: 318_000_000 },
-  { date: "2024-05-26", storage: 332_000_000 },
-  { date: "2024-05-27", storage: 347_000_000 },
-  { date: "2024-05-28", storage: 361_000_000 },
-  { date: "2024-05-29", storage: 375_000_000 },
-  { date: "2024-05-30", storage: 392_000_000 },
-];
+type StorageChartProps = {
+  data: {
+    date: string;
+    storage: number;
+  }[];
+};
 
 const chartConfig = {
   storage: {
@@ -48,7 +22,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function StorageChart() {
+export function StorageChart({ data }: StorageChartProps) {
   return (
     <div className="bg-card border border-border p-4 rounded-md">
       <ChartContainer
@@ -57,7 +31,7 @@ export function StorageChart() {
       >
         <AreaChart
           accessibilityLayer
-          data={chartData}
+          data={data}
           margin={{
             left: 0,
             right: 0,

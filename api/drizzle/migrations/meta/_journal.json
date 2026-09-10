@@ -204,6 +204,13 @@
       "when": 1788748158001,
       "tag": "0028_aberrant_meltdown",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1788780730733,
+      "tag": "0029_charming_firebrand",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,10 @@ import { z } from "zod";
 import { googleAi } from "@/lib/google.ts";
 import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
+import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { eq } from "drizzle-orm";
+import { setUsage } from "@/utils/polar/set-usage.ts";
+import { calculateGeminiCost } from "@/utils/polar/calculate-gemini-cost.ts";
 
 const seoResponseSchema = z.object({
   title: z.string(),
@@ -48,6 +51,12 @@ export const seoEnrichmentTask = schemaTask({
   run: async (payload) => {
     const { postId, transcription } = payload;
 
+    const [post] = await db
+      .select({ organizationSlug: channelsTable.organizationSlug })
+      .from(postsTable)
+      .innerJoin(channelsTable, eq(postsTable.channelId, channelsTable.id))
+      .where(eq(postsTable.id, postId));
+
     const prompt = `
       Analyze the text of the provided audio transcription and generate an SEO-optimized title and description.
 
@@ -68,6 +77,13 @@ export const seoEnrichmentTask = schemaTask({
     const response = await googleAi.models.generateContent({
       model: "gemini-2.5-flash-lite",
       contents: prompt,
+    });
+
+    await setUsage({
+      externalCustomerId: post.organizationSlug,
+      eventName: "seo_generated",
+      cost: calculateGeminiCost({ usageMetadata: response.usageMetadata }),
+      metadata: { postId },
     });
 
     const rawText = response.text ?? "";

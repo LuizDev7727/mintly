@@ -16,32 +16,59 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getInvoicesHttp } from "@/http/organization/get-invoices.http";
+import { dayjs } from "@/lib/dayjs";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { parseAsInteger, useQueryState } from "nuqs";
+import { InvoicesPagination } from "./invoices-pagination";
 
-type InvoiceStatus = "paid" | "pending" | "failed";
+type InvoiceStatus =
+  | "draft"
+  | "pending"
+  | "paid"
+  | "refunded"
+  | "partially_refunded"
+  | "void";
 
-interface Invoice {
-  id: string;
-  date: string;
-  amount: string;
-  status: InvoiceStatus;
-}
-
-const INVOICES: Invoice[] = [
-  { id: "INV-006", date: "Jun 1, 2026", amount: "$29.00", status: "paid" },
-  { id: "INV-005", date: "May 1, 2026", amount: "$29.00", status: "paid" },
-  { id: "INV-004", date: "Apr 1, 2026", amount: "$29.00", status: "failed" },
-  { id: "INV-003", date: "Mar 1, 2026", amount: "$29.00", status: "paid" },
-  { id: "INV-002", date: "Feb 1, 2026", amount: "$29.00", status: "paid" },
-  { id: "INV-001", date: "Jan 1, 2026", amount: "$29.00", status: "paid" },
-];
-
-const statusConfig: Record<InvoiceStatus, { label: string; variant: "secondary" | "outline" | "destructive" }> = {
-  paid: { label: "Paid", variant: "secondary" },
+const statusConfig: Record<
+  InvoiceStatus,
+  { label: string; variant: "secondary" | "outline" | "destructive" }
+> = {
+  draft: { label: "Draft", variant: "outline" },
   pending: { label: "Pending", variant: "outline" },
-  failed: { label: "Failed", variant: "destructive" },
+  paid: { label: "Paid", variant: "secondary" },
+  refunded: { label: "Refunded", variant: "outline" },
+  partially_refunded: { label: "Partially refunded", variant: "outline" },
+  void: { label: "Void", variant: "destructive" },
 };
 
+function formatAmount(totalAmount: number, currency: string) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.toUpperCase(),
+  }).format(totalAmount / 100);
+}
+
 export function InvoiceHistory() {
+  const { slug } = useParams({ from: "/orgs/$slug" });
+
+  const [currentPage] = useQueryState(
+    "invoice_page",
+    parseAsInteger.withDefault(0),
+  );
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["invoices", slug, currentPage],
+    queryFn: () =>
+      getInvoicesHttp({ orgSlug: slug, pageIndex: currentPage }),
+    placeholderData: keepPreviousData,
+  });
+
+  const invoices = data?.invoices ?? [];
+  const totalPages = data?.meta.totalPages ?? 0;
+  const isEmpty = !isLoading && invoices.length === 0;
+
   return (
     <Card className="bg-transparent shadow-none">
       <CardHeader className="border-b">
@@ -62,19 +89,35 @@ export function InvoiceHistory() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {INVOICES.map((invoice) => {
-              const { label, variant } = statusConfig[invoice.status];
+            {isLoading && (
+              <TableRow>
+                <TableCell colSpan={5} className="px-6 text-muted-foreground">
+                  Loading invoices...
+                </TableCell>
+              </TableRow>
+            )}
+            {isEmpty && (
+              <TableRow>
+                <TableCell colSpan={5} className="px-6 text-muted-foreground">
+                  No invoices yet.
+                </TableCell>
+              </TableRow>
+            )}
+            {invoices.map((invoice) => {
+              const status = statusConfig[invoice.status as InvoiceStatus];
               return (
                 <TableRow key={invoice.id}>
                   <TableCell className="px-6 font-medium">
                     {invoice.id}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {invoice.date}
+                    {dayjs(invoice.createdAt).format("MMM D, YYYY")}
                   </TableCell>
-                  <TableCell>{invoice.amount}</TableCell>
                   <TableCell>
-                    <Badge variant={variant}>{label}</Badge>
+                    {formatAmount(invoice.totalAmount, invoice.currency)}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={status.variant}>{status.label}</Badge>
                   </TableCell>
                   <TableCell className="text-right pr-6">
                     <Button variant="ghost" size="icon-sm">
@@ -88,6 +131,9 @@ export function InvoiceHistory() {
           </TableBody>
         </Table>
       </CardContent>
+      <div className="flex justify-end px-6 py-4">
+        <InvoicesPagination totalPages={totalPages} />
+      </div>
     </Card>
   );
 }
