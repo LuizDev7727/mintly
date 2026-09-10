@@ -13,10 +13,9 @@ import { accountsTable } from "@/infra/db/tables/accounts.table.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
+import { createOrganization } from "@/functions/organization/create-organization.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { createSlug } from "./create-slug.ts";
-import { encrypt } from "@/utils/crypto/encrypt.ts";
-import { hashApiKey } from "@/utils/crypto/hash-api-key.ts";
 
 export const auth = betterAuth({
   baseURL: await getInfisicalSecret({ secretName: "BETTER_AUTH_URL" }),
@@ -93,20 +92,11 @@ export const auth = betterAuth({
               .limit(1);
 
             const orgSlug = createSlug(user.name);
-            await db.insert(organizationsTable).values({
+
+            await createOrganization({
+              userId: session.userId,
               name: user.name,
               slug: orgSlug,
-              createdAt: new Date(),
-              apiKey: await encrypt(orgSlug),
-              apiKeyHash: await hashApiKey(orgSlug),
-              ownerId: session.userId,
-            });
-
-            await db.insert(membersTable).values({
-              organizationSlug: orgSlug,
-              userId: session.userId,
-              role: "owner",
-              createdAt: new Date(),
             });
 
             member = { organizationSlug: orgSlug };

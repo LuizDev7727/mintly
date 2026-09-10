@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "dev": "vite",
     "test": "playwright test",
@@ -23,6 +26,7 @@
     "@tanstack/react-query": "^5.101.0",
     "@tanstack/react-router": "^1.170.11",
     "@testing-library/react": "^16.3.2",
+    "@trigger.dev/react-hooks": "^4.5.16",
     "axios": "^1.17.0",
     "better-auth": "^1.6.14",
     "class-variance-authority": "^0.7.1",
@@ -68,6 +72,7 @@
     "@vitest/browser-playwright": "4.1.8",
     "@vitest/coverage-v8": "4.1.8",
     "@vitest/ui": "^4.1.8",
+    "chromatic": "^18.7.2",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",

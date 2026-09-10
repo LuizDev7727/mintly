@@ -30,7 +30,7 @@ export const getPostsRoute: FastifyPluginAsyncZod = async (app) => {
                 thumbnailUrl: z.string().nullable(),
                 title: z.string(),
                 size: z.number(),
-                runId: z.string().nullable(),
+                runId: z.string(),
                 mimeType: z.string(),
                 status: z.enum([
                   "PROCESSING",
@@ -46,6 +46,7 @@ export const getPostsRoute: FastifyPluginAsyncZod = async (app) => {
                   "CANCELED",
                 ]),
                 duration: z.number().optional(),
+                realtimeToken: z.string().nullable(),
                 createdAt: z.date(),
                 publishAt: z.date().nullable(),
                 socialsToPost: z.array(

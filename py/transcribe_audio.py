@@ -20,6 +20,7 @@ Requer um Modal Secret chamado "mintly-transcribe-audio-secret" com:
 import os
 import pathlib
 import shutil
+import time
 import uuid
 
 import modal
@@ -27,6 +28,17 @@ import requests
 from fastapi import status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+
+# Preço por segundo de GPU no Modal (https://modal.com/pricing), usado pra
+# reportar o custo real de cada job pro Trigger.dev via callback_url.
+GPU_TYPE = "A10G"
+GPU_PRICE_PER_SECOND_USD = {
+    "T4": 0.000164,
+    "L4": 0.000222,
+    "A10G": 0.000306,
+    "A100-40GB": 0.000583,
+    "A100-80GB": 0.000694,
+}
 
 whisperx_image = (
     modal.Image.debian_slim(python_version="3.10")
@@ -62,7 +74,7 @@ def download_file(url: str, destination: pathlib.Path) -> None:
 
 
 @app.cls(
-    gpu="A10G",
+    gpu=GPU_TYPE,
     timeout=600,
     retries=0,
     scaledown_window=20,
@@ -152,6 +164,8 @@ class WhisperXService:
         base_dir = pathlib.Path("/tmp") / run_id
         base_dir.mkdir(parents=True, exist_ok=True)
 
+        started_at = time.monotonic()
+
         result = {}
 
         try:
@@ -170,6 +184,14 @@ class WhisperXService:
             result["error"] = str(error)
         finally:
             shutil.rmtree(base_dir, ignore_errors=True)
+
+        # GPU é cobrada do início ao fim da execução, sucesso ou erro —
+        # reporta o custo real pro Trigger.dev poder repassar pro Polar.
+        elapsed_seconds = time.monotonic() - started_at
+        result["cost"] = {
+            "amount": round(elapsed_seconds * GPU_PRICE_PER_SECOND_USD[GPU_TYPE] * 100, 4),
+            "currency": "usd",
+        }
 
         try:
             requests.post(request.callback_url, json=result, timeout=30)

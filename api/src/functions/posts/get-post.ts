@@ -33,7 +33,10 @@ type GetPostResponse = {
     name: string;
     avatarUrl: string | null;
   };
-  socialsToPost: { social: "YOUTUBE" | "TIKTOK"; socialName: string }[];
+  socialsToPost: {
+    social: "YOUTUBE" | "TIKTOK" | "INSTAGRAM";
+    socialName: string;
+  }[];
 };
 
 export async function getPost(
@@ -55,7 +58,7 @@ export async function getPost(
         avatarUrl: usersTable.image,
       },
       socialsToPost: sql<
-        { social: "YOUTUBE" | "TIKTOK"; socialName: string }[]
+        { social: "YOUTUBE" | "TIKTOK" | "INSTAGRAM"; socialName: string }[]
       >`
                     json_agg(
                       json_build_object(

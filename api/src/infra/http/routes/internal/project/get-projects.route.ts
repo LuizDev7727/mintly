@@ -31,10 +31,12 @@ export const getProjectsRoute: FastifyPluginAsyncZod = async (app) => {
                 status: z.enum([
                   "SUCCESS",
                   "PROCESSING",
-                  "SCHEDULED",
+                  "ENCODING",
                   "ERROR",
                   "CANCELED",
                 ]),
+                runId: z.string(),
+                realtimeToken: z.string().nullable(),
                 createdAt: z.date(),
                 clipCount: z.number(),
                 owner: z.object({

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Webhooks } from "./-components/webhooks";
 import { Activities } from "./-components/activities";
-import { HardDrive, Package, Users } from "lucide-react";
+import { ChartPie, HardDrive, Package, Users } from "lucide-react";
 import { Sparkline } from "@/components/sparkline";
 import { useQuery } from "@tanstack/react-query";
 import { getOrganizationOverviewHttp } from "@/http/organization/get-organization-overview.http";
@@ -34,10 +34,9 @@ function OverviewPage() {
   const { channelsCount, membersCount, usage, storage, recentActivities, webhooks } = overview;
   const { totalUsage } = usage;
 
-
-  const formattedUsage = new Intl.NumberFormat("pt-BR", {
+  const formattedUsage = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "BRL",
+    currency: "USD",
   }).format(totalUsage / 100);
 
 
@@ -75,14 +74,14 @@ function OverviewPage() {
           <div className="px-5 pt-5 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <HardDrive className="size-4" />
+                <ChartPie className="size-4" />
                 <span className="text-sm">Usage</span>
               </div>
               <p className="text-xs text-muted-foreground">vs last 30 days</p>
             </div>
             <p className="text-2xl font-bold">{formattedUsage}</p>
           </div>
-          <Sparkline data={[10, 20, 600, 1000, 840, 40]} color={"#bef264"} />
+          <Sparkline data={usage.series} color={"#bef264"} />
         </div>
         <div className="rounded-lg border dark:bg-zinc-900/20 overflow-hidden">
           <div className="px-5 pt-5 space-y-3">

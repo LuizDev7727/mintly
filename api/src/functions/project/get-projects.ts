@@ -2,6 +2,7 @@ import { db } from "@/infra/db/client.ts";
 import { bestMomentsTable } from "@/infra/db/tables/best-moments.table.ts";
 import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
+import { generateRealtimeToken } from "@/utils/generate-realtime-token.ts";
 import { and, count, desc, eq, like } from "drizzle-orm";
 import { getChannel } from "../channel/get-channel.ts";
 
@@ -16,7 +17,9 @@ type GetProjectsResponse = {
     id: string;
     title: string;
     thumbnailUrl: string | null;
-    status: "SUCCESS" | "PROCESSING" | "SCHEDULED" | "ERROR" | "CANCELED";
+    status: "SUCCESS" | "PROCESSING" | "ENCODING" | "ERROR" | "CANCELED";
+    runId: string;
+    realtimeToken: string | null;
     createdAt: Date;
     clipCount: number;
     owner: {
@@ -31,6 +34,8 @@ type GetProjectsResponse = {
 };
 
 const PAGE_SIZE = 12;
+
+const ACTIVE_PROJECT_STATUSES = ["ENCODING"] as const;
 
 export async function getProjects(
   params: GetProjectsParams,
@@ -51,6 +56,7 @@ export async function getProjects(
         title: projectsTable.title,
         thumbnailUrl: projectsTable.thumbnailUrl,
         status: projectsTable.status,
+        runId: projectsTable.runId,
         createdAt: projectsTable.createdAt,
         clipCount: count(bestMomentsTable.id),
         owner: {
@@ -78,8 +84,27 @@ export async function getProjects(
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
+  const projectsWithRealtimeToken = await Promise.all(
+    projects.map(async (project) => {
+      // runId is only ever null in the brief window between inserting the
+      // project row and the trigger.dev task's onStart callback running —
+      // by the time a project is listed here, it's always populated.
+      const runId = project.runId!;
+
+      return {
+        ...project,
+        runId,
+        realtimeToken: (ACTIVE_PROJECT_STATUSES as readonly string[]).includes(
+          project.status,
+        )
+          ? await generateRealtimeToken({ runId })
+          : null,
+      };
+    }),
+  );
+
   return {
-    projects,
+    projects: projectsWithRealtimeToken,
     meta: {
       totalCount,
       totalPages,

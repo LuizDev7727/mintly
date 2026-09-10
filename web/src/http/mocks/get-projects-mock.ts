@@ -6,13 +6,14 @@ import type { Project } from "@/types/project";
 const STATUSES: Project["status"][] = [
   "SUCCESS",
   "PROCESSING",
-  "SCHEDULED",
+  "ENCODING",
   "ERROR",
   "CANCELED",
 ];
 
 const projects: Project[] = Array.from({ length: 24 }, () => ({
   id: faker.string.uuid(),
+  runId: faker.string.uuid(),
   title: faker.lorem.words({ min: 3, max: 8 }),
   thumbnailUrl: faker.datatype.boolean()
     ? faker.image.urlPicsumPhotos({ width: 1280, height: 720 })
@@ -24,6 +25,9 @@ const projects: Project[] = Array.from({ length: 24 }, () => ({
     name: faker.person.fullName(),
     avatarUrl: null,
   },
+  realtimeToken: faker.datatype.boolean()
+    ? faker.string.alphanumeric(32)
+    : null,
 }));
 
 export const getProjectsMock = http.get<
