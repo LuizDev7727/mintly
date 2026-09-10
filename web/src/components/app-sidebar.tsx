@@ -2,7 +2,6 @@ import { type ComponentProps } from "react";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarRail,
 } from "./ui/sidebar";
@@ -11,7 +10,6 @@ import { NavMain } from "./nav-main";
 import { useMatch } from "@tanstack/react-router";
 import { ChannelSwitcher } from "./channel-switcher";
 import { NavChannels } from "./nav-channels";
-import { NavUser } from "./nav-user";
 import { NavSecondary } from "./nav-secondary";
 import { Separator } from "./ui/separator";
 import { StarredFolders } from "./starred-folders";

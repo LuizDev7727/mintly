@@ -88,13 +88,16 @@ export function CostsChart({ data }: CostsChartProps) {
             }
           />
           <ChartLegend
-            payload={Object.entries(chartConfig).map(([key, value]) => ({
-              value: value.label,
-              dataKey: key,
-              type: "square",
-              color: `var(--color-${key})`,
-            }))}
-            content={<ChartLegendContent />}
+            content={
+              <ChartLegendContent
+                payload={Object.entries(chartConfig).map(([key, value]) => ({
+                  value: value.label,
+                  dataKey: key,
+                  type: "square",
+                  color: `var(--color-${key})`,
+                }))}
+              />
+            }
           />
           <Bar
             dataKey="clipRendered"
