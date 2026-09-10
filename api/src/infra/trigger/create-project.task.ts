@@ -3,16 +3,22 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { projectsTable } from "../db/tables/projects.table.ts";
+import { channelsTable } from "../db/tables/channels.table.ts";
 import { transcribeAudioTask } from "./transcribe-audio.task.ts";
 import { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
 import { googleAi } from "@/lib/google.ts";
-import { Prediction } from "replicate";
 import { bestMomentsTable } from "../db/tables/best-moments.table.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
+import { setUsage } from "@/utils/polar/set-usage.ts";
+import { calculateGeminiCost } from "@/utils/polar/calculate-gemini-cost.ts";
 
 type ModalCallbackPayload = {
   output_key: string;
   status: string;
+  cost: {
+    amount: number;
+    currency: string;
+  };
 };
 
 export const createProjectTask = schemaTask({
@@ -73,6 +79,14 @@ export const createProjectTask = schemaTask({
 
     logger.log("ProjectId created: ", { projectId });
     logger.log("VideoUrl: ", { videoUrl });
+
+    // Resolved once here so it's available for every usage event reported
+    // during this run, not just the one below.
+    const [project] = await db
+      .select({ organizationSlug: channelsTable.organizationSlug })
+      .from(projectsTable)
+      .innerJoin(channelsTable, eq(projectsTable.channelId, channelsTable.id))
+      .where(eq(projectsTable.id, projectId));
 
     const convertVideoToMp3TaskResponse = await tasks.triggerAndWait<
       typeof convertVideoToMp3Task
@@ -155,6 +169,13 @@ export const createProjectTask = schemaTask({
       contents: prompt,
     });
 
+    await setUsage({
+      externalCustomerId: project.organizationSlug,
+      eventName: "best_moments_generated",
+      cost: calculateGeminiCost({ usageMetadata: response.usageMetadata }),
+      metadata: { projectId },
+    });
+
     const responseText = response.text ?? "[]";
     const cleaned = responseText.replace(/```json|```/g, "").trim();
     const clips = clipsSchema.parse(JSON.parse(cleaned));
@@ -193,6 +214,16 @@ export const createProjectTask = schemaTask({
       const result = await wait.forToken<ModalCallbackPayload>(token).unwrap();
 
       logger.log("Result: ", { result });
+
+      await setUsage({
+        cost: result.cost,
+        eventName: "clip_rendered",
+        externalCustomerId: project.organizationSlug,
+        metadata: {
+          projectId,
+          title,
+        },
+      })
 
       await db.insert(bestMomentsTable).values({
         title: title,

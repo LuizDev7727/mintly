@@ -24,6 +24,7 @@ import pathlib
 import pickle
 import shutil
 import subprocess
+import time
 import uuid
 
 import boto3
@@ -40,6 +41,17 @@ from tqdm import tqdm
 
 LR_ASD_DIR = "/LR-ASD"
 
+# Preço por segundo de GPU no Modal (https://modal.com/pricing), usado pra
+# reportar o custo real de cada job pro Trigger.dev via callback_url.
+GPU_TYPE = "A10G"
+GPU_PRICE_PER_SECOND_USD = {
+    "T4": 0.000164,
+    "L4": 0.000222,
+    "A10G": 0.000306,
+    "A100-40GB": 0.000583,
+    "A100-80GB": 0.000694,
+}
+
 image = (
     modal.Image.from_registry("nvidia/cuda:12.4.0-devel-ubuntu22.04", add_python="3.12")
     .apt_install(["ffmpeg", "libgl1-mesa-glx", "wget", "libcudnn8", "libcudnn8-dev"])
@@ -47,7 +59,7 @@ image = (
     .run_commands(
         [
             "mkdir -p /usr/share/fonts/truetype/custom",
-            "wget -O /usr/share/fonts/truetype/custom/Anton-Regular.ttf",
+            "wget -O /usr/share/fonts/truetype/custom/Anton-Regular.ttf "
             "https://github.com/google/fonts/raw/main/ofl/anton/Anton-Regular.ttf",
             "fc-cache -f -v",
         ]
@@ -339,7 +351,7 @@ def process_clip(
 
 
 @app.cls(
-    gpu="A10G",
+    gpu=GPU_TYPE,
     timeout=900,
     retries=0,
     scaledown_window=20,
@@ -361,6 +373,8 @@ class ClipProcessor:
         run_id = str(uuid.uuid4())
         base_dir = pathlib.Path("/tmp") / run_id
         base_dir.mkdir(parents=True, exist_ok=True)
+
+        started_at = time.monotonic()
 
         output_key = f"clips/{run_id}.mp4"
         result = {"output_key": output_key}
@@ -386,6 +400,14 @@ class ClipProcessor:
             result["error"] = str(error)
         finally:
             shutil.rmtree(base_dir, ignore_errors=True)
+
+        # GPU é cobrada do início ao fim da execução, sucesso ou erro —
+        # reporta o custo real pro Trigger.dev poder repassar pro Polar.
+        elapsed_seconds = time.monotonic() - started_at
+        result["cost"] = {
+            "amount": round(elapsed_seconds * GPU_PRICE_PER_SECOND_USD[GPU_TYPE] * 100, 4),
+            "currency": "usd",
+        }
 
         try:
             requests.post(request.callback_url, json=result, timeout=30)

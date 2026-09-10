@@ -1,9 +1,12 @@
 import { logger, wait, schemaTask } from "@trigger.dev/sdk";
 import { z } from "zod";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
+import { projectsTable } from "@/infra/db/tables/projects.table.ts";
+import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { eq } from "drizzle-orm";
 import { db } from "../db/client.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
+import { polar } from "@/lib/polar.ts";
 
 type ModalTranscribeAudioCallbackPayload = {
   status: "SUCCESS" | "ERROR";
@@ -21,6 +24,10 @@ type ModalTranscribeAudioCallbackPayload = {
   }[];
   language?: string;
   error?: string;
+  cost: {
+    amount: number;
+    currency: string;
+  };
 }
 
 export const transcribeAudioTask = schemaTask({
@@ -83,9 +90,25 @@ export const transcribeAudioTask = schemaTask({
     // The payload contains the last run timestamp that you can use to check if this is the first run
     // And calculate the time since the last run
 
-    const { audioUrl } = payload;
+    const { audioUrl, type } = payload;
 
     logger.log("Audio URL: ", { audioUrl });
+
+    // Resolved once here so it's available for the "audio_transcribed"
+    // usage event reported below, regardless of which resource (post or
+    // project) triggered this task.
+    const [organization] =
+      type === "post"
+        ? await db
+            .select({ organizationSlug: channelsTable.organizationSlug })
+            .from(postsTable)
+            .innerJoin(channelsTable, eq(postsTable.channelId, channelsTable.id))
+            .where(eq(postsTable.id, payload.postId))
+        : await db
+            .select({ organizationSlug: channelsTable.organizationSlug })
+            .from(projectsTable)
+            .innerJoin(channelsTable, eq(projectsTable.channelId, channelsTable.id))
+            .where(eq(projectsTable.id, payload.projectId));
 
     const token = await wait.createToken({
       timeout: "10m",
@@ -105,6 +128,21 @@ export const transcribeAudioTask = schemaTask({
     const result = await wait.forToken<ModalTranscribeAudioCallbackPayload>(token).unwrap();
 
     logger.log("Result: ", { result });
+
+    await polar.events.ingest({
+      events: [
+        {
+          name: "audio_transcribed",
+          externalCustomerId: organization.organizationSlug,
+          metadata: {
+            ...(type === "post"
+              ? { postId: payload.postId }
+              : { projectId: payload.projectId }),
+            _cost: result.cost,
+          },
+        },
+      ],
+    });
 
     const transcription = result.segments ?? [];
     const allWords = transcription.flatMap((s) => s.words ?? []);

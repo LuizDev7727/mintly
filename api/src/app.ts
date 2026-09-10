@@ -57,6 +57,12 @@ import { acceptInviteRoute } from "./infra/http/routes/internal/invitation/accep
 import { declineInviteRoute } from "./infra/http/routes/internal/invitation/decline-invite.route.ts";
 import { revokeInviteRoute } from "./infra/http/routes/internal/organization/revoke-invite.route.ts";
 import { updateOrganizationRoute } from "./infra/http/routes/internal/organization/update-organization.route.ts";
+import { createBillingPortalSessionRoute } from "./infra/http/routes/internal/organization/create-billing-portal-session.route.ts";
+import { getOrganizationPaymentMethodStatusRoute } from "./infra/http/routes/internal/organization/get-organization-payment-method-status.route.ts";
+import { getInvoicesRoute } from "./infra/http/routes/internal/organization/get-invoices.route.ts";
+import { getPaymentMethodsRoute } from "./infra/http/routes/internal/organization/get-payment-methods.route.ts";
+import { getUsageRoute } from "./infra/http/routes/internal/organization/get-usage.route.ts";
+import { createCheckoutSessionRoute } from "./infra/http/routes/internal/organization/create-checkout-session.route.ts";
 import { requestYoutubeIntegrationUrlRoute } from "./infra/http/routes/internal/integration/request-youtube-integration-url.route.ts";
 import { youtubeCallbackRoute } from "./infra/http/routes/internal/integration/youtube-callback.route.ts";
 import { deleteIntegrationRoute } from "./infra/http/routes/internal/integration/delete-integration.route.ts";
@@ -161,6 +167,12 @@ server.register(acceptInviteRoute);
 server.register(declineInviteRoute);
 server.register(revokeInviteRoute);
 server.register(updateOrganizationRoute);
+server.register(createBillingPortalSessionRoute);
+server.register(getOrganizationPaymentMethodStatusRoute);
+server.register(getInvoicesRoute);
+server.register(getPaymentMethodsRoute);
+server.register(getUsageRoute);
+server.register(createCheckoutSessionRoute);
 
 server.register(deleteIntegrationRoute)
 server.register(requestYoutubeIntegrationUrlRoute)
