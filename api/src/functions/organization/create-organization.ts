@@ -2,6 +2,7 @@ import { OrganizationAlreadyCreatedError } from "@/errors/organization-already-c
 import { db } from "@/infra/db/client.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
+import { ensurePolarCustomer } from "@/functions/organization/ensure-polar-customer.ts";
 import { encrypt } from "@/utils/crypto/encrypt.ts";
 import { hashApiKey } from "@/utils/crypto/hash-api-key.ts";
 import { eq } from "drizzle-orm";
@@ -41,6 +42,8 @@ export async function createOrganization(params: CreateOrganizationParams) {
     role: "owner",
     createdAt: new Date(),
   });
+
+  await ensurePolarCustomer({ organizationSlug: slug });
 
   return {
     organizationId: newOrganization.id,

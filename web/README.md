@@ -1,89 +1,78 @@
-# React + TypeScript + Vite
+# Mintly — Web
 
-[] - Aumentar o height do componente que diz que não tem nenhum project criada
-[] - Aumentar o height do componente que diz que não tem nenhum post criada
-[] - Atualizar o avatar da organização
-[] - Atualizar o nome da organização
-  [] - Verificar se o slug da organização já existe
-[] - Implementar o botão leave organization
-[] - Deletar a organização somente quem for owner da organização
-[] - Configurar billing email para a organização
-[] - Configurar método de pagamento
-[] - Implementar a tabela de invoices da organização com o banco de dados
-[] - Página específica do post
-[] - Criação de posts
-[] - Criação de projects
+Frontend principal do Mintly (o produto em si — dashboard de organizações, canais, posts, projetos, billing/usage). **React 19** + **Vite** + **TanStack Router** (rotas por arquivo) + **TanStack Query**, UI em **shadcn/radix + Tailwind**.
 
-[] - Geração de pre-signed-url global tanto para posts, projects e inspirational thumbnails
+## Stack
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- **Vite** — dev server e build
+- **TanStack Router** — rotas por arquivo (`src/pages/`), navegação e params type-safe — ver `src/pages/CLAUDE.md`
+- **TanStack Query** — data fetching/cache, sempre em cima dos clientes de `src/http/`
+- **react-hook-form + Zod** — formulários (padrão estrito, ver skill `form-pattern`)
+- **nuqs** — estado sincronizado com query string (paginação, filtros)
+- **shadcn/radix-ui + Tailwind** — componentes de UI
+- **recharts** — gráficos (dashboards de usage/billing)
+- **@trigger.dev/react-hooks** — status/progresso em tempo real das tasks do backend (`useRealtimeRun`/`useRealtimeStream`)
+- **axios** — cliente HTTP (`src/http/api.ts`), ver `src/http/CLAUDE.md`
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd web
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Variáveis de ambiente
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+`.env` (não commitado):
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+VITE_API_BASE_URL="http://localhost:3000"
+VITE_NODE_ENV="development"
 ```
+
+## Scripts
+
+| Comando | O que faz |
+|---|---|
+| `pnpm dev` | Sobe o dev server (Vite) |
+| `pnpm build` | Type-check (`tsc -b`) + build de produção |
+| `pnpm lint` | ESLint |
+| `pnpm test` | Testes e2e (Playwright) |
+| `pnpm test:e2e:ui` | Playwright em modo UI |
+| `pnpm test:unit` | Testes unitários (Vitest) |
+| `pnpm test:ui` | Vitest em modo UI |
+| `pnpm storybook` | Sobe o Storybook (porta 6006) |
+| `pnpm build-storybook` | Build estático do Storybook |
+
+Mocks de API pra testes/Storybook usam **MSW** (`msw-storybook-addon`, worker em `public/`).
+
+## Estrutura
+
+```
+src/
+├── pages/           # rotas por arquivo (TanStack Router) — ver pages/CLAUDE.md
+├── components/        # componentes de UI compartilhados (shadcn + próprios)
+├── http/                # clientes HTTP por recurso (*.http.ts) — ver http/CLAUDE.md
+├── hooks/                 # hooks compartilhados
+├── context/                # contexts React
+├── lib/                     # config de libs (query client, utils do shadcn, etc.)
+├── schemas/                   # schemas Zod de formulário compartilhados
+├── types/                       # tipos compartilhados
+├── utils/                        # helpers puros (formatação, etc.)
+├── stories/                       # arquivos .stories.tsx do Storybook
+├── tests/                          # setup/utilitários de teste
+└── storage/                         # wrappers de localStorage/sessionStorage
+```
+
+## Convenções
+
+Documentadas como *skills* em `.claude/skills/` (carregadas automaticamente pelo Claude Code ao trabalhar nesses arquivos):
+
+- `form-pattern` — arquitetura de formulário (React Hook Form + Zod + design system)
+- `nuqs` — estado em query string
+- `tanstack-query` — padrões de data fetching (`useQuery`/`useMutation`, paginação)
+- `web:design` — conversão de design pra componente React
+- `react-grab` — loop de captura de elementos de UI no browser
+
+Rotas (`src/pages/`) e camada HTTP (`src/http/`) têm convenções mais detalhadas em seus próprios `CLAUDE.md`.

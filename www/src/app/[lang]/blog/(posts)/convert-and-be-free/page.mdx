@@ -1,0 +1,36 @@
+---
+title: Por trás do Mintly — por que estamos construindo essa plataforma
+description: Uma visão geral sobre o problema que o Mintly resolve, como o pipeline de melhores momentos funciona e a stack por trás de tudo.
+publishDate: 2026-09-05T11:00:00Z
+---
+
+# Conteúdo
+
+## O problema
+
+Quem cria conteúdo hoje precisa estar em todo lugar: YouTube, TikTok, Instagram, Reels, Shorts. Cada plataforma tem seu próprio painel, seu próprio fluxo de upload e suas próprias regras — e isso significa repetir o mesmo trabalho manualmente várias vezes só para publicar a mesma ideia em formatos diferentes.
+
+O Mintly nasceu para resolver essa fricção: uma plataforma onde criadores conseguem organizar, agendar e publicar posts em múltiplas redes sociais a partir de um único lugar, sem abrir uma aba diferente para cada canal.
+
+## Organização por organizações, canais e pastas
+
+Dentro do Mintly, o conteúdo é organizado em **organizações**, que podem ter múltiplos **canais** conectados (via OAuth, hoje com YouTube e TikTok) e **pastas** para manter tudo arrumado. Um post pode ser enviado uma única vez e publicado em vários canais ao mesmo tempo, com agendamento e acompanhamento de status de cada publicação individualmente.
+
+## Gerando melhores momentos automaticamente
+
+Uma das partes mais interessantes do produto é o pipeline de **melhores momentos**: a partir de um vídeo longo enviado pelo usuário, o sistema:
+
+1. **transcreve o áudio** do vídeo;
+2. usa **inteligência artificial** para identificar os trechos com maior potencial de viralização;
+3. envia cada trecho para um serviço com **GPU** que roda detecção de locutor ativo (*active speaker detection*) para identificar quem está falando, recorta um vídeo vertical seguindo o rosto (ou com fundo desfocado), queima as legendas automaticamente e entrega o clipe pronto para publicar em Reels, Shorts ou TikTok.
+
+Tudo isso roda em background, então o criador só precisa enviar o vídeo original e esperar os clipes ficarem prontos.
+
+## A stack por trás do Mintly
+
+- **API**: Node.js + TypeScript, Fastify, Drizzle ORM + PostgreSQL, better-auth para autenticação e multi-tenancy, e Trigger.dev orquestrando os jobs em background.
+- **Web**: React 19 + TypeScript, Vite, TanStack Router e TanStack Query, Tailwind CSS v4 e componentes baseados em Radix UI/shadcn.
+- **Processamento de vídeo e IA**: funções serverless em Python rodando no Modal com GPU sob demanda, usando LR-ASD para detecção de locutor ativo e ffmpeg/OpenCV para montar os clipes verticais.
+- **Infra**: Pulumi (TypeScript) provisionando a API em containers na AWS (ECS/Fargate).
+
+É uma stack pensada para lidar com processamento pesado de vídeo sem travar a experiência do usuário — o trabalho pesado sempre acontece de forma assíncrona, longe da UI.

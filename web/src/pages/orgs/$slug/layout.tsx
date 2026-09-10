@@ -9,6 +9,8 @@ import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SwitchViewMode } from "@/components/switch-view-mode";
 import { authClient } from "@/lib/auth";
+import { Search } from "@/components/search";
+import { PaymentMethodWarning } from "@/components/payment-method-warning";
 
 export const Route = createFileRoute("/orgs/$slug")({
   beforeLoad: async () => {
@@ -35,6 +37,8 @@ function OrganizationLayout() {
             {/*<NavigationBreadcrumb />*/}
           </div>
           <div className="flex items-center gap-x-2">
+            <PaymentMethodWarning />
+            <Search/>
             <div className="bg-border w-4 rotate-90 h-px" />
             <SwitchViewMode />
           </div>

@@ -40,6 +40,9 @@ type Env = {
   INSTAGRAM_ACCESS_TOKEN: string;
   INSTAGRAM_REDIRECT_URI: string;
   INSTAGRAM_REDIRECT_CALLBACK_URI: string;
+  POLAR_ACCESS_TOKEN: string;
+  POLAR_PRODUCT_ID: string;
+  POLAR_TOTAL_COST_METER_ID: string;
 };
 
 type GetInfisicalSecretProps = {

@@ -31,7 +31,7 @@ export function PostStatusBadge({ status }: PostStatusBadgeProps) {
       );
     case "CANCELED":
       return (
-        <Badge variant={"secondary"} className="absolute left-2 top-2 inline-flex items-center gap-1">
+        <Badge variant={"outline"} className="absolute left-2 top-2 inline-flex items-center gap-1">
           <Ban size={13} />
           {status}
         </Badge>

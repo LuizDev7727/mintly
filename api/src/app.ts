@@ -41,6 +41,7 @@ import { cancelPostRoute } from "./infra/http/routes/internal/post/cancel-post.r
 import { movePostsToFolderRoute } from "./infra/http/routes/internal/post/move-posts-to-folder.route.ts";
 import { getProjectsRoute } from "./infra/http/routes/internal/project/get-projects.route.ts";
 import { getProjectRoute } from "./infra/http/routes/internal/project/get-project.route.ts";
+import { searchResourcesRoute } from "./infra/http/routes/internal/search/search-resources.route.ts";
 import { createProjectRoute } from "./infra/http/routes/internal/project/create-project.route.ts";
 import { getBestMomentsRoute } from "./infra/http/routes/internal/best-moment/get-best-moments.route.ts";
 import { sendBestMomentToSocialMediaRoute } from "./infra/http/routes/internal/best-moment/send-best-moment-to-social-media.route.ts";
@@ -56,6 +57,12 @@ import { acceptInviteRoute } from "./infra/http/routes/internal/invitation/accep
 import { declineInviteRoute } from "./infra/http/routes/internal/invitation/decline-invite.route.ts";
 import { revokeInviteRoute } from "./infra/http/routes/internal/organization/revoke-invite.route.ts";
 import { updateOrganizationRoute } from "./infra/http/routes/internal/organization/update-organization.route.ts";
+import { createBillingPortalSessionRoute } from "./infra/http/routes/internal/organization/create-billing-portal-session.route.ts";
+import { getOrganizationPaymentMethodStatusRoute } from "./infra/http/routes/internal/organization/get-organization-payment-method-status.route.ts";
+import { getInvoicesRoute } from "./infra/http/routes/internal/organization/get-invoices.route.ts";
+import { getPaymentMethodsRoute } from "./infra/http/routes/internal/organization/get-payment-methods.route.ts";
+import { getUsageRoute } from "./infra/http/routes/internal/organization/get-usage.route.ts";
+import { createCheckoutSessionRoute } from "./infra/http/routes/internal/organization/create-checkout-session.route.ts";
 import { requestYoutubeIntegrationUrlRoute } from "./infra/http/routes/internal/integration/request-youtube-integration-url.route.ts";
 import { youtubeCallbackRoute } from "./infra/http/routes/internal/integration/youtube-callback.route.ts";
 import { deleteIntegrationRoute } from "./infra/http/routes/internal/integration/delete-integration.route.ts";
@@ -142,6 +149,7 @@ server.register(cancelPostRoute);
 server.register(movePostsToFolderRoute);
 server.register(getProjectsRoute);
 server.register(getProjectRoute);
+server.register(searchResourcesRoute);
 server.register(createProjectRoute);
 server.register(getBestMomentsRoute);
 server.register(sendBestMomentToSocialMediaRoute);
@@ -159,6 +167,12 @@ server.register(acceptInviteRoute);
 server.register(declineInviteRoute);
 server.register(revokeInviteRoute);
 server.register(updateOrganizationRoute);
+server.register(createBillingPortalSessionRoute);
+server.register(getOrganizationPaymentMethodStatusRoute);
+server.register(getInvoicesRoute);
+server.register(getPaymentMethodsRoute);
+server.register(getUsageRoute);
+server.register(createCheckoutSessionRoute);
 
 server.register(deleteIntegrationRoute)
 server.register(requestYoutubeIntegrationUrlRoute)

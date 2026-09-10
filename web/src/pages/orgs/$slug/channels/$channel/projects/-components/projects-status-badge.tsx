@@ -22,7 +22,7 @@ export function ProjectStatusBadge({ status }: ProjectStatusBadgeProps) {
           {status}
         </Badge>
       );
-    case "SCHEDULED":
+    case "ENCODING":
       return (
         <Badge variant={"scheduled"} className="absolute left-2 top-2 inline-flex items-center gap-1">
           <Calendar size={13} />
@@ -31,7 +31,7 @@ export function ProjectStatusBadge({ status }: ProjectStatusBadgeProps) {
       );
     case "CANCELED":
       return (
-        <Badge variant={"secondary"} className="absolute left-2 top-2 inline-flex items-center gap-1">
+        <Badge variant={"outline"} className="absolute left-2 top-2 inline-flex items-center gap-1">
           <Ban size={13} />
           {status}
         </Badge>

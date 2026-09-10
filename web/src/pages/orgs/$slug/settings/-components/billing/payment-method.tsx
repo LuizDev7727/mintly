@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,22 +8,31 @@ import {
 } from "@/components/ui/card";
 import { NoPaymentMethod } from "./no-payment-method";
 import { PaymentMethodCard } from "./payment-method-card";
-import { AddCreditCardForm } from "./add-credit-card-form";
-
-interface SavedCard {
-  id: string;
-  last4: string;
-  expiry: string;
-}
-
-const MOCK_CARDS: SavedCard[] = [
-  { id: "1", last4: "1234", expiry: "06/2026" },
-  { id: "2", last4: "5678", expiry: "11/2027" },
-];
+import { AddPaymentMethod } from "./add-payment-method";
+import { PaymentMethodsPagination } from "./payment-methods-pagination";
+import { getPaymentMethodsHttp } from "@/http/organization/get-payment-methods.http";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { parseAsInteger, useQueryState } from "nuqs";
 
 export function PaymentMethod() {
-  const [defaultId, setDefaultId] = useState<string>(MOCK_CARDS[0].id);
-  const cards = MOCK_CARDS;
+  const { slug } = useParams({ from: "/orgs/$slug" });
+
+  const [currentPage] = useQueryState(
+    "payment_method_page",
+    parseAsInteger.withDefault(0),
+  );
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["payment-methods", slug, currentPage],
+    queryFn: () =>
+      getPaymentMethodsHttp({ orgSlug: slug, pageIndex: currentPage }),
+    placeholderData: keepPreviousData,
+  });
+
+  const cards = data?.paymentMethods ?? [];
+  const totalPages = data?.meta.totalPages ?? 0;
+  const isEmpty = !isLoading && cards.length === 0;
 
   return (
     <Card className="bg-transparent shadow-none">
@@ -35,23 +43,28 @@ export function PaymentMethod() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 pt-6">
-        {cards.length === 0 ? (
-          <NoPaymentMethod />
-        ) : (
-          cards.map((card) => (
-            <PaymentMethodCard
-              key={card.id}
-              last4={card.last4}
-              expiry={card.expiry}
-              isDefault={card.id === defaultId}
-              onSetDefault={() => setDefaultId(card.id)}
-onRemove={() => {}}
-            />
-          ))
+        {isLoading && (
+          <p className="text-sm text-muted-foreground">
+            Loading payment methods...
+          </p>
         )}
+        {isEmpty && <NoPaymentMethod />}
+        {cards.map((card) => (
+          <PaymentMethodCard
+            key={card.id}
+            last4={card.last4}
+            expiry={`${String(card.expMonth).padStart(2, "0")}/${card.expYear}`}
+            isDefault={card.isDefault}
+          />
+        ))}
       </CardContent>
+      {totalPages > 1 && (
+        <div className="flex justify-end px-6">
+          <PaymentMethodsPagination totalPages={totalPages} />
+        </div>
+      )}
       <CardFooter className="border-t justify-end">
-        <AddCreditCardForm />
+        <AddPaymentMethod />
       </CardFooter>
     </Card>
   );

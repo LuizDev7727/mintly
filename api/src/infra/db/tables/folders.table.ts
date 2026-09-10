@@ -1,21 +1,40 @@
-import { relations } from "drizzle-orm";
-import { type AnyPgColumn, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { relations, sql, type SQL } from "drizzle-orm";
+import {
+  type AnyPgColumn,
+  index,
+  pgTable,
+  text,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
 import { channelsTable } from "./channels.table.ts";
 import { postsTable } from "./posts.table.ts";
+import { tsVector } from "./columns/ts-vector.column.ts";
 
-export const foldersTable = pgTable("folders", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  title: varchar("title").notNull(),
-  channelId: text("channel_id")
-    .notNull()
-    .references(() => channelsTable.id, { onDelete: "cascade" }),
-  parentId: text("parent_id").references((): AnyPgColumn => foldersTable.id, {
-    onDelete: "cascade",
-  }),
-});
+export const foldersTable = pgTable(
+  "folders",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => uuidv7()),
+    title: varchar("title").notNull(),
+    channelId: text("channel_id")
+      .notNull()
+      .references(() => channelsTable.id, { onDelete: "cascade" }),
+    parentId: text("parent_id").references(
+      (): AnyPgColumn => foldersTable.id,
+      {
+        onDelete: "cascade",
+      },
+    ),
+    searchVector: tsVector("search_vector").generatedAlwaysAs(
+      (): SQL => sql`immutable_to_tsvector(coalesce(title, ''))`,
+    ),
+  },
+  (table) => [
+    index("folders_search_vector_idx").using("gin", table.searchVector),
+  ],
+);
 
 export const foldersRelations = relations(foldersTable, ({ one, many }) => ({
   channel: one(channelsTable, {

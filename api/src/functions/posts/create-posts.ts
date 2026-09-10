@@ -41,12 +41,15 @@ export async function createPosts(params:CreatePostsParams) {
 
     const scheduledToDate = scheduledTo ? new Date(scheduledTo) : null;
 
+    const duration = Math.round(file.duration ?? 0);
+
     const [{ postInsertedId }] = await db.insert(postsTable).values({
       channelId,
       description: "",
-      duration: Math.round(file.duration ?? 0),
+      duration,
       title: file.name,
       mimeType: file.type,
+      status: scheduledToDate ? "SCHEDULED" : "PROCESSING",
       size: file.size,
       scheduledTo: scheduledToDate,
       ownerId,
@@ -77,6 +80,7 @@ export async function createPosts(params:CreatePostsParams) {
         socialsToPost: socialsToPost,
         fileUrl,
         size: file.size,
+        duration,
       },
       postId: postInsertedId,
     });

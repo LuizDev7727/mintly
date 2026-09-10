@@ -35,6 +35,7 @@ export type Post = {
   duration: number | null;
   createdAt: string;
   publishAt: string | null;
+  realtimeToken: string | null;
   socialsToPost: {
     id: string;
     socialName: string;
