@@ -1,6 +1,9 @@
 {
     "name": "infra",
     "main": "index.ts",
+    "engines": {
+        "node": ">=24"
+    },
     "devDependencies": {
         "@types/node": "^18",
         "typescript": "^5.0.0"
