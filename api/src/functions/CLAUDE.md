@@ -191,13 +191,23 @@ return { items, nextCursor };
 
 ## Error handling
 
-Throw with a `statusCode` property for errors the HTTP layer should translate:
+Throw a dedicated Error subclass from `src/errors/<nome>.error.ts` for errors the HTTP layer should translate to a specific status code — never a plain `Error` or one with an ad-hoc `statusCode` property tacked on:
 
 ```ts
+// src/errors/resource-not-found.error.ts
+export class ResourceNotFoundError extends Error {
+  constructor(message?: string) {
+    super(message ?? "Resource not found");
+  }
+}
+
+// inside the function
 if (!record) {
-  throw Object.assign(new Error("Resource not found"), { statusCode: 404 });
+  throw new ResourceNotFoundError();
 }
 ```
+
+The global handler (`src/infra/http/routes/error-handler.ts`, registered once in `app.ts`) maps each error class to a status code via `instanceof`. A new error class only takes effect once it's also added there — see `api/CLAUDE.md` for the full pattern.
 
 Only throw when something actually went wrong. Don't add defensive checks for impossible states.
 
