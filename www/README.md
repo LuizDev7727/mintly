@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mintly — Site institucional
 
-## Getting Started
+Site de marketing/institucional do Mintly (Next.js, App Router). Internacionalizado (`en-US`/`pt-BR`), com blog e changelog em MDX.
 
-First, run the development server:
+## Stack
+
+- **Next.js** (App Router) + **MDX** (`@next/mdx`) — conteúdo de blog/changelog é `.mdx` dentro da própria árvore de rotas
+- **Radix UI + Tailwind + class-variance-authority** — UI
+- **@formatjs/intl-localematcher + negotiator** — negociação de idioma pelo header `Accept-Language`
+- **remark/rehype** (`remark-gfm`, `remark-toc`, `remark-mdx-frontmatter`, `rehype-slug`, `rehype-autolink-headings`) — pipeline de processamento do Markdown/MDX (GFM, TOC, frontmatter, âncoras de heading)
+
+## Internacionalização
+
+Locales suportados: `en-US` (default) e `pt-BR`, com dicionários em `src/dictionaries/{en-us,pt-br}.json`.
+
+`src/proxy.ts` roda antes de qualquer rota: se a URL não começa com `/en-US` ou `/pt-BR`, detecta o idioma preferido do visitante (via header `Accept-Language`, matcher do `@formatjs/intl-localematcher`) e redireciona pra `/<locale>/<resto-da-url>`. Todas as rotas de conteúdo ficam sob `src/app/[lang]/`.
+
+## Rodando localmente
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+cd www
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre em [http://localhost:3000](http://localhost:3000) (porta padrão — diferente de `docs/`, que usa 3001, pra rodar os dois ao mesmo tempo).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm build   # build de produção
+pnpm lint    # biome check
+pnpm format  # biome format --write
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Estrutura
 
-## Learn More
+```
+src/
+├── proxy.ts                       # detecção/redirect de locale
+├── dictionaries/                    # en-us.json, pt-br.json
+├── mdx-components.tsx                 # componentes usados dentro de todo .mdx
+├── lib/                                 # helpers (parsing de frontmatter via gray-matter, etc.)
+├── components/                            # componentes de UI compartilhados
+└── app/[lang]/
+    ├── layout.tsx                          # layout raiz por locale
+    ├── page.tsx                             # home
+    ├── (home)/components/                     # componentes específicos da home (ex: features.tsx)
+    ├── blog/
+    │   ├── page.tsx                            # listagem
+    │   ├── (posts)/layout.tsx                   # layout compartilhado dos posts
+    │   └── (posts)/<slug>/page.mdx               # um post = uma pasta com page.mdx
+    └── changelog/
+        ├── page.tsx                            # listagem
+        ├── (entries)/layout.tsx                 # layout compartilhado das entries
+        └── (entries)/<slug>/page.mdx             # uma entry = uma pasta com page.mdx
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Adicionando um post de blog ou entry de changelog
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Criar `src/app/[lang]/blog/(posts)/<slug>/page.mdx` (ou o equivalente em `changelog/(entries)/`) — o slug da pasta vira a URL. `(posts)`/`(entries)` são route groups (não entram na URL), só existem pra dar um `layout.tsx` compartilhado aos posts/entries sem afetar a página de listagem (`blog/page.tsx`).
