@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getDictionary } from "@/app/[lang]/dictionaries";
 
 export const metadata: Metadata = {
   title: "Mintly | Blog",
@@ -52,14 +53,15 @@ async function getPosts(): Promise<Post[]> {
 export default async function Blog() {
 
   const locale = await lang()
+  const dict = await getDictionary()
   const posts = await getPosts()
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6">
       <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 py-24 text-center">
-        <h1 className="text-4xl font-bold tracking-tight md:text-5xl">Blog</h1>
+        <h1 className="text-4xl font-bold tracking-tight md:text-5xl">{dict.blog.title}</h1>
         <p className="text-lg text-muted-foreground">
-          Latest news and updates.
+          {dict.blog.subtitle}
         </p>
       </div>
 

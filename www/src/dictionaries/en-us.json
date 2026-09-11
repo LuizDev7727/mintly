@@ -1,5 +1,55 @@
 {
-  "products": {
-    "cart": "Add to Cart"
+  "header": {
+    "blog": "Blog",
+    "changelog": "Changelog",
+    "signIn": "Sign In",
+    "getStarted": "Get started"
+  },
+  "footer": {
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "rights": "All rights reserved."
+  },
+  "home": {
+    "hero": {
+      "title": "Schedule, publish, and track your content across every channel",
+      "subtitle": "Mintly connects your channels, organizes your content, and tracks growth — all in one place.",
+      "cta": "Get started for free"
+    },
+    "ctaSection": {
+      "title": "Ready to bring your content workflow together?",
+      "subtitle": "Create your free account and start scheduling in minutes.",
+      "cta": "Create your account"
+    }
+  },
+  "features": {
+    "title": "Everything you need to grow your content",
+    "subtitle": "From planning to publishing to reporting, Mintly keeps your whole content workflow in sync.",
+    "items": [
+      {
+        "title": "Schedule & publish",
+        "description": "Plan your content calendar once and let Mintly publish across every channel at exactly the right time."
+      },
+      {
+        "title": "Organize everything",
+        "description": "Keep drafts, assets, and approvals in one workspace instead of scattered across a dozen tools."
+      },
+      {
+        "title": "Track growth",
+        "description": "See what's working with clear analytics on reach, engagement, and audience growth over time."
+      },
+      {
+        "title": "Built for teams",
+        "description": "Invite teammates, assign roles, and collaborate on content without stepping on each other's work."
+      }
+    ]
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Latest news and updates."
+  },
+  "changelog": {
+    "title": "Changelog",
+    "subtitle": "See what's new, improved, and fixed in Mintly."
   }
 }

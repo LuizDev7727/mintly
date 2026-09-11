@@ -4,6 +4,7 @@ import { lang } from "next/root-params";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
+import { getDictionary } from "@/app/[lang]/dictionaries";
 
 export const metadata: Metadata = {
   title: "Mintly | Changelog",
@@ -45,16 +46,17 @@ async function getEntries(): Promise<Entry[]> {
 
 export default async function Changelog() {
   const locale = await lang();
+  const dict = await getDictionary();
   const entries = await getEntries();
 
   return (
     <div className="mx-auto w-full max-w-3xl px-6">
       <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 py-24 text-center">
         <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
-          Changelog
+          {dict.changelog.title}
         </h1>
         <p className="text-lg text-muted-foreground">
-          See what&apos;s new, improved, and fixed in Mintly.
+          {dict.changelog.subtitle}
         </p>
       </div>
 
@@ -62,7 +64,7 @@ export default async function Changelog() {
         {entries.map(({ slug, title, description, publishDate }) => (
           <li key={slug} className="border-t border-border pt-8">
             <time className="text-sm text-muted-foreground">
-              {new Date(publishDate).toLocaleDateString("en-US", {
+              {new Date(publishDate).toLocaleDateString(locale, {
                 dateStyle: "long",
               })}
             </time>

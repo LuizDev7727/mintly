@@ -18,20 +18,20 @@ export async function Header() {
 
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground sm:flex">
           <Link href={`/${locale}/blog`} className="hover:text-foreground">
-            Blog
+            {dict.header.blog}
           </Link>
           <Link href={`/${locale}/changelog`} className="hover:text-foreground">
-            Changelog
+            {dict.header.changelog}
           </Link>
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
           <Button variant="ghost" asChild>
-            <Link href="/auth">Sign In</Link>
+            <Link href="/auth">{dict.header.signIn}</Link>
           </Button>
           <Button asChild>
             <Link href="/auth/sign-up">
-              Get started
+              {dict.header.getStarted}
               <ArrowRight />
             </Link>
           </Button>

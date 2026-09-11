@@ -1,5 +1,55 @@
 {
-  "products": {
-    "cart": "Adicionar no carrinho"
+  "header": {
+    "blog": "Blog",
+    "changelog": "Changelog",
+    "signIn": "Entrar",
+    "getStarted": "Começar agora"
+  },
+  "footer": {
+    "termsOfService": "Termos de Serviço",
+    "privacyPolicy": "Política de Privacidade",
+    "rights": "Todos os direitos reservados."
+  },
+  "home": {
+    "hero": {
+      "title": "Agende, publique e acompanhe seu conteúdo em todos os canais",
+      "subtitle": "A Mintly conecta seus canais, organiza seu conteúdo e acompanha o crescimento — tudo em um só lugar.",
+      "cta": "Comece grátis"
+    },
+    "ctaSection": {
+      "title": "Pronto para unificar seu fluxo de conteúdo?",
+      "subtitle": "Crie sua conta gratuita e comece a agendar em minutos.",
+      "cta": "Criar sua conta"
+    }
+  },
+  "features": {
+    "title": "Tudo o que você precisa para fazer seu conteúdo crescer",
+    "subtitle": "Do planejamento à publicação e aos relatórios, a Mintly mantém todo o seu fluxo de conteúdo sincronizado.",
+    "items": [
+      {
+        "title": "Agende & publique",
+        "description": "Planeje seu calendário de conteúdo uma vez e deixe a Mintly publicar em todos os canais no momento certo."
+      },
+      {
+        "title": "Organize tudo",
+        "description": "Mantenha rascunhos, materiais e aprovações em um único espaço, em vez de espalhados por dezenas de ferramentas."
+      },
+      {
+        "title": "Acompanhe o crescimento",
+        "description": "Veja o que está funcionando com análises claras de alcance, engajamento e crescimento de audiência ao longo do tempo."
+      },
+      {
+        "title": "Feito para equipes",
+        "description": "Convide colegas de equipe, defina papéis e colabore no conteúdo sem atropelar o trabalho uns dos outros."
+      }
+    ]
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Últimas notícias e atualizações."
+  },
+  "changelog": {
+    "title": "Changelog",
+    "subtitle": "Veja o que há de novo, melhorado e corrigido na Mintly."
   }
 }
