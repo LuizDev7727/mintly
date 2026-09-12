@@ -182,6 +182,7 @@ jobs:
         run: pnpm build
         env:
           VITE_API_BASE_URL: http://localhost:3000
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           VITE_NODE_ENV: production
 
       - name: Run E2E tests
@@ -189,6 +190,7 @@ jobs:
         run: pnpm test ${{ needs.detect.outputs.e2e_files }}
         env:
           VITE_API_BASE_URL: http://localhost:3000
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           VITE_NODE_ENV: production
 
       - uses: actions/upload-artifact@v4
