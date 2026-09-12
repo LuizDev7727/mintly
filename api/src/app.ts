@@ -117,7 +117,15 @@ server.register(fastifyCookie);
 server.register(fastifyCors, {
   origin: await getInfisicalSecret({ secretName: "ALLOWED_ORIGIN" }),
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "sentry-trace",
+    "baggage",
+    "traceparent",
+    "tracestate",
+  ],
   credentials: true,
 });
 
