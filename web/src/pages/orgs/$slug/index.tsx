@@ -39,9 +39,9 @@ function OverviewPage() {
     currency: "USD",
   }).format(totalUsage / 100);
 
-
   return (
     <div className="space-y-4 h-full">
+
       <div>
         <h1 className="text-xl font-medium">Overview</h1>
         <p className="text-sm">Here's what's hapenning with your organization today.</p>

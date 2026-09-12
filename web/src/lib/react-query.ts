@@ -9,6 +9,7 @@ export const queryClient = new QueryClient({
     queries: {
       retry(failureCount) {
         if (failureCount >= 3) {
+
           if (showNetworkFailureError === false) {
             showNetworkFailureError = true;
 
@@ -34,6 +35,7 @@ export const queryClient = new QueryClient({
         if (isAxiosError(error)) {
           const message =
             error.response?.data?.message ?? "Something went wrong";
+
           toast(message);
         }
       },
