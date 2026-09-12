@@ -1,5 +1,85 @@
 {
   "products": {
     "cart": "Add to Cart"
+  },
+  "home": {
+    "meta": {
+      "title": "Home | Mintly",
+      "description": "Mintly connects your channels, organizes your content, and tracks growth — all in one place."
+    },
+    "hero": {
+      "title": "Schedule, publish, and track your content across every channel",
+      "titleVariantB": "Grow every channel from one simple dashboard",
+      "subtitle": "Mintly connects your channels, organizes your content, and tracks growth — all in one place.",
+      "cta": "Get started for free"
+    },
+    "features": {
+      "title": "Everything you need to grow your content",
+      "subtitle": "From planning to publishing to reporting, Mintly keeps your whole content workflow in sync.",
+      "items": [
+        {
+          "title": "Schedule & publish",
+          "description": "Plan your content calendar once and let Mintly publish across every channel at exactly the right time."
+        },
+        {
+          "title": "Organize everything",
+          "description": "Keep drafts, assets, and approvals in one workspace instead of scattered across a dozen tools."
+        },
+        {
+          "title": "Track growth",
+          "description": "See what's working with clear analytics on reach, engagement, and audience growth over time."
+        },
+        {
+          "title": "Built for teams",
+          "description": "Invite teammates, assign roles, and collaborate on content without stepping on each other's work."
+        }
+      ]
+    },
+    "pricing": {
+      "title": "Simple, pay-as-you-go pricing",
+      "subtitle": "No monthly fees, no seats, no tiers. You only pay for what you actually process — at cost, with no markup.",
+      "planTitle": "Pay as you go",
+      "planDescription": "Start for free. Usage is billed monthly, based on what your organization processes and publishes.",
+      "included": [
+        "AI clip generation, at cost — no markup",
+        "Video transcription and captioning",
+        "Thumbnail and SEO generation",
+        "Storage for your projects and posts",
+        "Unlimited channels and team members"
+      ],
+      "cta": "Get started for free",
+      "note": "No credit card required"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "subtitle": "Everything you need to know before getting started.",
+      "items": [
+        {
+          "question": "Which social networks does Mintly support?",
+          "answer": "Mintly connects with YouTube, TikTok, and Instagram today, with more channels on the way."
+        },
+        {
+          "question": "Do I need a credit card to start?",
+          "answer": "No. You can create a free account and start organizing your content right away — no card required."
+        },
+        {
+          "question": "Can I invite my team?",
+          "answer": "Yes. You can invite teammates to your organization, assign roles, and collaborate on the same content workspace."
+        },
+        {
+          "question": "How does billing work?",
+          "answer": "Mintly uses usage-based billing — you only pay for what your organization actually processes and publishes."
+        },
+        {
+          "question": "Can I cancel anytime?",
+          "answer": "Yes, you can cancel your plan at any time from your organization settings, no questions asked."
+        }
+      ]
+    },
+    "ctaFinal": {
+      "title": "Ready to bring your content workflow together?",
+      "subtitle": "Create your free account and start scheduling in minutes.",
+      "cta": "Create your account"
+    }
   }
 }

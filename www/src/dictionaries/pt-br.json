@@ -1,5 +1,85 @@
 {
   "products": {
     "cart": "Adicionar no carrinho"
+  },
+  "home": {
+    "meta": {
+      "title": "Início | Mintly",
+      "description": "O Mintly conecta seus canais, organiza seu conteúdo e acompanha o crescimento — tudo em um só lugar."
+    },
+    "hero": {
+      "title": "Agende, publique e acompanhe seu conteúdo em todos os canais",
+      "titleVariantB": "Cresça em todos os canais a partir de um único painel",
+      "subtitle": "O Mintly conecta seus canais, organiza seu conteúdo e acompanha o crescimento — tudo em um só lugar.",
+      "cta": "Comece gratuitamente"
+    },
+    "features": {
+      "title": "Tudo que você precisa para crescer seu conteúdo",
+      "subtitle": "Do planejamento à publicação e aos relatórios, o Mintly mantém todo o seu fluxo de conteúdo sincronizado.",
+      "items": [
+        {
+          "title": "Agende e publique",
+          "description": "Planeje seu calendário de conteúdo uma vez e deixe o Mintly publicar em todos os canais no momento certo."
+        },
+        {
+          "title": "Organize tudo",
+          "description": "Mantenha rascunhos, arquivos e aprovações em um só espaço de trabalho, em vez de espalhados em várias ferramentas."
+        },
+        {
+          "title": "Acompanhe o crescimento",
+          "description": "Veja o que está funcionando com análises claras de alcance, engajamento e crescimento de audiência ao longo do tempo."
+        },
+        {
+          "title": "Feito para equipes",
+          "description": "Convide colegas de equipe, atribua papéis e colabore no conteúdo sem atropelar o trabalho um do outro."
+        }
+      ]
+    },
+    "pricing": {
+      "title": "Preço simples, pague pelo uso",
+      "subtitle": "Sem mensalidade, sem assentos, sem planos. Você paga só pelo que realmente processa — pelo custo, sem markup.",
+      "planTitle": "Pague pelo uso",
+      "planDescription": "Comece de graça. O uso é cobrado mensalmente, com base no que sua organização processa e publica.",
+      "included": [
+        "Geração de clipes por IA, pelo custo — sem markup",
+        "Transcrição e legendas de vídeo",
+        "Geração de thumbnail e SEO",
+        "Armazenamento para seus projetos e posts",
+        "Canais e membros de equipe ilimitados"
+      ],
+      "cta": "Comece gratuitamente",
+      "note": "Não é necessário cartão de crédito"
+    },
+    "faq": {
+      "title": "Perguntas frequentes",
+      "subtitle": "Tudo que você precisa saber antes de começar.",
+      "items": [
+        {
+          "question": "Quais redes sociais o Mintly suporta?",
+          "answer": "O Mintly se conecta hoje com YouTube, TikTok e Instagram, com mais canais a caminho."
+        },
+        {
+          "question": "Preciso de cartão de crédito para começar?",
+          "answer": "Não. Você pode criar uma conta gratuita e começar a organizar seu conteúdo imediatamente — sem cartão."
+        },
+        {
+          "question": "Posso convidar minha equipe?",
+          "answer": "Sim. Você pode convidar colegas para sua organização, atribuir papéis e colaborar no mesmo espaço de conteúdo."
+        },
+        {
+          "question": "Como funciona a cobrança?",
+          "answer": "O Mintly usa cobrança baseada em uso — você só paga pelo que sua organização realmente processa e publica."
+        },
+        {
+          "question": "Posso cancelar quando quiser?",
+          "answer": "Sim, você pode cancelar seu plano a qualquer momento nas configurações da organização, sem perguntas."
+        }
+      ]
+    },
+    "ctaFinal": {
+      "title": "Pronto para unificar seu fluxo de conteúdo?",
+      "subtitle": "Crie sua conta gratuita e comece a agendar em minutos.",
+      "cta": "Criar sua conta"
+    }
   }
 }
