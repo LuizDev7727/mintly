@@ -11,7 +11,7 @@ type MobileNavProps = {
 };
 
 export function MobileNav({ links }: MobileNavProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
     <div className="sm:hidden">
