@@ -28,13 +28,13 @@ export function FolderCard({ folder }: FolderCardProps) {
   const itemsLabel = `${folder.postsCount} ${folder.postsCount === 1 ? "item" : "items"}`;
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl bg-card p-4 transition-colors hover:bg-card/70">
+    <div className="flex flex-col gap-2 rounded-xl bg-card p-3 transition-colors hover:bg-card/70">
       <div
         onClick={handleSelectFolder}
         className="flex cursor-pointer items-start justify-between"
       >
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-          <FolderIcon className="size-5" />
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+          <FolderIcon className="size-4" />
         </div>
 
         {folder.isStarred && (
@@ -43,7 +43,7 @@ export function FolderCard({ folder }: FolderCardProps) {
       </div>
 
       <div onClick={handleSelectFolder} className="min-w-0 cursor-pointer">
-        <p className="truncate text-base font-semibold text-foreground">
+        <p className="truncate text-sm font-semibold text-foreground">
           {folder.title}
         </p>
       </div>
