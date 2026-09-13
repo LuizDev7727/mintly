@@ -1,4 +1,3 @@
-import type { Folder } from "@/types/folder";
 import { api } from "../api";
 
 type GetStarredFoldersParams = {
@@ -6,8 +5,14 @@ type GetStarredFoldersParams = {
   channelId: string;
 };
 
+type StarredFolder = {
+  id: string;
+  title: string;
+  postsCount: number;
+};
+
 export type GetStarredFoldersResponse = {
-  folders: Folder[];
+  folders: StarredFolder[];
 };
 
 export async function getStarredFoldersHttp(

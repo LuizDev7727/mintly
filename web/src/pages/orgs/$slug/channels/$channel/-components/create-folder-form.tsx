@@ -53,6 +53,7 @@ export function CreateFolderForm() {
         id: folderId,
         title,
         postsCount: 0,
+        isStarred: false,
         parent: currentFolderId
           ? { id: currentFolderId, title: "precisamos-pegar-title" }
           : null,

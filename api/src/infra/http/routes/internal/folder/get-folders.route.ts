@@ -28,6 +28,7 @@ export const getFoldersRoute: FastifyPluginAsyncZod = async (app) => {
                 id: z.string(),
                 title: z.string(),
                 postsCount: z.number(),
+                isStarred: z.boolean(),
               }),
             ),
             parent: z

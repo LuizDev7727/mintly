@@ -31,6 +31,7 @@ import { setStarredFolderRoute } from "./infra/http/routes/internal/folder/set-s
 import { removeStarredFolderRoute } from "./infra/http/routes/internal/folder/remove-starred-folder.route.ts";
 import { getOrganizationOverviewRoute } from "./infra/http/routes/internal/organization/get-overview.route.ts";
 import { getWebhooksOverviewRoute } from "./infra/http/routes/internal/webhook/get-webhooks-overview.route.ts";
+import { getWebhookRoute } from "./infra/http/routes/internal/webhook/get-webhook.route.ts";
 import { getAvailableEventsRoute } from "./infra/http/routes/internal/webhook/get-available-events.route.ts";
 import { createWebhookRoute } from "./infra/http/routes/internal/webhook/create-webhook.route.ts";
 import { handleWebhookEventRoute } from "./infra/http/routes/internal/webhook/handle-webhook-event.route.ts";
@@ -117,7 +118,15 @@ server.register(fastifyCookie);
 server.register(fastifyCors, {
   origin: await getInfisicalSecret({ secretName: "ALLOWED_ORIGIN" }),
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "sentry-trace",
+    "baggage",
+    "traceparent",
+    "tracestate",
+  ],
   credentials: true,
 });
 
@@ -138,6 +147,7 @@ server.register(setStarredFolderRoute);
 server.register(removeStarredFolderRoute);
 server.register(getOrganizationOverviewRoute);
 server.register(getWebhooksOverviewRoute);
+server.register(getWebhookRoute);
 server.register(getAvailableEventsRoute);
 server.register(createWebhookRoute);
 server.register(handleWebhookEventRoute);

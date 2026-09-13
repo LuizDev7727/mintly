@@ -1,6 +1,7 @@
 import { relations, sql, type SQL } from "drizzle-orm";
 import {
   type AnyPgColumn,
+  boolean,
   index,
   pgTable,
   text,
@@ -27,6 +28,7 @@ export const foldersTable = pgTable(
         onDelete: "cascade",
       },
     ),
+    isStarred: boolean("is_starred").default(false).notNull(),
     searchVector: tsVector("search_vector").generatedAlwaysAs(
       (): SQL => sql`immutable_to_tsvector(coalesce(title, ''))`,
     ),
