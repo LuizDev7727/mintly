@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { formatDistanceToNow } from "date-fns"
-import { Eye, Globe, KeyRound, MoreHorizontal, Pencil, Trash } from "lucide-react"
+import { Globe, KeyRound, MoreHorizontal, Pencil, Trash } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,6 +14,7 @@ import type { Webhook } from "@/types/webhook"
 import { CreateWebhookDialog } from "./create-webhook-dialog"
 import { WebhookDeliveriesSheet } from "./webhook-deliveries-sheet"
 import { WebhookSigningSecretDialog } from "./webhook-signing-secret-dialog"
+import { Link, useParams } from "@tanstack/react-router"
 
 interface WebhookEndpointsSectionProps {
   webhooks: Webhook[]
@@ -22,6 +23,10 @@ interface WebhookEndpointsSectionProps {
 export function WebhookEndpointsSection({
   webhooks,
 }: WebhookEndpointsSectionProps) {
+
+  const { slug } = useParams({
+    from: "/orgs/$slug"
+  })
   const [secretDialogEndpoint, setSecretDialogEndpoint] =
     useState<Webhook | null>(null)
   const [deliveriesEndpoint, setDeliveriesEndpoint] =
@@ -40,13 +45,13 @@ export function WebhookEndpointsSection({
             No webhook endpoints created yet.
           </p>
         )}
-        {webhooks.map((endpoint) => (
-          <div key={endpoint.id} className="rounded-md border p-3">
+        {webhooks.map((webhook) => (
+          <div key={webhook.id} className="rounded-md border p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
                 <Globe className="size-4 shrink-0 text-muted-foreground" />
                 <span className="truncate font-mono text-xs">
-                  {endpoint.url}
+                  {webhook.url}
                 </span>
               </div>
               <div className="flex shrink-0 items-center gap-1">
@@ -60,20 +65,17 @@ export function WebhookEndpointsSection({
                     <DropdownMenuItem
                       onSelect={(event) => {
                         event.preventDefault()
-                        setDeliveriesEndpoint(endpoint)
-                      }}
-                    >
-                      <Eye className="size-3.5" />
-                      View deliveries
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onSelect={(event) => {
-                        event.preventDefault()
-                        setSecretDialogEndpoint(endpoint)
+                        setSecretDialogEndpoint(webhook)
                       }}
                     >
                       <KeyRound className="size-3.5" />
                       View signing secret
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/orgs/$slug/webhooks/$webhookId" params={{ slug, webhookId: webhook.id }}>
+                        <Pencil className="size-3.5" />
+                        Details
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <Pencil className="size-3.5" />
@@ -89,7 +91,7 @@ export function WebhookEndpointsSection({
             </div>
 
             <div className="mt-2 flex flex-wrap gap-1">
-              {endpoint.triggers.map((trigger) => (
+              {webhook.triggers.map((trigger) => (
                 <Badge key={trigger} variant="outline" className="font-mono text-[10px]">
                   {trigger}
                 </Badge>
@@ -98,19 +100,19 @@ export function WebhookEndpointsSection({
 
             <p className="mt-2 text-xs text-muted-foreground">
               Last delivery:{" "}
-              {endpoint.lastLog ? (
+              {webhook.lastLog ? (
                 <span
                   className={cn(
-                    endpoint.lastLog.status === "FAILED" && "text-destructive",
+                    webhook.lastLog.status === "FAILED" && "text-destructive",
                   )}
                 >
-                  {endpoint.lastLog.status === "FAILED"
+                  {webhook.lastLog.status === "FAILED"
                     ? "Failed"
-                    : endpoint.lastLog.status === "PENDING"
+                    : webhook.lastLog.status === "PENDING"
                       ? "Pending"
                       : "Success"}{" "}
                   ·{" "}
-                  {formatDistanceToNow(new Date(endpoint.lastLog.createdAt), {
+                  {formatDistanceToNow(new Date(webhook.lastLog.createdAt), {
                     addSuffix: true,
                   })}
                 </span>
