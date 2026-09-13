@@ -1,5 +1,6 @@
+import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
-import { starredFoldersTable } from "@/infra/db/tables/starred-folders.table.ts";
+import { foldersTable } from "@/infra/db/tables/folders.table.ts";
 import { and, eq } from "drizzle-orm";
 
 type SetStarredFolderParams = {
@@ -16,25 +17,20 @@ export async function setStarredFolder(
 ): Promise<SetStarredFolderResponse> {
   const { folderId, channelId } = params;
 
-  const [existing] = await db
-    .select({ id: starredFoldersTable.id })
-    .from(starredFoldersTable)
+  const [folder] = await db
+    .update(foldersTable)
+    .set({ isStarred: true })
     .where(
       and(
-        eq(starredFoldersTable.folderId, folderId),
-        eq(starredFoldersTable.channelId, channelId),
+        eq(foldersTable.id, folderId),
+        eq(foldersTable.channelId, channelId),
       ),
     )
-    .limit(1);
+    .returning({ id: foldersTable.id });
 
-  if (existing) {
-    return { starredFolderId: existing.id };
+  if (!folder) {
+    throw new ResourceNotFoundError(`Folder with id ${folderId} not found`);
   }
 
-  const [{ starredFolderId }] = await db
-    .insert(starredFoldersTable)
-    .values({ folderId, channelId })
-    .returning({ starredFolderId: starredFoldersTable.id });
-
-  return { starredFolderId };
+  return { starredFolderId: folder.id };
 }
