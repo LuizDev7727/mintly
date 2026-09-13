@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { CookieBanner } from "@/components/cookie-banner";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({
   variable: "--font-inter",
@@ -15,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export async function generateStaticParams() {
-  return [{ lang: "en-US" }, { lang: "pt-BR" }];
+  return [{ lang: "en" }, { lang: "pt" }];
 }
 
 export default async function RootLayout({
@@ -26,6 +29,12 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} className={`${inter.variable} h-full antialiased dark`}>
+      {process.env.NODE_ENV === "production" && (
+        <>
+          <Analytics />
+          <SpeedInsights/>
+        </>
+      )}
       <body className="min-h-full flex flex-col relative">
         <div id="home" className="absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-size-[3rem_3rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] h-screen" />
 
@@ -34,6 +43,8 @@ export default async function RootLayout({
         <div className="relative z-0 flex flex-1 flex-col">{children}</div>
 
         <Footer />
+
+        <CookieBanner />
       </body>
     </html>
   );

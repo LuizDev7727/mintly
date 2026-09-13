@@ -1,8 +1,7 @@
 import { db } from "@/infra/db/client.ts";
 import { foldersTable } from "@/infra/db/tables/folders.table.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
-import { starredFoldersTable } from "@/infra/db/tables/starred-folders.table.ts";
-import { count, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 
 type GetStarredFoldersParams = {
   channelId: string;
@@ -29,13 +28,14 @@ export async function getStarredFolders(
       title: foldersTable.title,
       postsCount: count(postsTable.id),
     })
-    .from(starredFoldersTable)
-    .innerJoin(
-      foldersTable,
-      eq(starredFoldersTable.folderId, foldersTable.id),
-    )
+    .from(foldersTable)
     .leftJoin(postsTable, eq(postsTable.folderId, foldersTable.id))
-    .where(eq(starredFoldersTable.channelId, channelId))
+    .where(
+      and(
+        eq(foldersTable.isStarred, true),
+        eq(foldersTable.channelId, channelId),
+      ),
+    )
     .groupBy(foldersTable.id);
 
   return { folders };

@@ -211,6 +211,13 @@
       "when": 1788780730733,
       "tag": "0029_charming_firebrand",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1789301685452,
+      "tag": "0030_quiet_lifeguard",
+      "breakpoints": true
     }
   ]
 }

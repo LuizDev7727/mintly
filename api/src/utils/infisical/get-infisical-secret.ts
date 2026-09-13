@@ -20,6 +20,7 @@ type Env = {
   TRIGGER_SECRET_KEY: string;
   MODAL_URL: string;
   MODAL_TRANSCRIBE_AUDIO_URL: string;
+  MODAL_GENERATE_TEXT_URL: string;
   TIKTOK_CLIENT_KEY: string;
   TIKTOK_CLIENT_SECRET: string;
   TIKTOK_REDIRECT_URI: string;

@@ -1,4 +1,4 @@
-import { FolderIcon, MoreHorizontal } from "lucide-react";
+import { FolderIcon, MoreHorizontal, Star } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,42 +25,56 @@ export function FolderCard({ folder }: FolderCardProps) {
     setSelectedFolderName(folder.title);
   }
 
+  const itemsLabel = `${folder.postsCount} ${folder.postsCount === 1 ? "item" : "items"}`;
+
   return (
-    <div className="flex items-center justify-between rounded-lg border border-border p-3 transition-all hover:border-primary/40">
+    <div className="flex flex-col gap-2 rounded-xl bg-card p-3 transition-colors hover:bg-card/70">
       <div
         onClick={handleSelectFolder}
-        className="w-full group flex cursor-pointer items-center gap-x-3 "
+        className="flex cursor-pointer items-start justify-between"
       >
-        <div className="shrink-0 rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary/20">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
           <FolderIcon className="size-4" />
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="truncate text-sm font-semibold">{folder.title}</p>
-          <p className="text-xs text-muted-foreground">
-            {folder.postsCount} posts
-          </p>
-        </div>
+
+        {folder.isStarred && (
+          <Star className="size-4 shrink-0 fill-foreground text-foreground" />
+        )}
       </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger className="cursor-pointer">
-          <MoreHorizontal className="size-4" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <StarFolderButton
-            folderId={folder.id}
-            folderTitle={folder.title}
-            folderPostsCount={folder.postsCount}
-          />
-          <DropdownMenuSeparator />
-          <UpdateFolderNameDialog
-            folderId={folder.id}
-            folderName={folder.title}
-          />
-          <DropdownMenuSeparator />
-          <DeleteFolderDialog folderId={folder.id} folderName={folder.title} />
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div onClick={handleSelectFolder} className="min-w-0 cursor-pointer">
+        <p className="truncate text-sm font-semibold text-foreground">
+          {folder.title}
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-muted-foreground">{itemsLabel}</p>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger className="cursor-pointer rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground">
+            <MoreHorizontal className="size-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <StarFolderButton
+              folderId={folder.id}
+              folderTitle={folder.title}
+              folderPostsCount={folder.postsCount}
+              folderIsStarred={folder.isStarred}
+            />
+            <DropdownMenuSeparator />
+            <UpdateFolderNameDialog
+              folderId={folder.id}
+              folderName={folder.title}
+            />
+            <DropdownMenuSeparator />
+            <DeleteFolderDialog
+              folderId={folder.id}
+              folderName={folder.title}
+            />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 }

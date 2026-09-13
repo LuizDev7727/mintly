@@ -25,6 +25,7 @@ import { Route as OrgsSlugMembersIndexRouteImport } from './pages/orgs/$slug/mem
 import { Route as OrgsSlugChannelsIndexRouteImport } from './pages/orgs/$slug/channels/index'
 import { Route as OrgsSlugActivitiesIndexRouteImport } from './pages/orgs/$slug/activities/index'
 import { Route as OrgsSlugChannelsChannelLayoutRouteImport } from './pages/orgs/$slug/channels/$channel/layout'
+import { Route as OrgsSlugWebhooksWebhookIdIndexRouteImport } from './pages/orgs/$slug/webhooks/$webhookId/index'
 import { Route as OrgsSlugChannelsChannelIndexRouteImport } from './pages/orgs/$slug/channels/$channel/index'
 import { Route as OrgsSlugChannelsChannelSettingsIndexRouteImport } from './pages/orgs/$slug/channels/$channel/settings/index'
 import { Route as OrgsSlugChannelsChannelProjectsIndexRouteImport } from './pages/orgs/$slug/channels/$channel/projects/index'
@@ -115,6 +116,12 @@ const OrgsSlugChannelsChannelLayoutRoute =
     path: '/channels/$channel',
     getParentRoute: () => OrgsSlugLayoutRoute,
   } as any)
+const OrgsSlugWebhooksWebhookIdIndexRoute =
+  OrgsSlugWebhooksWebhookIdIndexRouteImport.update({
+    id: '/webhooks/$webhookId/',
+    path: '/webhooks/$webhookId/',
+    getParentRoute: () => OrgsSlugLayoutRoute,
+  } as any)
 const OrgsSlugChannelsChannelIndexRoute =
   OrgsSlugChannelsChannelIndexRouteImport.update({
     id: '/',
@@ -182,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/orgs/$slug/usage/': typeof OrgsSlugUsageIndexRoute
   '/orgs/$slug/webhooks/': typeof OrgsSlugWebhooksIndexRoute
   '/orgs/$slug/channels/$channel/': typeof OrgsSlugChannelsChannelIndexRoute
+  '/orgs/$slug/webhooks/$webhookId/': typeof OrgsSlugWebhooksWebhookIdIndexRoute
   '/orgs/$slug/channels/$channel/$postId/': typeof OrgsSlugChannelsChannelPostIdIndexRoute
   '/orgs/$slug/channels/$channel/ai/': typeof OrgsSlugChannelsChannelAiIndexRoute
   '/orgs/$slug/channels/$channel/create-upload/': typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
@@ -205,6 +213,7 @@ export interface FileRoutesByTo {
   '/orgs/$slug/usage': typeof OrgsSlugUsageIndexRoute
   '/orgs/$slug/webhooks': typeof OrgsSlugWebhooksIndexRoute
   '/orgs/$slug/channels/$channel': typeof OrgsSlugChannelsChannelIndexRoute
+  '/orgs/$slug/webhooks/$webhookId': typeof OrgsSlugWebhooksWebhookIdIndexRoute
   '/orgs/$slug/channels/$channel/$postId': typeof OrgsSlugChannelsChannelPostIdIndexRoute
   '/orgs/$slug/channels/$channel/ai': typeof OrgsSlugChannelsChannelAiIndexRoute
   '/orgs/$slug/channels/$channel/create-upload': typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
@@ -232,6 +241,7 @@ export interface FileRoutesById {
   '/orgs/$slug/usage/': typeof OrgsSlugUsageIndexRoute
   '/orgs/$slug/webhooks/': typeof OrgsSlugWebhooksIndexRoute
   '/orgs/$slug/channels/$channel/': typeof OrgsSlugChannelsChannelIndexRoute
+  '/orgs/$slug/webhooks/$webhookId/': typeof OrgsSlugWebhooksWebhookIdIndexRoute
   '/orgs/$slug/channels/$channel/$postId/': typeof OrgsSlugChannelsChannelPostIdIndexRoute
   '/orgs/$slug/channels/$channel/ai/': typeof OrgsSlugChannelsChannelAiIndexRoute
   '/orgs/$slug/channels/$channel/create-upload/': typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/usage/'
     | '/orgs/$slug/webhooks/'
     | '/orgs/$slug/channels/$channel/'
+    | '/orgs/$slug/webhooks/$webhookId/'
     | '/orgs/$slug/channels/$channel/$postId/'
     | '/orgs/$slug/channels/$channel/ai/'
     | '/orgs/$slug/channels/$channel/create-upload/'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/usage'
     | '/orgs/$slug/webhooks'
     | '/orgs/$slug/channels/$channel'
+    | '/orgs/$slug/webhooks/$webhookId'
     | '/orgs/$slug/channels/$channel/$postId'
     | '/orgs/$slug/channels/$channel/ai'
     | '/orgs/$slug/channels/$channel/create-upload'
@@ -309,6 +321,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/usage/'
     | '/orgs/$slug/webhooks/'
     | '/orgs/$slug/channels/$channel/'
+    | '/orgs/$slug/webhooks/$webhookId/'
     | '/orgs/$slug/channels/$channel/$postId/'
     | '/orgs/$slug/channels/$channel/ai/'
     | '/orgs/$slug/channels/$channel/create-upload/'
@@ -441,6 +454,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgsSlugChannelsChannelLayoutRouteImport
       parentRoute: typeof OrgsSlugLayoutRoute
     }
+    '/orgs/$slug/webhooks/$webhookId/': {
+      id: '/orgs/$slug/webhooks/$webhookId/'
+      path: '/webhooks/$webhookId'
+      fullPath: '/orgs/$slug/webhooks/$webhookId/'
+      preLoaderRoute: typeof OrgsSlugWebhooksWebhookIdIndexRouteImport
+      parentRoute: typeof OrgsSlugLayoutRoute
+    }
     '/orgs/$slug/channels/$channel/': {
       id: '/orgs/$slug/channels/$channel/'
       path: '/'
@@ -557,6 +577,7 @@ interface OrgsSlugLayoutRouteChildren {
   OrgsSlugSettingsIndexRoute: typeof OrgsSlugSettingsIndexRoute
   OrgsSlugUsageIndexRoute: typeof OrgsSlugUsageIndexRoute
   OrgsSlugWebhooksIndexRoute: typeof OrgsSlugWebhooksIndexRoute
+  OrgsSlugWebhooksWebhookIdIndexRoute: typeof OrgsSlugWebhooksWebhookIdIndexRoute
 }
 
 const OrgsSlugLayoutRouteChildren: OrgsSlugLayoutRouteChildren = {
@@ -569,6 +590,7 @@ const OrgsSlugLayoutRouteChildren: OrgsSlugLayoutRouteChildren = {
   OrgsSlugSettingsIndexRoute: OrgsSlugSettingsIndexRoute,
   OrgsSlugUsageIndexRoute: OrgsSlugUsageIndexRoute,
   OrgsSlugWebhooksIndexRoute: OrgsSlugWebhooksIndexRoute,
+  OrgsSlugWebhooksWebhookIdIndexRoute: OrgsSlugWebhooksWebhookIdIndexRoute,
 }
 
 const OrgsSlugLayoutRouteWithChildren = OrgsSlugLayoutRoute._addFileChildren(

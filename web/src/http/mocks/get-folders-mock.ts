@@ -6,6 +6,7 @@ export const folders = Array.from({ length: 36 }, () => ({
   id: faker.string.uuid(),
   title: faker.lorem.words({ min: 1, max: 3 }),
   postsCount: faker.number.int({ min: 0, max: 120 }),
+  isStarred: faker.datatype.boolean(),
 }));
 
 export const getFoldersMock = http.get<
@@ -25,6 +26,7 @@ export const getFoldersMock = http.get<
           id: faker.string.uuid(),
           title: faker.lorem.words({ min: 1, max: 3 }),
           postsCount: faker.number.int({ min: 0, max: 120 }),
+          isStarred: faker.datatype.boolean(),
         }))
       : folders;
 

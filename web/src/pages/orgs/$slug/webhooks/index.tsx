@@ -53,7 +53,7 @@ function WebhooksPage() {
           <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2">
               <RecentDeliveriesSection deliveries={data.recentDeliveries} />
-              <QuickReferenceSection />
+              <WebhookEndpointsSection webhooks={data.webhooks} />
             </div>
 
             <div className="flex flex-col gap-4">
@@ -63,8 +63,8 @@ function WebhooksPage() {
                   Manage your API credentials and endpoints.
                 </p>
               </div>
-              <ApiKeySection apiKey={data.apiKey} />
-              <WebhookEndpointsSection webhooks={data.webhooks} />
+                <ApiKeySection apiKey={data.apiKey} />
+                <QuickReferenceSection />
             </div>
           </div>
         </>
