@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Check, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 
 interface CopyButtonProps
   extends Omit<React.ComponentProps<typeof Button>, "onClick"> {
@@ -21,6 +22,7 @@ export function CopyButton({
   function handleCopy() {
     navigator.clipboard.writeText(value)
     setCopied(true)
+    toast("Text copied successfuly.")
     setTimeout(() => setCopied(false), 1500)
   }
 
@@ -34,7 +36,7 @@ export function CopyButton({
       aria-label={children ? undefined : "Copy to clipboard"}
       {...props}
     >
-      {copied ? <Check className="text-emerald-500" /> : <Copy />}
+      {copied ? <Check /> : <Copy />}
       {children}
     </Button>
   )
