@@ -1,6 +1,6 @@
 # py/ — Serviços Modal
 
-Dois serviços Python independentes, hospedados no **Modal** (GPU sob demanda), fora do processo principal da API (`api/`). Cada um é um app Modal separado, com sua própria imagem/deploy — não há um pacote Python compartilhado entre eles (por isso algumas coisas, como a tabela de preço de GPU, aparecem duplicadas nos dois arquivos).
+Três serviços Python independentes, hospedados no **Modal** (GPU sob demanda), fora do processo principal da API (`api/`). Cada um é um app Modal separado, com sua própria imagem/deploy — não há um pacote Python compartilhado entre eles (por isso algumas coisas, como a tabela de preço de GPU, aparecem duplicadas nos arquivos).
 
 São chamados pelo Node (`api/src/infra/trigger/*.task.ts`) via HTTP, usando o padrão de waitpoint do Trigger.dev (ver `api/src/infra/trigger/CLAUDE.md`) — o Node dispara a chamada, gera um token de espera e fica suspenso até o Modal chamar de volta via `callback_url`.
 
@@ -26,6 +26,14 @@ Transcrição de áudio via **WhisperX** (substituiu um serviço equivalente no 
 Classe `WhisperXService` (`@app.cls(gpu="A10G", ...)`). Os pesos do modelo ficam num `modal.Volume` (`whisperx-models`) montado em `/cache`, pra não baixar de novo a cada cold start — **importante**: `HF_HOME`/`TORCH_HOME` precisam ser setados *antes* de importar `whisperx` (feito em `@modal.enter()`), senão o download de modelo ignora o Volume.
 
 Secret do Modal: `mintly-transcribe-audio-secret` (`HF_TOKEN`, necessário só quando `diarize=True` vem na request).
+
+### `generate_text.py` — `mintly-generate-text`
+
+Geração de texto via **Qwen2.5 7B** (`Qwen/Qwen2.5-7B-Instruct`, `transformers` — Qwen2.5 não tem variante 8B), substituindo o Gemini (`gemini-2.5-flash-lite`) na geração de SEO — ver `api/src/infra/trigger/seo-enrichment.task.ts`. O Gemini vinha apresentando erros de sobrecarga (503) que quebravam o pipeline; a task manda um `prompt` já pronto e usa o `text` retornado.
+
+Classe `TextGenerationService` (`@app.cls(gpu="A10G", ...)`). Os pesos do modelo ficam num `modal.Volume` (`qwen-models`) montado em `/cache`, mesmo motivo do `transcribe_audio.py`: `HF_HOME` precisa ser setado *antes* de importar `transformers`.
+
+Secret do Modal: `mintly-generate-text-secret` (`HF_TOKEN`, opcional — Qwen2.5 não é gated, só acelera o download).
 
 ## Padrão: endpoint HTTP + job assíncrono + callback
 
@@ -89,9 +97,10 @@ Esse `cost` é o que o lado Node usa pra reportar `_cost` real no evento do Pola
 cd py
 modal deploy main.py
 modal deploy transcribe_audio.py
+modal deploy generate_text.py
 ```
 
-As URLs dos endpoints ficam no Infisical (`MODAL_URL`, `MODAL_TRANSCRIBE_AUDIO_URL`), lidas pelo Node via `getInfisicalSecret`.
+As URLs dos endpoints ficam no Infisical (`MODAL_URL`, `MODAL_TRANSCRIBE_AUDIO_URL`, `MODAL_GENERATE_TEXT_URL`), lidas pelo Node via `getInfisicalSecret`.
 
 ## `instructions.md`
 
