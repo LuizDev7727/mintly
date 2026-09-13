@@ -6,7 +6,7 @@ import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { eq } from "drizzle-orm";
 import { db } from "../db/client.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
-import { polar } from "@/lib/polar.ts";
+import { setUsage } from "@/utils/polar/set-usage.ts";
 
 type ModalTranscribeAudioCallbackPayload = {
   status: "SUCCESS" | "ERROR";
@@ -114,7 +114,11 @@ export const transcribeAudioTask = schemaTask({
       timeout: "10m",
     });
 
-    await fetch(await getInfisicalSecret({ secretName: "MODAL_TRANSCRIBE_AUDIO_URL" }), {
+    const modalTranscribeAudioUrl = await getInfisicalSecret({
+      secretName: "MODAL_TRANSCRIBE_AUDIO_URL"
+    })
+
+    await fetch(modalTranscribeAudioUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -129,19 +133,15 @@ export const transcribeAudioTask = schemaTask({
 
     logger.log("Result: ", { result });
 
-    await polar.events.ingest({
-      events: [
-        {
-          name: "audio_transcribed",
-          externalCustomerId: organization.organizationSlug,
-          metadata: {
-            ...(type === "post"
-              ? { postId: payload.postId }
-              : { projectId: payload.projectId }),
-            _cost: result.cost,
-          },
-        },
-      ],
+    await setUsage({
+      externalCustomerId: organization.organizationSlug,
+      eventName: "audio_transcribed",
+      cost: result.cost,
+      metadata: {
+        ...(type === "post"
+          ? { postId: payload.postId }
+          : { projectId: payload.projectId }),
+      },
     });
 
     const transcription = result.segments ?? [];
