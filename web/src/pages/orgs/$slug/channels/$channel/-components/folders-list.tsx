@@ -73,7 +73,7 @@ export function FoldersList() {
           />
         </div>
       </header>
-      <div className="h-56">
+      <div className="min-h-56">
         {isEmpty ? (
           <FoldersListEmpty />
         ) : (

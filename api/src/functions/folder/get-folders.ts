@@ -16,6 +16,7 @@ type Folder = {
   id: string;
   title: string;
   postsCount: number;
+  isStarred: boolean;
 };
 
 type GetFoldersResponse = {
@@ -84,6 +85,7 @@ export async function getFolders(
         id: foldersTable.id,
         title: foldersTable.title,
         postsCount: count(postsTable.id),
+        isStarred: foldersTable.isStarred,
       })
       .from(foldersTable)
       .leftJoin(postsTable, eq(postsTable.folderId, foldersTable.id))
