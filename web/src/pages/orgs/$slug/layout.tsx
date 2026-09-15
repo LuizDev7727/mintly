@@ -4,12 +4,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-
 import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SwitchViewMode } from "@/components/switch-view-mode";
 import { authClient } from "@/lib/auth";
-import { Search } from "@/components/search";
 import { PaymentMethodWarning } from "@/components/payment-method-warning";
 
 export const Route = createFileRoute("/orgs/$slug")({
@@ -26,6 +23,7 @@ export const Route = createFileRoute("/orgs/$slug")({
 });
 
 function OrganizationLayout() {
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -33,14 +31,12 @@ function OrganizationLayout() {
         <header className="flex items-center justify-between bg-sidebar h-16 shrink-0 gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 pr-4">
           <div className="flex items-center justify-between gap-2 px-2">
             <SidebarTrigger className="-ml-1" />
-            {/*<div className="bg-border w-4 rotate-90 h-px" />*/}
-            {/*<NavigationBreadcrumb />*/}
+            <div className="bg-border w-4 rotate-90 h-px" />
           </div>
           <div className="flex items-center gap-x-2">
             <PaymentMethodWarning />
-            <Search/>
             <div className="bg-border w-4 rotate-90 h-px" />
-            <SwitchViewMode />
+            {/*<SwitchViewMode/>*/}
           </div>
         </header>
         <Separator />

@@ -33,6 +33,7 @@ import { Route as OrgsSlugChannelsChannelIntegrationsIndexRouteImport } from './
 import { Route as OrgsSlugChannelsChannelCreateUploadIndexRouteImport } from './pages/orgs/$slug/channels/$channel/create-upload/index'
 import { Route as OrgsSlugChannelsChannelAiIndexRouteImport } from './pages/orgs/$slug/channels/$channel/ai/index'
 import { Route as OrgsSlugChannelsChannelPostIdIndexRouteImport } from './pages/orgs/$slug/channels/$channel/$postId/index'
+import { Route as OrgsSlugChannelsChannelProjectsCreateProjectIndexRouteImport } from './pages/orgs/$slug/channels/$channel/projects/create-project/index'
 import { Route as OrgsSlugChannelsChannelProjectsProjectIdIndexRouteImport } from './pages/orgs/$slug/channels/$channel/projects/$projectId/index'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
@@ -164,6 +165,12 @@ const OrgsSlugChannelsChannelPostIdIndexRoute =
     path: '/$postId/',
     getParentRoute: () => OrgsSlugChannelsChannelLayoutRoute,
   } as any)
+const OrgsSlugChannelsChannelProjectsCreateProjectIndexRoute =
+  OrgsSlugChannelsChannelProjectsCreateProjectIndexRouteImport.update({
+    id: '/projects/create-project/',
+    path: '/projects/create-project/',
+    getParentRoute: () => OrgsSlugChannelsChannelLayoutRoute,
+  } as any)
 const OrgsSlugChannelsChannelProjectsProjectIdIndexRoute =
   OrgsSlugChannelsChannelProjectsProjectIdIndexRouteImport.update({
     id: '/projects/$projectId/',
@@ -197,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/orgs/$slug/channels/$channel/projects/': typeof OrgsSlugChannelsChannelProjectsIndexRoute
   '/orgs/$slug/channels/$channel/settings/': typeof OrgsSlugChannelsChannelSettingsIndexRoute
   '/orgs/$slug/channels/$channel/projects/$projectId/': typeof OrgsSlugChannelsChannelProjectsProjectIdIndexRoute
+  '/orgs/$slug/channels/$channel/projects/create-project/': typeof OrgsSlugChannelsChannelProjectsCreateProjectIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -221,6 +229,7 @@ export interface FileRoutesByTo {
   '/orgs/$slug/channels/$channel/projects': typeof OrgsSlugChannelsChannelProjectsIndexRoute
   '/orgs/$slug/channels/$channel/settings': typeof OrgsSlugChannelsChannelSettingsIndexRoute
   '/orgs/$slug/channels/$channel/projects/$projectId': typeof OrgsSlugChannelsChannelProjectsProjectIdIndexRoute
+  '/orgs/$slug/channels/$channel/projects/create-project': typeof OrgsSlugChannelsChannelProjectsCreateProjectIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -249,6 +258,7 @@ export interface FileRoutesById {
   '/orgs/$slug/channels/$channel/projects/': typeof OrgsSlugChannelsChannelProjectsIndexRoute
   '/orgs/$slug/channels/$channel/settings/': typeof OrgsSlugChannelsChannelSettingsIndexRoute
   '/orgs/$slug/channels/$channel/projects/$projectId/': typeof OrgsSlugChannelsChannelProjectsProjectIdIndexRoute
+  '/orgs/$slug/channels/$channel/projects/create-project/': typeof OrgsSlugChannelsChannelProjectsCreateProjectIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/channels/$channel/projects/'
     | '/orgs/$slug/channels/$channel/settings/'
     | '/orgs/$slug/channels/$channel/projects/$projectId/'
+    | '/orgs/$slug/channels/$channel/projects/create-project/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -302,6 +313,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/channels/$channel/projects'
     | '/orgs/$slug/channels/$channel/settings'
     | '/orgs/$slug/channels/$channel/projects/$projectId'
+    | '/orgs/$slug/channels/$channel/projects/create-project'
   id:
     | '__root__'
     | '/'
@@ -329,6 +341,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/channels/$channel/projects/'
     | '/orgs/$slug/channels/$channel/settings/'
     | '/orgs/$slug/channels/$channel/projects/$projectId/'
+    | '/orgs/$slug/channels/$channel/projects/create-project/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -510,6 +523,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgsSlugChannelsChannelPostIdIndexRouteImport
       parentRoute: typeof OrgsSlugChannelsChannelLayoutRoute
     }
+    '/orgs/$slug/channels/$channel/projects/create-project/': {
+      id: '/orgs/$slug/channels/$channel/projects/create-project/'
+      path: '/projects/create-project'
+      fullPath: '/orgs/$slug/channels/$channel/projects/create-project/'
+      preLoaderRoute: typeof OrgsSlugChannelsChannelProjectsCreateProjectIndexRouteImport
+      parentRoute: typeof OrgsSlugChannelsChannelLayoutRoute
+    }
     '/orgs/$slug/channels/$channel/projects/$projectId/': {
       id: '/orgs/$slug/channels/$channel/projects/$projectId/'
       path: '/projects/$projectId'
@@ -543,6 +563,7 @@ interface OrgsSlugChannelsChannelLayoutRouteChildren {
   OrgsSlugChannelsChannelProjectsIndexRoute: typeof OrgsSlugChannelsChannelProjectsIndexRoute
   OrgsSlugChannelsChannelSettingsIndexRoute: typeof OrgsSlugChannelsChannelSettingsIndexRoute
   OrgsSlugChannelsChannelProjectsProjectIdIndexRoute: typeof OrgsSlugChannelsChannelProjectsProjectIdIndexRoute
+  OrgsSlugChannelsChannelProjectsCreateProjectIndexRoute: typeof OrgsSlugChannelsChannelProjectsCreateProjectIndexRoute
 }
 
 const OrgsSlugChannelsChannelLayoutRouteChildren: OrgsSlugChannelsChannelLayoutRouteChildren =
@@ -561,6 +582,8 @@ const OrgsSlugChannelsChannelLayoutRouteChildren: OrgsSlugChannelsChannelLayoutR
       OrgsSlugChannelsChannelSettingsIndexRoute,
     OrgsSlugChannelsChannelProjectsProjectIdIndexRoute:
       OrgsSlugChannelsChannelProjectsProjectIdIndexRoute,
+    OrgsSlugChannelsChannelProjectsCreateProjectIndexRoute:
+      OrgsSlugChannelsChannelProjectsCreateProjectIndexRoute,
   }
 
 const OrgsSlugChannelsChannelLayoutRouteWithChildren =

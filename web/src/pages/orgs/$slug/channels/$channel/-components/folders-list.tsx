@@ -3,12 +3,11 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { FolderCard } from "./folder-card";
 import { parseAsInteger, useQueryState } from "nuqs";
-import { BackToRootFolderButton } from "./back-to-root-folder-button";
 import { FoldersPagination } from "./folders-pagination";
 import { FolderListLoading } from "./folder-list-loading";
 import { BackToPreviousFolder } from "./back-to-previous-folder";
 import { FoldersListEmpty } from "./folders-list-empty";
-import { CreateFolderDialog } from "./create-folder-dialog";
+import { BackToRootFolderButton } from "./back-to-root-folder-button";
 
 export function FoldersList() {
   const [currentFolderId] = useQueryState("folder_id");
@@ -58,21 +57,19 @@ export function FoldersList() {
 
   return (
     <div className="space-y-2">
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-x-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <BackToRootFolderButton />
           {hasParent && <BackToPreviousFolder parent={parent} />}
         </div>
-        <div className="flex items-center gap-x-2">
-          <CreateFolderDialog />
-          <div className="bg-border w-4 rotate-90 h-px" />
+        {totalPages > 1 && (
           <FoldersPagination
             isLoading={isLoading}
             totalPages={totalPages}
             currentFolderPage={currentFolderPage}
           />
-        </div>
-      </header>
+        )}
+      </div>
       <div className="min-h-56">
         {isEmpty ? (
           <FoldersListEmpty />

@@ -9,8 +9,10 @@ import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
+import { SwitchViewMode } from "@/components/profile/switch-view-mode";
 import { authClient } from "@/lib/auth";
 import {
   updateProfileSchema,
@@ -175,6 +177,10 @@ export function UpdateProfileForm({
             </p>
             {errors.bio && <FieldError>{errors.bio.message}</FieldError>}
           </Field>
+
+          <Separator />
+
+          <SwitchViewMode />
         </div>
       </div>
       <DialogFooter className="border-t px-6 py-4">

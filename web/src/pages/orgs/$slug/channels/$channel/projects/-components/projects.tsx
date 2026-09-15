@@ -2,13 +2,25 @@ import { useViewMode } from "@/context/view-mode-context";
 import { getProjectsHttp } from "@/http/projects/get-projects.http";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import {
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryState,
+} from "nuqs";
 import { ProjectsEmpty } from "./projects-empty";
 import { ProjectsGridView } from "./projects-grid-view";
 import { ProjectsListView } from "./projects-list-view";
 import { ProjectsLoading } from "./projects-loading";
-import { ProjectsFilter } from "./projects-filter";
 import { ProjectsPagination } from "./projects-pagination";
+
+const PROJECT_STATUSES = [
+  "SUCCESS",
+  "PROCESSING",
+  "ENCODING",
+  "ERROR",
+  "CANCELED",
+] as const;
 
 export function Projects() {
   const { slug, channel } = useParams({
@@ -25,16 +37,33 @@ export function Projects() {
     parseAsString.withDefault(""),
   );
 
+  const [statusFilter] = useQueryState(
+    "status_filter",
+    parseAsStringLiteral(PROJECT_STATUSES),
+  );
+
+  const [ownerFilter] = useQueryState("owner_filter");
+
   const { view } = useViewMode();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["projects", slug, channel, titleFilter, currentPage],
+    queryKey: [
+      "projects",
+      slug,
+      channel,
+      titleFilter,
+      statusFilter,
+      ownerFilter,
+      currentPage,
+    ],
     queryFn: async () =>
       getProjectsHttp({
         orgSlug: slug,
         channelId: channel,
         pageIndex: currentPage,
         titleFilter,
+        statusFilter,
+        ownerId: ownerFilter ?? null,
       }),
     placeholderData: keepPreviousData,
   });
@@ -52,7 +81,7 @@ export function Projects() {
   }
 
   const { projects, meta } = data;
-  const { totalPages } = meta;
+  const { totalPages, totalCount } = meta;
   const isProjectsEmpty = projects.length === 0;
 
   if (isProjectsEmpty) {
@@ -61,17 +90,10 @@ export function Projects() {
 
   return (
     <div className="space-y-4">
-
-      <div className="flex items-center gap-x-2">
-        <ProjectsFilter />
-
-        <ProjectsPagination totalPages={totalPages} />
-      </div>
-
-
       {view === "grid" && <ProjectsGridView projects={projects} />}
       {view === "list" && <ProjectsListView projects={projects} />}
+
+      <ProjectsPagination totalPages={totalPages} totalCount={totalCount} />
     </div>
   )
-
 }

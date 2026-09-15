@@ -29,9 +29,15 @@ import {
   CollapsibleTrigger,
 } from "./ui/collapsible";
 import { getMembersHttp } from "@/http/organization/get-members.http";
+import { getChannelsHttp } from "@/http/channel/get-channels.http";
 
 export function NavMain() {
   const { slug } = useParams({ from: "/orgs/$slug" });
+
+  const { data: channelsData } = useQuery({
+    queryKey: ["channels", slug],
+    queryFn: () => getChannelsHttp({ orgSlug: slug  }),
+  });
 
   const { data: membersData } = useQuery({
     queryKey: ["members", slug],
@@ -68,6 +74,9 @@ export function NavMain() {
               <span>Channels</span>
             </NavLink>
           </SidebarMenuButton>
+          {
+            channelsData && <SidebarMenuBadge>{channelsData.channels.length}</SidebarMenuBadge>
+          }
         </SidebarMenuItem>
 
         <SidebarMenuItem>

@@ -12,7 +12,6 @@ export type GetOrganizationOverviewResponse = {
     membersCount: number;
     usage: {
       totalUsage: number;
-      series: number[];
     };
     storage: {
       totalStorage: number;

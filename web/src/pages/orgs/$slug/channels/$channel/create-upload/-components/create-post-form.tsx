@@ -16,6 +16,7 @@ import type { Integration } from "@/types/integration";
 import { formatBytes } from "@/utils/format-bytes";
 import { formatDuration } from "@/utils/format-duration";
 import { getFileExtension } from "@/utils/get-file-extension";
+import { getVideoDuration } from "@/utils/get-video-duration";
 import { sanitizeFilename } from "@/utils/sanitize-filename";
 import { uploadFile } from "@/utils/upload-file";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,26 +55,6 @@ export type UploadEntry = {
 type CreatePostFormProps = {
   integrations: Integration[];
 };
-
-function getVideoDuration(file: File): Promise<number> {
-  return new Promise((resolve, reject) => {
-    const video = document.createElement('video');
-    video.preload = 'metadata';
-
-    video.onloadedmetadata = () => {
-      URL.revokeObjectURL(video.src);
-      resolve(video.duration);
-    };
-
-    video.onerror = () => {
-      URL.revokeObjectURL(video.src);
-      reject(new Error('Não foi possível carregar o vídeo'));
-    };
-
-    video.src = URL.createObjectURL(file);
-  });
-}
-
 
 export function CreatePostForm({ integrations }: CreatePostFormProps) {
   const [isDragging, setIsDragging] = useState(false);

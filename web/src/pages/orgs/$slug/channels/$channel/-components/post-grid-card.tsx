@@ -1,14 +1,4 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarGroup,
-  AvatarImage,
-} from "@/components/ui/avatar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { SocialsToPostAvatarsGroup } from "./socials-to-post-avatars-group";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +11,6 @@ import { formatDuration } from "@/utils/format-duration";
 import { Link } from "@tanstack/react-router";
 import { Eye, ImageIcon, MoreHorizontal, Trash2 } from "lucide-react";
 import { PostStatusBadge } from "./post-status-badge";
-import { getInitials } from "@/utils/get-initials";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ImageGeneration } from "@/components/image-generation";
@@ -82,7 +71,7 @@ export function PostGridCard({
     <div
       onClick={onSelect}
       data-selected={isSelected}
-      className="cursor-pointer rounded-lg border border-border data-[selected=true]:border-primary bg-sidebar p-2.5 text-card-foreground"
+      className="cursor-pointer rounded-lg border border-border data-[selected=true]:border-primary bg-card p-2.5 text-card-foreground"
     >
       <div className="relative aspect-video overflow-hidden rounded-md bg-muted">
         {status === "GENERATING_THUMBNAIL" && (
@@ -126,24 +115,9 @@ export function PostGridCard({
 
       {/* Linha inferior: avatar group + texto + menu */}
       <div className="flex items-start gap-2.5 pt-2.5">
-        {/* Avatar group */}
-        <AvatarGroup>
-          {post.socialsToPost.map((socialToPost) => (
-            <Tooltip key={socialToPost.id}>
-              <TooltipTrigger asChild>
-                <Avatar size="sm">
-                  {socialToPost.avatarUrl && (
-                    <AvatarImage src={socialToPost.avatarUrl} />
-                  )}
-                  <AvatarFallback>
-                    {getInitials(socialToPost.socialName)}
-                  </AvatarFallback>
-                </Avatar>
-              </TooltipTrigger>
-              <TooltipContent>{socialToPost.socialName}</TooltipContent>
-            </Tooltip>
-          ))}
-        </AvatarGroup>
+        <SocialsToPostAvatarsGroup
+          socialsToPost={post.socialsToPost}
+        />
 
         {/* Título + meta */}
         <div className="min-w-0 flex-1">

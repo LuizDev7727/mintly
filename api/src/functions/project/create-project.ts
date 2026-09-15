@@ -8,38 +8,32 @@ import { tasks } from "@trigger.dev/sdk";
 type CreateProjectParams = {
   channelId: string;
   ownerId: string;
-  file: {
+  files: {
     name: string;
     key: string;
-  };
+  }[];
 };
 
-type CreateProjectResponse = {
-  projectId: string;
-};
+export async function createProject(params: CreateProjectParams) {
+  const { channelId, ownerId, files } = params;
 
-export async function createProject(
-  params: CreateProjectParams,
-): Promise<CreateProjectResponse> {
-  const { channelId, ownerId, file } = params;
+  for (const file of files) {
+    await checkFileExists({ key: file.key });
 
-  await checkFileExists({ key: file.key });
+    const [{ projectId }] = await db
+      .insert(projectsTable)
+      .values({
+        title: file.name,
+        channelId,
+        ownerId,
+      })
+      .returning({ projectId: projectsTable.id });
 
-  const [{ projectId }] = await db
-    .insert(projectsTable)
-    .values({
-      title: file.name,
-      channelId,
-      ownerId,
-    })
-    .returning({ projectId: projectsTable.id });
+    const videoUrl = await generateSignedUrl({ key: file.key });
 
-  const videoUrl = await generateSignedUrl({ key: file.key });
-
-  await tasks.trigger<typeof createProjectTask>("create-project", {
-    videoUrl,
-    projectId,
-  });
-
-  return { projectId };
+    await tasks.trigger<typeof createProjectTask>("create-project", {
+      videoUrl,
+      projectId,
+    });
+  }
 }

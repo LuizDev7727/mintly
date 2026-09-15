@@ -80,15 +80,15 @@ export function OrganizationSwitcher() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              size="lg"
+              size="icon"
               className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               {organization.logo ?
                 <Avatar>
                   <AvatarImage src={organization.logo} />
                 </Avatar> :
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Building className="size-4" />
+                <div className="flex aspect-square size-6 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground group-data-[collapsible=icon]:size-4 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:text-sidebar-foreground">
+                  <Building className="size-3.5" />
                 </div>
               }
               <div className="grid flex-1 text-left text-sm leading-tight transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0">

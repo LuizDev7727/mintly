@@ -10,6 +10,8 @@ type GetProjectsParams = {
   channelId: string;
   pageIndex: number;
   titleFilter: string | null;
+  statusFilter: "SUCCESS" | "PROCESSING" | "ENCODING" | "ERROR" | "CANCELED" | null;
+  ownerId: string | null;
 };
 
 type GetProjectsResponse = {
@@ -40,13 +42,15 @@ const ACTIVE_PROJECT_STATUSES = ["ENCODING"] as const;
 export async function getProjects(
   params: GetProjectsParams,
 ): Promise<GetProjectsResponse> {
-  const { channelId, pageIndex, titleFilter } = params;
+  const { channelId, pageIndex, titleFilter, statusFilter, ownerId } = params;
 
   await getChannel({ channelId });
 
   const filters = and(
     eq(projectsTable.channelId, channelId),
     titleFilter ? like(projectsTable.title, `%${titleFilter}%`) : undefined,
+    statusFilter ? eq(projectsTable.status, statusFilter) : undefined,
+    ownerId ? eq(projectsTable.ownerId, ownerId) : undefined,
   );
 
   const [projects, [{ totalCount }]] = await Promise.all([

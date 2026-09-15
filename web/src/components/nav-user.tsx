@@ -44,10 +44,10 @@ export function NavUser() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              size="lg"
+              size="sm"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="size-8 rounded-lg">
+              <Avatar className="size-4 rounded-lg">
                 {session?.user.image && (
                   <AvatarImage
                     src={session?.user.image}
@@ -62,7 +62,6 @@ export function NavUser() {
                 <span className="truncate font-medium">
                   {session?.user.name}
                 </span>
-                <span className="truncate text-xs">{session?.user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4 transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
             </SidebarMenuButton>
