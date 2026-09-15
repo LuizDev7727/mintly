@@ -9,9 +9,13 @@ import { parseAsInteger, useQueryState } from "nuqs";
 
 type ProjectsPaginationProps = {
   totalPages: number;
+  totalCount: number;
 };
 
-export function ProjectsPagination({ totalPages }: ProjectsPaginationProps) {
+export function ProjectsPagination({
+  totalPages,
+  totalCount,
+}: ProjectsPaginationProps) {
   const [currentPage, setCurrentPage] = useQueryState(
     "project_page",
     parseAsInteger.withDefault(0),
@@ -35,45 +39,50 @@ export function ProjectsPagination({ totalPages }: ProjectsPaginationProps) {
 
   const hasPreviousPage = currentPage > 0;
   const hasNextPage = currentPage < totalPages - 1;
-  const isFirstPage = currentPage === 0;
+
+  const projectCountLabel = `${totalCount} ${totalCount === 1 ? "project" : "projects"}`;
 
   return (
-    <div className="flex items-center gap-x-2">
-      <Button
-        variant={"outline"}
-        size={"icon"}
-        onClick={goToFirstPage}
-        disabled={!hasPreviousPage || isFirstPage}
-      >
-        <ChevronsLeft className="size-4" />
-      </Button>
-      <Button
-        variant={"outline"}
-        size={"icon"}
-        onClick={goToPreviousPage}
-        disabled={!hasPreviousPage || isFirstPage}
-      >
-        <ChevronLeft className="size-4" />
-      </Button>
-      <span className="text-xs text-muted-foreground px-1 tabular-nums">
-        {currentPage + 1}/{totalPages}
-      </span>
-      <Button
-        variant={"outline"}
-        size={"icon"}
-        onClick={goToNextPage}
-        disabled={!hasNextPage}
-      >
-        <ChevronRight className="size-4" />
-      </Button>
-      <Button
-        variant={"outline"}
-        size={"icon"}
-        onClick={goToLastPage}
-        disabled={!hasNextPage}
-      >
-        <ChevronsRight className="size-4" />
-      </Button>
+    <div className="flex items-center justify-between gap-x-2">
+      <p className="text-xs text-muted-foreground">{projectCountLabel}</p>
+
+      <div className="flex items-center gap-x-2">
+        <Button
+          variant={"outline"}
+          size={"icon"}
+          onClick={goToFirstPage}
+          disabled={!hasPreviousPage}
+        >
+          <ChevronsLeft className="size-4" />
+        </Button>
+        <Button
+          variant={"outline"}
+          size={"icon"}
+          onClick={goToPreviousPage}
+          disabled={!hasPreviousPage}
+        >
+          <ChevronLeft className="size-4" />
+        </Button>
+        <span className="text-xs text-muted-foreground px-1 tabular-nums">
+          Page {currentPage + 1} of {totalPages}
+        </span>
+        <Button
+          variant={"outline"}
+          size={"icon"}
+          onClick={goToNextPage}
+          disabled={!hasNextPage}
+        >
+          <ChevronRight className="size-4" />
+        </Button>
+        <Button
+          variant={"outline"}
+          size={"icon"}
+          onClick={goToLastPage}
+          disabled={!hasNextPage}
+        >
+          <ChevronsRight className="size-4" />
+        </Button>
+      </div>
     </div>
   );
 }

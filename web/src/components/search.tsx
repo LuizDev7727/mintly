@@ -11,6 +11,12 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
+import { Kbd } from "@/components/ui/kbd"
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar"
 import { getSearchResultsHttp } from "@/http/search/get-search-results.http"
 
 const SEARCH_KEYBOARD_SHORTCUT = "k"
@@ -22,6 +28,9 @@ type SearchResult = {
   title: string
   channelId: string
 }
+
+const isMac =
+  typeof navigator !== "undefined" && /Mac/.test(navigator.platform)
 
 export function Search() {
   const [open, setOpen] = useState(false)
@@ -108,9 +117,23 @@ export function Search() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div onClick={() => setOpen(true)} className="w-fit cursor-pointer">
-        <SearchIcon className="size-4" />
-      </div>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            onClick={() => setOpen(true)}
+            tooltip="Search"
+            className="cursor-pointer justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <SearchIcon />
+              <span>Search</span>
+            </div>
+            <Kbd className="group-data-[collapsible=icon]:hidden">
+              {isMac ? "⌘K" : "Ctrl+K"}
+            </Kbd>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
       <CommandDialog open={open} onOpenChange={setOpen} shouldFilter={false}>
         <CommandInput
           placeholder="Search posts, projects and folders."

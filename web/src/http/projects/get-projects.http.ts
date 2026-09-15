@@ -6,6 +6,8 @@ type GetProjectsParams = {
   channelId: string;
   pageIndex?: number;
   titleFilter: string | null;
+  statusFilter: Project["status"] | null;
+  ownerId: string | null;
 };
 
 export type GetProjectsResponse = {
@@ -19,10 +21,11 @@ export type GetProjectsResponse = {
 export async function getProjectsHttp(
   params: GetProjectsParams,
 ): Promise<GetProjectsResponse> {
-  const { orgSlug, channelId, pageIndex, titleFilter } = params;
+  const { orgSlug, channelId, pageIndex, titleFilter, statusFilter, ownerId } =
+    params;
   const { data } = await api.get<GetProjectsResponse>(
     `/organizations/${orgSlug}/channels/${channelId}/projects`,
-    { params: { pageIndex, titleFilter } },
+    { params: { pageIndex, titleFilter, statusFilter, ownerId } },
   );
   return data;
 }

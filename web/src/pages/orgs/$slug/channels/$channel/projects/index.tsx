@@ -1,7 +1,8 @@
-import { Separator } from "@/components/ui/separator";
-import { createFileRoute } from "@tanstack/react-router";
-import { CreateProjectForm } from "./-components/create-project-form";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 import { Projects } from "./-components/projects";
+import { Plus } from "lucide-react"
+import { ProjectsFilter } from "./-components/projects-filter";
 
 export const Route = createFileRoute("/orgs/$slug/channels/$channel/projects/")(
   {
@@ -19,18 +20,33 @@ export const Route = createFileRoute("/orgs/$slug/channels/$channel/projects/")(
 );
 
 function ChannelProjectsPage() {
+
+  const { slug, channel } = Route.useParams()
+
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-xl font-medium">Projects</h1>
-        <p className="text-muted-foreground text-sm">
-          Generate best moments to your videos
-        </p>
+      <header className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-medium">Projects</h1>
+          <p className="text-muted-foreground text-sm">
+            Generate best moments to your videos
+          </p>
+        </div>
+        <Button asChild>
+          <Link
+            to="/orgs/$slug/channels/$channel/projects/create-project"
+            params={{
+              slug,
+              channel
+            }}
+          >
+            <Plus/>
+            Create Post
+          </Link>
+        </Button>
       </header>
 
-      <CreateProjectForm />
-
-      <Separator />
+      <ProjectsFilter />
 
       <Projects />
     </div>

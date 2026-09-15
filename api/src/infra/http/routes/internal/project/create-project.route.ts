@@ -1,7 +1,6 @@
 import { createProject } from "@/functions/project/create-project.ts";
 import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { createActivity } from "@/utils/create-activity.ts";
-import { trace } from "@opentelemetry/api";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
@@ -20,46 +19,50 @@ export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
           channelId: z.string(),
         }),
         body: z.object({
-          file: z.object({
-            name: z.string(),
-            key: z.string(),
-          }),
+          files: z
+            .array(
+              z.object({
+                name: z.string(),
+                key: z.string(),
+              }),
+            )
+            .min(1),
         }),
         response: {
-          201: z.object({
-            projectId: z.string(),
-          }),
+          201: z.void(),
         },
       },
     },
     async (request, reply) => {
       const { slug, channelId } = request.params;
-      const { file } = request.body;
+      const { files } = request.body;
       const { id: userId } = request.user;
 
       const span = tracer.startSpan("createProject");
       span.setAttribute("channel.id", channelId);
-      span.setAttribute("file.name", file.name);
+      span.setAttribute("files.count", files.length);
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      const { projectId } = await createProject({
+      await createProject({
         channelId,
         ownerId: userId,
-        file,
+        files,
       });
 
       await createActivity({
         action: "CREATED_PROJECT",
         authorId: userId,
-        description: `Created project ${file.name}`,
+        description:
+          files.length === 1
+            ? `Created project ${files[0].name}`
+            : `Created ${files.length} projects`,
         orgSlug: slug,
       });
 
       span.end();
-      trace.getActiveSpan()?.setAttribute("project.id", projectId);
 
-      return reply.status(201).send({ projectId });
+      return reply.status(201).send();
     },
   );
 };

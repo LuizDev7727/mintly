@@ -12,7 +12,7 @@ export function CreateChannelCard() {
             Create channel
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Set default AI, security and automation settings per channel.
+            Create posts, generate projects and configure your brand-kit.
           </p>
         </div>
       </div>

@@ -4,13 +4,28 @@ import { socialsToPostTable } from "@/infra/db/tables/socials-to-post.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { generateRealtimeToken } from "@/utils/generate-realtime-token.ts";
-import { and, count, desc, eq, isNull, like, sql } from "drizzle-orm";
+import { and, countDistinct, desc, eq, isNull, like, sql } from "drizzle-orm";
+
+type PostStatus =
+  | "PROCESSING"
+  | "SCHEDULED"
+  | "ERROR"
+  | "PUBLISHED"
+  | "ENCODING"
+  | "GENERATING_METADATA"
+  | "GENERATING_THUMBNAIL"
+  | "TRANSCRIBING"
+  | "SEO_GENERATING"
+  | "PUBLISHING"
+  | "CANCELED";
 
 type GetPostsParams = {
   titleFilter: string | null;
   pageIndex: number;
   channelId: string;
   folderId: string | null;
+  statusFilter: PostStatus | null;
+  ownerId: string | null;
 };
 
 const ACTIVE_POST_STATUSES = [
@@ -40,7 +55,7 @@ type GetPostsResponse = {
 }
 
 export async function getPosts(params: GetPostsParams): Promise<GetPostsResponse> {
-  const { titleFilter, pageIndex, channelId, folderId } = params;
+  const { titleFilter, pageIndex, channelId, folderId, statusFilter, ownerId } = params;
 
   const PAGE_SIZE = 10;
 
@@ -81,6 +96,8 @@ export async function getPosts(params: GetPostsParams): Promise<GetPostsResponse
             : isNull(postsTable.folderId),
           titleFilter ? like(postsTable.title, `%${titleFilter}%`) : undefined,
           eq(postsTable.channelId, channelId),
+          statusFilter ? eq(postsTable.status, statusFilter) : undefined,
+          ownerId ? eq(postsTable.ownerId, ownerId) : undefined,
         ),
       )
       .innerJoin(
@@ -93,11 +110,19 @@ export async function getPosts(params: GetPostsParams): Promise<GetPostsResponse
       .limit(PAGE_SIZE)
       .groupBy(postsTable.id, usersTable.name, usersTable.image),
 
+    // Mirrors the same join as the data query above — a post with no
+    // socialsToPost row is excluded there, so it must be excluded here too,
+    // otherwise totalCount/totalPages overcounts posts the data query can
+    // never actually return, breaking pagination on the tail pages.
     db
       .select({
-        totalPostsCount: count(postsTable.id),
+        totalPostsCount: countDistinct(postsTable.id),
       })
       .from(postsTable)
+      .innerJoin(
+        socialsToPostTable,
+        eq(postsTable.id, socialsToPostTable.postId),
+      )
       .where(
         and(
           folderId
@@ -105,6 +130,8 @@ export async function getPosts(params: GetPostsParams): Promise<GetPostsResponse
             : isNull(postsTable.folderId),
           titleFilter ? like(postsTable.title, `%${titleFilter}%`) : undefined,
           eq(postsTable.channelId, channelId),
+          statusFilter ? eq(postsTable.status, statusFilter) : undefined,
+          ownerId ? eq(postsTable.ownerId, ownerId) : undefined,
         ),
       ),
   ]);

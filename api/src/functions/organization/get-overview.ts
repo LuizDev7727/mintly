@@ -19,7 +19,6 @@ type GetOverviewResponse = {
     membersCount: number,
     usage: {
       totalUsage: number;
-      series: number[]
     },
     storage: {
       totalStorage: number;
@@ -174,7 +173,6 @@ export async function getOverview({ orgSlug }: GetOverviewProps): Promise<GetOve
       },
       usage: {
         totalUsage: currentSpend.totalCents,
-        series: [],
       },
       recentActivities,
       webhooks,

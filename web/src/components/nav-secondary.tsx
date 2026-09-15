@@ -9,7 +9,6 @@ import {
 
 import { ThemeToggle } from "./theme-toggle";
 import { PendingInvites } from "./pending-invites";
-import { UserPlus, Rss } from "lucide-react";
 
 export function NavSecondary() {
   const { state } = useSidebar();
@@ -32,18 +31,6 @@ export function NavSecondary() {
             <SidebarMenuButton>
               <PendingInvites/>
               <span>Notifications</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <UserPlus/>
-              <span>Invite Member</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <Rss />
-              <span>Changelog</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -4,20 +4,34 @@ import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { Timeline } from "@/components/ui/timeline";
 import { Spinner } from "@/components/ui/spinner";
 import { getActivitiesHttp } from "@/http/activity/get-activities.http";
+import { parseAsStringLiteral, useQueryState } from "nuqs";
+import { ACTIVITY_ACTIONS } from "./activity-action-config";
 import { ActivityCard } from "./activity-card";
 import { ActivitiesListEmpty } from "./activities-list-empty";
 
 export function ActivitiesList() {
   const { slug } = useParams({ from: "/orgs/$slug/activities/" });
 
+  const [actionFilter] = useQueryState(
+    "action_filter",
+    parseAsStringLiteral(ACTIVITY_ACTIONS),
+  );
+
+  const [authorFilter] = useQueryState("author_filter");
+
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useSuspenseInfiniteQuery({
-      queryKey: ["activities", slug],
+      queryKey: ["activities", slug, actionFilter, authorFilter],
       queryFn: ({ pageParam }) =>
-        getActivitiesHttp({ orgSlug: slug, cursor: pageParam }),
+        getActivitiesHttp({
+          orgSlug: slug,
+          cursor: pageParam,
+          actionFilter,
+          authorId: authorFilter ?? null,
+        }),
       getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       initialPageParam: undefined as string | undefined,
     });
