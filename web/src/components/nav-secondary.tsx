@@ -9,7 +9,6 @@ import {
 
 import { ThemeToggle } from "./theme-toggle";
 import { PendingInvites } from "./pending-invites";
-import { UserPlus, Rss } from "lucide-react";
 
 export function NavSecondary() {
   const { state } = useSidebar();

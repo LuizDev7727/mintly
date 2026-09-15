@@ -15,11 +15,15 @@ import { formatBytes } from "@/utils/format-bytes";
 import { formatDuration } from "@/utils/format-duration";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import { Eye, Image, MoreHorizontal, Trash2, Check, AlertTriangle, Calendar, Ban } from "lucide-react";
+import { Eye, Image, MoreHorizontal, Trash2, Check, AlertTriangle, Calendar, Ban, Loader2 } from "lucide-react";
 import { SocialsToPostAvatarsGroup } from "./socials-to-post-avatars-group";
 
 type PostListViewProps = {
   posts: Post[];
+};
+
+type PostStatusBadgeProps = {
+  status: Post["status"];
 };
 
 export function PostListView({ posts }: PostListViewProps) {

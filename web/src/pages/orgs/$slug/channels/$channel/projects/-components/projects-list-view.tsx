@@ -10,14 +10,18 @@ type ProjectsListViewProps = {
   projects: Project[];
 };
 
+type ProjectStatusBadgeProps = {
+  status: Project["status"];
+};
+
 export function ProjectsListView({ projects }: ProjectsListViewProps) {
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
 
-  function ProjectStatusBadge({ status }: PostStatusBadgeProps) {
+  function ProjectStatusBadge({ status }: ProjectStatusBadgeProps) {
     switch (status) {
-      case "PUBLISHED":
+      case "SUCCESS":
         return (
           <Badge>
             <Check size={13} />
@@ -31,7 +35,7 @@ export function ProjectsListView({ projects }: ProjectsListViewProps) {
             {status}
           </Badge>
         );
-      case "SCHEDULED":
+      case "ENCODING":
         return (
           <Badge variant={"scheduled"}>
             <Calendar size={13} />
