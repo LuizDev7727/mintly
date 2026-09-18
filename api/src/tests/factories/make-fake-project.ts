@@ -22,6 +22,9 @@ export async function makeFakeProject(
       ownerId,
       status: data.status,
       thumbnailUrl: data.thumbnailUrl,
+      // In production the Trigger.dev task fills this in right after insert, so
+      // a listed project always has one — the list routes validate it as string.
+      runId: data.runId ?? `run_${faker.string.alphanumeric(20)}`,
     })
     .returning({ projectId: projectsTable.id });
 
