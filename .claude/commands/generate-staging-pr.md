@@ -1,24 +1,24 @@
 ---
 name: generate-staging-pr
-description: Generates a pull request from develop to staging, with a full description of changes based on actual file diffs and a Mermaid diagram showing what was touched. Requires the GitHub CLI (gh) to be authenticated.
+description: Generates a pull request from development to staging, with a full description of changes based on actual file diffs and a Mermaid diagram showing what was touched. Requires the GitHub CLI (gh) to be authenticated.
 ---
 
-You are promoting changes from `develop` to `staging` for QA validation. Follow every step below in order.
+You are promoting changes from `development` to `staging` for QA validation. Follow every step below in order.
 
 ---
 
 ## Step 1 — Analyze the actual file changes
 
-Fetch and inspect what actually changed between `staging` and `develop`:
+Fetch and inspect what actually changed between `staging` and `development`:
 
 ```bash
 git fetch origin
 
 # List every file that changed
-git diff origin/staging..origin/develop --name-status
+git diff origin/staging..origin/development --name-status
 
 # Full diff to read what changed inside each file
-git diff origin/staging..origin/develop
+git diff origin/staging..origin/development
 ```
 
 Read the full diff carefully. The PR description and diagram must reflect the **actual code changes**, not just commit messages. Commit messages are unreliable — the diff is the source of truth.
@@ -26,8 +26,8 @@ Read the full diff carefully. The PR description and diagram must reflect the **
 Also collect commits for grouping and linking:
 
 ```bash
-git log origin/staging..origin/develop --pretty=format:"%h %s" --no-merges
-git log origin/staging..origin/develop --merges --pretty=format:"%s"
+git log origin/staging..origin/development --pretty=format:"%h %s" --no-merges
+git log origin/staging..origin/development --merges --pretty=format:"%s"
 ```
 
 ---
@@ -130,16 +130,16 @@ Use when the diff contains several unrelated features merged from different feat
 ```
 gitGraph
    commit id: "staging baseline"
-   branch develop
+   branch development
    branch feature/transactions
    checkout feature/transactions
    commit id: "feat: transaction list"
-   checkout develop
+   checkout development
    merge feature/transactions
    branch feature/auth
    checkout feature/auth
    commit id: "fix: token refresh"
-   checkout develop
+   checkout development
    merge feature/auth
 ```
 
@@ -157,15 +157,15 @@ Always use **real names from the diff** (component names, function names, route 
 ```bash
 gh pr create \
   --base staging \
-  --head develop \
-  --title "staging: promote develop — <short summary>" \
+  --head development \
+  --title "staging: promote development — <short summary>" \
   --body "$(cat <<'EOF'
 <full PR body from Step 3>
 EOF
 )"
 ```
 
-If a PR from `develop` → `staging` already exists, update its body instead:
+If a PR from `development` → `staging` already exists, update its body instead:
 
 ```bash
 gh pr edit <pr-number> --body "$(cat <<'EOF'
