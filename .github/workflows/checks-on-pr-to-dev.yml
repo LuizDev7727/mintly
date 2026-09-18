@@ -72,7 +72,8 @@ jobs:
       - name: Lint changed files
         working-directory: web
         run: |
-          FILES=$(git diff --name-only --diff-filter=d "origin/${{ github.base_ref }}...HEAD" -- 'web/src/**/*.ts' 'web/src/**/*.tsx' | sed 's|^web/||')
+          # --relative: paths are relative to web/ (the working directory)
+          FILES=$(git diff --name-only --relative --diff-filter=d "origin/${{ github.base_ref }}...HEAD" -- src | grep -E '\.tsx?$' || true)
           if [ -z "$FILES" ]; then
             echo "No changed TS/TSX files to lint."
           else
