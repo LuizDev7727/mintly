@@ -14,6 +14,11 @@ feature/* → development → staging → main
 
 Ao criar qualquer PR com `gh pr create`, sempre passar `--base development` (ou a branch correta do fluxo). Nunca omitir `--base` para evitar que o GitHub use `main` como padrão.
 
+## Domínio e revisão
+
+- **`CONTEXT.md`** — glossário do domínio (organização, canal, projeto, post, pipelines, billing) com o que cada coisa é e não é. Leia antes de mexer em pipelines, billing ou modelagem de dados.
+- **`/mintly-review`** — revisão read-only do diff contra `development` com revisores independentes em paralelo (isolamento entre organizações, segurança, requisitos, convenções, regressão, pipelines/billing, performance). Rode antes de abrir um PR.
+
 ## Estrutura do Monorepo
 
 Cada pasta na raiz é um projeto independente, com seu próprio `package.json`/lockfile. Não é um workspace único — não assuma que uma dependência instalada numa pasta está disponível em outra.
