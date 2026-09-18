@@ -1,4 +1,4 @@
-import { ChevronsUpDown, LogOut } from "lucide-react";
+import { ChevronDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -47,7 +47,7 @@ export function NavUser() {
               size="sm"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="size-4 rounded-lg">
+              <Avatar size="sm" className="rounded-lg">
                 {session?.user.image && (
                   <AvatarImage
                     src={session?.user.image}
@@ -58,12 +58,7 @@ export function NavUser() {
                   {getInitials(session?.user.name ?? "CN")}
                 </AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0">
-                <span className="truncate font-medium">
-                  {session?.user.name}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4 transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
+              <ChevronDown className="ml-auto size-4 transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

@@ -15,7 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuLabel,
-  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
@@ -94,9 +93,6 @@ export function OrganizationSwitcher() {
                 <span className="truncate font-medium">
                   {organization.name}'s workspace
                 </span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {organization.membersCount} members
-                </span>
               </div>
               <ChevronsUpDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
             </SidebarMenuButton>
@@ -122,7 +118,6 @@ export function OrganizationSwitcher() {
                     <Building className="size-3.5 shrink-0" />
                   </div>
                   {org.name}
-                  <DropdownMenuShortcut>FREE</DropdownMenuShortcut>
                 </Link>
               </DropdownMenuItem>
             ))}

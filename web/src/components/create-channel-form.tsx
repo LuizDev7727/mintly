@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { createChannelHttp } from "@/http/channel/create-channel.http";
@@ -14,7 +15,6 @@ import type { GetChannelsResponse } from "@/http/channel/get-channels.http";
 import type { Channel } from "@/types/channel";
 import { Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { createSlug } from "@/utils/create-slug";
 
 export function CreateChannelForm() {
   const { slug } = useParams({
@@ -32,15 +32,13 @@ export function CreateChannelForm() {
 
   const { mutateAsync: createChannel } = useMutation({
     mutationFn: createChannelHttp,
-    onSuccess: ({ channelId }, { name }) => {
+    onSuccess: ({ channelId }, { name, description }) => {
       const newChannel: Channel = {
         id: channelId,
         name,
-        slug: createSlug(name),
         avatar: null,
-        postsCount: 0,
-        integrationsCount: 0,
-        postsSeries: [],
+        description,
+        createdAt: new Date().toISOString(),
       };
 
       queryClient.setQueryData<GetChannelsResponse>(
@@ -59,6 +57,7 @@ export function CreateChannelForm() {
     await createChannel({
       org: slug,
       name: formBody.name,
+      description: formBody.description,
     });
   }
 
@@ -66,6 +65,11 @@ export function CreateChannelForm() {
     <form className="space-y-4" onSubmit={handleSubmit(handleCreateChannel)}>
       <Label>Name</Label>
       <Input {...register("name")} placeholder="Amazon" />
+      <Label>Description</Label>
+      <Textarea
+        {...register("description")}
+        placeholder="What is this channel about?"
+      />
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? (
           <Loader2 className="animate-spin size-4" />

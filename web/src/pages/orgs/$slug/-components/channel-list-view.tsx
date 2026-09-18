@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Channel } from "@/types/channel";
 import { getInitials } from "@/utils/get-initials";
 import { Link, useParams } from "@tanstack/react-router";
-import { Plug, TvMinimal, Upload } from "lucide-react";
+import { TvMinimal } from "lucide-react";
 
 type ChannelListViewProps = {
   channels: Channel[];
@@ -31,17 +31,9 @@ export function ChannelListView({ channels }: ChannelListViewProps) {
               <p className="truncate text-[15px] font-semibold leading-[1.3]">
                 {channel.name}
               </p>
-              <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Upload className="size-3.5" />
-                  {channel.postsCount} posts
-                </span>
-                <span className="hidden text-[13px] text-border sm:inline">·</span>
-                <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Plug className="size-3.5" />
-                  {channel.integrationsCount} integrations
-                </span>
-              </div>
+              <p className="mt-1 truncate text-xs text-muted-foreground">
+                {channel.description}
+              </p>
             </div>
           </div>
 

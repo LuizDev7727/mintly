@@ -3,6 +3,7 @@ import { api } from "../api";
 type CreateChannelParams = {
   org: string;
   name: string;
+  description: string;
 };
 
 export type CreateChannelResponse = {
@@ -10,10 +11,10 @@ export type CreateChannelResponse = {
 };
 
 export async function createChannelHttp(params: CreateChannelParams) {
-  const { org, name } = params;
+  const { org, name, description } = params;
   const { data } = await api.post<CreateChannelResponse>(
     `/organizations/${org}/channels`,
-    { name },
+    { name, description },
   );
 
   const { channelId } = data;

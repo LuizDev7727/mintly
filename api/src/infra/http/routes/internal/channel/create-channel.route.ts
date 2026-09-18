@@ -20,6 +20,7 @@ export const createChannelRoute: FastifyPluginAsyncZod = async (app) => {
         }),
         body: z.object({
           name: z.string().min(1),
+          description: z.string(),
         }),
         response: {
           201: z.object({
@@ -30,7 +31,7 @@ export const createChannelRoute: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { slug } = request.params;
-      const { name } = request.body;
+      const { name, description } = request.body;
       const { id } = request.user;
       const { activeOrganizationId } = request.session;
 
@@ -42,7 +43,11 @@ export const createChannelRoute: FastifyPluginAsyncZod = async (app) => {
       const span = tracer.startSpan("create-channel");
       span.setAttribute("org.slug", slug);
 
-      const { channelId } = await createChannel({ orgSlug: slug, name });
+      const { channelId } = await createChannel({
+        orgSlug: slug,
+        name,
+        description,
+      });
 
       await createActivity({
         action: "CREATED_CHANNEL",
