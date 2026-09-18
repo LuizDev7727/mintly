@@ -90,7 +90,13 @@ async function getUsageEvents({
 
     events.push(...items);
 
-    if (page >= pagination.maxPage) break;
+    // `events.list` is typed as page-based | cursor-based; we request by
+    // `page`, so `maxPage` is expected, but handle both shapes so the loop
+    // can never spin forever.
+    const hasNextPage =
+      "maxPage" in pagination ? page < pagination.maxPage : pagination.hasNextPage;
+
+    if (!hasNextPage) break;
     page++;
   }
 
