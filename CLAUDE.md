@@ -40,7 +40,11 @@ Site institucional/marketing (Next.js + MDX + Radix + Tailwind). Internacionaliz
 
 ### `mcp/`
 
-Servidor **MCP** (Model Context Protocol) próprio do Mintly, rodando via stdio (`@modelcontextprotocol/server`). Expõe a API do Mintly como tools pra agentes de IA — hoje só tem `get-projects-tool` (lista projetos de um canal). Cada tool fica em `src/tools/`, com contrato de output em `src/contracts/`. Configurado em `.mcp.json`; precisa de `MINTLY_API_KEY`/`MINTLY_API_URL` no ambiente.
+Servidor **MCP** (Model Context Protocol) próprio do Mintly, rodando via stdio (`@modelcontextprotocol/server`). Expõe a API do Mintly como tools pra agentes de IA — hoje só tem `get-projects-tool` (lista projetos de um canal). Cada tool fica em `src/tools/`, com contrato de output em `src/contracts/`. `mcp/.mcp.json` é só um **exemplo** de registro do servidor num cliente MCP (não é carregado ao abrir o repo); precisa de `MINTLY_API_KEY`/`MINTLY_API_URL` no ambiente.
+
+### MCPs do projeto (`.mcp.json` na raiz)
+
+Só o **Playwright MCP** (`@playwright/mcp`), usado para o agente abrir o app no browser e provar que uma mudança de tela funciona — ver "Validação no browser" em `web/CLAUDE.md`. A entrada usa `cmd /c npx` porque o projeto é desenvolvido em Windows nativo; em macOS/Linux troque por `"command": "npx"`.
 
 ### `infra/`
 
