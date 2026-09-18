@@ -1,9 +1,7 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { Pencil, TvMinimal } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { TvMinimal } from "lucide-react";
 import type { Channel } from "@/types/channel";
 import { dayjs } from "@/lib/dayjs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ChannelCardProps {
   channel: Channel;
