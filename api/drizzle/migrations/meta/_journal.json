@@ -218,6 +218,13 @@
       "when": 1789301685452,
       "tag": "0030_quiet_lifeguard",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1789568431100,
+      "tag": "0031_worried_the_stranger",
+      "breakpoints": true
     }
   ]
 }

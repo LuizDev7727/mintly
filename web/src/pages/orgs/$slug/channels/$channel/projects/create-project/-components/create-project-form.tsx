@@ -2,6 +2,12 @@ import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { usePaymentMethodStatus } from "@/hooks/use-payment-method-status";
 import { createProjectHttp } from "@/http/projects/create-project.http";
 import {
   createProjectSchema,
@@ -50,6 +56,10 @@ export function CreateProjectForm() {
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
+
+  const { hasPaymentMethod, isLoading: isPaymentMethodLoading } =
+    usePaymentMethodStatus({ orgSlug: slug });
+  const isMissingPaymentMethod = !isPaymentMethodLoading && !hasPaymentMethod;
 
   const {
     control,
@@ -271,14 +281,30 @@ export function CreateProjectForm() {
                 Add Video(s)
               </label>
             </Button>
-            <Button type="submit" disabled={isSubmitting || isFilesEmpty}>
-              {isSubmitting ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Scissors className="size-4" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="inline-flex">
+                  <Button
+                    type="submit"
+                    disabled={
+                      isSubmitting || isFilesEmpty || isMissingPaymentMethod
+                    }
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <Scissors className="size-4" />
+                    )}
+                    Generate Best Moments ({videoFields.length})
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              {isMissingPaymentMethod && (
+                <TooltipContent>
+                  <p>Add a payment method to create projects</p>
+                </TooltipContent>
               )}
-              Generate Best Moments ({videoFields.length})
-            </Button>
+            </Tooltip>
           </div>
         </header>
 

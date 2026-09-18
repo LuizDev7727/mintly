@@ -48,3 +48,27 @@ Cliente `better-auth` com o plugin `organizationClient()` (multi-tenant: usuári
 ## Variáveis de ambiente
 
 Sempre via `@/env` (nunca `import.meta.env` direto) — ver `src/lib/CLAUDE.md`, regra 2.
+
+## Estilo condicional — `data-*` em vez de ternário no `className`
+
+Para estado visual condicional (ativo/selecionado/aberto/etc.), usar `data-*` attribute no elemento + variante `data-[attr=valor]:` do Tailwind, em vez de `cn(condição ? "..." : "...")`. É o padrão já dominante no projeto (`data-current`, `data-selected`, `data-active`, `data-sidebar`, etc. em `channel-card.tsx`, `organization-switcher.tsx`, `sidebar.tsx`) — evita duplicar a base da classe nos dois ramos do ternário e mantém a condição legível no atributo, não escondida dentro de uma string de classe.
+
+```tsx
+// ❌ Evitar — ternário duplicando a classe base nos dois ramos
+<button
+  className={cn(
+    "rounded px-3 py-1 text-sm transition-colors",
+    view === "pending"
+      ? "bg-accent text-accent-foreground font-medium"
+      : "text-muted-foreground hover:text-foreground",
+  )}
+>
+
+// ✅ Preferir — data-attribute + variante Tailwind
+<button
+  data-current={view === "pending"}
+  className="rounded px-3 py-1 text-sm text-muted-foreground transition-colors data-[current=true]:bg-accent data-[current=true]:font-medium data-[current=true]:text-accent-foreground hover:text-foreground"
+>
+```
+
+Só volte para `cn(condição ? ... : ...)` quando as duas variantes não compartilham nenhuma classe base (nada a ganhar unificando).

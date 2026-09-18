@@ -16,6 +16,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { ImageGeneration } from "@/components/image-generation";
 import { useRealtimeRun, useRealtimeStream } from "@trigger.dev/react-hooks";
 import { AnimatedCircularProgressBar } from "@/components/animated-circular-progress";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type PostGridCardProps = {
   post: Post;
@@ -69,9 +70,8 @@ export function PostGridCard({
 
   return (
     <div
-      onClick={onSelect}
       data-selected={isSelected}
-      className="cursor-pointer rounded-lg border border-border data-[selected=true]:border-primary bg-card p-2.5 text-card-foreground"
+      className="rounded-lg border border-border data-[selected=true]:border-primary bg-card p-2.5 text-card-foreground"
     >
       <div className="relative aspect-video overflow-hidden rounded-md bg-muted">
         {status === "GENERATING_THUMBNAIL" && (
@@ -96,7 +96,12 @@ export function PostGridCard({
           </div>
         ) : null}
 
-        <PostStatusBadge status={status} />
+        <div className="absolute left-2 top-2 flex items-center gap-1">
+          <Checkbox
+            onCheckedChange={onSelect}
+          />
+          <PostStatusBadge status={status} />
+        </div>
 
         {isEncoding && (
           <AnimatedCircularProgressBar

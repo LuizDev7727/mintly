@@ -1,7 +1,6 @@
 import { db } from "@/infra/db/client.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
-import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { and, eq } from "drizzle-orm";
@@ -10,9 +9,32 @@ type GetMembersParams = {
   orgSlug: string;
 };
 
-export async function getMembers({ orgSlug }: GetMembersParams) {
+type GetMembersResponse = {
+  members: {
+    id: string;
+    role: string;
+    createdAt: Date;
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      avatarUrl: string | null;
+      bio: string | null;
+    };
+  }[],
+  pendingInvites: {
+    id: string;
+    email: string;
+    role: string | null;
+    createdAt: Date;
+  }[]
+}
 
-  const [result, pendingInvites] = await Promise.all([
+export async function getMembers(
+  { orgSlug }: GetMembersParams
+): Promise<GetMembersResponse> {
+
+  const [membersQueryResult, pendingInvites] = await Promise.all([
     db
       .select({
         id: membersTable.id,
@@ -47,7 +69,7 @@ export async function getMembers({ orgSlug }: GetMembersParams) {
   ]);
 
   const members = await Promise.all(
-    result.map(async ({ id, role, createdAt, user }) => {
+    membersQueryResult.map(async ({ id, role, createdAt, user }) => {
       const avatarUrl = user.image
         ? await generateSignedUrl({ key: user.image })
         : null;

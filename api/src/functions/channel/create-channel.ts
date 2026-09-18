@@ -7,6 +7,7 @@ import { ChannelAlreadyExistsError } from "../../errors/channel-already-exists.e
 type CreateChannelParams = {
   orgSlug: string;
   name: string;
+  description: string;
 };
 
 type CreateChannelResponse = {
@@ -16,7 +17,7 @@ type CreateChannelResponse = {
 export async function createChannel(
   params: CreateChannelParams,
 ): Promise<CreateChannelResponse> {
-  const { orgSlug, name } = params;
+  const { orgSlug, name, description } = params;
 
   const [hasSameChannelRegistred] = await db
     .select()
@@ -35,7 +36,12 @@ export async function createChannel(
 
   const [{ channelId }] = await db
     .insert(channelsTable)
-    .values({ name, slug: createSlug(name), organizationSlug: orgSlug })
+    .values({
+      name,
+      description,
+      slug: createSlug(name),
+      organizationSlug: orgSlug,
+    })
     .returning({ channelId: channelsTable.id });
 
   return { channelId };

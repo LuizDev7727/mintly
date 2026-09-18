@@ -10,35 +10,35 @@ export function PostStatusBadge({ status }: PostStatusBadgeProps) {
   switch (status) {
     case "PUBLISHED":
       return (
-        <Badge className="absolute left-2 top-2 inline-flex items-center gap-1">
+        <Badge>
           <Check size={13} />
           {status}
         </Badge>
       );
     case "ERROR":
       return (
-        <Badge variant={"destructive"} className="absolute left-2 top-2 inline-flex items-center gap-1">
+        <Badge variant={"destructive"}>
           <AlertTriangle size={13} />
           {status}
         </Badge>
       );
     case "SCHEDULED":
       return (
-        <Badge variant={"scheduled"} className="absolute left-2 top-2 inline-flex items-center gap-1">
+        <Badge variant={"scheduled"}>
           <Calendar size={13} />
           {status}
         </Badge>
       );
     case "CANCELED":
       return (
-        <Badge variant={"outline"} className="absolute left-2 top-2 inline-flex items-center gap-1">
+        <Badge variant={"outline"}>
           <Ban size={13} />
           {status}
         </Badge>
       );
     default:
       return (
-        <Badge className="absolute left-2 top-2 inline-flex items-center gap-1">
+        <Badge>
           <Loader2 size={13} className="animate-spin" />
           {status}
         </Badge>
