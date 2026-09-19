@@ -8,8 +8,9 @@
 
 ## File conventions
 
-- All test files live in `src/tests/` and follow the pattern `*.test.ts`
-- Test file names should reflect the route or module being tested (e.g. `health.test.ts`, `transactions.test.ts`)
+- Route tests live in `src/tests/http/<resource>/<verb>-<resource>.test.ts` (e.g. `http/channel/create-channel.test.ts`, `http/project/get-projects.test.ts`); external `/api/v1/*` routes go in `http/external/`. Only cross-cutting tests such as `health.test.ts` sit directly in `src/tests/`.
+- All test files follow the pattern `*.test.ts`, and the name reflects the route being tested.
+- Test data comes from `src/tests/factories/` (see its `CLAUDE.md`). Factories must produce data the routes accept: a listed project needs a `runId`, and channel creation needs a `description`.
 
 ## Global setup (`setup.ts`)
 
