@@ -72,3 +72,14 @@ Para estado visual condicional (ativo/selecionado/aberto/etc.), usar `data-*` at
 ```
 
 Só volte para `cn(condição ? ... : ...)` quando as duas variantes não compartilham nenhuma classe base (nada a ganhar unificando).
+
+## Validação no browser (Playwright MCP)
+
+Toda mudança que toca em tela deve ser exercitada no browser antes de ser dada como pronta — testes unitários e `tsc` não mostram se a tela funciona nem como ela ficou. O servidor `playwright` está no `.mcp.json` da raiz.
+
+1. Suba o Postgres (`docker compose up -d` em `api/`) e aplique as migrations (`pnpm db:migrate`); suba a API (`pnpm dev` em `api/`, porta 3000) e o web (`pnpm dev` aqui, porta 5173).
+2. Se ainda não existir, crie o usuário de seed com `pnpm db:seed` em `api/` — as credenciais estão em `src/tests/global-setup.ts`; não as copie para outros arquivos.
+3. Com as tools do Playwright MCP: entre em `/auth`, navegue até a tela alterada, exercite o fluxo novo (caminho feliz e um erro) e confira console e requests com falha.
+4. Relate o que viu de verdade. Se não foi possível subir o ambiente, diga isso explicitamente em vez de assumir que funciona.
+
+Isso complementa, não substitui, os testes: não commite os passos exploratórios como spec E2E (`src/tests/e2e/`) — E2E é caro e lento de manter; só vira spec o fluxo crítico completo.
