@@ -14,6 +14,8 @@ feature/* → development → staging → main
 
 Ao criar qualquer PR com `gh pr create`, sempre passar `--base development` (ou a branch correta do fluxo). Nunca omitir `--base` para evitar que o GitHub use `main` como padrão.
 
+Essas regras são **aplicadas por um hook**, não só por texto: `.claude/hooks/git-flow-guard.mjs` (registrado em `.claude/settings.json`) bloqueia `git commit` em `main`/`staging`/`development`, `git push` para essas branches, force push, e `gh pr create` sem `--base` ou com base fora do fluxo. Se um comando for bloqueado, a mensagem diz o que fazer — não tente contornar o hook. Testes do hook: `node --test .claude/hooks/git-flow-guard.test.mjs`.
+
 ## Estrutura do Monorepo
 
 Cada pasta na raiz é um projeto independente, com seu próprio `package.json`/lockfile. Não é um workspace único — não assuma que uma dependência instalada numa pasta está disponível em outra.
