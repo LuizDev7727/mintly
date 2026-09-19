@@ -10,6 +10,9 @@ export default defineConfig({
   test: {
     reporters: "verbose",
     setupFiles: ["./src/tests/setup.ts"],
+    // Every test file boots the app, which fetches its secrets from Infisical.
+    // Fewer parallel files on CI means fewer requests in the same instant.
+    maxWorkers: process.env.CI ? 2 : undefined,
     // coverage: {
     //   enabled: true,
     //   provider: 'v8',

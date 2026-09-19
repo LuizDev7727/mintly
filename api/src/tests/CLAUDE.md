@@ -20,6 +20,10 @@
 2. Creates a `testUser` and resolves `authHeaders` via `auth-test.ts`
 3. Closes the server after all tests finish via `afterAll`
 
+It also **mocks `generateRealtimeToken`** (`@/utils/generate-realtime-token.ts`) for every test. The real one calls Trigger.dev and needs `TRIGGER_SECRET_KEY`, which exists in a developer's `.env` but not in CI — without the mock, any list endpoint that returns an `ENCODING`/`PROCESSING` item answers 500 on CI while passing locally. Never call Trigger.dev or other paid/external services from a test.
+
+Every test file boots the app and fetches its secrets from Infisical, which rate-limits (HTTP 429). `getInfisicalSecret` retries on 429, and `vitest.config.ts` limits workers to 2 when `CI` is set; if you add many test files, expect the run to take longer, not to fail.
+
 Import these exports when your test needs an authenticated request:
 
 ```ts
