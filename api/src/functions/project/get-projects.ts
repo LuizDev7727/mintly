@@ -7,6 +7,7 @@ import { and, count, desc, eq, like } from "drizzle-orm";
 import { getChannel } from "../channel/get-channel.ts";
 
 type GetProjectsParams = {
+  organizationSlug: string;
   channelId: string;
   pageIndex: number;
   titleFilter: string | null;
@@ -42,9 +43,9 @@ const ACTIVE_PROJECT_STATUSES = ["ENCODING"] as const;
 export async function getProjects(
   params: GetProjectsParams,
 ): Promise<GetProjectsResponse> {
-  const { channelId, pageIndex, titleFilter, statusFilter, ownerId } = params;
+  const { organizationSlug, channelId, pageIndex, titleFilter, statusFilter, ownerId } = params;
 
-  await getChannel({ channelId });
+  await getChannel({ channelId, organizationSlug });
 
   const filters = and(
     eq(projectsTable.channelId, channelId),
