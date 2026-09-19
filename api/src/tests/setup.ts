@@ -1,9 +1,16 @@
-import { beforeAll, afterAll } from "vitest";
+import { beforeAll, afterAll, vi } from "vitest";
 import { server } from "@/app.ts";
 import { test } from "@/lib/auth.ts";
 import { faker } from "@faker-js/faker";
 import { makeFakeOrganization } from "./factories/make-fake-organization.ts";
 import { makeFakeMember } from "./factories/make-fake-member.ts";
+
+// Tests must not call Trigger.dev. The real generateRealtimeToken needs
+// TRIGGER_SECRET_KEY, which exists in a developer's .env but not in CI, so any
+// list endpoint returning an ENCODING/PROCESSING item answered 500 there.
+vi.mock("@/utils/generate-realtime-token.ts", () => ({
+  generateRealtimeToken: vi.fn(async () => "test-realtime-token"),
+}));
 
 export let testUser: ReturnType<typeof test.createUser>;
 export let testOrgSlug: string;

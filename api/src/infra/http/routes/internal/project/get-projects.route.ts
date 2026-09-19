@@ -72,6 +72,7 @@ export const getProjectsRoute: FastifyPluginAsyncZod = async (app) => {
       await checkMembership({ organizationSlug: orgSlug, userId });
 
       const { projects, meta } = await getProjects({
+        organizationSlug: orgSlug,
         channelId,
         pageIndex,
         titleFilter,

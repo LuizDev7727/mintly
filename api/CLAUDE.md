@@ -19,9 +19,9 @@ Ver [`README.md`](./README.md) para stack, setup e scripts. Este arquivo cobre c
 
 `src/webhooks/`, `src/schemas/`, `src/errors/` (abaixo) e `src/@types/` (augmentation do Fastify, `fastify.d.ts`) ainda não têm `CLAUDE.md` próprio — são pequenos o suficiente pra caber aqui.
 
-## Erros — padrão real (⚠️ diverge do exemplo em `functions/CLAUDE.md`)
+## Erros
 
-`functions/CLAUDE.md` documenta erro como `throw Object.assign(new Error(...), { statusCode: 404 })` — **isso não é o que o código faz de verdade**. O padrão realmente implementado (`src/infra/http/routes/error-handler.ts`) é:
+Nunca lance `Error` puro nem `Object.assign(new Error(...), { statusCode })` — o handler global só traduz classes conhecidas. O padrão (`src/infra/http/routes/error-handler.ts`) é:
 
 1. Cada erro de domínio é uma classe própria em `src/errors/<nome>.error.ts`, estendendo `Error`:
    ```ts
@@ -41,8 +41,6 @@ Ver [`README.md`](./README.md) para stack, setup e scripts. Este arquivo cobre c
 
 Nomeie o arquivo `<nome>.error.ts` (dois arquivos existentes — `organization-already-created.ts`, `user-not-belongs-to-the-organization.ts` — não seguem essa convenção; são exceção histórica, não copiar o padrão deles).
 
-`functions/CLAUDE.md` deveria ser corrigido pra refletir isso — sinalizar pro usuário se for mexer nessa área.
-
 ## Webhooks de saída (`src/webhooks/`)
 
 Diferente de `src/infra/trigger/` (que processa jobs internos), essa pasta entrega eventos **pra fora** — webhooks configurados pela organização (ex: "me avise quando um post for publicado").
@@ -50,8 +48,6 @@ Diferente de `src/infra/trigger/` (que processa jobs internos), essa pasta entre
 - `webhook-event.ts` — union discriminada (Zod, por `trigger`) de todos os eventos disparáveis (`post.created`, `post.failed`, `post.posted`, `project.created`); cada payload de evento fica em `events/<evento>.ts`.
 - `handle-webhook-event.ts` — assina o payload como JWT (header `Mintly-Signature`, mesmo mecanismo documentado em `docs/`), registra um log de entrega (`webhookLogsTable`, status `PENDING` → `SUCCESS`/`FAILED`) e faz o `POST` pro endpoint da organização.
 - Ao adicionar um evento novo: criar `events/<evento>.ts` (schema do payload), adicionar o literal em `webhook-event.ts`, e disparar via `publish-webhook.ts`/`webhook-event-trigger.ts` no ponto do código onde o evento acontece.
-
-Nota: `handle-webhook-event.ts` grava `ip: "asdasdasdasdasd"` hardcoded ao criar o log — é um placeholder que ficou, não captura o IP real da entrega. Vale corrigir se mexer nessa função.
 
 ## Schemas compartilhados (`src/schemas/`)
 

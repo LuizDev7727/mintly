@@ -5,6 +5,7 @@ import { getChannel } from "../channel/get-channel.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 
 type GetInspirationalThumbnailsParams = {
+  organizationSlug: string;
   channelId: string;
   cursor?: string;
 };
@@ -12,10 +13,11 @@ type GetInspirationalThumbnailsParams = {
 const PAGE_SIZE = 10;
 
 export async function getInspirationalThumbnails(params: GetInspirationalThumbnailsParams) {
-  const { channelId, cursor } = params;
+  const { organizationSlug, channelId, cursor } = params;
 
   await getChannel({
-    channelId
+    channelId,
+    organizationSlug,
   })
 
   const result = await db.select({
