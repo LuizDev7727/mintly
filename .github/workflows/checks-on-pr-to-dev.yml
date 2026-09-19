@@ -1,0 +1,85 @@
+name: Checks on PR to Development
+
+# Fast, deterministic feedback that runs on every PR — independent of whether
+# the PR touched test files (see tests-on-pr-to-dev.yml for the heavy suites).
+
+on:
+  pull_request:
+    branches: [development]
+
+jobs:
+  api-typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Non-blocking for now: `development` still has pre-existing type errors in
+    # api/. Remove this line once `pnpm typecheck` is clean so it becomes a gate.
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.1.1
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: "pnpm"
+          cache-dependency-path: api/pnpm-lock.yaml
+
+      - name: Install API dependencies
+        working-directory: api
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck API
+        working-directory: api
+        run: pnpm typecheck
+
+  web-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VITE_API_BASE_URL: http://localhost:3000
+      VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+      VITE_NODE_ENV: test
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # needed to diff against the base branch
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.1.1
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: "pnpm"
+          cache-dependency-path: web/pnpm-lock.yaml
+
+      - name: Install web dependencies
+        working-directory: web
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck web
+        working-directory: web
+        run: pnpm exec tsc -b
+
+      # The repo still has legacy lint errors, so lint only the files this PR
+      # touches. Once `pnpm lint` is clean, replace this step with `pnpm lint`.
+      - name: Lint changed files
+        working-directory: web
+        run: |
+          # --relative: paths are relative to web/ (the working directory)
+          FILES=$(git diff --name-only --relative --diff-filter=d "origin/${{ github.base_ref }}...HEAD" -- src | grep -E '\.tsx?$' || true)
+          if [ -z "$FILES" ]; then
+            echo "No changed TS/TSX files to lint."
+          else
+            echo "$FILES" | xargs pnpm exec eslint
+          fi
+
+      - name: Unit tests
+        working-directory: web
+        run: pnpm test:unit
