@@ -55,11 +55,14 @@ jobs:
         working-directory: api
         run: pnpm install
 
+      # Port 5483 (not 5432): the app reads DATABASE_URL from Infisical (env "dev"),
+      # which points to localhost:5483, so the CI database must listen there too.
+      # With 5432, every API test file failed with ECONNREFUSED 127.0.0.1:5483.
       - name: Start PostgreSQL
         run: |
           docker run -d \
             --name mintly-pg \
-            --network host \
+            -p 5483:5432 \
             -e POSTGRES_USER=mintly \
             -e POSTGRES_PASSWORD=mintly \
             -e POSTGRES_DB=mintly \
@@ -72,7 +75,7 @@ jobs:
         working-directory: api
         run: pnpm db:migrate
         env:
-          DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
+          DATABASE_URL: postgresql://mintly:mintly@localhost:5483/mintly
 
       - name: Run API tests
         working-directory: api
@@ -124,7 +127,7 @@ jobs:
         run: |
           docker run -d \
             --name mintly-pg \
-            --network host \
+            -p 5483:5432 \
             -e POSTGRES_USER=mintly \
             -e POSTGRES_PASSWORD=mintly \
             -e POSTGRES_DB=mintly \
@@ -140,7 +143,7 @@ jobs:
         working-directory: api
         run: pnpm db:migrate
         env:
-          DATABASE_URL: postgresql://mintly:mintly@localhost:5432/mintly
+          DATABASE_URL: postgresql://mintly:mintly@localhost:5483/mintly
 
       - name: Seed E2E test user
         working-directory: api
