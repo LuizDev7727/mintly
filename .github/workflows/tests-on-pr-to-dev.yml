@@ -71,11 +71,28 @@ jobs:
       - name: Wait for PostgreSQL
         run: until docker exec mintly-pg pg_isready -U mintly; do sleep 1; done
 
+      # Retry: this step failed intermittently on CI (silently, with only
+      # ELIFECYCLE in the log) and the cause is not known. Migrations are
+      # idempotent, so retrying is safe.
       - name: Run migrations
         working-directory: api
-        run: pnpm db:migrate
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if pnpm db:migrate; then
+              exit 0
+            fi
+            echo "Migration attempt $attempt/5 failed"
+            sleep 3
+          done
+          echo "Migrations failed after 5 attempts"
+          exit 1
         env:
           DATABASE_URL: postgresql://mintly:mintly@localhost:5483/mintly
+
+      # Surface the real cause when anything above fails.
+      - name: Postgres container logs (on failure)
+        if: failure()
+        run: docker logs mintly-pg
 
       - name: Run API tests
         working-directory: api
@@ -139,11 +156,28 @@ jobs:
       - name: Wait for PostgreSQL
         run: until docker exec mintly-pg pg_isready -U mintly; do sleep 1; done
 
+      # Retry: this step failed intermittently on CI (silently, with only
+      # ELIFECYCLE in the log) and the cause is not known. Migrations are
+      # idempotent, so retrying is safe.
       - name: Run migrations
         working-directory: api
-        run: pnpm db:migrate
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if pnpm db:migrate; then
+              exit 0
+            fi
+            echo "Migration attempt $attempt/5 failed"
+            sleep 3
+          done
+          echo "Migrations failed after 5 attempts"
+          exit 1
         env:
           DATABASE_URL: postgresql://mintly:mintly@localhost:5483/mintly
+
+      # Surface the real cause when anything above fails.
+      - name: Postgres container logs (on failure)
+        if: failure()
+        run: docker logs mintly-pg
 
       - name: Seed E2E test user
         working-directory: api
