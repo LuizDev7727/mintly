@@ -1,6 +1,6 @@
 # Mintly — Site institucional
 
-Site de marketing/institucional do Mintly (Next.js, App Router). Internacionalizado (`en-US`/`pt-BR`), com blog e changelog em MDX.
+Site de marketing/institucional do Mintly (Next.js, App Router). Internacionalizado (`en`/`pt`), com blog e changelog em MDX.
 
 ## Stack
 
@@ -11,9 +11,9 @@ Site de marketing/institucional do Mintly (Next.js, App Router). Internacionaliz
 
 ## Internacionalização
 
-Locales suportados: `en-US` (default) e `pt-BR`, com dicionários em `src/dictionaries/{en-us,pt-br}.json`.
+Locales suportados: `en` (default) e `pt` — são os segmentos de URL (`/en/...`, `/pt/...`), definidos em `src/app/[lang]/locales.ts` e `src/proxy.ts` — com dicionários em `src/dictionaries/{en-us,pt-br}.json`.
 
-`src/proxy.ts` roda antes de qualquer rota: se a URL não começa com `/en-US` ou `/pt-BR`, detecta o idioma preferido do visitante (via header `Accept-Language`, matcher do `@formatjs/intl-localematcher`) e redireciona pra `/<locale>/<resto-da-url>`. Todas as rotas de conteúdo ficam sob `src/app/[lang]/`.
+`src/proxy.ts` roda antes de qualquer rota: se a URL não começa com `/en` ou `/pt`, detecta o idioma preferido do visitante (via header `Accept-Language`, matcher do `@formatjs/intl-localematcher`) e redireciona pra `/<locale>/<resto-da-url>`. Todas as rotas de conteúdo ficam sob `src/app/[lang]/`.
 
 ## Rodando localmente
 
