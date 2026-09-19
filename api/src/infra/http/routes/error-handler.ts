@@ -2,6 +2,7 @@ import { ChannelAlreadyExistsError } from "@/errors/channel-already-exists.error
 import { FolderAlreadyExistsError } from "@/errors/folder-already-exists.error.ts";
 import { OrganizationAlreadyCreatedError } from "@/errors/organization-already-created.ts";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
+import { UnauthorizedError } from "@/errors/unauthorized.error.ts";
 import { UserNotBelongsToTheOrganizationError } from "@/errors/user-not-belongs-to-the-organization.ts";
 import type { FastifyInstance } from "fastify";
 import { hasZodFastifySchemaValidationErrors } from "fastify-type-provider-zod";
@@ -13,6 +14,12 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
     return reply.status(400).send({
       message: "Validation error",
       errors: error.validation,
+    });
+  }
+
+  if (error instanceof UnauthorizedError) {
+    return reply.status(401).send({
+      message: error.message,
     });
   }
 

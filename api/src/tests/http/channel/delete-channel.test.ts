@@ -10,7 +10,7 @@ beforeAll(async () => {
   const response = await request(server.server)
     .post(`/api/organizations/${testOrgSlug}/channels`)
     .set(authHeaders)
-    .send({ name: faker.word.noun() });
+    .send({ name: faker.word.noun(), description: faker.lorem.sentence() });
 
   channelId = response.body.channelId;
 });

@@ -44,8 +44,21 @@ type GetPostsResponse = {
     thumbnailUrl: string | null;
     title: string;
     size: number;
-    status: string;
+    status: PostStatus;
     runId: string;
+    mimeType: string;
+    duration: number;
+    createdAt: Date;
+    publishAt: Date | null;
+    socialsToPost: {
+      id: string;
+      social: "YOUTUBE" | "TIKTOK" | "INSTAGRAM";
+      socialName: string;
+      avatarUrl: string | null;
+    }[];
+    author: {
+      name: string;
+    };
     realtimeToken: string | null;
   }[];
   meta: {
