@@ -5,8 +5,11 @@ import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 import { faker } from "@faker-js/faker";
 import { uuidv7 } from "uuidv7";
 import { makeFakeProject } from "@/tests/factories/make-fake-project.ts";
+import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
+import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
 
 let channelId: string;
+let channelOfAnotherOrg: string;
 let projectTitle: string;
 
 beforeAll(async () => {
@@ -20,6 +23,10 @@ beforeAll(async () => {
   projectTitle = faker.lorem.words({ min: 3, max: 8 });
   await makeFakeProject(channelId, testUser.id, { title: projectTitle });
   await makeFakeProject(channelId, testUser.id);
+
+  const { organizationSlug: anotherOrgSlug } = await makeFakeOrganization(testUser.id);
+  ({ channelId: channelOfAnotherOrg } = await makeFakeChannel(anotherOrgSlug));
+  await makeFakeProject(channelOfAnotherOrg, testUser.id, { status: "SUCCESS" });
 });
 
 describe("GET [/api/organizations/:orgSlug/channels/:channelId/projects]", () => {
@@ -52,5 +59,15 @@ describe("GET [/api/organizations/:orgSlug/channels/:channelId/projects]", () =>
       .set(authHeaders);
 
     expect(response.status).toEqual(404);
+  });
+
+  test("should return 404 when the channel belongs to another organization", async () => {
+    // The caller is a member of testOrgSlug, but the channel is not theirs.
+    const response = await request(server.server)
+      .get(`/api/organizations/${testOrgSlug}/channels/${channelOfAnotherOrg}/projects`)
+      .set(authHeaders);
+
+    expect(response.status).toEqual(404);
+    expect(response.body).not.toHaveProperty("projects");
   });
 });

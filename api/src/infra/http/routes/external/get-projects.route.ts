@@ -55,6 +55,7 @@ export const getProjectsExternalRoute: FastifyPluginAsyncZod = async (
       span.setAttribute("organization.id", request.organization.id);
 
       const { projects, meta } = await getProjects({
+        organizationSlug: request.organization.slug,
         channelId,
         pageIndex,
         titleFilter,

@@ -8,10 +8,13 @@ import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { hashApiKey } from "@/utils/crypto/hash-api-key.ts";
 import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 import { makeFakeProject } from "@/tests/factories/make-fake-project.ts";
+import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
+import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
 
 const API_KEY = "test-external-api-key";
 
 let channelId: string;
+let channelOfAnotherOrg: string;
 
 beforeAll(async () => {
   // The setup factory creates the organization without an API key.
@@ -30,6 +33,11 @@ beforeAll(async () => {
   // No status override: new projects default to "ENCODING".
   await makeFakeProject(channelId, testUser.id);
   await makeFakeProject(channelId, testUser.id, { status: "SUCCESS" });
+
+  // A channel (with a project) that belongs to a DIFFERENT organization.
+  const { organizationSlug: anotherOrgSlug } = await makeFakeOrganization(testUser.id);
+  ({ channelId: channelOfAnotherOrg } = await makeFakeChannel(anotherOrgSlug));
+  await makeFakeProject(channelOfAnotherOrg, testUser.id, { status: "SUCCESS" });
 });
 
 describe("GET [/api/v1/projects]", () => {
@@ -53,5 +61,24 @@ describe("GET [/api/v1/projects]", () => {
       expect.arrayContaining(["ENCODING", "SUCCESS"]),
     );
     expect(response.body.meta).toHaveProperty("totalCount", 2);
+  });
+
+  test("should return 404 for a channel that belongs to another organization", async () => {
+    const response = await request(server.server)
+      .get("/api/v1/projects")
+      .query({ channelId: channelOfAnotherOrg })
+      .set("Authorization", `Bearer ${API_KEY}`);
+
+    expect(response.status).toEqual(404);
+    expect(response.body).not.toHaveProperty("projects");
+  });
+
+  test("should return 404 for a channel that does not exist", async () => {
+    const response = await request(server.server)
+      .get("/api/v1/projects")
+      .query({ channelId: faker.string.uuid() })
+      .set("Authorization", `Bearer ${API_KEY}`);
+
+    expect(response.status).toEqual(404);
   });
 });
