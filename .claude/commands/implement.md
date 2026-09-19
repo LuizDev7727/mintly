@@ -159,14 +159,14 @@ Run only the gates for the layers you touched, and fix every failure **your chan
 
 | Layer | Command (from the project folder) |
 |---|---|
-| `api/` typecheck | `pnpm exec tsc --noEmit` (~45s) — the baseline is **not clean**, see below |
+| `api/` typecheck | `pnpm typecheck` (30–120s) — the baseline is clean and CI blocks on it, so any error is yours |
 | `api/` tests | `pnpm test <changed test files>` — needs Postgres from `docker-compose.yml` (port 5483) with migrations applied (`pnpm db:migrate`) |
 | `web/` lint | `pnpm exec eslint <changed files>` — `pnpm lint` on the whole repo still fails on legacy errors |
 | `web/` typecheck + build | `pnpm build` |
 | `web/` unit tests | `pnpm test:unit` |
 | `web/` e2e (when a flow was added/changed) | `pnpm test <changed spec files>` |
 
-**Known baseline failures.** `api/` typecheck currently reports pre-existing errors on `development` (`connect-youtube.ts`, `get-usage.ts`, `get-avaiable-events.ts`, `check-user-session.ts`, `external/get-projects.route.ts`), and `pnpm lint` in `web/` has legacy errors. Do not "fix" unrelated files to make a gate green: confirm your change adds **no new** errors (compare the error list before and after) and report the pre-existing ones separately. Delete this paragraph once those baselines are clean.
+**Known baseline failure.** Only `pnpm lint` in `web/` still has legacy errors. Do not "fix" unrelated files to make it green: lint just the files you changed, confirm your change adds **no new** errors, and report the pre-existing ones separately. The `api/` typecheck, the web typecheck and the web unit tests are clean — a failure there is caused by your change. Delete this paragraph once `pnpm lint` is clean.
 
 If the change touches a screen and a Playwright MCP server is available, open the page in the browser and exercise the new behavior once — the automated tests do not replace seeing it work.
 

@@ -11,9 +11,6 @@ jobs:
   api-typecheck:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Non-blocking for now: `development` still has pre-existing type errors in
-    # api/. Remove this line once `pnpm typecheck` is clean so it becomes a gate.
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v7
