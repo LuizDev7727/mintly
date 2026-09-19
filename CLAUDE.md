@@ -51,7 +51,7 @@ Servidor **MCP** (Model Context Protocol) próprio do Mintly, rodando via stdio 
 
 ### MCPs do projeto (`.mcp.json` na raiz)
 
-Só o **Playwright MCP** (`@playwright/mcp`), usado para o agente abrir o app no browser e provar que uma mudança de tela funciona — ver "Validação no browser" em `web/CLAUDE.md`. A entrada usa `cmd /c npx` porque o projeto é desenvolvido em Windows nativo; em macOS/Linux troque por `"command": "npx"`.
+Só o **Playwright MCP** (`@playwright/mcp`), usado para o agente abrir o app no browser e provar que uma mudança de tela funciona — ver "Validação no browser" em `web/CLAUDE.md`. A entrada usa `cmd /c npx` porque o projeto é desenvolvido em Windows nativo; em macOS/Linux troque por `"command": "npx"`. Usa `--browser msedge` porque o padrão do MCP exige o Google Chrome instalado no sistema, e o Edge já vem no Windows (perfil temporário, sem download); se preferir o Chrome, instale-o e remova a flag. O MCP grava snapshots em `.playwright-mcp/` no diretório em que roda — está no `.gitignore`.
 
 ### `infra/`
 
