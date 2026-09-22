@@ -16,7 +16,7 @@ export function PendingInvitesList() {
 
   // useSuspenseQuery re-suspends on every queryKey change (it does not accept
   // placeholderData), so changing pages shows the Suspense fallback again —
-  // see PendingInvitesListSkeleton, rendered by the boundary in members-tabs.tsx.
+  // see PendingInvitesListLoading, rendered by the boundary in members-tabs.tsx.
   const { data } = useSuspenseQuery({
     queryKey: ["organization-pending-invites", slug, "page", currentPage],
     queryFn: () =>

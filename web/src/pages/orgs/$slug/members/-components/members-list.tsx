@@ -15,7 +15,7 @@ export function MembersList() {
 
   // useSuspenseQuery re-suspends on every queryKey change (it does not accept
   // placeholderData), so changing pages shows the Suspense fallback again —
-  // see MembersListSkeleton, rendered by the boundary in members-tabs.tsx.
+  // see MembersListLoading, rendered by the boundary in members-tabs.tsx.
   const { data } = useSuspenseQuery({
     queryKey: ["members", slug, "page", currentPage],
     queryFn: () => getMembersHttp({ orgSlug: slug, pageIndex: currentPage }),

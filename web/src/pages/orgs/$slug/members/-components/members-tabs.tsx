@@ -8,9 +8,9 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { MembersList } from "./members-list";
-import { MembersListSkeleton } from "./members-list-skeleton";
+import { MembersListLoading } from "./members-list-loading";
 import { PendingInvitesList } from "./pending-invites-list";
-import { PendingInvitesListSkeleton } from "./pending-invites-list-skeleton";
+import { PendingInvitesListLoading } from "./pending-invites-list-loading";
 
 const TAB_TRIGGER_CLASS = [
   // The visible sides need a colour; the bottom stays transparent because the
@@ -44,13 +44,13 @@ export function MembersTabs() {
       </div>
 
       <TabsContent value="members">
-        <Suspense fallback={<MembersListSkeleton />}>
+        <Suspense fallback={<MembersListLoading />}>
           <MembersList />
         </Suspense>
       </TabsContent>
 
       <TabsContent value="pending">
-        <Suspense fallback={<PendingInvitesListSkeleton />}>
+        <Suspense fallback={<PendingInvitesListLoading />}>
           <PendingInvitesList />
         </Suspense>
       </TabsContent>
