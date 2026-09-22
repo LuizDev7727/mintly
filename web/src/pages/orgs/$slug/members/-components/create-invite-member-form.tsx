@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { createInviteMemberHttp } from "@/http/organization/create-invite-member.http";
-import type { GetMembersResponse } from "@/http/organization/get-members.http";
 import {
   createInviteMemberSchema,
   type CreateInviteMemberFormType,
@@ -31,26 +30,17 @@ export function CreateInviteMemberForm() {
 
   const { mutateAsync: handleCreateInvite } = useMutation({
     mutationFn: createInviteMemberHttp,
-    onSuccess: (data, variables) => {
-      const { inviteId } = data;
-      queryClient.setQueryData<GetMembersResponse>(
-        ["members", slug],
-        (old) => {
-          if (!old) return old;
-
-          const newPendingInvites = [
-            ...old.pendingInvites,
-            {
-              id: inviteId,
-              email: variables.email,
-              role: null,
-              createdAt: new Date().toISOString(),
-            },
-          ];
-
-          return { ...old, pendingInvites: newPendingInvites };
-        },
-      );
+    onSuccess: () => {
+      // The invite always lands on page 1 (most recent first), which may not
+      // be the page a cached query is showing — refetch instead of patching
+      // the list by hand. Both prefixes: every cached page, and the count
+      // that feeds the "Pending" tab label.
+      queryClient.invalidateQueries({
+        queryKey: ["organization-pending-invites", slug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["organization-pending-invites-count", slug],
+      });
     },
   });
 

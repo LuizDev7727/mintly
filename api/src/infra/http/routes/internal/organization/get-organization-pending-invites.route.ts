@@ -1,13 +1,15 @@
-import { getMembers } from "@/functions/organization/get-members.ts";
+import { getOrganizationPendingInvites } from "@/functions/organization/get-organization-pending-invites.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { tracer } from "../../../tracer/tracer.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
-export const getMembersRoute: FastifyPluginAsyncZod = async (app) => {
+export const getOrganizationPendingInvitesRoute: FastifyPluginAsyncZod = async (
+  app,
+) => {
   app.get(
-    "/api/organizations/:slug/members",
+    "/api/organizations/:slug/invites/pending",
     {
       preHandler: [
         checkUserSession,
@@ -17,23 +19,16 @@ export const getMembersRoute: FastifyPluginAsyncZod = async (app) => {
           slug: z.string(),
         }),
         querystring: z.object({
-          // Omitted = the whole list (sidebar avatars and owner filters).
-          pageIndex: z.coerce.number().int().min(0).optional(),
+          pageIndex: z.coerce.number().int().min(0).default(0),
         }),
         response: {
           200: z.object({
-            members: z.array(
+            pendingInvites: z.array(
               z.object({
                 id: z.string(),
-                role: z.string(),
+                email: z.string(),
+                role: z.string().nullable(),
                 createdAt: z.date(),
-                user: z.object({
-                  id: z.string(),
-                  name: z.string(),
-                  email: z.string(),
-                  avatarUrl: z.string().nullable(),
-                  bio: z.string().nullable(),
-                }),
               }),
             ),
             meta: z.object({
@@ -49,21 +44,21 @@ export const getMembersRoute: FastifyPluginAsyncZod = async (app) => {
       const { pageIndex } = request.query;
       const { id: userId } = request.user;
 
-      const span = tracer.startSpan("get-members");
+      const span = tracer.startSpan("get-organization-pending-invites");
       span.setAttribute("organization-slug", slug);
-      span.setAttribute("page-index", pageIndex ?? "No pagination");
+      span.setAttribute("page-index", pageIndex);
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      const { members, meta } = await getMembers({
+      const { pendingInvites, meta } = await getOrganizationPendingInvites({
         orgSlug: slug,
         pageIndex,
       });
 
-      span.setAttribute("members-count", members.length);
+      span.setAttribute("pending-invites-count", pendingInvites.length);
       span.end();
 
-      return reply.status(200).send({ members, meta });
+      return reply.status(200).send({ pendingInvites, meta });
     },
   );
 };

@@ -1,22 +1,27 @@
 import type { Member } from "@/types/member";
-import type { PendingInvite } from "@/types/pending-invite";
 import { api } from "../api";
 
 type GetMembersParams = {
   orgSlug: string;
+  // Omitted = every member (sidebar avatars, owner filters).
+  pageIndex?: number;
 };
 
 export type GetMembersResponse = {
   members: Member[];
-  pendingInvites: PendingInvite[];
+  meta: {
+    totalCount: number;
+    totalPages: number;
+  };
 };
 
 export async function getMembersHttp(
   params: GetMembersParams,
 ): Promise<GetMembersResponse> {
-  const { orgSlug } = params;
+  const { orgSlug, pageIndex } = params;
   const { data } = await api.get<GetMembersResponse>(
     `/organizations/${orgSlug}/members`,
+    { params: { pageIndex } },
   );
   return data;
 }

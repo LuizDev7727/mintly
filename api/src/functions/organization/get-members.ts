@@ -1,13 +1,17 @@
 import { db } from "@/infra/db/client.ts";
-import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import { and, eq } from "drizzle-orm";
+import { asc, count, eq } from "drizzle-orm";
 
 type GetMembersParams = {
   orgSlug: string;
+  // When omitted, every member is returned (used by the sidebar avatars and the
+  // owner filters, which need the full list). When set, only that page.
+  pageIndex?: number;
 };
+
+const PAGE_SIZE = 12;
 
 type GetMembersResponse = {
   members: {
@@ -22,50 +26,46 @@ type GetMembersResponse = {
       bio: string | null;
     };
   }[],
-  pendingInvites: {
-    id: string;
-    email: string;
-    role: string | null;
-    createdAt: Date;
-  }[]
+  meta: {
+    totalCount: number;
+    totalPages: number;
+  };
 }
 
 export async function getMembers(
-  { orgSlug }: GetMembersParams
+  params: GetMembersParams
 ): Promise<GetMembersResponse> {
+  const { orgSlug, pageIndex } = params;
 
-  const [membersQueryResult, pendingInvites] = await Promise.all([
+  const membersQuery = db
+    .select({
+      id: membersTable.id,
+      role: membersTable.role,
+      createdAt: membersTable.createdAt,
+      user: {
+        id: usersTable.id,
+        name: usersTable.name,
+        email: usersTable.email,
+        image: usersTable.image,
+        bio: usersTable.bio,
+      },
+    })
+    .from(membersTable)
+    .innerJoin(usersTable, eq(membersTable.userId, usersTable.id))
+    .where(eq(membersTable.organizationSlug, orgSlug))
+    // A stable order is what keeps pages from repeating or skipping members.
+    .orderBy(asc(membersTable.createdAt), asc(membersTable.id))
+    .$dynamic();
+
+  const [membersQueryResult, [{ totalCount }]] = await Promise.all([
+    pageIndex === undefined
+      ? membersQuery
+      : membersQuery.limit(PAGE_SIZE).offset(pageIndex * PAGE_SIZE),
+
     db
-      .select({
-        id: membersTable.id,
-        role: membersTable.role,
-        createdAt: membersTable.createdAt,
-        user: {
-          id: usersTable.id,
-          name: usersTable.name,
-          email: usersTable.email,
-          image: usersTable.image,
-          bio: usersTable.bio,
-        },
-      })
+      .select({ totalCount: count() })
       .from(membersTable)
-      .innerJoin(usersTable, eq(membersTable.userId, usersTable.id))
       .where(eq(membersTable.organizationSlug, orgSlug)),
-
-    db
-      .select({
-        id: invitationsTable.id,
-        email: invitationsTable.email,
-        role: invitationsTable.role,
-        createdAt: invitationsTable.createdAt,
-      })
-      .from(invitationsTable)
-      .where(
-        and(
-          eq(invitationsTable.organizationSlug, orgSlug),
-          eq(invitationsTable.status, "pending"),
-        ),
-      ),
   ]);
 
   const members = await Promise.all(
@@ -91,6 +91,10 @@ export async function getMembers(
 
   return {
     members,
-    pendingInvites,
+    meta: {
+      totalCount,
+      // Without a pageIndex the whole list is one "page".
+      totalPages: pageIndex === undefined ? 1 : Math.ceil(totalCount / PAGE_SIZE),
+    },
   };
 }

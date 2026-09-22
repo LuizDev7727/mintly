@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { dayjs } from "@/lib/dayjs";
 import { revokeInviteHttp } from "@/http/organization/revoke-invite.http";
-import type { GetMembersResponse } from "@/http/organization/get-members.http";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { Clock, Mail, UserRoundX } from "lucide-react";
@@ -23,19 +22,15 @@ export function PendingInviteMemberCard({
   const { mutate: handleRevoke, isPending } = useMutation({
     mutationFn: revokeInviteHttp,
     onSuccess: () => {
-      queryClient.setQueryData<GetMembersResponse>(
-        ["members", slug],
-        (old) => {
-          if (!old) return old;
-
-          return {
-            ...old,
-            pendingInvites: old.pendingInvites.filter(
-              (invite) => invite.id !== inviteMember.id,
-            ),
-          };
-        },
-      );
+      // Revoking shifts every invite after this one up a page — refetch
+      // instead of patching the list by hand. Both prefixes: every cached
+      // page, and the count that feeds the "Pending" tab label.
+      queryClient.invalidateQueries({
+        queryKey: ["organization-pending-invites", slug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["organization-pending-invites-count", slug],
+      });
     },
   });
 
