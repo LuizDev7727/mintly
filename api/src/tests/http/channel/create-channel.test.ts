@@ -9,7 +9,7 @@ describe("POST [/api/organizations/:orgSlug/channels]", () => {
     const response = await request(server.server)
       .post(`/api/organizations/${testOrgSlug}/channels`)
       .set(authHeaders)
-      .send({ name: faker.word.noun() });
+      .send({ name: faker.word.noun(), description: faker.lorem.sentence() });
 
     expect(response.status).toEqual(201);
     expect(response.body).toHaveProperty("channelId");

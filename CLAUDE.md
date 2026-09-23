@@ -14,6 +14,13 @@ feature/* → development → staging → main
 
 Ao criar qualquer PR com `gh pr create`, sempre passar `--base development` (ou a branch correta do fluxo). Nunca omitir `--base` para evitar que o GitHub use `main` como padrão.
 
+Essas regras são **aplicadas por um hook**, não só por texto: `.claude/hooks/git-flow-guard.mjs` (registrado em `.claude/settings.json`) bloqueia `git commit` em `main`/`staging`/`development`, `git push` para essas branches, force push, e `gh pr create` sem `--base` ou com base fora do fluxo. Se um comando for bloqueado, a mensagem diz o que fazer — não tente contornar o hook. Testes do hook: `node --test .claude/hooks/git-flow-guard.test.mjs`.
+
+## Domínio e revisão
+
+- **`CONTEXT.md`** — glossário do domínio (organização, canal, projeto, post, pipelines, billing) com o que cada coisa é e não é. Leia antes de mexer em pipelines, billing ou modelagem de dados.
+- **`/mintly-review`** — revisão read-only do diff contra `development` com revisores independentes em paralelo (isolamento entre organizações, segurança, requisitos, convenções, regressão, pipelines/billing, performance). Rode antes de abrir um PR.
+
 ## Estrutura do Monorepo
 
 Cada pasta na raiz é um projeto independente, com seu próprio `package.json`/lockfile. Não é um workspace único — não assuma que uma dependência instalada numa pasta está disponível em outra.
@@ -40,7 +47,11 @@ Site institucional/marketing (Next.js + MDX + Radix + Tailwind). Internacionaliz
 
 ### `mcp/`
 
-Servidor **MCP** (Model Context Protocol) próprio do Mintly, rodando via stdio (`@modelcontextprotocol/server`). Expõe a API do Mintly como tools pra agentes de IA — hoje só tem `get-projects-tool` (lista projetos de um canal). Cada tool fica em `src/tools/`, com contrato de output em `src/contracts/`. Configurado em `.mcp.json`; precisa de `MINTLY_API_KEY`/`MINTLY_API_URL` no ambiente.
+Servidor **MCP** (Model Context Protocol) próprio do Mintly, rodando via stdio (`@modelcontextprotocol/server`). Expõe a API do Mintly como tools pra agentes de IA — hoje só tem `get-projects-tool` (lista projetos de um canal). Cada tool fica em `src/tools/`, com contrato de output em `src/contracts/`. `mcp/.mcp.json` é só um **exemplo** de registro do servidor num cliente MCP (não é carregado ao abrir o repo); precisa de `MINTLY_API_KEY`/`MINTLY_API_URL` no ambiente.
+
+### MCPs do projeto (`.mcp.json` na raiz)
+
+Só o **Playwright MCP** (`@playwright/mcp`), usado para o agente abrir o app no browser e provar que uma mudança de tela funciona — ver "Validação no browser" em `web/CLAUDE.md`. A entrada usa `cmd /c npx` porque o projeto é desenvolvido em Windows nativo; em macOS/Linux troque por `"command": "npx"`. Usa `--browser msedge` porque o padrão do MCP exige o Google Chrome instalado no sistema, e o Edge já vem no Windows (perfil temporário, sem download); se preferir o Chrome, instale-o e remova a flag. O MCP grava snapshots em `.playwright-mcp/` no diretório em que roda — está no `.gitignore`.
 
 ### `infra/`
 

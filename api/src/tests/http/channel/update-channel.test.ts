@@ -10,7 +10,7 @@ beforeAll(async () => {
   const response = await request(server.server)
     .post(`/api/organizations/${testOrgSlug}/channels`)
     .set(authHeaders)
-    .send({ name: faker.word.noun() });
+    .send({ name: faker.word.noun(), description: faker.lorem.sentence() });
 
   channelId = response.body.channelId;
 });
@@ -20,7 +20,7 @@ describe("PUT [/api/organizations/:slug/channels/:channelId]", () => {
     const response = await request(server.server)
       .put(`/api/organizations/${testOrgSlug}/channels/${channelId}`)
       .set(authHeaders)
-      .send({ name: faker.word.noun() });
+      .send({ name: faker.word.noun(), description: faker.lorem.sentence() });
 
     expect(response.status).toEqual(204);
   });
@@ -40,7 +40,7 @@ describe("PUT [/api/organizations/:slug/channels/:channelId]", () => {
         `/api/organizations/${testOrgSlug}/channels/${faker.string.uuid()}`,
       )
       .set(authHeaders)
-      .send({ name: faker.word.noun() });
+      .send({ name: faker.word.noun(), description: faker.lorem.sentence() });
 
     expect(response.status).toEqual(404);
   });

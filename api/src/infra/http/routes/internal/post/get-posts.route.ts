@@ -21,6 +21,23 @@ export const getPostsRoute: FastifyPluginAsyncZod = async (app) => {
           titleFilter: z.string().nullable().default(null),
           pageIndex: z.coerce.number().int().min(0).default(0),
           folderId: z.uuidv7().nullable().default(null),
+          statusFilter: z
+            .enum([
+              "PROCESSING",
+              "SCHEDULED",
+              "ERROR",
+              "PUBLISHED",
+              "ENCODING",
+              "GENERATING_METADATA",
+              "GENERATING_THUMBNAIL",
+              "TRANSCRIBING",
+              "SEO_GENERATING",
+              "PUBLISHING",
+              "CANCELED",
+            ])
+            .nullable()
+            .default(null),
+          ownerId: z.string().nullable().default(null),
         }),
         response: {
           200: z.object({
@@ -72,13 +89,15 @@ export const getPostsRoute: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { orgSlug, channelId } = request.params;
-      const { titleFilter, pageIndex, folderId } = request.query;
+      const { titleFilter, pageIndex, folderId, statusFilter, ownerId } = request.query;
       const { id: userId } = request.user;
 
       const span = tracer.startSpan("get-posts");
       span.setAttribute("channel.id", channelId);
       span.setAttribute("title_filter", titleFilter ?? "No title filter");
       span.setAttribute("folder.id", folderId ?? "No selected folder");
+      span.setAttribute("status_filter", statusFilter ?? "No status filter");
+      span.setAttribute("owner_id", ownerId ?? "No owner filter");
 
       await checkMembership({ organizationSlug: orgSlug, userId });
 
@@ -87,6 +106,8 @@ export const getPostsRoute: FastifyPluginAsyncZod = async (app) => {
         folderId,
         pageIndex,
         titleFilter,
+        statusFilter,
+        ownerId,
       });
 
       span.end();

@@ -4,23 +4,27 @@ import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { and, desc, eq, lt } from "drizzle-orm";
 
+type ActivityAction =
+  | "CREATED_CHANNEL"
+  | "CREATED_POST"
+  | "CANCELED_POST"
+  | "DELETED_POST"
+  | "CREATED_PROJECT"
+  | "ADDED_INTEGRATION"
+  | "DELETED_INTEGRATION"
+  | "UPLOAD_INSPIRATIONAL_THUMBNAIL"
+  | "DELETED_INSPIRATIONAL_THUMBNAIL";
+
 type GetActivitiesParams = {
   orgSlug: string;
   cursor?: string;
+  actionFilter: ActivityAction | null;
+  authorId: string | null;
 };
 
 type Activity = {
   id: string;
-  action:
-    | "CREATED_CHANNEL"
-    | "CREATED_POST"
-    | "CANCELED_POST"
-    | "DELETED_POST"
-    | "CREATED_PROJECT"
-    | "ADDED_INTEGRATION"
-    | "DELETED_INTEGRATION"
-    | "UPLOAD_INSPIRATIONAL_THUMBNAIL"
-    | "DELETED_INSPIRATIONAL_THUMBNAIL";
+  action: ActivityAction;
   description: string;
   createdAt: Date;
   author: {
@@ -39,7 +43,7 @@ const PAGE_SIZE = 10;
 export async function getActivities(
   params: GetActivitiesParams,
 ): Promise<GetActivitiesResponse> {
-  const { orgSlug, cursor } = params;
+  const { orgSlug, cursor, actionFilter, authorId } = params;
 
   const resultQuery = await db
     .select({
@@ -58,6 +62,8 @@ export async function getActivities(
       and(
         eq(activitiesTable.organizationSlug, orgSlug),
         cursor ? lt(activitiesTable.id, cursor) : undefined,
+        actionFilter ? eq(activitiesTable.action, actionFilter) : undefined,
+        authorId ? eq(activitiesTable.authorId, authorId) : undefined,
       ),
     )
     .orderBy(desc(activitiesTable.id))

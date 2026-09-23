@@ -62,7 +62,7 @@ export function ProjectGridCard({
   const encodingProgress = parts.at(-1)?.percent ?? 0;
 
   return (
-    <div className="rounded-lg border border-border bg-sidebar p-2.5 text-card-foreground">
+    <div className="rounded-lg border border-border bg-card p-2.5 text-card-foreground">
       <div className="relative aspect-video overflow-hidden rounded-md bg-muted">
         {project.thumbnailUrl !== null ? (
           <img

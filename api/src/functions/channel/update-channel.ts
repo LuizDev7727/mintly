@@ -6,16 +6,17 @@ import { eq } from "drizzle-orm";
 type UpdateChannelParams = {
   channelId: string;
   name: string;
+  description?: string;
 };
 
 export async function updateChannel(
   params: UpdateChannelParams,
 ): Promise<void> {
-  const { channelId, name } = params;
+  const { channelId, name, description } = params;
 
   const [updated] = await db
     .update(channelsTable)
-    .set({ name })
+    .set({ name, description })
     .where(eq(channelsTable.id, channelId))
     .returning({ id: channelsTable.id });
 

@@ -37,7 +37,7 @@ export const getChannelRoute: FastifyPluginAsyncZod = async (app) => {
         userId
       })
 
-      const channel = await getChannel({ channelId });
+      const channel = await getChannel({ channelId, organizationSlug: slug });
 
       span.end();
 

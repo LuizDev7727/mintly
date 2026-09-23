@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
+import { Badge } from "@/components/ui/badge";
 import { cancelPostHttp } from "@/http/posts/cancel-post.http";
 import type { GetPostsResponse } from "@/http/posts/get-posts.http";
 import { dayjs } from "@/lib/dayjs";
@@ -14,12 +15,15 @@ import { formatBytes } from "@/utils/format-bytes";
 import { formatDuration } from "@/utils/format-duration";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import { Eye, Image, MoreHorizontal, Trash2 } from "lucide-react";
-import { POST_NETWORK_ICONS } from "./post-network-icons";
-import { PostStatusBadge } from "./post-status-badge";
+import { Eye, Image, MoreHorizontal, Trash2, Check, AlertTriangle, Calendar, Ban, Loader2 } from "lucide-react";
+import { SocialsToPostAvatarsGroup } from "./socials-to-post-avatars-group";
 
 type PostListViewProps = {
   posts: Post[];
+};
+
+type PostStatusBadgeProps = {
+  status: Post["status"];
 };
 
 export function PostListView({ posts }: PostListViewProps) {
@@ -59,13 +63,50 @@ export function PostListView({ posts }: PostListViewProps) {
     });
   }
 
+  function PostStatusBadge({ status }: PostStatusBadgeProps) {
+    switch (status) {
+      case "PUBLISHED":
+        return (
+          <Badge>
+            <Check size={13} />
+            {status}
+          </Badge>
+        );
+      case "ERROR":
+        return (
+          <Badge variant={"destructive"}>
+            <AlertTriangle size={13} />
+            {status}
+          </Badge>
+        );
+      case "SCHEDULED":
+        return (
+          <Badge variant={"scheduled"}>
+            <Calendar size={13} />
+            {status}
+          </Badge>
+        );
+      case "CANCELED":
+        return (
+          <Badge variant={"outline"}>
+            <Ban size={13} />
+            {status}
+          </Badge>
+        );
+      default:
+        return (
+          <Badge>
+            <Loader2 size={13} className="animate-spin" />
+            {status}
+          </Badge>
+        );
+    }
+  }
+
   return (
     <div className="space-y-2">
       {posts.map((post) => {
         const hasThumbnail = post.thumbnailUrl !== null;
-
-        const visibleNetworks = post.socialsToPost.slice(0, 3);
-        const extraCount = post.socialsToPost.length - visibleNetworks.length;
 
         const isPostProcessing =
           post.status !== "PUBLISHED" &&
@@ -75,7 +116,7 @@ export function PostListView({ posts }: PostListViewProps) {
         return (
           <div
             key={post.id}
-            className="relative flex items-center justify-between gap-3 rounded-lg border bg-sidebar p-2 pe-3"
+            className="relative flex items-center justify-between gap-3 rounded-lg border bg-card p-2 pe-3"
           >
             <div className="flex min-w-0 items-center gap-3">
               <div className="aspect-video h-12 shrink-0 overflow-hidden rounded bg-[#242424]">
@@ -94,54 +135,21 @@ export function PostListView({ posts }: PostListViewProps) {
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">{post.title}</p>
                 <p className="truncate text-xs text-muted-foreground">
+                  {post.author.name} {" · "}
                   {formatBytes(post.size)} ·{" "}
-                  {post.duration ? formatDuration(post.duration) : "-"}
+                  {post.duration ? formatDuration(post.duration) : "-"} ·{" "}
+                  {post.publishAt ? dayjs(post.publishAt).format("MMM D") : "Now"}
                 </p>
               </div>
             </div>
 
             <div className="flex shrink-0 items-center gap-3">
-              <div className="flex items-center gap-1">
-                {visibleNetworks.map((network) => (
-                  <span
-                    key={network.id}
-                    className="flex size-6 items-center justify-center rounded-full bg-[#0a0a0a]"
-                  >
-                    {POST_NETWORK_ICONS[network.social]}
-                  </span>
-                ))}
-                {extraCount > 0 && (
-                  <span className="rounded-full bg-[#0a0a0a] px-1.75 py-0.5 text-[11px] text-muted-foreground">
-                    +{extraCount}
-                  </span>
-                )}
-              </div>
+
+              <SocialsToPostAvatarsGroup
+                socialsToPost={post.socialsToPost}
+              />
 
               <PostStatusBadge status={post.status} />
-
-              <span className="text-xs text-muted-foreground">
-                {post.author.name}
-              </span>
-
-              <span className="text-xs text-muted-foreground">
-                {post.publishAt ? dayjs(post.publishAt).format("MMM D") : "Now"}
-              </span>
-
-              {isPostProcessing && (
-                <Button
-                  type="button"
-                  variant={"destructive"}
-                  size={"icon-sm"}
-                  disabled={isCancellingPost}
-                  onClick={() => handleCancelPost(post)}
-                >
-                  {isCancellingPost ? (
-                    <Spinner className="size-3.5" />
-                  ) : (
-                    <Trash2 size={13} />
-                  )}
-                </Button>
-              )}
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -159,6 +167,23 @@ export function PostListView({ posts }: PostListViewProps) {
                       View details
                     </Link>
                   </DropdownMenuItem>
+                  {isPostProcessing && (
+                    <DropdownMenuItem asChild>
+                      <Button
+                        type="button"
+                        variant={"destructive"}
+                        size={"icon-sm"}
+                        disabled={isCancellingPost}
+                        onClick={() => handleCancelPost(post)}
+                      >
+                        {isCancellingPost ? (
+                          <Spinner className="size-3.5" />
+                        ) : (
+                          <Trash2 size={13} />
+                        )}
+                      </Button>
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

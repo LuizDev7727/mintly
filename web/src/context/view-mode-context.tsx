@@ -2,6 +2,8 @@ import { createContext, useContext, useState } from "react";
 
 type ViewMode = "grid" | "list";
 
+const VIEW_MODE_STORAGE_KEY = "view-mode";
+
 type ViewModeProviderProps = {
   children: React.ReactNode;
   defaultView?: ViewMode;
@@ -19,12 +21,24 @@ const initialState: ViewModeContextState = {
 
 const ViewModeContext = createContext<ViewModeContextState>(initialState);
 
+function getStoredView(defaultView: ViewMode): ViewMode {
+  const stored = window.localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+  return stored === "grid" || stored === "list" ? stored : defaultView;
+}
+
 export function ViewModeProvider({
   children,
   defaultView = "grid",
   ...props
 }: ViewModeProviderProps) {
-  const [view, setView] = useState<ViewMode>(defaultView);
+  const [view, setViewState] = useState<ViewMode>(() =>
+    getStoredView(defaultView),
+  );
+
+  function setView(nextView: ViewMode) {
+    window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, nextView);
+    setViewState(nextView);
+  }
 
   const value = {
     view,

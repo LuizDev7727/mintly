@@ -28,7 +28,7 @@ export function FolderCard({ folder }: FolderCardProps) {
   const itemsLabel = `${folder.postsCount} ${folder.postsCount === 1 ? "item" : "items"}`;
 
   return (
-    <div className="flex flex-col gap-2 rounded-xl bg-card p-3 transition-colors hover:bg-card/70">
+    <div className="flex flex-col gap-2 rounded-xl border border-input p-3 transition-colors hover:bg-card/70">
       <div
         onClick={handleSelectFolder}
         className="flex cursor-pointer items-start justify-between"
@@ -37,9 +37,10 @@ export function FolderCard({ folder }: FolderCardProps) {
           <FolderIcon className="size-4" />
         </div>
 
-        {folder.isStarred && (
-          <Star className="size-4 shrink-0 fill-foreground text-foreground" />
-        )}
+        <Star
+          data-starred={folder.isStarred}
+          className="size-4 shrink-0 text-muted-foreground data-[starred=true]:fill-foreground data-[starred=true]:text-foreground"
+        />
       </div>
 
       <div onClick={handleSelectFolder} className="min-w-0 cursor-pointer">

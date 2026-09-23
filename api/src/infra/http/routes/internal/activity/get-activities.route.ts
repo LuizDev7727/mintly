@@ -18,6 +18,21 @@ export const getActivitiesRoute: FastifyPluginAsyncZod = async (app) => {
         }),
         querystring: z.object({
           cursor: z.string().optional(),
+          actionFilter: z
+            .enum([
+              "CREATED_CHANNEL",
+              "CREATED_POST",
+              "CANCELED_POST",
+              "DELETED_POST",
+              "CREATED_PROJECT",
+              "ADDED_INTEGRATION",
+              "DELETED_INTEGRATION",
+              "UPLOAD_INSPIRATIONAL_THUMBNAIL",
+              "DELETED_INSPIRATIONAL_THUMBNAIL",
+            ])
+            .nullable()
+            .default(null),
+          authorId: z.string().nullable().default(null),
         }),
         response: {
           200: z.object({
@@ -50,7 +65,7 @@ export const getActivitiesRoute: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { slug } = request.params;
-      const { cursor } = request.query;
+      const { cursor, actionFilter, authorId } = request.query;
       const { id: userId } = request.user;
 
       await checkMembership({
@@ -60,10 +75,14 @@ export const getActivitiesRoute: FastifyPluginAsyncZod = async (app) => {
 
       const span = tracer.startSpan("get-activities");
       span.setAttribute("organization.slug", slug);
+      span.setAttribute("action_filter", actionFilter ?? "No action filter");
+      span.setAttribute("author_id", authorId ?? "No author filter");
 
       const { activities, nextCursor } = await getActivities({
         orgSlug: slug,
         cursor,
+        actionFilter,
+        authorId,
       });
 
       span.setAttribute("activities-count", activities.length);

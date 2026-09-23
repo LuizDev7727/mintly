@@ -27,7 +27,7 @@ export const getProjectsExternalRoute: FastifyPluginAsyncZod = async (
                 status: z.enum([
                   "SUCCESS",
                   "PROCESSING",
-                  "SCHEDULED",
+                  "ENCODING",
                   "ERROR",
                   "CANCELED",
                 ]),
@@ -55,9 +55,12 @@ export const getProjectsExternalRoute: FastifyPluginAsyncZod = async (
       span.setAttribute("organization.id", request.organization.id);
 
       const { projects, meta } = await getProjects({
+        organizationSlug: request.organization.slug,
         channelId,
         pageIndex,
         titleFilter,
+        statusFilter: null,
+        ownerId: null,
       });
 
       span.end();

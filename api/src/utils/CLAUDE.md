@@ -28,6 +28,17 @@ Gera uma URL pré-assinada (presigned) para leitura de um objeto no Cloudflare R
 const url = await generateSignedUrl({ key: "uploads/foto.jpg" });
 ```
 
+### `infisical/retry-on-rate-limit.ts`
+Exporta `retryOnRateLimit<T>(operation, options?): Promise<T>`.
+
+Repete uma chamada ao Infisical quando ela falha com rate limit (HTTP 429). Espera o tempo que o próprio servidor informa (`Please try again in N seconds`), ou backoff exponencial (2s, 4s, …) se não houver dica, limitado a 60 s, com jitter, e desiste após 6 tentativas (`maxAttempts`). Qualquer outro erro é relançado na hora. `sleep` e `random` são injetáveis para teste.
+
+É usada em `getInfisicalSecret` e no login de `src/lib/infisical.ts` — todo arquivo de teste (e todo boot) busca segredos, então sem isso uma rajada de arquivos em paralelo estoura o limite.
+
+```ts
+const secret = await retryOnRateLimit(() => infisical.secrets().getSecret({ ... }));
+```
+
 ## Regras
 
 - Não coloque lógica de negócio aqui — apenas funções auxiliares reutilizáveis.

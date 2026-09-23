@@ -8,8 +8,9 @@
 
 ## File conventions
 
-- All test files live in `src/tests/` and follow the pattern `*.test.ts`
-- Test file names should reflect the route or module being tested (e.g. `health.test.ts`, `transactions.test.ts`)
+- Route tests live in `src/tests/http/<resource>/<verb>-<resource>.test.ts` (e.g. `http/channel/create-channel.test.ts`, `http/project/get-projects.test.ts`); external `/api/v1/*` routes go in `http/external/`. Only cross-cutting tests such as `health.test.ts` sit directly in `src/tests/`.
+- All test files follow the pattern `*.test.ts`, and the name reflects the route being tested.
+- Test data comes from `src/tests/factories/` (see its `CLAUDE.md`). Factories must produce data the routes accept: a listed project needs a `runId`, and channel creation needs a `description`.
 
 ## Global setup (`setup.ts`)
 
@@ -18,6 +19,10 @@
 1. Calls `server.ready()` so Fastify is fully initialized before assertions run
 2. Creates a `testUser` and resolves `authHeaders` via `auth-test.ts`
 3. Closes the server after all tests finish via `afterAll`
+
+It also **mocks `generateRealtimeToken`** (`@/utils/generate-realtime-token.ts`) for every test. The real one calls Trigger.dev and needs `TRIGGER_SECRET_KEY`, which exists in a developer's `.env` but not in CI — without the mock, any list endpoint that returns an `ENCODING`/`PROCESSING` item answers 500 on CI while passing locally. Never call Trigger.dev or other paid/external services from a test.
+
+Every test file boots the app and fetches its secrets from Infisical, which rate-limits (HTTP 429). `getInfisicalSecret` retries on 429, and `vitest.config.ts` limits workers to 2 when `CI` is set; if you add many test files, expect the run to take longer, not to fail.
 
 Import these exports when your test needs an authenticated request:
 

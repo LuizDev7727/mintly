@@ -28,14 +28,20 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-import { getMembersHttp } from "@/http/organization/get-members.http";
+import { getMembersCountHttp } from "@/http/organization/get-members-count.http";
+import { getChannelsHttp } from "@/http/channel/get-channels.http";
 
 export function NavMain() {
   const { slug } = useParams({ from: "/orgs/$slug" });
 
-  const { data: membersData } = useQuery({
-    queryKey: ["members", slug],
-    queryFn: () => getMembersHttp({ orgSlug: slug }),
+  const { data: channelsData } = useQuery({
+    queryKey: ["channels", slug],
+    queryFn: () => getChannelsHttp({ orgSlug: slug  }),
+  });
+
+  const { data: membersCountData } = useQuery({
+    queryKey: ["members-count", slug],
+    queryFn: () => getMembersCountHttp({ orgSlug: slug }),
   });
 
   return (
@@ -68,6 +74,9 @@ export function NavMain() {
               <span>Channels</span>
             </NavLink>
           </SidebarMenuButton>
+          {
+            channelsData && <SidebarMenuBadge>{channelsData.channels.length}</SidebarMenuBadge>
+          }
         </SidebarMenuItem>
 
         <SidebarMenuItem>
@@ -118,7 +127,7 @@ export function NavMain() {
             </NavLink>
           </SidebarMenuButton>
           {
-            membersData && <SidebarMenuBadge>{membersData.members.length}</SidebarMenuBadge>
+            membersCountData && <SidebarMenuBadge>{membersCountData.count}</SidebarMenuBadge>
           }
         </SidebarMenuItem>
 

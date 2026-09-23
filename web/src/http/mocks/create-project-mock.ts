@@ -1,24 +1,16 @@
 import { http, HttpResponse } from "msw";
-import { faker } from "@faker-js/faker";
 
 type CreateProjectRequest = {
-  file: {
+  files: {
     name: string;
     key: string;
-  };
-};
-
-type CreateProjectResponse = {
-  projectId: string;
+  }[];
 };
 
 export const createProjectMock = http.post<
   { channelId: string },
   CreateProjectRequest,
-  CreateProjectResponse
+  never
 >("http://localhost:3000/api/channels/:channelId/projects", () => {
-  return HttpResponse.json(
-    { projectId: faker.string.uuid() },
-    { status: 201 },
-  );
+  return new HttpResponse(null, { status: 201 });
 });

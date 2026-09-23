@@ -19,6 +19,11 @@ export const getProjectsRoute: FastifyPluginAsyncZod = async (app) => {
         }),
         querystring: z.object({
           titleFilter: z.string().nullable().default(null),
+          statusFilter: z
+            .enum(["SUCCESS", "PROCESSING", "ENCODING", "ERROR", "CANCELED"])
+            .nullable()
+            .default(null),
+          ownerId: z.string().nullable().default(null),
           pageIndex: z.coerce.number().int().min(0).default(0),
         }),
         response: {
@@ -55,19 +60,24 @@ export const getProjectsRoute: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { orgSlug, channelId } = request.params;
-      const { titleFilter, pageIndex } = request.query;
+      const { titleFilter, statusFilter, ownerId, pageIndex } = request.query;
       const { id: userId } = request.user;
 
       const span = tracer.startSpan("get-projects");
       span.setAttribute("channel.id", channelId);
       span.setAttribute("title_filter", titleFilter ?? "No title filter");
+      span.setAttribute("status_filter", statusFilter ?? "No status filter");
+      span.setAttribute("owner_id", ownerId ?? "No owner filter");
 
       await checkMembership({ organizationSlug: orgSlug, userId });
 
       const { projects, meta } = await getProjects({
+        organizationSlug: orgSlug,
         channelId,
         pageIndex,
         titleFilter,
+        statusFilter,
+        ownerId,
       });
 
       span.end();

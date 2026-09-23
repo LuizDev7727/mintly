@@ -33,10 +33,10 @@ export function PaymentMethodWarning() {
   }
 
   return (
-    <div className="flex items-center gap-2 rounded-full border border-destructive/30 bg-destructive/10 py-1 pl-3 pr-1 text-xs text-destructive">
+    <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-destructive/30 bg-destructive/10 py-1 pl-3 pr-1 text-xs text-destructive">
       <CreditCard className="size-3.5 shrink-0" />
       <span className="hidden sm:inline">
-        Add a payment method to create posts and projects
+        Add a payment method
       </span>
       <Button
         size="sm"

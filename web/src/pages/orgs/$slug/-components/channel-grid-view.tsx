@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Channel } from "@/types/channel";
 import { getInitials } from "@/utils/get-initials";
 import { Link, useParams } from "@tanstack/react-router";
-import { Plug, TvMinimal, Upload } from "lucide-react";
+import { TvMinimal } from "lucide-react";
 
 type ChannelGridViewProps = {
   channels: Channel[];
@@ -33,17 +33,9 @@ export function ChannelGridView({ channels }: ChannelGridViewProps) {
             <h3 className="text-[15px] font-semibold leading-[1.3]">
               {channel.name}
             </h3>
-            <div className="mt-1.5 flex items-center gap-2.5">
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Upload className="size-3.5" />
-                {channel.postsCount} posts
-              </span>
-              <span className="text-[13px] text-border">·</span>
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Plug className="size-3.5" />
-                {channel.integrationsCount} integrations
-              </span>
-            </div>
+            <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">
+              {channel.description}
+            </p>
           </div>
 
           <footer className="p-4 border border-transparent border-t-border flex items-center justify-between">

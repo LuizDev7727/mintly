@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { YoutubeIcon } from "@/components/youtube-icon";
+import { usePaymentMethodStatus } from "@/hooks/use-payment-method-status";
 import { abortMultipartUploadHttp } from "@/http/upload/abort-multipart-upload.http";
 import { createPostsHttp } from "@/http/posts/create-posts.http";
 import {
@@ -16,6 +22,7 @@ import type { Integration } from "@/types/integration";
 import { formatBytes } from "@/utils/format-bytes";
 import { formatDuration } from "@/utils/format-duration";
 import { getFileExtension } from "@/utils/get-file-extension";
+import { getVideoDuration } from "@/utils/get-video-duration";
 import { sanitizeFilename } from "@/utils/sanitize-filename";
 import { uploadFile } from "@/utils/upload-file";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,26 +62,6 @@ type CreatePostFormProps = {
   integrations: Integration[];
 };
 
-function getVideoDuration(file: File): Promise<number> {
-  return new Promise((resolve, reject) => {
-    const video = document.createElement('video');
-    video.preload = 'metadata';
-
-    video.onloadedmetadata = () => {
-      URL.revokeObjectURL(video.src);
-      resolve(video.duration);
-    };
-
-    video.onerror = () => {
-      URL.revokeObjectURL(video.src);
-      reject(new Error('Não foi possível carregar o vídeo'));
-    };
-
-    video.src = URL.createObjectURL(file);
-  });
-}
-
-
 export function CreatePostForm({ integrations }: CreatePostFormProps) {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -86,6 +73,10 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     from: "/orgs/$slug/channels/$channel",
   });
   const navigate = useNavigate();
+
+  const { hasPaymentMethod, isLoading: isPaymentMethodLoading } =
+    usePaymentMethodStatus({ orgSlug: slug });
+  const isMissingPaymentMethod = !isPaymentMethodLoading && !hasPaymentMethod;
 
   const {
     control,
@@ -356,10 +347,26 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                 Add Post(s)
               </label>
             </Button>
-            <Button type="submit" disabled={isSubmitting || isPostsEmpty}>
-              <UploadCloudIcon className="size-4" />
-              Upload All ({posts.length})
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="inline-flex">
+                  <Button
+                    type="submit"
+                    disabled={
+                      isSubmitting || isPostsEmpty || isMissingPaymentMethod
+                    }
+                  >
+                    <UploadCloudIcon className="size-4" />
+                    Upload All ({posts.length})
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              {isMissingPaymentMethod && (
+                <TooltipContent>
+                  <p>Add a payment method to create posts</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
           </div>
         </header>
 
