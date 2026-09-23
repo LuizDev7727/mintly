@@ -52,7 +52,9 @@ export function PendingInvites() {
           };
         },
       );
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({
+        queryKey: ["organizations"]
+      });
     },
   });
 

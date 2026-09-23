@@ -48,6 +48,7 @@ export const getInspirationalThumbnailsRoute: FastifyPluginAsyncZod = async (
       await checkMembership({ organizationSlug: slug, userId });
 
       const { inspirationalThumbnails, nextCursor } = await getInspirationalThumbnails({
+        organizationSlug: slug,
         channelId,
         cursor,
       });

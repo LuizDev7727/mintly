@@ -25,7 +25,6 @@ export const getOrganizationOverviewRoute: FastifyPluginAsyncZod = async (
               membersCount: z.number(),
               usage: z.object({
                 totalUsage: z.number(),
-                series: z.array(z.number()),
               }),
               storage: z.object({
                 totalStorage: z.number(),

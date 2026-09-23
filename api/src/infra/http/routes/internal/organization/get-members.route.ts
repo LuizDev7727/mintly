@@ -16,6 +16,10 @@ export const getMembersRoute: FastifyPluginAsyncZod = async (app) => {
         params: z.object({
           slug: z.string(),
         }),
+        querystring: z.object({
+          // Omitted = the whole list (sidebar avatars and owner filters).
+          pageIndex: z.coerce.number().int().min(0).optional(),
+        }),
         response: {
           200: z.object({
             members: z.array(
@@ -32,34 +36,34 @@ export const getMembersRoute: FastifyPluginAsyncZod = async (app) => {
                 }),
               }),
             ),
-            pendingInvites: z.array(
-              z.object({
-                id: z.string(),
-                email: z.string(),
-                role: z.string().nullable(),
-                createdAt: z.date(),
-              }),
-            ),
+            meta: z.object({
+              totalCount: z.number(),
+              totalPages: z.number(),
+            }),
           }),
         },
       },
     },
     async (request, reply) => {
       const { slug } = request.params;
+      const { pageIndex } = request.query;
       const { id: userId } = request.user;
 
       const span = tracer.startSpan("get-members");
       span.setAttribute("organization-slug", slug);
+      span.setAttribute("page-index", pageIndex ?? "No pagination");
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      const { members, pendingInvites } = await getMembers({ orgSlug: slug });
+      const { members, meta } = await getMembers({
+        orgSlug: slug,
+        pageIndex,
+      });
 
       span.setAttribute("members-count", members.length);
-      span.setAttribute("pending-invites-count", pendingInvites.length);
       span.end();
 
-      return reply.status(200).send({ members, pendingInvites });
+      return reply.status(200).send({ members, meta });
     },
   );
 };

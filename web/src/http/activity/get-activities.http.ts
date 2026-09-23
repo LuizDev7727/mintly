@@ -4,6 +4,8 @@ import { api } from "../api";
 type GetActivitiesHttpParams = {
   orgSlug: string;
   cursor?: string;
+  actionFilter: Activity["action"] | null;
+  authorId: string | null;
 };
 
 type GetActivitiesHttpResponse = {
@@ -14,10 +16,10 @@ type GetActivitiesHttpResponse = {
 export async function getActivitiesHttp(
   params: GetActivitiesHttpParams,
 ): Promise<GetActivitiesHttpResponse> {
-  const { orgSlug, cursor } = params;
+  const { orgSlug, cursor, actionFilter, authorId } = params;
 
   const { data } = await api.get<GetActivitiesHttpResponse>(`/organizations/${orgSlug}/activities`, {
-    params: cursor ? { cursor } : undefined,
+    params: { cursor, actionFilter, authorId },
   });
 
   const { activities, nextCursor } = data;

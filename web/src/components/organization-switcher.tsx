@@ -15,7 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuLabel,
-  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
@@ -80,23 +79,19 @@ export function OrganizationSwitcher() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              size="lg"
               className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               {organization.logo ?
                 <Avatar>
                   <AvatarImage src={organization.logo} />
                 </Avatar> :
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Building className="size-4" />
+                <div className="flex aspect-square size-6 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground group-data-[collapsible=icon]:size-4 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:text-sidebar-foreground">
+                  <Building className="size-3.5" />
                 </div>
               }
               <div className="grid flex-1 text-left text-sm leading-tight transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0">
                 <span className="truncate font-medium">
                   {organization.name}'s workspace
-                </span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {organization.membersCount} members
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
@@ -123,7 +118,6 @@ export function OrganizationSwitcher() {
                     <Building className="size-3.5 shrink-0" />
                   </div>
                   {org.name}
-                  <DropdownMenuShortcut>FREE</DropdownMenuShortcut>
                 </Link>
               </DropdownMenuItem>
             ))}

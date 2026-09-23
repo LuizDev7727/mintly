@@ -7,7 +7,8 @@ vi.mock("@tanstack/react-router", () => ({
   useParams: () => ({ slug: "my-org", channel: "my-channel" }),
 }));
 
-vi.mock("nuqs", () => ({
+vi.mock("nuqs", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("nuqs")>()),
   useQueryState: () => ["", vi.fn()],
 }));
 

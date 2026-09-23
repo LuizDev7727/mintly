@@ -30,13 +30,17 @@ export async function connectYoutube(params: ConnectYoutubeParams) {
     throw new Error(`Failed to exchange YouTube OAuth code: ${code}`);
   }
 
-  const tokenResponse = await tokenRequest.json();
-
   const {
     access_token: accessToken,
     refresh_token: refreshToken,
     expires_in: expiresIn,
-  } = tokenResponse;
+  } = z
+    .object({
+      access_token: z.string(),
+      refresh_token: z.string(),
+      expires_in: z.number(),
+    })
+    .parse(await tokenRequest.json());
 
   const profileRequest = await fetch(
     "https://www.googleapis.com/oauth2/v3/userinfo",

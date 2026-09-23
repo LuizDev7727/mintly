@@ -8,7 +8,7 @@ type GetAvaiableEventsResponse = {
 }
 
 export async function getAvaiableEvents(): Promise<GetAvaiableEventsResponse> {
-  const triggers = [
+  const triggers: AvailableEvent[] = [
     {
       trigger: "post.created",
       description: "Occurs whenever a post is created.",
@@ -25,7 +25,7 @@ export async function getAvaiableEvents(): Promise<GetAvaiableEventsResponse> {
       trigger: "project.created",
       description: "Occurs whenever a project is created.",
     },
-  ] as const
+  ]
 
   return { triggers }
 }

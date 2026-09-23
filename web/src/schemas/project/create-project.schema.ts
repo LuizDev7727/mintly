@@ -1,9 +1,14 @@
 import { z } from "zod";
 
 export const createProjectSchema = z.object({
-  file: z
-    .file()
-    // .max(MAX_FILE_SIZE_BYTES, "File must be 256MB or smaller"),
+  files: z
+    .array(
+      z.object({
+        file: z.file(),
+        duration: z.number().nullable(),
+      }),
+    )
+    .min(1, { error: "Select at least one video" }),
 });
 
 export type CreateProjectFormType = z.infer<typeof createProjectSchema>;

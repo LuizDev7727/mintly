@@ -48,3 +48,38 @@ Cliente `better-auth` com o plugin `organizationClient()` (multi-tenant: usuári
 ## Variáveis de ambiente
 
 Sempre via `@/env` (nunca `import.meta.env` direto) — ver `src/lib/CLAUDE.md`, regra 2.
+
+## Estilo condicional — `data-*` em vez de ternário no `className`
+
+Para estado visual condicional (ativo/selecionado/aberto/etc.), usar `data-*` attribute no elemento + variante `data-[attr=valor]:` do Tailwind, em vez de `cn(condição ? "..." : "...")`. É o padrão já dominante no projeto (`data-current`, `data-selected`, `data-active`, `data-sidebar`, etc. em `channel-card.tsx`, `organization-switcher.tsx`, `sidebar.tsx`) — evita duplicar a base da classe nos dois ramos do ternário e mantém a condição legível no atributo, não escondida dentro de uma string de classe.
+
+```tsx
+// ❌ Evitar — ternário duplicando a classe base nos dois ramos
+<button
+  className={cn(
+    "rounded px-3 py-1 text-sm transition-colors",
+    view === "pending"
+      ? "bg-accent text-accent-foreground font-medium"
+      : "text-muted-foreground hover:text-foreground",
+  )}
+>
+
+// ✅ Preferir — data-attribute + variante Tailwind
+<button
+  data-current={view === "pending"}
+  className="rounded px-3 py-1 text-sm text-muted-foreground transition-colors data-[current=true]:bg-accent data-[current=true]:font-medium data-[current=true]:text-accent-foreground hover:text-foreground"
+>
+```
+
+Só volte para `cn(condição ? ... : ...)` quando as duas variantes não compartilham nenhuma classe base (nada a ganhar unificando).
+
+## Validação no browser (Playwright MCP)
+
+Toda mudança que toca em tela deve ser exercitada no browser antes de ser dada como pronta — testes unitários e `tsc` não mostram se a tela funciona nem como ela ficou. O servidor `playwright` está no `.mcp.json` da raiz.
+
+1. Suba o Postgres (`docker compose up -d` em `api/`) e aplique as migrations (`pnpm db:migrate`); suba a API (`pnpm dev` em `api/`, porta 3000) e o web (`pnpm dev` aqui, porta 5173).
+2. Se ainda não existir, crie o usuário de seed com `pnpm db:seed` em `api/` — as credenciais estão em `src/tests/global-setup.ts`; não as copie para outros arquivos.
+3. Com as tools do Playwright MCP: entre em `/auth`, navegue até a tela alterada, exercite o fluxo novo (caminho feliz e um erro) e confira console e requests com falha.
+4. Relate o que viu de verdade. Se não foi possível subir o ambiente, diga isso explicitamente em vez de assumir que funciona.
+
+Isso complementa, não substitui, os testes: não commite os passos exploratórios como spec E2E (`src/tests/e2e/`) — E2E é caro e lento de manter; só vira spec o fluxo crítico completo.

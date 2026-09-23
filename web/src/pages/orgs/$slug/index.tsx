@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Webhooks } from "./-components/webhooks";
 import { Activities } from "./-components/activities";
+import { OverviewLoading } from "./-components/overview-loading";
 import { ChartPie, HardDrive, Package, Users } from "lucide-react";
 import { Sparkline } from "@/components/sparkline";
 import { useQuery } from "@tanstack/react-query";
@@ -12,7 +13,10 @@ export const Route = createFileRoute("/orgs/$slug/")({
   head: () => ({
     meta: [
       { title: "Overview | Mintly" },
-      { name: "description", content: "Organization overview." },
+      {
+        name: "description",
+        content: "Organization overview."
+      },
     ],
   }),
 });
@@ -22,16 +26,26 @@ function OverviewPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['overview', slug],
-    queryFn: () => getOrganizationOverviewHttp({ orgSlug: slug })
+    queryFn: () => getOrganizationOverviewHttp({
+      orgSlug: slug
+    })
   })
 
   if (!data || isLoading) {
-    return <p>Loading...</p>
+    return <OverviewLoading />;
   }
 
   const { overview } = data;
 
-  const { channelsCount, membersCount, usage, storage, recentActivities, webhooks } = overview;
+  const {
+    channelsCount,
+    membersCount,
+    usage,
+    storage,
+    recentActivities,
+    webhooks
+  } = overview;
+
   const { totalUsage } = usage;
 
   const formattedUsage = new Intl.NumberFormat("en-US", {
@@ -70,19 +84,20 @@ function OverviewPage() {
           </div>
           <p className="text-2xl font-bold">{membersCount}</p>
         </Link>
-        <div className="rounded-lg border dark:bg-zinc-900/20 overflow-hidden">
-          <div className="px-5 pt-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <ChartPie className="size-4" />
-                <span className="text-sm">Usage</span>
-              </div>
-              <p className="text-xs text-muted-foreground">vs last 30 days</p>
+        <Link
+          to="/orgs/$slug/usage"
+          params={{ slug }}
+          className="rounded-lg border dark:bg-zinc-900/20 p-5 space-y-3 transition-colors hover:bg-muted/50 dark:hover:bg-zinc-900/40"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <ChartPie className="size-4" />
+              <span className="text-sm">Usage</span>
             </div>
-            <p className="text-2xl font-bold">{formattedUsage}</p>
+            <p className="text-xs text-muted-foreground">vs last 30 days</p>
           </div>
-          <Sparkline data={usage.series} color={"#bef264"} />
-        </div>
+          <p className="text-2xl font-bold">{formattedUsage}</p>
+        </Link>
         <div className="rounded-lg border dark:bg-zinc-900/20 overflow-hidden">
           <div className="px-5 pt-5 space-y-3">
             <div className="flex items-center justify-between">

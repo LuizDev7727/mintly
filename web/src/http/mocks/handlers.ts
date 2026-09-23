@@ -13,6 +13,8 @@ import { getProjectsMock } from "./get-projects-mock";
 import { createProjectMock } from "./create-project-mock";
 import { getBestMomentsMock } from "./get-best-moments-mock";
 import { getSearchResultsMock } from "./get-search-results-mock";
+import { getMembersCountMock } from "./get-members-count-mock";
+import { getOrganizationPendingInvitesMock } from "./get-organization-pending-invites-mock";
 
 export const handlers = [
   getOrganizationsMock,
@@ -30,4 +32,6 @@ export const handlers = [
   createProjectMock,
   getBestMomentsMock,
   getSearchResultsMock,
+  getMembersCountMock,
+  getOrganizationPendingInvitesMock,
 ];

@@ -19,6 +19,7 @@ export const updateChannelRoute: FastifyPluginAsyncZod = async (app) => {
         }),
         body: z.object({
           name: z.string().min(1),
+          description: z.string().optional(),
         }),
         response: {
           204: z.never(),
@@ -27,7 +28,7 @@ export const updateChannelRoute: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { slug, channelId } = request.params;
-      const { name } = request.body;
+      const { name, description } = request.body;
       const { id: userId } = request.user;
 
       const span = tracer.startSpan("update-channel");
@@ -38,7 +39,7 @@ export const updateChannelRoute: FastifyPluginAsyncZod = async (app) => {
         userId
       })
 
-      await updateChannel({ channelId, name });
+      await updateChannel({ channelId, name, description });
 
       span.end();
 

@@ -1,3 +1,4 @@
+import { UnauthorizedError } from "@/errors/unauthorized.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { hashApiKey } from "@/utils/crypto/hash-api-key.ts";
@@ -8,7 +9,7 @@ export async function checkApiKey(request: FastifyRequest) {
   const authorization = request.headers.authorization;
 
   if (!authorization?.startsWith("Bearer ")) {
-    throw Object.assign(new Error("Unauthorized"), { statusCode: 401 });
+    throw new UnauthorizedError();
   }
 
   const apiKey = authorization.replace("Bearer ", "");
@@ -27,7 +28,7 @@ export async function checkApiKey(request: FastifyRequest) {
     );
 
   if (!organization) {
-    throw Object.assign(new Error("Unauthorized"), { statusCode: 401 });
+    throw new UnauthorizedError();
   }
 
   request.organization = organization;

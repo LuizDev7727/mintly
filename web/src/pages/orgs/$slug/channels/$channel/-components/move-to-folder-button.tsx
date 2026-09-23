@@ -149,7 +149,7 @@ export function MoveToFolderButton() {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button disabled={isNoPostsSelected}>
+        <Button disabled={isNoPostsSelected} className="flex-1">
           <ArrowLeftRight className="size-4" />
           Move to folder
         </Button>
