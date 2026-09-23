@@ -52,6 +52,8 @@ import { getActiveOrganizationRoute } from "./infra/http/routes/internal/organiz
 import { setActiveOrganizationRoute } from "./infra/http/routes/internal/organization/set-active-organization.route.ts";
 import { createOrganizationRoute } from "./infra/http/routes/internal/organization/create-organization.route.ts";
 import { getMembersRoute } from "./infra/http/routes/internal/organization/get-members.route.ts";
+import { getMembersCountRoute } from "./infra/http/routes/internal/organization/get-members-count.route.ts";
+import { getOrganizationPendingInvitesRoute } from "./infra/http/routes/internal/organization/get-organization-pending-invites.route.ts";
 import { createInviteMemberRoute } from "./infra/http/routes/internal/organization/create-invite-member.route.ts";
 import { getPendingInvitesRoute } from "./infra/http/routes/internal/invitation/get-pending-invites.route.ts";
 import { acceptInviteRoute } from "./infra/http/routes/internal/invitation/accept-invite.route.ts";
@@ -171,6 +173,8 @@ server.register(createOrganizationRoute);
 server.register(getActiveOrganizationRoute);
 server.register(setActiveOrganizationRoute);
 server.register(getMembersRoute);
+server.register(getMembersCountRoute);
+server.register(getOrganizationPendingInvitesRoute);
 server.register(createInviteMemberRoute);
 server.register(getPendingInvitesRoute);
 server.register(acceptInviteRoute);
