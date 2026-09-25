@@ -4,7 +4,7 @@ import { faker } from "@faker-js/faker";
 test.describe("Sign Up", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
   test.beforeEach(async ({ page }) => {
-    await page.goto("/auth/sign-up");
+    await page.goto("/sign-up");
   });
 
   test("should render sign up page with correct title", async ({ page }) => {
@@ -59,7 +59,7 @@ test.describe("Sign Up", () => {
   test("should navigate to sign in page", async ({ page }) => {
     await page.getByRole("link", { name: "Sign in" }).click();
 
-    await expect(page).toHaveURL("/auth");
+    await expect(page).toHaveURL("/");
   });
 
   test("should create account successfully and redirect to orgs", async ({

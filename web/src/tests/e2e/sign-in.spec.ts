@@ -8,7 +8,7 @@ test.describe("Sign In", () => {
   };
 
   test.beforeEach(async ({ page }) => {
-    await page.goto("/auth");
+    await page.goto("/");
   });
 
   test("should render sign in page with correct title", async ({ page }) => {
@@ -47,7 +47,7 @@ test.describe("Sign In", () => {
   test("should navigate to sign up page", async ({ page }) => {
     await page.getByRole("link", { name: "Sign up" }).click();
 
-    await expect(page).toHaveURL("/auth/sign-up");
+    await expect(page).toHaveURL("/sign-up");
   });
 
   test("should sign in successfully and redirect to orgs", async ({ page }) => {

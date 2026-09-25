@@ -16,7 +16,7 @@ export const Route = createFileRoute("/orgs/$slug")({
     const hasSession = session === null;
 
     if (hasSession) {
-      throw redirect({ to: "/auth" });
+      throw redirect({ to: "/orgs" });
     }
   },
   component: OrganizationLayout,
