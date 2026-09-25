@@ -4,10 +4,8 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import {
   Tooltip,
-  TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { usePaymentMethodStatus } from "@/hooks/use-payment-method-status";
 import { createProjectHttp } from "@/http/projects/create-project.http";
 import {
   createProjectSchema,
@@ -56,10 +54,6 @@ export function CreateProjectForm() {
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
-
-  const { hasPaymentMethod, isLoading: isPaymentMethodLoading } =
-    usePaymentMethodStatus({ orgSlug: slug });
-  const isMissingPaymentMethod = !isPaymentMethodLoading && !hasPaymentMethod;
 
   const {
     control,
@@ -287,7 +281,7 @@ export function CreateProjectForm() {
                   <Button
                     type="submit"
                     disabled={
-                      isSubmitting || isFilesEmpty || isMissingPaymentMethod
+                      isSubmitting || isFilesEmpty
                     }
                   >
                     {isSubmitting ? (
@@ -299,11 +293,6 @@ export function CreateProjectForm() {
                   </Button>
                 </span>
               </TooltipTrigger>
-              {isMissingPaymentMethod && (
-                <TooltipContent>
-                  <p>Add a payment method to create projects</p>
-                </TooltipContent>
-              )}
             </Tooltip>
           </div>
         </header>

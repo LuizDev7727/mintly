@@ -53,8 +53,6 @@ export async function connectTikTok(params: ConnectTikTokParams) {
 
   const tiktokTokenResponse = await tokenRequest.json();
 
-  console.log({ tiktokTokenResponse });
-
   const {
     access_token: accessToken,
     expires_in: expiresIn,

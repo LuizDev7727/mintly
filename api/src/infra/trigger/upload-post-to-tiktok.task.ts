@@ -1,4 +1,4 @@
-import { logger, schemaTask } from "@trigger.dev/sdk";
+import { logger, schemaTask, wait } from "@trigger.dev/sdk";
 import { z } from "zod";
 import os from "node:os";
 import path from "node:path";
@@ -6,7 +6,7 @@ import { uuidv7 } from "uuidv7";
 import { createReadStream, createWriteStream } from "node:fs";
 import { db } from "@/infra/db/client.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
@@ -17,6 +17,7 @@ export const uploadPostToTiktokTask = schemaTask({
     fileUrl: z.url(),
     title: z.string(),
     postId: z.uuidv7(),
+    channelId: z.string(),
     fileSizeInBytes: z.number(),
   }),
 
@@ -54,7 +55,7 @@ export const uploadPostToTiktokTask = schemaTask({
 
     const MAX_CHUNK_SIZE = 1024 * 1024 * 64; // 64MB
 
-    const { fileUrl, title, fileSizeInBytes } = payload;
+    const { fileUrl, title, fileSizeInBytes, channelId } = payload;
 
     const file = await fetch(fileUrl);
 
@@ -90,10 +91,26 @@ export const uploadPostToTiktokTask = schemaTask({
 
     const chunkSize = hasMoreThanOneChunk ? MAX_CHUNK_SIZE : videoSize;
 
-    const [{ accessToken, refresh_token, expiry_in }] = await db
+    const [integration] = await db
       .select()
       .from(integrationsTable)
-      .where(eq(integrationsTable.provider, "TIKTOK"));
+      .where(
+        and(
+          eq(integrationsTable.provider, "TIKTOK"),
+          eq(integrationsTable.channelId, channelId),
+        ),
+      );
+
+    if (!integration) {
+      throw new Error("TikTok integration not found for this channel.");
+    }
+
+    const {
+      id: integrationId,
+      accessToken,
+      refresh_token,
+      expiry_in,
+    } = integration;
 
     const nowInSeconds = Math.floor(Date.now() / 1000);
     const isAccessTokenValid = nowInSeconds < expiry_in;
@@ -146,7 +163,7 @@ export const uploadPostToTiktokTask = schemaTask({
           refresh_token: newRefreshToken,
           refreshExpiresIn: nowInSeconds + newRefreshExpiresIn,
         })
-        .where(eq(integrationsTable.provider, "TIKTOK"));
+        .where(eq(integrationsTable.id, integrationId));
 
       tiktokAccessToken = newAccessToken;
     }
@@ -167,7 +184,7 @@ export const uploadPostToTiktokTask = schemaTask({
         body: JSON.stringify({
           post_info: {
             title: title,
-            privacy_level: "SELF_ONLY",
+            privacy_level: "PUBLIC_TO_EVERYONE",
             disable_duet: false,
             disable_comment: false,
             disable_stitch: false,
@@ -186,15 +203,19 @@ export const uploadPostToTiktokTask = schemaTask({
 
     logger.log("tiktokUploadVideoJson: ", { tiktokUploadVideoJson });
 
+    // On failure TikTok answers with `data: {}` and an `error.code` other than
+    // "ok", so every `data` field is optional and `error` is checked below.
     const tiktokUploadVideoResponseSchema = z.object({
-      data: z.object({
-        publish_id: z.string(),
-        upload_url: z.url(),
-      }),
+      data: z
+        .object({
+          publish_id: z.string().optional(),
+          upload_url: z.string().optional(),
+        })
+        .optional(),
       error: z.object({
         code: z.string(),
         message: z.string(),
-        log_id: z.string(),
+        log_id: z.string().optional(),
       }),
     });
 
@@ -202,7 +223,13 @@ export const uploadPostToTiktokTask = schemaTask({
 
     logger.log("tiktokUploadVideoResponse: ", { data, error });
 
-    const { upload_url: uploadUrl } = data;
+    if (error.code !== "ok" || !data?.publish_id || !data.upload_url) {
+      throw new Error(
+        `TikTok rejected the video upload (${error.code}): ${error.message} [log_id: ${error.log_id}]`,
+      );
+    }
+
+    const { publish_id, upload_url: uploadUrl } = data;
 
     for (let i = 0; i < totalChunkCount; i++) {
 
@@ -212,34 +239,78 @@ export const uploadPostToTiktokTask = schemaTask({
 
       const chunkStream = createReadStream(file_output_path, { start, end });
 
-      await fetch(uploadUrl, {
+      const chunkResponse = await fetch(uploadUrl, {
         method: "PUT",
         headers: {
           "Content-Type": "video/mp4",
           "Content-Length": String(length),
-          "Content-Range": `bytes ${i * chunkSize}-${(i + 1) * chunkSize - 1}/${videoSize}`,
+          "Content-Range": `bytes ${start}-${end}/${videoSize}`,
         },
         body: chunkStream,
         duplex: "half"
-      })
+      });
+
+      if (!chunkResponse.ok) {
+        throw new Error(
+          `TikTok chunk upload failed (HTTP ${chunkResponse.status}) at chunk ${i + 1}/${totalChunkCount}`,
+        );
+      }
     }
 
-    const { publish_id } = data;
+    const MAX_PUBLISH_STATUS_CHECKS = 24;
+    const PUBLISH_STATUS_CHECK_INTERVAL_IN_SECONDS = 5;
 
-    const checkPublishStatusResponse = await fetch("https://open.tiktokapis.com/v2/post/publish/status/fetch/", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${tiktokAccessToken}`,
-        "Content-Type": "application/json; charset=UTF-8",
-      },
-      body: JSON.stringify({
-        publish_id,
+    const publishStatusResponseSchema = z.object({
+      data: z
+        .object({
+          status: z.string().optional(),
+          fail_reason: z.string().optional(),
+        })
+        .optional(),
+      error: z.object({
+        code: z.string(),
+        message: z.string(),
       }),
     });
 
-    const checkPublishStatusResponseJson = await checkPublishStatusResponse.json();
-    logger.log("Check publish status: ", { checkPublishStatusResponseJson });
+    // Finishing the upload does not mean the video was published: TikTok
+    // processes it afterwards. Only PUBLISH_COMPLETE counts as success.
+    for (let attempt = 1; attempt <= MAX_PUBLISH_STATUS_CHECKS; attempt++) {
+      const checkPublishStatusResponse = await fetch("https://open.tiktokapis.com/v2/post/publish/status/fetch/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${tiktokAccessToken}`,
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify({
+          publish_id,
+        }),
+      });
 
+      const { data: publishStatus, error: publishStatusError } =
+        publishStatusResponseSchema.parse(await checkPublishStatusResponse.json());
 
+      logger.log("Check publish status: ", { attempt, publishStatus, publishStatusError });
+
+      if (publishStatusError.code !== "ok" || !publishStatus?.status) {
+        throw new Error(
+          `TikTok publish status check failed (${publishStatusError.code}): ${publishStatusError.message}`,
+        );
+      }
+
+      if (publishStatus.status === "PUBLISH_COMPLETE") {
+        return;
+      }
+
+      if (publishStatus.status === "FAILED") {
+        throw new Error(
+          `TikTok failed to publish the video: ${publishStatus.fail_reason ?? "unknown reason"}`,
+        );
+      }
+
+      await wait.for({ seconds: PUBLISH_STATUS_CHECK_INTERVAL_IN_SECONDS });
+    }
+
+    throw new Error("TikTok did not finish publishing the video in time.");
   },
 });
