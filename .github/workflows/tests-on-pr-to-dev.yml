@@ -203,12 +203,15 @@ jobs:
           INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
           INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
           INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
+        # NODE_ENV=test (overrides the Dockerfile's production): with "production"
+        # the Polar client targets api.polar.sh, and the Infisical "dev" token is
+        # rejected there (401 invalid_token), so every sign-up returned a 500.
         run: |
           docker run -d \
             --name mintly-api \
             --network host \
             -e "BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET" \
-            -e NODE_ENV=production \
+            -e NODE_ENV=test \
             -e OTEL_SERVICE_NAME=mintly-api-e2e \
             -e OTEL_TRACES_EXPORTER=none \
             -e "INFISICAL_CLIENT_ID=$INFISICAL_CLIENT_ID" \
