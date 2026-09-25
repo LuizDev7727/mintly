@@ -124,10 +124,19 @@ jobs:
         with:
           node-version: lts/*
           cache: "pnpm"
-          cache-dependency-path: web/pnpm-lock.yaml
+          cache-dependency-path: |
+            web/pnpm-lock.yaml
+            api/pnpm-lock.yaml
 
       - name: Install web dependencies
         working-directory: web
+        run: pnpm install
+
+      # Migrations and the seed run through `dotenv-cli` (an api devDependency).
+      # Without this install, `dotenv` resolves to the Ruby gem preinstalled on
+      # ubuntu runners and fails with "invalid option: -e".
+      - name: Install API dependencies
+        working-directory: api
         run: pnpm install
 
       - name: Cache Playwright browsers
