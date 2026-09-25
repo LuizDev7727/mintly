@@ -239,6 +239,11 @@ jobs:
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           VITE_NODE_ENV: production
 
+      # Surface why an API call (e.g. sign-up) failed during the E2E run.
+      - name: API container logs (on failure)
+        if: failure()
+        run: docker logs mintly-api
+
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

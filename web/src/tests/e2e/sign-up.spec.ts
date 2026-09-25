@@ -10,7 +10,7 @@ test.describe("Sign Up", () => {
   test("should render sign up page with correct title", async ({ page }) => {
     await expect(page).toHaveTitle(/Sign Up | Mintly/);
     await expect(
-      page.getByRole("heading", { name: "Create an account" }),
+      page.getByRole("button", { name: "Create account" }),
     ).toBeVisible();
   });
 

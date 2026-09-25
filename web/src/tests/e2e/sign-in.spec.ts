@@ -13,9 +13,7 @@ test.describe("Sign In", () => {
 
   test("should render sign in page with correct title", async ({ page }) => {
     await expect(page).toHaveTitle(/Sign In | Mintly/);
-    await expect(
-      page.getByRole("heading", { name: "Welcome back" }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Log in" })).toBeVisible();
   });
 
   test("should show validation errors when submitting empty form", async ({
