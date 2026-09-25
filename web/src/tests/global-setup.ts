@@ -8,7 +8,7 @@ export default async function globalSetup(config: FullConfig) {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
-  await page.goto(`${baseURL}/auth`);
+  await page.goto(`${baseURL}/`);
   await page.getByLabel("Email").fill("testuser@gmail.com");
   await page
     .getByRole("textbox", { name: "Password", exact: true })

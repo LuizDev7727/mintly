@@ -22,10 +22,13 @@ import { toast } from "sonner";
 import { TogglePasswordVisibility } from "./-components/toggle-password-visibility";
 import { Separator } from "@/components/ui/separator";
 
-export const Route = createFileRoute("/auth/")({
+export const Route = createFileRoute("/_auth/")({
   head: () => ({
     meta: [
-      { name: "description", content: "Sign in to your Mintly account." },
+      {
+        name: "description",
+        content: "Sign in to your Mintly account."
+      },
       { title: "Sign In | Mintly" },
     ],
   }),
@@ -56,7 +59,11 @@ function SignInPage() {
       fetchOptions: {
         onSuccess: async () => {
           toast("Logged in successfully!");
-          navigate({ to: "/orgs", replace: true, reloadDocument: true });
+          navigate({
+            to: "/orgs",
+            replace: true,
+            reloadDocument: true
+          });
         },
         onError: async ({ error }) => {
           toast.error(error.message);
@@ -67,15 +74,6 @@ function SignInPage() {
 
   return (
     <div className="w-full space-y-6">
-      <div className="flex flex-col items-center space-y-2 text-center">
-        <Link to="/" className="w-fit rounded-full p-4 border">
-          <img src="/logo.svg" className="size-8"/>
-        </Link>
-        <h1 className="text-2xl font-bold">Welcome back</h1>
-        <p className="text-muted-foreground text-sm">
-          Enter your credentials to access your account
-        </p>
-      </div>
 
       <form onSubmit={handleSubmit(handleSignIn)} className="space-y-4">
         <FieldGroup>
@@ -129,7 +127,7 @@ function SignInPage() {
 
       <p className="text-center text-sm">
         Don't have an account?{" "}
-        <Link to="/auth/sign-up" className="underline">
+        <Link to="/sign-up" className="underline">
           Sign up
         </Link>
       </p>

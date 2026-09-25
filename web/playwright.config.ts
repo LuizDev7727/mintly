@@ -26,7 +26,7 @@ export default defineConfig({
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    baseURL: "http://localhost:4173",
+    baseURL: "http://localhost:5173",
     storageState: "./src/tests/.auth/user.json",
     trace: "on-first-retry",
   },
@@ -69,9 +69,11 @@ export default defineConfig({
     // },
   ],
 
+  // Port 5173 (not the preview default 4173): the API only allows CORS and
+  // auth from the origin in the ALLOWED_ORIGIN secret, which is localhost:5173.
   webServer: {
-    command: "pnpm preview",
-    url: "http://localhost:4173",
+    command: "pnpm preview --port 5173 --strictPort",
+    url: "http://localhost:5173",
     reuseExistingServer: !process.env.CI,
   },
 });

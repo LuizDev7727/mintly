@@ -13,10 +13,10 @@ export const Route = createFileRoute("/orgs/$slug")({
   beforeLoad: async () => {
     const { data: session } = await authClient.getSession();
 
-    const hasSession = session === null;
+    const isSessionEmpty = session === null;
 
-    if (hasSession) {
-      throw redirect({ to: "/auth" });
+    if (isSessionEmpty) {
+      throw redirect({ to: "/" });
     }
   },
   component: OrganizationLayout,

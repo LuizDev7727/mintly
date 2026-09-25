@@ -23,10 +23,13 @@ import { Spinner } from "@/components/ui/spinner";
 import { TogglePasswordVisibility } from "../-components/toggle-password-visibility";
 import { Separator } from "@/components/ui/separator";
 
-export const Route = createFileRoute("/auth/sign-up/")({
+export const Route = createFileRoute("/_auth/sign-up/")({
   head: () => ({
     meta: [
-      { name: "description", content: "Create your Mintly account." },
+      {
+        name: "description",
+        content: "Create your Mintly account."
+      },
       { title: "Sign Up | Mintly" },
     ],
   }),
@@ -63,7 +66,11 @@ function SignUpPage() {
       fetchOptions: {
         onSuccess: () => {
           toast("Account created successfully!");
-          navigate({ to: "/orgs", replace: true, reloadDocument: true });
+          navigate({
+            to: "/orgs",
+            replace: true,
+            reloadDocument: true
+          });
         },
       },
     });
@@ -71,15 +78,6 @@ function SignUpPage() {
 
   return (
     <div className="w-full space-y-6">
-      <div className="flex flex-col items-center space-y-2 text-center">
-        <Link to="/" className="w-fit rounded-full p-4 border">
-          <img src="/logo.svg" className="size-8"/>
-        </Link>
-        <h1 className="text-2xl font-bold">Create an account</h1>
-        <p className="text-muted-foreground text-sm">
-          Enter your details below to get started
-        </p>
-      </div>
 
       <form onSubmit={handleSubmit(handleSignUp)} className="space-y-4">
         <FieldGroup>
@@ -164,7 +162,7 @@ function SignUpPage() {
 
       <p className="text-center text-sm">
         Already have an account?{" "}
-        <Link to="/auth" className="underline">
+        <Link to="/" className="underline">
           Sign in
         </Link>
       </p>
