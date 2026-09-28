@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { FileTextIcon, FolderIcon, LayoutGridIcon, SearchIcon } from "lucide-react"
+import { FolderIcon, ImageIcon, SearchIcon } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "@tanstack/react-router"
 
@@ -17,21 +17,21 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { getSearchResultsHttp } from "@/http/search/get-search-results.http"
+import {
+  getSearchResultsHttp,
+  type FolderSearchResult,
+  type PostSearchResult,
+  type ProjectSearchResult,
+} from "@/http/search/get-search-results.http"
 
 const SEARCH_KEYBOARD_SHORTCUT = "k"
 const MIN_QUERY_LENGTH = 2
 const DEBOUNCE_DELAY_MS = 300
 
-type SearchResult = {
-  id: string
-  title: string
-  channelId: string
-}
-
 const isMac =
   typeof navigator !== "undefined" && /Mac/.test(navigator.platform)
 
+/** Global search for posts, projects and folders, opened via the sidebar or Cmd/Ctrl+K. */
 export function Search() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
@@ -80,7 +80,7 @@ export function Search() {
     setDebouncedQuery("")
   }
 
-  function handleSelectPost(post: SearchResult) {
+  function handleSelectPost(post: PostSearchResult) {
     navigate({
       to: "/orgs/$slug/channels/$channel/$postId",
       params: { slug: orgSlug, channel: post.channelId, postId: post.id },
@@ -88,7 +88,7 @@ export function Search() {
     closeAndReset()
   }
 
-  function handleSelectProject(project: SearchResult) {
+  function handleSelectProject(project: ProjectSearchResult) {
     navigate({
       to: "/orgs/$slug/channels/$channel/projects/$projectId",
       params: {
@@ -100,7 +100,7 @@ export function Search() {
     closeAndReset()
   }
 
-  function handleSelectFolder(folder: SearchResult) {
+  function handleSelectFolder(folder: FolderSearchResult) {
     navigate({
       to: "/orgs/$slug/channels/$channel",
       params: { slug: orgSlug, channel: folder.channelId },
@@ -139,13 +139,14 @@ export function Search() {
           placeholder="Search posts, projects and folders."
           value={query}
           onValueChange={setQuery}
+          loading={shouldSearch && isLoading}
         />
         <CommandList>
           {!shouldSearch && (
             <CommandEmpty>Type at least 2 characters to search.</CommandEmpty>
           )}
           {shouldSearch && isLoading && (
-            <CommandEmpty>Searching...</CommandEmpty>
+            <CommandEmpty className="animate-pulse">Searching...</CommandEmpty>
           )}
           {shouldSearch && !isLoading && !hasResults && (
             <CommandEmpty>No results found.</CommandEmpty>
@@ -157,9 +158,27 @@ export function Search() {
                   key={post.id}
                   value={`post-${post.id}`}
                   onSelect={() => handleSelectPost(post)}
+                  className="items-start"
                 >
-                  <FileTextIcon />
-                  <span>{post.title}</span>
+                  <div className="aspect-video h-9 shrink-0 overflow-hidden rounded-lg bg-muted">
+                    {post.thumbnailUrl ? (
+                      <img
+                        src={post.thumbnailUrl}
+                        alt=""
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex size-full items-center justify-center text-muted-foreground">
+                        <ImageIcon className="size-4" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate">{post.title}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {post.description || "No description"}
+                    </p>
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -171,9 +190,27 @@ export function Search() {
                   key={project.id}
                   value={`project-${project.id}`}
                   onSelect={() => handleSelectProject(project)}
+                  className="items-start"
                 >
-                  <LayoutGridIcon />
-                  <span>{project.title}</span>
+                  <div className="aspect-video h-9 shrink-0 overflow-hidden rounded-lg bg-muted">
+                    {project.thumbnailUrl ? (
+                      <img
+                        src={project.thumbnailUrl}
+                        alt=""
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex size-full items-center justify-center text-muted-foreground">
+                        <ImageIcon className="size-4" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate">{project.title}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      No description
+                    </p>
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>

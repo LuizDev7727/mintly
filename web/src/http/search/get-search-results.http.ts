@@ -5,16 +5,31 @@ type GetSearchResultsParams = {
   query: string;
 };
 
-type SearchResult = {
+export type PostSearchResult = {
+  id: string;
+  title: string;
+  channelId: string;
+  thumbnailUrl: string | null;
+  description: string;
+};
+
+export type ProjectSearchResult = {
+  id: string;
+  title: string;
+  channelId: string;
+  thumbnailUrl: string | null;
+};
+
+export type FolderSearchResult = {
   id: string;
   title: string;
   channelId: string;
 };
 
 export type GetSearchResultsResponse = {
-  posts: SearchResult[];
-  projects: SearchResult[];
-  folders: SearchResult[];
+  posts: PostSearchResult[];
+  projects: ProjectSearchResult[];
+  folders: FolderSearchResult[];
 };
 
 export async function getSearchResultsHttp(

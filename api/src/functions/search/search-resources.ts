@@ -3,6 +3,7 @@ import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { foldersTable } from "@/infra/db/tables/folders.table.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { projectsTable } from "@/infra/db/tables/projects.table.ts";
+import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { and, desc, eq, sql } from "drizzle-orm";
 
 const RESULTS_PER_TYPE = 5;
@@ -13,8 +14,19 @@ type SearchResourcesParams = {
 };
 
 type SearchResourcesResponse = {
-  posts: { id: string; title: string; channelId: string }[];
-  projects: { id: string; title: string; channelId: string }[];
+  posts: {
+    id: string;
+    title: string;
+    channelId: string;
+    thumbnailUrl: string | null;
+    description: string;
+  }[];
+  projects: {
+    id: string;
+    title: string;
+    channelId: string;
+    thumbnailUrl: string | null;
+  }[];
   folders: { id: string; title: string; channelId: string }[];
 };
 
@@ -25,12 +37,14 @@ export async function searchResources(
 
   const tsQuery = sql`websearch_to_tsquery('simple', ${query})`;
 
-  const [posts, projects, folders] = await Promise.all([
+  const [postsQueryResult, projects, folders] = await Promise.all([
     db
       .select({
         id: postsTable.id,
         title: postsTable.title,
         channelId: postsTable.channelId,
+        thumbnailStorageKey: postsTable.thumbnailStorageKey,
+        description: postsTable.description,
       })
       .from(postsTable)
       .innerJoin(channelsTable, eq(postsTable.channelId, channelsTable.id))
@@ -47,6 +61,7 @@ export async function searchResources(
         id: projectsTable.id,
         title: projectsTable.title,
         channelId: projectsTable.channelId,
+        thumbnailUrl: projectsTable.thumbnailUrl,
       })
       .from(projectsTable)
       .innerJoin(channelsTable, eq(projectsTable.channelId, channelsTable.id))
@@ -75,6 +90,15 @@ export async function searchResources(
       .orderBy(desc(sql`ts_rank(${foldersTable.searchVector}, ${tsQuery})`))
       .limit(RESULTS_PER_TYPE),
   ]);
+
+  const posts = await Promise.all(
+    postsQueryResult.map(async ({ thumbnailStorageKey, ...post }) => ({
+      ...post,
+      thumbnailUrl: thumbnailStorageKey
+        ? await generateSignedUrl({ key: thumbnailStorageKey })
+        : null,
+    })),
+  );
 
   return { posts, projects, folders };
 }
