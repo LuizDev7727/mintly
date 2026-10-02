@@ -37,8 +37,6 @@
     "@opentelemetry/instrumentation-http": "^0.218.0",
     "@opentelemetry/instrumentation-pg": "^0.70.0",
     "@opentelemetry/sdk-node": "^0.218.0",
-    "@polar-sh/ingestion": "^0.4.2",
-    "@polar-sh/sdk": "^0.49.0",
     "@react-email/components": "^1.0.12",
     "@trigger.dev/sdk": "4.6.4",
     "@upstash/qstash": "^2.11.3",

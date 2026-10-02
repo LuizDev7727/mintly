@@ -1,0 +1,1 @@
+ALTER TABLE "organizations" DROP COLUMN "polar_customer_id";

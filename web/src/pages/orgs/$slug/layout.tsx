@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { authClient } from "@/lib/auth";
-import { PaymentMethodWarning } from "@/components/payment-method-warning";
 import { NavUser } from "@/components/nav-user";
 
 export const Route = createFileRoute("/orgs/$slug")({
@@ -34,7 +33,6 @@ function OrganizationLayout() {
             <SidebarTrigger />
           </div>
           <div className="flex items-center gap-x-2">
-            <PaymentMethodWarning />
             <div className="bg-border w-4 rotate-90 h-px" />
             <NavUser/>
           </div>
