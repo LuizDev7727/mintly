@@ -63,6 +63,7 @@ import { updateOrganizationRoute } from "./infra/http/routes/internal/organizati
 import { createBillingPortalSessionRoute } from "./infra/http/routes/internal/organization/create-billing-portal-session.route.ts";
 import { getOrganizationPaymentMethodStatusRoute } from "./infra/http/routes/internal/organization/get-organization-payment-method-status.route.ts";
 import { getInvoicesRoute } from "./infra/http/routes/internal/organization/get-invoices.route.ts";
+import { getInvoiceRoute } from "./infra/http/routes/internal/organization/get-invoice.route.ts";
 import { getPaymentMethodsRoute } from "./infra/http/routes/internal/organization/get-payment-methods.route.ts";
 import { getUsageRoute } from "./infra/http/routes/internal/organization/get-usage.route.ts";
 import { createCheckoutSessionRoute } from "./infra/http/routes/internal/organization/create-checkout-session.route.ts";
@@ -184,6 +185,7 @@ server.register(updateOrganizationRoute);
 server.register(createBillingPortalSessionRoute);
 server.register(getOrganizationPaymentMethodStatusRoute);
 server.register(getInvoicesRoute);
+server.register(getInvoiceRoute);
 server.register(getPaymentMethodsRoute);
 server.register(getUsageRoute);
 server.register(createCheckoutSessionRoute);

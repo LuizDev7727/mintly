@@ -4,7 +4,7 @@ import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { eq } from "drizzle-orm";
-import { setUsage } from "@/utils/polar/set-usage.ts";
+import { setUsage } from "@/utils/set-usage.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 const seoResponseSchema = z.object({

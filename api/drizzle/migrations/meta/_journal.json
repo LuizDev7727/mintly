@@ -225,6 +225,13 @@
       "when": 1789568431100,
       "tag": "0031_worried_the_stranger",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1790952004357,
+      "tag": "0032_large_masque",
+      "breakpoints": true
     }
   ]
 }

@@ -9,7 +9,7 @@ import { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
 import { googleAi } from "@/lib/google.ts";
 import { bestMomentsTable } from "../db/tables/best-moments.table.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
-import { setUsage } from "@/utils/polar/set-usage.ts";
+import { setUsage } from "@/utils/set-usage.ts";
 import { calculateGeminiCost } from "@/utils/polar/calculate-gemini-cost.ts";
 
 type ModalCallbackPayload = {
