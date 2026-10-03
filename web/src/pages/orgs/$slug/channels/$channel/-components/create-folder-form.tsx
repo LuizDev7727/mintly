@@ -73,6 +73,10 @@ export function CreateFolderForm() {
         };
       });
 
+      queryClient.invalidateQueries({
+        queryKey: ["folders", slug, channel, "tree"],
+      });
+
       toast("Folder created successfully");
     },
   });

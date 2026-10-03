@@ -60,6 +60,9 @@ export function DeleteFolderDialog({
           folders: newArray,
         };
       });
+      queryClient.invalidateQueries({
+        queryKey: ["folders", slug, channel, "tree"],
+      });
       toast("Folder deleted successfully");
     },
   });

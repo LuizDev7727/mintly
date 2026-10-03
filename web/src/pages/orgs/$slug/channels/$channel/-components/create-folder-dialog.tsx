@@ -10,17 +10,25 @@ import {
 import { FolderPlus } from "lucide-react";
 import { CreateFolderForm } from "./create-folder-form";
 import { useQueryState } from "nuqs";
+import type { ReactNode } from "react";
 
-export function CreateFolderDialog() {
+type CreateFolderDialogProps = {
+  /** Custom trigger element. Defaults to the "New Folder" button. */
+  trigger?: ReactNode;
+};
+
+export function CreateFolderDialog({ trigger }: CreateFolderDialogProps) {
   const [currentFolderName] = useQueryState("folder_name");
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"outline"}>
-          <FolderPlus className="mr-2 size-4" />
-          New Folder
-        </Button>
+        {trigger ?? (
+          <Button variant={"outline"}>
+            <FolderPlus className="mr-2 size-4" />
+            New Folder
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

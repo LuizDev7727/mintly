@@ -25,6 +25,7 @@ import { deleteChannelRoute } from "./infra/http/routes/internal/channel/delete-
 import { createFolderRoute } from "./infra/http/routes/internal/folder/create-folder.route.ts";
 import { deleteFolderRoute } from "./infra/http/routes/internal/folder/delete-folder.route.ts";
 import { getFoldersRoute } from "./infra/http/routes/internal/folder/get-folders.route.ts";
+import { getFoldersTreeRoute } from "./infra/http/routes/internal/folder/get-folders-tree.route.ts";
 import { updateFolderRoute } from "./infra/http/routes/internal/folder/update-folder.route.ts";
 import { getStarredFoldersRoute } from "./infra/http/routes/internal/folder/get-starred-folders.route.ts";
 import { setStarredFolderRoute } from "./infra/http/routes/internal/folder/set-starred-folder.route.ts";
@@ -144,6 +145,7 @@ server.register(deleteChannelRoute);
 server.register(createFolderRoute);
 server.register(deleteFolderRoute);
 server.register(getFoldersRoute);
+server.register(getFoldersTreeRoute);
 server.register(updateFolderRoute);
 server.register(getStarredFoldersRoute);
 server.register(setStarredFolderRoute);
