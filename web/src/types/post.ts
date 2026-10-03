@@ -2,10 +2,15 @@ export type PostDetails = {
   title: string;
   thumbnailUrl: string | null;
   description: string;
+  mimeType: string;
   createdAt: string;
   size: number;
   duration: number;
   status: Post["status"];
+  folder: {
+    id: string;
+    title: string;
+  } | null;
   author: {
     name: string;
     avatarUrl: string | null;

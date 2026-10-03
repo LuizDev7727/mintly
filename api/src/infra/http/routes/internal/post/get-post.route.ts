@@ -23,6 +23,7 @@ export const getPostRoute: FastifyPluginAsyncZod = async (app) => {
             title: z.string(),
             thumbnailUrl: z.string().nullable(),
             description: z.string(),
+            mimeType: z.string(),
             createdAt: z.date(),
             size: z.number(),
             duration: z.number(),
@@ -39,6 +40,12 @@ export const getPostRoute: FastifyPluginAsyncZod = async (app) => {
               "PUBLISHING",
               "CANCELED",
             ]),
+            folder: z
+              .object({
+                id: z.string(),
+                title: z.string(),
+              })
+              .nullable(),
             author: z.object({
               name: z.string(),
               avatarUrl: z.string().nullable(),

@@ -1,5 +1,6 @@
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
+import { foldersTable } from "@/infra/db/tables/folders.table.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { socialsToPostTable } from "@/infra/db/tables/socials-to-post.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
@@ -14,6 +15,7 @@ type GetPostResponse = {
   title: string;
   thumbnailUrl: string | null;
   description: string;
+  mimeType: string;
   createdAt: Date;
   size: number;
   duration: number;
@@ -29,6 +31,10 @@ type GetPostResponse = {
     | "SEO_GENERATING"
     | "PUBLISHING"
     | "CANCELED";
+  folder: {
+    id: string;
+    title: string;
+  } | null;
   author: {
     name: string;
     avatarUrl: string | null;
@@ -49,10 +55,13 @@ export async function getPost(
       title: postsTable.title,
       thumbnailStorageKey: postsTable.thumbnailStorageKey,
       description: postsTable.description,
+      mimeType: postsTable.mimeType,
       createdAt: postsTable.createdAt,
       size: postsTable.size,
       duration: postsTable.duration,
       status: postsTable.status,
+      folderId: foldersTable.id,
+      folderTitle: foldersTable.title,
       author: {
         name: usersTable.name,
         avatarUrl: usersTable.image,
@@ -70,22 +79,33 @@ export async function getPost(
     })
     .from(postsTable)
     .innerJoin(usersTable, eq(postsTable.ownerId, usersTable.id))
+    .leftJoin(foldersTable, eq(postsTable.folderId, foldersTable.id))
     .innerJoin(
       socialsToPostTable,
       eq(postsTable.id, socialsToPostTable.postId),
     )
     .where(eq(postsTable.id, postId))
-    .groupBy(postsTable.id, usersTable.name, usersTable.image)
+    .groupBy(
+      postsTable.id,
+      usersTable.name,
+      usersTable.image,
+      foldersTable.id,
+      foldersTable.title,
+    )
     .limit(1);
 
   if (!post) {
     throw new ResourceNotFoundError("Post not found");
   }
 
-  const { thumbnailStorageKey, ...rest } = post;
+  const { thumbnailStorageKey, folderId, folderTitle, ...rest } = post;
 
   return {
     ...rest,
+    folder:
+      folderId !== null && folderTitle !== null
+        ? { id: folderId, title: folderTitle }
+        : null,
     thumbnailUrl: thumbnailStorageKey
       ? await generateSignedUrl({ key: thumbnailStorageKey })
       : null,
