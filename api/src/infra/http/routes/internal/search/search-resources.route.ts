@@ -24,6 +24,8 @@ export const searchResourcesRoute: FastifyPluginAsyncZod = async (app) => {
                 id: z.string(),
                 title: z.string(),
                 channelId: z.string(),
+                thumbnailUrl: z.string().nullable(),
+                description: z.string(),
               }),
             ),
             projects: z.array(
@@ -31,6 +33,9 @@ export const searchResourcesRoute: FastifyPluginAsyncZod = async (app) => {
                 id: z.string(),
                 title: z.string(),
                 channelId: z.string(),
+                thumbnailUrl: z.string().nullable(),
+                createdAt: z.string(),
+                bestMomentsCount: z.number(),
               }),
             ),
             folders: z.array(

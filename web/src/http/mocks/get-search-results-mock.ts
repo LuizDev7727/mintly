@@ -4,16 +4,28 @@ import type { GetSearchResultsResponse } from "../search/get-search-results.http
 
 const RESULTS_PER_TYPE = 5;
 
-const posts = Array.from({ length: 40 }, () => ({
+const THUMBNAIL_URLS = [
+  "https://pub-2f07862307a848f6a37eefd05ab02ea6.r2.dev/mr-beast-thumb.webp",
+  "https://pub-2f07862307a848f6a37eefd05ab02ea6.r2.dev/mr-beast-thumb-2.webp",
+  "https://pub-2f07862307a848f6a37eefd05ab02ea6.r2.dev/mr-beast-thumb-3.webp",
+  "https://pub-2f07862307a848f6a37eefd05ab02ea6.r2.dev/mr-beast-thumb-4.webp",
+];
+
+const posts = Array.from({ length: 40 }, (_, index) => ({
   id: faker.string.uuid(),
   title: faker.lorem.words({ min: 3, max: 8 }),
   channelId: faker.string.uuid(),
+  thumbnailUrl: THUMBNAIL_URLS[index % THUMBNAIL_URLS.length],
+  description: faker.lorem.sentence(),
 }));
 
-const projects = Array.from({ length: 20 }, () => ({
+const projects = Array.from({ length: 20 }, (_, index) => ({
   id: faker.string.uuid(),
   title: faker.lorem.words({ min: 2, max: 5 }),
   channelId: faker.string.uuid(),
+  thumbnailUrl: THUMBNAIL_URLS[index % THUMBNAIL_URLS.length],
+  createdAt: faker.date.recent({ days: 90 }).toISOString(),
+  bestMomentsCount: faker.number.int({ min: 0, max: 12 }),
 }));
 
 const folders = Array.from({ length: 20 }, () => ({
