@@ -57,9 +57,6 @@ export function ChannelSwitcher() {
                 <span className="truncate font-medium">
                   {currentChannel!.name}
                 </span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {currentChannel!.description}
-                </span>
               </div>
               <ChevronsUpDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
             </SidebarMenuButton>

@@ -2,6 +2,7 @@ import { Link, useParams } from "@tanstack/react-router";
 import { TvMinimal } from "lucide-react";
 import type { Channel } from "@/types/channel";
 import { dayjs } from "@/lib/dayjs";
+import { Separator } from "@/components/ui/separator";
 
 interface ChannelCardProps {
   channel: Channel;
@@ -14,27 +15,29 @@ export function ChannelCard({ channel }: ChannelCardProps) {
     <Link
       to="/orgs/$slug/channels/$channel"
       params={{ slug, channel: channel.id }}
-      className="flex h-full w-full min-w-0 flex-col overflow-hidden rounded-lg border dark:bg-zinc-900/20"
+      className="flex h-full w-full min-w-0 flex-col overflow-hidden rounded-xl border bg-card p-5 transition-colors hover:border-primary/40 dark:bg-zinc-900/20"
     >
-      <div className="flex items-start justify-between gap-2 p-5">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-md border bg-sidebar">
-            <TvMinimal className="size-4" />
-          </div>
-          <h3 className="truncate font-semibold leading-tight">
+      <div className="flex min-w-0 items-center gap-4">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-sidebar text-muted-foreground">
+          <TvMinimal className="size-5" />
+        </div>
+        <div className="min-w-0">
+          <h3 className="truncate text-lg font-semibold leading-tight">
             {channel.name}
           </h3>
         </div>
       </div>
 
-      <p className="px-5 pb-5 text-sm text-muted-foreground line-clamp-2">
+      <p className="mt-6 text-sm text-muted-foreground line-clamp-2">
         {channel.description || "No description"}
       </p>
 
-      <div className="mt-auto text-sm text-muted-foreground flex items-center justify-between border-t px-5 py-3">
+      <Separator className="mt-5 mb-4" />
+
+      <div className="mt-auto flex items-center justify-start text-xs text-muted-foreground">
         <span>
           Created{" "}
-          <span className="">
+          <span className="text-foreground">
             {dayjs(channel.createdAt).format("MMM D, YYYY")}
           </span>
         </span>

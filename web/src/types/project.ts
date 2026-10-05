@@ -12,3 +12,11 @@ export type Project = {
     avatarUrl: string | null;
   };
 };
+
+export const PROJECT_STATUSES = [
+  "SUCCESS",
+  "PROCESSING",
+  "ENCODING",
+  "ERROR",
+  "CANCELED",
+] as const satisfies readonly Project["status"][];
