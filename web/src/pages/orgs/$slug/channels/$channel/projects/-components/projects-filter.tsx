@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { getMembersHttp } from "@/http/organization/get-members.http";
 import { getInitials } from "@/utils/get-initials";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import {
   AlertTriangle,
@@ -21,19 +21,13 @@ import {
   Calendar,
   Check,
   Loader2,
+  RotateCcw,
   Search,
   SlidersHorizontal,
   X,
 } from "lucide-react";
 import { debounce, parseAsStringLiteral, useQueryState } from "nuqs";
-
-const PROJECT_STATUSES = [
-  "SUCCESS",
-  "PROCESSING",
-  "ENCODING",
-  "ERROR",
-  "CANCELED",
-] as const;
+import { PROJECT_STATUSES } from "@/types/project";
 
 const PROJECT_STATUS_ICONS = {
   SUCCESS: Check,
@@ -44,7 +38,10 @@ const PROJECT_STATUS_ICONS = {
 } as const;
 
 export function ProjectsFilter() {
-  const { slug } = useParams({ from: "/orgs/$slug/channels/$channel" });
+  const { slug, channel } = useParams({
+    from: "/orgs/$slug/channels/$channel",
+  });
+  const queryClient = useQueryClient();
 
   const [titleFilter, setTitleFilter] = useQueryState("title_filter", {
     defaultValue: "",
@@ -58,7 +55,7 @@ export function ProjectsFilter() {
   const [ownerFilter, setOwnerFilter] = useQueryState("owner_filter");
 
   const { data } = useQuery({
-    queryKey: ["members", slug],
+    queryKey: [slug],
     queryFn: () => getMembersHttp({ orgSlug: slug }),
     refetchOnWindowFocus: false,
   });
@@ -78,6 +75,12 @@ export function ProjectsFilter() {
 
   function handleToggleOwner(ownerId: string) {
     setOwnerFilter(ownerFilter === ownerId ? null : ownerId);
+  }
+
+  function handleReload() {
+    queryClient.invalidateQueries({
+      queryKey: [slug, channel],
+    });
   }
 
   function handleResetFilter() {
@@ -195,6 +198,11 @@ export function ProjectsFilter() {
           </SheetFooter>
         </SheetContent>
       </Sheet>
+
+      <Button onClick={handleReload}>
+        <RotateCcw className="size-4" />
+        Reload
+      </Button>
     </div>
   );
 }

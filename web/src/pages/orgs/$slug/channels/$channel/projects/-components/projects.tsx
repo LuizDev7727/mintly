@@ -13,14 +13,7 @@ import { ProjectsGridView } from "./projects-grid-view";
 import { ProjectsListView } from "./projects-list-view";
 import { ProjectsLoading } from "./projects-loading";
 import { ProjectsPagination } from "./projects-pagination";
-
-const PROJECT_STATUSES = [
-  "SUCCESS",
-  "PROCESSING",
-  "ENCODING",
-  "ERROR",
-  "CANCELED",
-] as const;
+import { PROJECT_STATUSES } from "@/types/project";
 
 export function Projects() {
   const { slug, channel } = useParams({
@@ -48,7 +41,6 @@ export function Projects() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
-      "projects",
       slug,
       channel,
       titleFilter,
@@ -89,11 +81,13 @@ export function Projects() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-1 flex-col gap-4">
       {view === "grid" && <ProjectsGridView projects={projects} />}
       {view === "list" && <ProjectsListView projects={projects} />}
 
-      <ProjectsPagination totalPages={totalPages} totalCount={totalCount} />
+      <div className="mt-auto">
+        <ProjectsPagination totalPages={totalPages} totalCount={totalCount} />
+      </div>
     </div>
   )
 }
