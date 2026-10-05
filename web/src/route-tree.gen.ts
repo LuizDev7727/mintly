@@ -28,6 +28,7 @@ import { Route as OrgsSlugChannelsChannelSettingsIndexRouteImport } from './page
 import { Route as OrgsSlugChannelsChannelProjectsIndexRouteImport } from './pages/orgs/$slug/channels/$channel/projects/index'
 import { Route as OrgsSlugChannelsChannelIntegrationsIndexRouteImport } from './pages/orgs/$slug/channels/$channel/integrations/index'
 import { Route as OrgsSlugChannelsChannelCreateUploadIndexRouteImport } from './pages/orgs/$slug/channels/$channel/create-upload/index'
+import { Route as OrgsSlugChannelsChannelBrandKitIndexRouteImport } from './pages/orgs/$slug/channels/$channel/brand-kit/index'
 import { Route as OrgsSlugChannelsChannelAiIndexRouteImport } from './pages/orgs/$slug/channels/$channel/ai/index'
 import { Route as OrgsSlugChannelsChannelPostIdIndexRouteImport } from './pages/orgs/$slug/channels/$channel/$postId/index'
 import { Route as OrgsSlugChannelsChannelProjectsCreateProjectIndexRouteImport } from './pages/orgs/$slug/channels/$channel/projects/create-project/index'
@@ -134,6 +135,12 @@ const OrgsSlugChannelsChannelCreateUploadIndexRoute =
     path: '/create-upload/',
     getParentRoute: () => OrgsSlugChannelsChannelLayoutRoute,
   } as any)
+const OrgsSlugChannelsChannelBrandKitIndexRoute =
+  OrgsSlugChannelsChannelBrandKitIndexRouteImport.update({
+    id: '/brand-kit/',
+    path: '/brand-kit/',
+    getParentRoute: () => OrgsSlugChannelsChannelLayoutRoute,
+  } as any)
 const OrgsSlugChannelsChannelAiIndexRoute =
   OrgsSlugChannelsChannelAiIndexRouteImport.update({
     id: '/ai/',
@@ -176,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/orgs/$slug/webhooks/$webhookId/': typeof OrgsSlugWebhooksWebhookIdIndexRoute
   '/orgs/$slug/channels/$channel/$postId/': typeof OrgsSlugChannelsChannelPostIdIndexRoute
   '/orgs/$slug/channels/$channel/ai/': typeof OrgsSlugChannelsChannelAiIndexRoute
+  '/orgs/$slug/channels/$channel/brand-kit/': typeof OrgsSlugChannelsChannelBrandKitIndexRoute
   '/orgs/$slug/channels/$channel/create-upload/': typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
   '/orgs/$slug/channels/$channel/integrations/': typeof OrgsSlugChannelsChannelIntegrationsIndexRoute
   '/orgs/$slug/channels/$channel/projects/': typeof OrgsSlugChannelsChannelProjectsIndexRoute
@@ -198,6 +206,7 @@ export interface FileRoutesByTo {
   '/orgs/$slug/webhooks/$webhookId': typeof OrgsSlugWebhooksWebhookIdIndexRoute
   '/orgs/$slug/channels/$channel/$postId': typeof OrgsSlugChannelsChannelPostIdIndexRoute
   '/orgs/$slug/channels/$channel/ai': typeof OrgsSlugChannelsChannelAiIndexRoute
+  '/orgs/$slug/channels/$channel/brand-kit': typeof OrgsSlugChannelsChannelBrandKitIndexRoute
   '/orgs/$slug/channels/$channel/create-upload': typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
   '/orgs/$slug/channels/$channel/integrations': typeof OrgsSlugChannelsChannelIntegrationsIndexRoute
   '/orgs/$slug/channels/$channel/projects': typeof OrgsSlugChannelsChannelProjectsIndexRoute
@@ -224,6 +233,7 @@ export interface FileRoutesById {
   '/orgs/$slug/webhooks/$webhookId/': typeof OrgsSlugWebhooksWebhookIdIndexRoute
   '/orgs/$slug/channels/$channel/$postId/': typeof OrgsSlugChannelsChannelPostIdIndexRoute
   '/orgs/$slug/channels/$channel/ai/': typeof OrgsSlugChannelsChannelAiIndexRoute
+  '/orgs/$slug/channels/$channel/brand-kit/': typeof OrgsSlugChannelsChannelBrandKitIndexRoute
   '/orgs/$slug/channels/$channel/create-upload/': typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
   '/orgs/$slug/channels/$channel/integrations/': typeof OrgsSlugChannelsChannelIntegrationsIndexRoute
   '/orgs/$slug/channels/$channel/projects/': typeof OrgsSlugChannelsChannelProjectsIndexRoute
@@ -250,6 +260,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/webhooks/$webhookId/'
     | '/orgs/$slug/channels/$channel/$postId/'
     | '/orgs/$slug/channels/$channel/ai/'
+    | '/orgs/$slug/channels/$channel/brand-kit/'
     | '/orgs/$slug/channels/$channel/create-upload/'
     | '/orgs/$slug/channels/$channel/integrations/'
     | '/orgs/$slug/channels/$channel/projects/'
@@ -272,6 +283,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/webhooks/$webhookId'
     | '/orgs/$slug/channels/$channel/$postId'
     | '/orgs/$slug/channels/$channel/ai'
+    | '/orgs/$slug/channels/$channel/brand-kit'
     | '/orgs/$slug/channels/$channel/create-upload'
     | '/orgs/$slug/channels/$channel/integrations'
     | '/orgs/$slug/channels/$channel/projects'
@@ -297,6 +309,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/webhooks/$webhookId/'
     | '/orgs/$slug/channels/$channel/$postId/'
     | '/orgs/$slug/channels/$channel/ai/'
+    | '/orgs/$slug/channels/$channel/brand-kit/'
     | '/orgs/$slug/channels/$channel/create-upload/'
     | '/orgs/$slug/channels/$channel/integrations/'
     | '/orgs/$slug/channels/$channel/projects/'
@@ -446,6 +459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgsSlugChannelsChannelCreateUploadIndexRouteImport
       parentRoute: typeof OrgsSlugChannelsChannelLayoutRoute
     }
+    '/orgs/$slug/channels/$channel/brand-kit/': {
+      id: '/orgs/$slug/channels/$channel/brand-kit/'
+      path: '/brand-kit'
+      fullPath: '/orgs/$slug/channels/$channel/brand-kit/'
+      preLoaderRoute: typeof OrgsSlugChannelsChannelBrandKitIndexRouteImport
+      parentRoute: typeof OrgsSlugChannelsChannelLayoutRoute
+    }
     '/orgs/$slug/channels/$channel/ai/': {
       id: '/orgs/$slug/channels/$channel/ai/'
       path: '/ai'
@@ -495,6 +515,7 @@ interface OrgsSlugChannelsChannelLayoutRouteChildren {
   OrgsSlugChannelsChannelIndexRoute: typeof OrgsSlugChannelsChannelIndexRoute
   OrgsSlugChannelsChannelPostIdIndexRoute: typeof OrgsSlugChannelsChannelPostIdIndexRoute
   OrgsSlugChannelsChannelAiIndexRoute: typeof OrgsSlugChannelsChannelAiIndexRoute
+  OrgsSlugChannelsChannelBrandKitIndexRoute: typeof OrgsSlugChannelsChannelBrandKitIndexRoute
   OrgsSlugChannelsChannelCreateUploadIndexRoute: typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
   OrgsSlugChannelsChannelIntegrationsIndexRoute: typeof OrgsSlugChannelsChannelIntegrationsIndexRoute
   OrgsSlugChannelsChannelProjectsIndexRoute: typeof OrgsSlugChannelsChannelProjectsIndexRoute
@@ -509,6 +530,8 @@ const OrgsSlugChannelsChannelLayoutRouteChildren: OrgsSlugChannelsChannelLayoutR
     OrgsSlugChannelsChannelPostIdIndexRoute:
       OrgsSlugChannelsChannelPostIdIndexRoute,
     OrgsSlugChannelsChannelAiIndexRoute: OrgsSlugChannelsChannelAiIndexRoute,
+    OrgsSlugChannelsChannelBrandKitIndexRoute:
+      OrgsSlugChannelsChannelBrandKitIndexRoute,
     OrgsSlugChannelsChannelCreateUploadIndexRoute:
       OrgsSlugChannelsChannelCreateUploadIndexRoute,
     OrgsSlugChannelsChannelIntegrationsIndexRoute:
