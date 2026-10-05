@@ -6,11 +6,9 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
-  TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { YoutubeIcon } from "@/components/youtube-icon";
-import { usePaymentMethodStatus } from "@/hooks/use-payment-method-status";
 import { abortMultipartUploadHttp } from "@/http/upload/abort-multipart-upload.http";
 import { createPostsHttp } from "@/http/posts/create-posts.http";
 import {
@@ -73,10 +71,6 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     from: "/orgs/$slug/channels/$channel",
   });
   const navigate = useNavigate();
-
-  const { hasPaymentMethod, isLoading: isPaymentMethodLoading } =
-    usePaymentMethodStatus({ orgSlug: slug });
-  const isMissingPaymentMethod = !isPaymentMethodLoading && !hasPaymentMethod;
 
   const {
     control,
@@ -353,7 +347,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                   <Button
                     type="submit"
                     disabled={
-                      isSubmitting || isPostsEmpty || isMissingPaymentMethod
+                      isSubmitting || isPostsEmpty
                     }
                   >
                     <UploadCloudIcon className="size-4" />
@@ -361,11 +355,6 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                   </Button>
                 </span>
               </TooltipTrigger>
-              {isMissingPaymentMethod && (
-                <TooltipContent>
-                  <p>Add a payment method to create posts</p>
-                </TooltipContent>
-              )}
             </Tooltip>
           </div>
         </header>

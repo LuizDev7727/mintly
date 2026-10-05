@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { FileTextIcon, FolderIcon, LayoutGridIcon, SearchIcon } from "lucide-react"
+import { FolderIcon, ImageIcon, LayoutGridIcon, SearchIcon } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "@tanstack/react-router"
 
@@ -17,7 +17,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { getSearchResultsHttp } from "@/http/search/get-search-results.http"
+import { dayjs } from "@/lib/dayjs"
+import {
+  getSearchResultsHttp,
+  type PostSearchResult,
+  type ProjectSearchResult,
+} from "@/http/search/get-search-results.http"
 
 const SEARCH_KEYBOARD_SHORTCUT = "k"
 const MIN_QUERY_LENGTH = 2
@@ -80,7 +85,7 @@ export function Search() {
     setDebouncedQuery("")
   }
 
-  function handleSelectPost(post: SearchResult) {
+  function handleSelectPost(post: PostSearchResult) {
     navigate({
       to: "/orgs/$slug/channels/$channel/$postId",
       params: { slug: orgSlug, channel: post.channelId, postId: post.id },
@@ -88,7 +93,7 @@ export function Search() {
     closeAndReset()
   }
 
-  function handleSelectProject(project: SearchResult) {
+  function handleSelectProject(project: ProjectSearchResult) {
     navigate({
       to: "/orgs/$slug/channels/$channel/projects/$projectId",
       params: {
@@ -128,7 +133,7 @@ export function Search() {
               <SearchIcon />
               <span>Search</span>
             </div>
-            <Kbd className="group-data-[collapsible=icon]:hidden">
+            <Kbd className="border border-input group-data-[collapsible=icon]:hidden">
               {isMac ? "⌘K" : "Ctrl+K"}
             </Kbd>
           </SidebarMenuButton>
@@ -157,9 +162,27 @@ export function Search() {
                   key={post.id}
                   value={`post-${post.id}`}
                   onSelect={() => handleSelectPost(post)}
+                  className="items-start"
                 >
-                  <FileTextIcon />
-                  <span>{post.title}</span>
+                  <div className="aspect-video h-9 shrink-0 overflow-hidden rounded-sm">
+                    {post.thumbnailUrl ? (
+                      <img
+                        src={post.thumbnailUrl}
+                        alt=""
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex size-full items-center justify-center rounded-sm border border-input text-muted-foreground">
+                        <ImageIcon className="size-4" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate">{post.title}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {post.description || "No description"}
+                    </p>
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -171,9 +194,30 @@ export function Search() {
                   key={project.id}
                   value={`project-${project.id}`}
                   onSelect={() => handleSelectProject(project)}
+                  className="items-start"
                 >
-                  <LayoutGridIcon />
-                  <span>{project.title}</span>
+                  <div className="aspect-video h-9 shrink-0 overflow-hidden rounded-lg">
+                    {project.thumbnailUrl ? (
+                      <img
+                        src={project.thumbnailUrl}
+                        alt=""
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex size-full items-center justify-center rounded-lg border border-input text-muted-foreground">
+                        <LayoutGridIcon className="size-4" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate">{project.title}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {dayjs(project.createdAt).format("MMM D, YYYY")} ·{" "}
+                      {project.bestMomentsCount === 1
+                        ? "1 best moment"
+                        : `${project.bestMomentsCount} best moments`}
+                    </p>
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>

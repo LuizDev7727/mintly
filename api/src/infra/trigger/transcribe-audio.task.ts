@@ -6,7 +6,7 @@ import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { eq } from "drizzle-orm";
 import { db } from "../db/client.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
-import { setUsage } from "@/utils/polar/set-usage.ts";
+import { setUsage } from "@/utils/set-usage.ts";
 
 type ModalTranscribeAudioCallbackPayload = {
   status: "SUCCESS" | "ERROR";

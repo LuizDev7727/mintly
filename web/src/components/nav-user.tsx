@@ -31,7 +31,7 @@ export function NavUser() {
       fetchOptions: {
         onSuccess: () => {
           navigate({
-            to: "/auth",
+            to: "/",
           });
         },
       },

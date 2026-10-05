@@ -1,5 +1,3 @@
-import { polar } from "@/lib/polar.ts";
-
 type GetPaymentMethodsParams = {
   organizationSlug: string;
   pageIndex: number;
@@ -22,42 +20,37 @@ type GetPaymentMethodsResponse = {
 
 const PAGE_SIZE = 10;
 
+// TODO: mockado enquanto o billing via Polar está fora do ar.
+const MOCK_PAYMENT_METHODS: GetPaymentMethodsResponse["paymentMethods"] = [
+  {
+    id: "pm_mock_1",
+    brand: "visa",
+    last4: "4242",
+    expMonth: 11,
+    expYear: 2030,
+    isDefault: true,
+  },
+  {
+    id: "pm_mock_2",
+    brand: "mastercard",
+    last4: "1123",
+    expMonth: 4,
+    expYear: 2028,
+    isDefault: false,
+  },
+];
+
 export async function getPaymentMethods({
-  organizationSlug,
   pageIndex,
 }: GetPaymentMethodsParams): Promise<GetPaymentMethodsResponse> {
-  const { result } = await polar.customers.listPaymentMethodsExternal({
-    externalId: organizationSlug,
-    // Polar pages are 1-indexed; the rest of the app uses 0-indexed pages.
-    page: pageIndex + 1,
-    limit: PAGE_SIZE,
-  });
-
-  // PaymentMethod is a union of card and generic (non-card) processors.
-  // Only card methods carry `methodMetadata` (brand/last4/expiry), which is
-  // all this app currently shows, so non-card methods are skipped.
-  const paymentMethods = result.items.flatMap((item) => {
-    if (!("methodMetadata" in item)) {
-      return [];
-    }
-
-    return [
-      {
-        id: item.id,
-        brand: item.methodMetadata.brand,
-        last4: item.methodMetadata.last4,
-        expMonth: item.methodMetadata.expMonth,
-        expYear: item.methodMetadata.expYear,
-        isDefault: item.isDefault,
-      },
-    ];
-  });
-
   return {
-    paymentMethods,
+    paymentMethods: MOCK_PAYMENT_METHODS.slice(
+      pageIndex * PAGE_SIZE,
+      (pageIndex + 1) * PAGE_SIZE,
+    ),
     meta: {
-      totalCount: result.pagination.totalCount,
-      totalPages: result.pagination.maxPage,
+      totalCount: MOCK_PAYMENT_METHODS.length,
+      totalPages: Math.ceil(MOCK_PAYMENT_METHODS.length / PAGE_SIZE),
     },
   };
 }
