@@ -2,6 +2,9 @@ import { defineConfig } from "@trigger.dev/sdk";
 import { ffmpeg } from "@trigger.dev/build/extensions/core";
 import { syncEnvVars } from "@trigger.dev/build/extensions/core";
 import { InfisicalSDK } from "@infisical/sdk";
+import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
+import { PgInstrumentation } from "@opentelemetry/instrumentation-pg";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 
 export default defineConfig({
   project: "proj_nzoodvxxkshyumjxnzmn",
@@ -20,6 +23,20 @@ export default defineConfig({
       factor: 2,
       randomize: true,
     },
+  },
+  telemetry: {
+    instrumentations: [
+      new HttpInstrumentation(),
+      new PgInstrumentation()
+    ],
+    exporters: [
+      new OTLPTraceExporter({
+        url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT!,
+        headers: {
+          Authorization: `Bearer ${process.env.OTEL_EXPORTER_OTLP_HEADERS!}`,
+        },
+      }),
+    ],
   },
   dirs: ["src/infra/trigger"],
   build: {
