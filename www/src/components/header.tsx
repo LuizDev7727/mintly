@@ -36,10 +36,10 @@ export async function Header() {
             <LanguageSwitcher />
 
             <Button variant="ghost" asChild>
-              <Link href="https://mintly-six.vercel.app/auth">Sign In</Link>
+              <Link href="https://mintly-six.vercel.app/">Sign In</Link>
             </Button>
             <Button asChild>
-              <Link href="https://mintly-six.vercel.app/auth/sign-up">
+              <Link href="https://mintly-six.vercel.app/">
                 Get started
                 <ArrowRight />
               </Link>
