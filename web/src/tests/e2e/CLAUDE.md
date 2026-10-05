@@ -16,8 +16,8 @@ E2E tests validate complete user flows through the real browser — from navigat
 
 `playwright.config.ts` is configured with `webServer`, which:
 
-1. Builds the app (`pnpm build`) and starts a preview server (`pnpm preview`) at `http://localhost:4173`
-2. Sets `baseURL` to `http://localhost:4173` — use relative paths in all tests
+1. Builds the app (`pnpm build`) and starts a preview server (`pnpm preview --port 5173`) at `http://localhost:5173` — the port must match the API's `ALLOWED_ORIGIN`, otherwise CORS blocks every request
+2. Sets `baseURL` to `http://localhost:5173` — use relative paths in all tests
 3. Locally: reuses a running server if one exists; in CI: always starts a fresh one
 
 The frontend calls the real API via `VITE_API_BASE_URL` (set in `.env`). For CI, set this variable to the staging API URL in the pipeline environment secrets — no mock, no local API needed.

@@ -37,7 +37,6 @@ export const organizationsTable = pgTable(
       iv: string
     }>(),
     apiKeyHash: text('api_key_hash').unique(),
-    polarCustomerId: text("polar_customer_id"),
     ownerId: text("owner_id")
       .notNull()
       .references(() => usersTable.id, {

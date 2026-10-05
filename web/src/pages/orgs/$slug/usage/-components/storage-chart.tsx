@@ -9,6 +9,8 @@ import {
 import { formatBytes } from "@/utils/format-bytes";
 
 type StorageChartProps = {
+  title: string;
+  description: string;
   data: {
     date: string;
     storage: number;
@@ -22,12 +24,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function StorageChart({ data }: StorageChartProps) {
+export function StorageChart({ title, description, data }: StorageChartProps) {
   return (
-    <div className="bg-card border border-border p-4 rounded-md">
+    <div className="flex flex-1 flex-col gap-6 bg-card dark:bg-zinc-900/20 border border-border p-5 rounded-xl">
+      <div>
+        <h2 className="text-base font-medium">{title}</h2>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
       <ChartContainer
         config={chartConfig}
-        className="aspect-auto h-62.5 w-full"
+        className="aspect-auto min-h-62.5 w-full flex-1"
       >
         <AreaChart
           accessibilityLayer

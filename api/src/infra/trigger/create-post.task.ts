@@ -41,6 +41,7 @@ export const createPostTask = schemaTask({
         .min(1, { error: "Post needs at least one integration selected" }),
     }),
     postId: z.uuidv7(),
+    channelId: z.string(),
   }),
   onStart: async ({ payload, ctx }) => {
     const { postId } = payload;
@@ -104,7 +105,7 @@ export const createPostTask = schemaTask({
     // The payload contains the last run timestamp that you can use to check if this is the first run
     // And calculate the time since the last run
 
-    const { post, postId } = payload;
+    const { post, postId, channelId } = payload;
 
     const {
       shouldGenerateShorts,
@@ -225,6 +226,7 @@ export const createPostTask = schemaTask({
               fileSizeInBytes: size,
               fileUrl,
               postId,
+              channelId,
             },
           );
           break;

@@ -9,15 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './pages/__root'
-import { Route as TermsOfServiceRouteImport } from './pages/terms-of-service'
-import { Route as PrivacyPolicyRouteImport } from './pages/privacy-policy'
-import { Route as AuthLayoutRouteImport } from './pages/auth/layout'
-import { Route as IndexRouteImport } from './pages/index'
+import { Route as AuthLayoutRouteImport } from './pages/_auth/layout'
 import { Route as OrgsIndexRouteImport } from './pages/orgs/index'
-import { Route as AuthIndexRouteImport } from './pages/auth/index'
+import { Route as AuthIndexRouteImport } from './pages/_auth/index'
 import { Route as OrgsSlugLayoutRouteImport } from './pages/orgs/$slug/layout'
 import { Route as OrgsSlugIndexRouteImport } from './pages/orgs/$slug/index'
-import { Route as AuthSignUpIndexRouteImport } from './pages/auth/sign-up/index'
+import { Route as AuthSignUpIndexRouteImport } from './pages/_auth/sign-up/index'
 import { Route as OrgsSlugWebhooksIndexRouteImport } from './pages/orgs/$slug/webhooks/index'
 import { Route as OrgsSlugUsageIndexRouteImport } from './pages/orgs/$slug/usage/index'
 import { Route as OrgsSlugSettingsIndexRouteImport } from './pages/orgs/$slug/settings/index'
@@ -31,29 +28,14 @@ import { Route as OrgsSlugChannelsChannelSettingsIndexRouteImport } from './page
 import { Route as OrgsSlugChannelsChannelProjectsIndexRouteImport } from './pages/orgs/$slug/channels/$channel/projects/index'
 import { Route as OrgsSlugChannelsChannelIntegrationsIndexRouteImport } from './pages/orgs/$slug/channels/$channel/integrations/index'
 import { Route as OrgsSlugChannelsChannelCreateUploadIndexRouteImport } from './pages/orgs/$slug/channels/$channel/create-upload/index'
+import { Route as OrgsSlugChannelsChannelBrandKitIndexRouteImport } from './pages/orgs/$slug/channels/$channel/brand-kit/index'
 import { Route as OrgsSlugChannelsChannelAiIndexRouteImport } from './pages/orgs/$slug/channels/$channel/ai/index'
 import { Route as OrgsSlugChannelsChannelPostIdIndexRouteImport } from './pages/orgs/$slug/channels/$channel/$postId/index'
 import { Route as OrgsSlugChannelsChannelProjectsCreateProjectIndexRouteImport } from './pages/orgs/$slug/channels/$channel/projects/create-project/index'
 import { Route as OrgsSlugChannelsChannelProjectsProjectIdIndexRouteImport } from './pages/orgs/$slug/channels/$channel/projects/$projectId/index'
 
-const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
-  id: '/terms-of-service',
-  path: '/terms-of-service',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
-  id: '/privacy-policy',
-  path: '/privacy-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrgsIndexRoute = OrgsIndexRouteImport.update({
@@ -153,6 +135,12 @@ const OrgsSlugChannelsChannelCreateUploadIndexRoute =
     path: '/create-upload/',
     getParentRoute: () => OrgsSlugChannelsChannelLayoutRoute,
   } as any)
+const OrgsSlugChannelsChannelBrandKitIndexRoute =
+  OrgsSlugChannelsChannelBrandKitIndexRouteImport.update({
+    id: '/brand-kit/',
+    path: '/brand-kit/',
+    getParentRoute: () => OrgsSlugChannelsChannelLayoutRoute,
+  } as any)
 const OrgsSlugChannelsChannelAiIndexRoute =
   OrgsSlugChannelsChannelAiIndexRouteImport.update({
     id: '/ai/',
@@ -179,14 +167,10 @@ const OrgsSlugChannelsChannelProjectsProjectIdIndexRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/auth': typeof AuthLayoutRouteWithChildren
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
+  '/': typeof AuthIndexRoute
   '/orgs/$slug': typeof OrgsSlugLayoutRouteWithChildren
-  '/auth/': typeof AuthIndexRoute
   '/orgs/': typeof OrgsIndexRoute
-  '/auth/sign-up/': typeof AuthSignUpIndexRoute
+  '/sign-up/': typeof AuthSignUpIndexRoute
   '/orgs/$slug/': typeof OrgsSlugIndexRoute
   '/orgs/$slug/channels/$channel': typeof OrgsSlugChannelsChannelLayoutRouteWithChildren
   '/orgs/$slug/activities/': typeof OrgsSlugActivitiesIndexRoute
@@ -199,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/orgs/$slug/webhooks/$webhookId/': typeof OrgsSlugWebhooksWebhookIdIndexRoute
   '/orgs/$slug/channels/$channel/$postId/': typeof OrgsSlugChannelsChannelPostIdIndexRoute
   '/orgs/$slug/channels/$channel/ai/': typeof OrgsSlugChannelsChannelAiIndexRoute
+  '/orgs/$slug/channels/$channel/brand-kit/': typeof OrgsSlugChannelsChannelBrandKitIndexRoute
   '/orgs/$slug/channels/$channel/create-upload/': typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
   '/orgs/$slug/channels/$channel/integrations/': typeof OrgsSlugChannelsChannelIntegrationsIndexRoute
   '/orgs/$slug/channels/$channel/projects/': typeof OrgsSlugChannelsChannelProjectsIndexRoute
@@ -207,12 +192,9 @@ export interface FileRoutesByFullPath {
   '/orgs/$slug/channels/$channel/projects/create-project/': typeof OrgsSlugChannelsChannelProjectsCreateProjectIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
-  '/auth': typeof AuthIndexRoute
+  '/': typeof AuthIndexRoute
   '/orgs': typeof OrgsIndexRoute
-  '/auth/sign-up': typeof AuthSignUpIndexRoute
+  '/sign-up': typeof AuthSignUpIndexRoute
   '/orgs/$slug': typeof OrgsSlugIndexRoute
   '/orgs/$slug/activities': typeof OrgsSlugActivitiesIndexRoute
   '/orgs/$slug/channels': typeof OrgsSlugChannelsIndexRoute
@@ -224,6 +206,7 @@ export interface FileRoutesByTo {
   '/orgs/$slug/webhooks/$webhookId': typeof OrgsSlugWebhooksWebhookIdIndexRoute
   '/orgs/$slug/channels/$channel/$postId': typeof OrgsSlugChannelsChannelPostIdIndexRoute
   '/orgs/$slug/channels/$channel/ai': typeof OrgsSlugChannelsChannelAiIndexRoute
+  '/orgs/$slug/channels/$channel/brand-kit': typeof OrgsSlugChannelsChannelBrandKitIndexRoute
   '/orgs/$slug/channels/$channel/create-upload': typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
   '/orgs/$slug/channels/$channel/integrations': typeof OrgsSlugChannelsChannelIntegrationsIndexRoute
   '/orgs/$slug/channels/$channel/projects': typeof OrgsSlugChannelsChannelProjectsIndexRoute
@@ -233,14 +216,11 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/auth': typeof AuthLayoutRouteWithChildren
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
+  '/_auth': typeof AuthLayoutRouteWithChildren
   '/orgs/$slug': typeof OrgsSlugLayoutRouteWithChildren
-  '/auth/': typeof AuthIndexRoute
+  '/_auth/': typeof AuthIndexRoute
   '/orgs/': typeof OrgsIndexRoute
-  '/auth/sign-up/': typeof AuthSignUpIndexRoute
+  '/_auth/sign-up/': typeof AuthSignUpIndexRoute
   '/orgs/$slug/': typeof OrgsSlugIndexRoute
   '/orgs/$slug/channels/$channel': typeof OrgsSlugChannelsChannelLayoutRouteWithChildren
   '/orgs/$slug/activities/': typeof OrgsSlugActivitiesIndexRoute
@@ -253,6 +233,7 @@ export interface FileRoutesById {
   '/orgs/$slug/webhooks/$webhookId/': typeof OrgsSlugWebhooksWebhookIdIndexRoute
   '/orgs/$slug/channels/$channel/$postId/': typeof OrgsSlugChannelsChannelPostIdIndexRoute
   '/orgs/$slug/channels/$channel/ai/': typeof OrgsSlugChannelsChannelAiIndexRoute
+  '/orgs/$slug/channels/$channel/brand-kit/': typeof OrgsSlugChannelsChannelBrandKitIndexRoute
   '/orgs/$slug/channels/$channel/create-upload/': typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
   '/orgs/$slug/channels/$channel/integrations/': typeof OrgsSlugChannelsChannelIntegrationsIndexRoute
   '/orgs/$slug/channels/$channel/projects/': typeof OrgsSlugChannelsChannelProjectsIndexRoute
@@ -264,13 +245,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/auth'
-    | '/privacy-policy'
-    | '/terms-of-service'
     | '/orgs/$slug'
-    | '/auth/'
     | '/orgs/'
-    | '/auth/sign-up/'
+    | '/sign-up/'
     | '/orgs/$slug/'
     | '/orgs/$slug/channels/$channel'
     | '/orgs/$slug/activities/'
@@ -283,6 +260,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/webhooks/$webhookId/'
     | '/orgs/$slug/channels/$channel/$postId/'
     | '/orgs/$slug/channels/$channel/ai/'
+    | '/orgs/$slug/channels/$channel/brand-kit/'
     | '/orgs/$slug/channels/$channel/create-upload/'
     | '/orgs/$slug/channels/$channel/integrations/'
     | '/orgs/$slug/channels/$channel/projects/'
@@ -292,11 +270,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/privacy-policy'
-    | '/terms-of-service'
-    | '/auth'
     | '/orgs'
-    | '/auth/sign-up'
+    | '/sign-up'
     | '/orgs/$slug'
     | '/orgs/$slug/activities'
     | '/orgs/$slug/channels'
@@ -308,6 +283,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/webhooks/$webhookId'
     | '/orgs/$slug/channels/$channel/$postId'
     | '/orgs/$slug/channels/$channel/ai'
+    | '/orgs/$slug/channels/$channel/brand-kit'
     | '/orgs/$slug/channels/$channel/create-upload'
     | '/orgs/$slug/channels/$channel/integrations'
     | '/orgs/$slug/channels/$channel/projects'
@@ -316,14 +292,11 @@ export interface FileRouteTypes {
     | '/orgs/$slug/channels/$channel/projects/create-project'
   id:
     | '__root__'
-    | '/'
-    | '/auth'
-    | '/privacy-policy'
-    | '/terms-of-service'
+    | '/_auth'
     | '/orgs/$slug'
-    | '/auth/'
+    | '/_auth/'
     | '/orgs/'
-    | '/auth/sign-up/'
+    | '/_auth/sign-up/'
     | '/orgs/$slug/'
     | '/orgs/$slug/channels/$channel'
     | '/orgs/$slug/activities/'
@@ -336,6 +309,7 @@ export interface FileRouteTypes {
     | '/orgs/$slug/webhooks/$webhookId/'
     | '/orgs/$slug/channels/$channel/$postId/'
     | '/orgs/$slug/channels/$channel/ai/'
+    | '/orgs/$slug/channels/$channel/brand-kit/'
     | '/orgs/$slug/channels/$channel/create-upload/'
     | '/orgs/$slug/channels/$channel/integrations/'
     | '/orgs/$slug/channels/$channel/projects/'
@@ -345,42 +319,18 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
-  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
-  TermsOfServiceRoute: typeof TermsOfServiceRoute
   OrgsSlugLayoutRoute: typeof OrgsSlugLayoutRouteWithChildren
   OrgsIndexRoute: typeof OrgsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms-of-service': {
-      id: '/terms-of-service'
-      path: '/terms-of-service'
-      fullPath: '/terms-of-service'
-      preLoaderRoute: typeof TermsOfServiceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy-policy': {
-      id: '/privacy-policy'
-      path: '/privacy-policy'
-      fullPath: '/privacy-policy'
-      preLoaderRoute: typeof PrivacyPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthLayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
+    '/_auth': {
+      id: '/_auth'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/orgs/': {
@@ -390,10 +340,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/': {
-      id: '/auth/'
+    '/_auth/': {
+      id: '/_auth/'
       path: '/'
-      fullPath: '/auth/'
+      fullPath: '/'
       preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof AuthLayoutRoute
     }
@@ -411,10 +361,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgsSlugIndexRouteImport
       parentRoute: typeof OrgsSlugLayoutRoute
     }
-    '/auth/sign-up/': {
-      id: '/auth/sign-up/'
+    '/_auth/sign-up/': {
+      id: '/_auth/sign-up/'
       path: '/sign-up'
-      fullPath: '/auth/sign-up/'
+      fullPath: '/sign-up/'
       preLoaderRoute: typeof AuthSignUpIndexRouteImport
       parentRoute: typeof AuthLayoutRoute
     }
@@ -509,6 +459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgsSlugChannelsChannelCreateUploadIndexRouteImport
       parentRoute: typeof OrgsSlugChannelsChannelLayoutRoute
     }
+    '/orgs/$slug/channels/$channel/brand-kit/': {
+      id: '/orgs/$slug/channels/$channel/brand-kit/'
+      path: '/brand-kit'
+      fullPath: '/orgs/$slug/channels/$channel/brand-kit/'
+      preLoaderRoute: typeof OrgsSlugChannelsChannelBrandKitIndexRouteImport
+      parentRoute: typeof OrgsSlugChannelsChannelLayoutRoute
+    }
     '/orgs/$slug/channels/$channel/ai/': {
       id: '/orgs/$slug/channels/$channel/ai/'
       path: '/ai'
@@ -558,6 +515,7 @@ interface OrgsSlugChannelsChannelLayoutRouteChildren {
   OrgsSlugChannelsChannelIndexRoute: typeof OrgsSlugChannelsChannelIndexRoute
   OrgsSlugChannelsChannelPostIdIndexRoute: typeof OrgsSlugChannelsChannelPostIdIndexRoute
   OrgsSlugChannelsChannelAiIndexRoute: typeof OrgsSlugChannelsChannelAiIndexRoute
+  OrgsSlugChannelsChannelBrandKitIndexRoute: typeof OrgsSlugChannelsChannelBrandKitIndexRoute
   OrgsSlugChannelsChannelCreateUploadIndexRoute: typeof OrgsSlugChannelsChannelCreateUploadIndexRoute
   OrgsSlugChannelsChannelIntegrationsIndexRoute: typeof OrgsSlugChannelsChannelIntegrationsIndexRoute
   OrgsSlugChannelsChannelProjectsIndexRoute: typeof OrgsSlugChannelsChannelProjectsIndexRoute
@@ -572,6 +530,8 @@ const OrgsSlugChannelsChannelLayoutRouteChildren: OrgsSlugChannelsChannelLayoutR
     OrgsSlugChannelsChannelPostIdIndexRoute:
       OrgsSlugChannelsChannelPostIdIndexRoute,
     OrgsSlugChannelsChannelAiIndexRoute: OrgsSlugChannelsChannelAiIndexRoute,
+    OrgsSlugChannelsChannelBrandKitIndexRoute:
+      OrgsSlugChannelsChannelBrandKitIndexRoute,
     OrgsSlugChannelsChannelCreateUploadIndexRoute:
       OrgsSlugChannelsChannelCreateUploadIndexRoute,
     OrgsSlugChannelsChannelIntegrationsIndexRoute:
@@ -621,10 +581,7 @@ const OrgsSlugLayoutRouteWithChildren = OrgsSlugLayoutRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
-  PrivacyPolicyRoute: PrivacyPolicyRoute,
-  TermsOfServiceRoute: TermsOfServiceRoute,
   OrgsSlugLayoutRoute: OrgsSlugLayoutRouteWithChildren,
   OrgsIndexRoute: OrgsIndexRoute,
 }

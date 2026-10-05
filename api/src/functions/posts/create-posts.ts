@@ -83,6 +83,7 @@ export async function createPosts(params:CreatePostsParams) {
         duration,
       },
       postId: postInsertedId,
+      channelId,
     });
   }
 }

@@ -75,6 +75,10 @@ export function UpdateFolderNameForm({
         };
       });
 
+      queryClient.invalidateQueries({
+        queryKey: ["folders", slug, channel, "tree"],
+      });
+
       toast("Folder updated successfully");
     },
   });

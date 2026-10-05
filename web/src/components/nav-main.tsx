@@ -86,7 +86,19 @@ export function NavMain() {
           >
             <NavLink to={"/orgs/$slug/usage"} params={{ slug }}>
               <ChartPieIcon />
-              <span>Usage</span>
+              <span>Usage & Billing</span>
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
+            asChild
+          >
+            <NavLink to={"/orgs/$slug/activities"} params={{ slug }}>
+              <Activity />
+              <span>Activities</span>
             </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -99,19 +111,6 @@ export function NavMain() {
             <NavLink to={"/orgs/$slug/webhooks"} params={{ slug }}>
               <Webhook />
               <span>API & Webhooks</span>
-            </NavLink>
-          </SidebarMenuButton>
-          <SidebarMenuBadge>Beta</SidebarMenuBadge>
-        </SidebarMenuItem>
-
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink to={"/orgs/$slug/activities"} params={{ slug }}>
-              <Activity />
-              <span>Activities</span>
             </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -143,7 +142,7 @@ export function NavMain() {
               </NavLink>
             </SidebarMenuButton>
             <CollapsibleTrigger asChild>
-              <SidebarMenuAction className="cursor-pointer data-[state=open]:rotate-90">
+              <SidebarMenuAction className="cursor-pointer data-[state=open]:rotate-90 peer-data-[current=true]/menu-button:text-sidebar-primary-foreground">
                 <ChevronRight />
                 <span className="sr-only">Toggle</span>
               </SidebarMenuAction>

@@ -90,14 +90,16 @@ export function Posts() {
   const isPostsEmpty = posts.length === 0;
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-1 flex-col gap-4">
       {!isPostsEmpty && view === "grid" && <PostGridView posts={posts} />}
       {!isPostsEmpty && view === "list" && <PostListView posts={posts} />}
 
       {isPostsEmpty && !isLoading && <PostsListEmpty />}
 
       {!isPostsEmpty && (
-        <PostsPagination totalPages={totalPages} totalCount={totalCount} />
+        <div className="mt-auto">
+          <PostsPagination totalPages={totalPages} totalCount={totalCount} />
+        </div>
       )}
     </div>
   );

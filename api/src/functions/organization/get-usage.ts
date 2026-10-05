@@ -1,16 +1,7 @@
 import { db } from "@/infra/db/client.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
-import { getOrganizationCogs } from "@/functions/organization/get-organization-cogs.ts";
 import { and, eq, sql } from "drizzle-orm";
-import { polar } from "@/lib/polar.ts";
-
-type UsageEventName =
-  | "best_moments_generated"
-  | "clip_rendered"
-  | "thumbnail_generated"
-  | "seo_generated"
-  | "audio_transcribed";
 
 type GetUsageParams = {
   organizationSlug: string;
@@ -51,15 +42,10 @@ type GetUsageResponse = {
   storageSeries: StorageByDate[];
 };
 
-const EVENT_NAME_TO_SERIES_KEY: Record<
-  UsageEventName,
-  keyof Omit<UsageByDate, "date">
-> = {
-  best_moments_generated: "bestMomentsGenerated",
-  clip_rendered: "clipRendered",
-  thumbnail_generated: "thumbnailGenerated",
-  seo_generated: "seoGenerated",
-  audio_transcribed: "audioTranscribed",
+const MOCK_COSTS: PeriodComparison = {
+  currentCents: 12450,
+  previousCents: 9800,
+  changePercentage: 27.04,
 };
 
 function calculateChangePercentage(current: number, previous: number): number {
@@ -70,37 +56,41 @@ function calculateChangePercentage(current: number, previous: number): number {
   return ((current - previous) / previous) * 100;
 }
 
-async function getUsageEvents({
-  organizationSlug,
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+
+// TODO: mockado enquanto o billing via Polar está fora do ar. Gera uma série
+// determinística (uma onda por tipo de evento) para cada dia do período.
+function buildMockSeries({
   startDate,
   endDate,
-}: GetUsageParams) {
-  const events = [];
-  let page = 1;
+}: Pick<GetUsageParams, "startDate" | "endDate">): UsageByDate[] {
+  const wave = (index: number, offset: number, amplitude: number, base: number) =>
+    Math.max(0, Math.round(base + amplitude * Math.sin(index / 3 + offset)));
 
-  while (true) {
-    const { items, pagination } = await polar.events.list({
-      externalCustomerId: organizationSlug,
-      name: Object.keys(EVENT_NAME_TO_SERIES_KEY),
-      startTimestamp: startDate,
-      endTimestamp: endDate,
-      page,
-      limit: 100,
+  const series: UsageByDate[] = [];
+  const firstDay = Date.UTC(
+    startDate.getUTCFullYear(),
+    startDate.getUTCMonth(),
+    startDate.getUTCDate(),
+  );
+  const lastDay = Date.UTC(
+    endDate.getUTCFullYear(),
+    endDate.getUTCMonth(),
+    endDate.getUTCDate(),
+  );
+
+  for (let day = firstDay, index = 0; day <= lastDay; day += DAY_IN_MS, index++) {
+    series.push({
+      date: new Date(day).toISOString().split("T")[0],
+      clipRendered: wave(index, 0, 4, 6),
+      thumbnailGenerated: wave(index, 1, 3, 4),
+      seoGenerated: wave(index, 2, 2, 3),
+      audioTranscribed: wave(index, 3, 3, 5),
+      bestMomentsGenerated: wave(index, 4, 2, 3),
     });
-
-    events.push(...items);
-
-    // `events.list` is typed as page-based | cursor-based; we request by
-    // `page`, so `maxPage` is expected, but handle both shapes so the loop
-    // can never spin forever.
-    const hasNextPage =
-      "maxPage" in pagination ? page < pagination.maxPage : pagination.hasNextPage;
-
-    if (!hasNextPage) break;
-    page++;
   }
 
-  return events;
+  return series;
 }
 
 export async function getUsage({
@@ -108,12 +98,11 @@ export async function getUsage({
   startDate,
   endDate,
 }: GetUsageParams): Promise<GetUsageResponse> {
-  // The "Costs"/"Storage" KPIs always compare the current calendar month
-  // against the previous one, independent of startDate/endDate — those two
-  // only scope the two charts (series, storageSeries).
+  // The "Storage" KPI always compares the current calendar month against the
+  // previous one, independent of startDate/endDate — those two only scope the
+  // two charts (series, storageSeries).
   const now = new Date();
   const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
   // One row per calendar day in the requested range, so storageSeries always
   // has a point for every day even without uploads that day.
@@ -149,14 +138,10 @@ export async function getUsage({
   );
 
   const [
-    events,
     storageRows,
-    currentCogs,
-    previousCogs,
     [{ totalBytes: currentStorageBytes }],
     [{ totalBytes: previousStorageBytes }],
   ] = await Promise.all([
-    getUsageEvents({ organizationSlug, startDate, endDate }),
     db
       .with(dateSeries, postsSizePerDay)
       .select({
@@ -166,18 +151,6 @@ export async function getUsage({
       .from(dateSeries)
       .leftJoin(postsSizePerDay, eq(postsSizePerDay.postDate, dateSeries.date))
       .orderBy(dateSeries.date),
-    // Billing is pass-through (no markup), so COGS this month is exactly
-    // what the org owes — reused here instead of re-deriving the same sum.
-    getOrganizationCogs({
-      organizationSlug,
-      startDate: currentMonthStart,
-      endDate: now,
-    }),
-    getOrganizationCogs({
-      organizationSlug,
-      startDate: previousMonthStart,
-      endDate: currentMonthStart,
-    }),
     db
       .select({
         totalBytes: sql<number>`coalesce(sum(${postsTable.size}), 0)::int`,
@@ -204,32 +177,7 @@ export async function getUsage({
       ),
   ]);
 
-  const seriesByDate = new Map<string, UsageByDate>();
-
-  for (const event of events) {
-    const seriesKey = EVENT_NAME_TO_SERIES_KEY[event.name as UsageEventName];
-
-    if (!seriesKey) continue;
-
-    const date = event.timestamp.toISOString().split("T")[0];
-
-    if (!seriesByDate.has(date)) {
-      seriesByDate.set(date, {
-        date,
-        clipRendered: 0,
-        thumbnailGenerated: 0,
-        seoGenerated: 0,
-        audioTranscribed: 0,
-        bestMomentsGenerated: 0,
-      });
-    }
-
-    seriesByDate.get(date)![seriesKey] += 1;
-  }
-
-  const series = Array.from(seriesByDate.values()).sort((a, b) =>
-    a.date.localeCompare(b.date),
-  );
+  const series = buildMockSeries({ startDate, endDate });
 
   // Cumulative within the selected range (starts at 0 on startDate), not the
   // org's all-time total — matches the "for the selected period" chart title.
@@ -240,14 +188,8 @@ export async function getUsage({
   }));
 
   return {
-    costs: {
-      currentCents: currentCogs.totalCents,
-      previousCents: previousCogs.totalCents,
-      changePercentage: calculateChangePercentage(
-        currentCogs.totalCents,
-        previousCogs.totalCents,
-      ),
-    },
+    // TODO: mockado enquanto o billing via Polar está fora do ar.
+    costs: MOCK_COSTS,
     storage: {
       currentBytes: currentStorageBytes,
       previousBytes: previousStorageBytes,

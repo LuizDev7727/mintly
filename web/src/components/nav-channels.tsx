@@ -6,7 +6,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Bot, Settings, Workflow, Video, Clapperboard } from "lucide-react";
+import { Bot, Settings, Workflow, Video, Clapperboard, Toolbox } from "lucide-react";
 import { useParams } from "@tanstack/react-router";
 import { NavLink } from "./nav-link";
 import { getIntegrationsHttp } from "@/http/integration/get-integrations.http";
@@ -53,6 +53,21 @@ export function NavChannels() {
             >
               <Clapperboard />
               <span>Projects</span>
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
+            asChild
+          >
+            <NavLink
+              to={"/orgs/$slug/channels/$channel/brand-kit"}
+              params={{ slug, channel }}
+            >
+              <Toolbox />
+              <span>Brand Kit</span>
             </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>

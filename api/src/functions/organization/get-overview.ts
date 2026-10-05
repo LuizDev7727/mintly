@@ -6,7 +6,6 @@ import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import { getOrganizationCurrentSpend } from "@/functions/organization/get-organization-current-spend.ts";
 import { and, count, desc, eq, sql } from "drizzle-orm";
 
 type GetOverviewProps = {
@@ -84,7 +83,6 @@ export async function getOverview({ orgSlug }: GetOverviewProps): Promise<GetOve
     webhooks,
     [{ totalStorage }],
     [{ series: storageSeries }],
-    currentSpend,
   ] = await Promise.all([
     db
       .select({ channelsCount: count() })
@@ -146,7 +144,6 @@ export async function getOverview({ orgSlug }: GetOverviewProps): Promise<GetOve
       })
       .from(dateSeries)
       .leftJoin(postsSizePerDay, eq(postsSizePerDay.postDate, dateSeries.date)),
-    getOrganizationCurrentSpend({ organizationSlug: orgSlug }),
   ]);
 
   const recentActivities = await Promise.all(
@@ -172,7 +169,8 @@ export async function getOverview({ orgSlug }: GetOverviewProps): Promise<GetOve
         totalStorage,
       },
       usage: {
-        totalUsage: currentSpend.totalCents,
+        // TODO: mockado enquanto o billing via Polar está fora do ar.
+        totalUsage: 0,
       },
       recentActivities,
       webhooks,
