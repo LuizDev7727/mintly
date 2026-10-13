@@ -7,15 +7,15 @@ import {
 } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
 
-type PaymentMethodsPaginationProps = {
+type GenerationHistoryPaginationProps = {
   totalPages: number;
 };
 
-export function PaymentMethodsPagination({
+export function GenerationHistoryPagination({
   totalPages,
-}: PaymentMethodsPaginationProps) {
+}: GenerationHistoryPaginationProps) {
   const [currentPage, setCurrentPage] = useQueryState(
-    "payment_method_page",
+    "generation_page",
     parseAsInteger.withDefault(0),
   );
 
@@ -37,40 +37,43 @@ export function PaymentMethodsPagination({
 
   const hasPreviousPage = currentPage > 0;
   const hasNextPage = currentPage < totalPages - 1;
-  const isFirstPage = currentPage === 0;
 
   return (
-    <div className="flex items-center gap-x-2">
+    <div className="flex items-center justify-end gap-x-2 border-t p-3">
       <Button
-        variant={"outline"}
-        size={"icon"}
+        variant="outline"
+        size="icon"
+        aria-label="First page"
         onClick={goToFirstPage}
-        disabled={!hasPreviousPage || isFirstPage}
+        disabled={!hasPreviousPage}
       >
         <ChevronsLeft className="size-4" />
       </Button>
       <Button
-        variant={"outline"}
-        size={"icon"}
+        variant="outline"
+        size="icon"
+        aria-label="Previous page"
         onClick={goToPreviousPage}
-        disabled={!hasPreviousPage || isFirstPage}
+        disabled={!hasPreviousPage}
       >
         <ChevronLeft className="size-4" />
       </Button>
-      <span className="text-xs text-muted-foreground px-1 tabular-nums">
-        {currentPage + 1}/{totalPages}
+      <span className="px-1 text-xs tabular-nums text-muted-foreground">
+        Page {currentPage + 1} of {totalPages}
       </span>
       <Button
-        variant={"outline"}
-        size={"icon"}
+        variant="outline"
+        size="icon"
+        aria-label="Next page"
         onClick={goToNextPage}
         disabled={!hasNextPage}
       >
         <ChevronRight className="size-4" />
       </Button>
       <Button
-        variant={"outline"}
-        size={"icon"}
+        variant="outline"
+        size="icon"
+        aria-label="Last page"
         onClick={goToLastPage}
         disabled={!hasNextPage}
       >

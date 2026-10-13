@@ -7,6 +7,9 @@ import {
 import { AppSidebar } from "@/components/app-sidebar";
 import { authClient } from "@/lib/auth";
 import { NavUser } from "@/components/nav-user";
+import { NavigationBreadcrumb } from "@/components/navigation-breadcrumb";
+import { Separator } from "@/components/ui/separator";
+
 
 export const Route = createFileRoute("/orgs/$slug")({
   beforeLoad: async () => {
@@ -28,12 +31,12 @@ function OrganizationLayout() {
       <AppSidebar />
       <SidebarInset>
         <header className="sticky border-b border-input top-0 z-10 flex items-center justify-between bg-sidebar h-16.25 shrink-0 gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 pr-4">
-          <div className="flex items-center justify-between gap-2 px-2">
-            <div className="bg-border w-4 rotate-90 h-px" />
+          <div className="flex min-w-0 items-center gap-x-2 px-2">
             <SidebarTrigger />
+            <NavigationBreadcrumb/>
           </div>
-          <div className="flex items-center gap-x-2">
-            <div className="bg-border w-4 rotate-90 h-px" />
+          <div className="flex items-center gap-x-3">
+            <div className="bg-border h-5 w-px" />
             <NavUser/>
           </div>
         </header>

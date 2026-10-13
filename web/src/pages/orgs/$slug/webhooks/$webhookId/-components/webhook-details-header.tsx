@@ -36,7 +36,7 @@ export function WebhookDetailsHeader({ webhook }: WebhookDetailsHeaderProps) {
         </Link>
       </Button>
 
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4">
+      <div className="flex flex-col gap-4 rounded-xl bg-card">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0 space-y-1.5">
             <p className="truncate font-mono text-sm text-foreground">
@@ -61,7 +61,13 @@ export function WebhookDetailsHeader({ webhook }: WebhookDetailsHeaderProps) {
                 )}
               </>
             ) : (
-              <Badge variant="outline">No deliveries yet</Badge>
+              <Badge variant="outline" className="gap-2">
+                <span aria-hidden="true" className="relative flex size-2">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75 motion-reduce:animate-none" />
+                  <span className="relative inline-flex size-2 rounded-full bg-primary" />
+                </span>
+                Live
+              </Badge>
             )}
           </div>
         </div>

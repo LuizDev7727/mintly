@@ -1,4 +1,5 @@
 import { Link, useParams } from "@tanstack/react-router";
+import { Activity as ActivityIcon } from "lucide-react";
 import { Timeline } from "@/components/ui/timeline";
 import type { Activity } from "@/types/activity";
 import { ActivityCard } from "@/pages/orgs/$slug/activities/-components/activity-card";
@@ -23,11 +24,20 @@ export function Activities({ activities }: ActivitiesProps) {
         </Link>
       </div>
 
-      <Timeline>
-        {activities.map((activity, index) => (
-          <ActivityCard key={activity.id} index={index} activity={activity} />
-        ))}
-      </Timeline>
+      {activities.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed py-8 text-center">
+          <ActivityIcon className="size-5 text-muted-foreground" />
+          <p className="max-w-56 text-xs text-muted-foreground">
+            No recent activities yet. Actions in your organization will show up here.
+          </p>
+        </div>
+      ) : (
+        <Timeline>
+          {activities.map((activity, index) => (
+            <ActivityCard key={activity.id} index={index} activity={activity} />
+          ))}
+        </Timeline>
+      )}
     </div>
   );
 }
