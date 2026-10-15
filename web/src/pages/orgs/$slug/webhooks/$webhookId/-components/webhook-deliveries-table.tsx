@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import { format } from "date-fns"
-import { ChevronRight, X } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,19 +15,6 @@ import type { WebhookLog } from "@/http/webhook/get-webhook.http"
 import { WebhookDeliverySheet } from "./webhook-delivery-sheet"
 
 const PAGE_SIZE = 12
-
-type StatusFilter = "ALL" | "PENDING" | "SUCCESS" | "FAILED"
-
-const STATUS_FILTERS: {
-  key: StatusFilter
-  label: string
-  dotClassName: string
-}[] = [
-  { key: "ALL", label: "All", dotClassName: "bg-muted-foreground" },
-  { key: "PENDING", label: "Pending", dotClassName: "bg-amber-500" },
-  { key: "SUCCESS", label: "Success", dotClassName: "bg-primary" },
-  { key: "FAILED", label: "Error", dotClassName: "bg-destructive" },
-]
 
 const STATUS_LABEL = {
   SUCCESS: "Success",
@@ -55,7 +42,6 @@ interface WebhookDeliveriesTableProps {
 }
 
 export function WebhookDeliveriesTable({ logs }: WebhookDeliveriesTableProps) {
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL")
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -64,40 +50,19 @@ export function WebhookDeliveriesTable({ logs }: WebhookDeliveriesTableProps) {
     [logs],
   )
 
-  const counts = useMemo(
-    () => ({
-      ALL: logs.length,
-      PENDING: logs.filter((log) => log.status === "PENDING").length,
-      SUCCESS: logs.filter((log) => log.status === "SUCCESS").length,
-      FAILED: logs.filter((log) => log.status === "FAILED").length,
-    }),
-    [logs],
-  )
-
-  const filteredLogs =
-    statusFilter === "ALL"
-      ? sortedLogs
-      : sortedLogs.filter((log) => log.status === statusFilter)
+  const filteredLogs = sortedLogs
 
   const visibleLogs = filteredLogs.slice(0, visibleCount)
   const hasMore = filteredLogs.length > visibleCount
 
   const selectedLog = filteredLogs.find((log) => log.id === selectedId) ?? null
 
-  function handleFilterChange(filter: StatusFilter) {
-    setStatusFilter(filter)
-    setVisibleCount(PAGE_SIZE)
-    setSelectedId(null)
-  }
-
   return (
     <div className="overflow-hidden bg-card">
 
       {filteredLogs.length === 0 ? (
         <p className="border-t py-6 text-center text-xs text-muted-foreground">
-          {logs.length === 0
-            ? "No deliveries yet. Events will show up here once they're triggered."
-            : "No deliveries match this filter."}
+          No deliveries yet. Events will show up here once they're triggered.
         </p>
       ) : (
         <div className="relative">

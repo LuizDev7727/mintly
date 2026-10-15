@@ -8,7 +8,6 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { authClient } from "@/lib/auth";
 import { NavUser } from "@/components/nav-user";
 import { NavigationBreadcrumb } from "@/components/navigation-breadcrumb";
-import { Separator } from "@/components/ui/separator";
 
 
 export const Route = createFileRoute("/orgs/$slug")({

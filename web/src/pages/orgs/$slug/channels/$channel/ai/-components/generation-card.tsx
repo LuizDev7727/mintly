@@ -34,7 +34,6 @@ export function GenerationCard({ generation }: GenerationCardProps) {
           <Badge variant={STATUS_BADGE_VARIANT[generation.status]}>
             {STATUS_LABEL[generation.status]}
           </Badge>
-          <span className="font-mono">{generation.aspectRatio}</span>
           {generation.durationSeconds !== null && (
             <span className="font-mono">{generation.durationSeconds}s</span>
           )}
