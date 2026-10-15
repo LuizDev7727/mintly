@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { InspirationalThumbnail } from "@/types/inspirational-thumbnail";
 import { formatBytes } from "@/utils/format-bytes";
 
@@ -5,38 +7,61 @@ type InspirationalThumbnailListViewProps = {
   thumbnails: InspirationalThumbnail[];
   selectedRows: string[];
   handleSelectRow: (id: string) => void;
+  /** Linhas renderizadas antes das thumbnails (dropzone, uploads em andamento). */
+  children?: ReactNode;
 };
 
 export function InspirationalThumbnailListView({
   thumbnails,
   selectedRows,
   handleSelectRow,
+  children,
 }: InspirationalThumbnailListViewProps) {
-
   return (
     <div className="space-y-2">
-      {thumbnails.map((thumbnail) => (
-        <div data-is-selected={selectedRows.includes(thumbnail.id)} className="cursor-pointer flex bg-card items-center justify-between gap-2 rounded-lg border p-2 pe-3 data-[is-selected=true]:border-lime-400" onClick={() => handleSelectRow(thumbnail.id)}>
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="aspect-square shrink-0 rounded bg-accent">
+      {children}
+
+      {thumbnails.map((thumbnail) => {
+        const isSelected = selectedRows.includes(thumbnail.id);
+
+        return (
+          <div
+            key={thumbnail.id}
+            data-selected={isSelected}
+            className="relative flex items-center gap-3 rounded-lg border bg-card p-2 pe-3 transition-colors hover:bg-muted/50 data-[selected=true]:border-primary"
+          >
+            <Checkbox
+              checked={isSelected}
+              onCheckedChange={() => handleSelectRow(thumbnail.id)}
+              aria-label={`Select ${thumbnail.name}`}
+              className="z-10 ms-1"
+            />
+
+            <div className="aspect-video h-12 shrink-0 overflow-hidden rounded bg-muted">
               <img
                 alt={thumbnail.name}
-                className="size-10 rounded-[inherit] object-cover"
                 src={thumbnail.url}
+                className="size-full object-cover"
               />
             </div>
-            <div className="flex min-w-0 flex-col gap-0.5">
-              <p className="truncate font-medium text-[13px]">
-                {thumbnail.name}
-              </p>
-              <p className="text-muted-foreground text-xs">
+
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium">{thumbnail.name}</p>
+              <p className="truncate text-xs text-muted-foreground">
                 {formatBytes(thumbnail.sizeInBytes)}
               </p>
             </div>
-          </div>
 
-        </div>
-      ))}
+            <button
+              type="button"
+              aria-label={`Select ${thumbnail.name}`}
+              aria-pressed={isSelected}
+              onClick={() => handleSelectRow(thumbnail.id)}
+              className="absolute inset-0 cursor-pointer rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }

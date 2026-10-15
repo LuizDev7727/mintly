@@ -1,43 +1,30 @@
-import { HomeIcon, Video } from "lucide-react";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useLocation, useParams } from "@tanstack/react-router";
+import { useMatches } from "@tanstack/react-router";
 
 export function NavigationBreadcrumb() {
 
-  const { slug } = useParams({
-    from: "/orgs/$slug"
+  const pageTitle = useMatches({
+    select: (matches) => {
+      const title = matches
+        .flatMap((match) => match.meta ?? [])
+        .findLast((meta) => meta && "title" in meta)?.title
+
+      return title?.replace(/\s*\|\s*Mintly$/, "")
+    },
   })
-
-  const { pathname } = useLocation()
-
-  const paths = pathname.split("/")
-
-  const isChannelSet = paths.length >= 5;
-
-  const pageName = isChannelSet && paths[paths.length - 1] || "My Posts"
-
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink className="inline-flex items-center gap-1.5" href={`/orgs/${slug}`}>
-            <HomeIcon aria-hidden="true" size={16} />
-            Home
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
           <BreadcrumbLink className="inline-flex items-center gap-1.5">
-            <Video aria-hidden="true" size={16} />
-            {pageName}
+            {/*<Video aria-hidden="true" size={16} />*/}
+            {pageTitle ?? "My Posts"}
           </BreadcrumbLink>
         </BreadcrumbItem>
       </BreadcrumbList>
