@@ -73,6 +73,8 @@ import { getActivitiesRoute } from "./infra/http/routes/internal/activity/get-ac
 import { addInspirationalThumbnailRoute } from "./infra/http/routes/internal/inspirational-thumbnail/add-inspirational-thumbnail.route.ts";
 import { getInspirationalThumbnailsRoute } from "./infra/http/routes/internal/inspirational-thumbnail/get-inspirational-thumbnails.route.ts";
 import { deleteInspirationalThumbnailRoute } from "./infra/http/routes/internal/inspirational-thumbnail/delete-inspirational-thumbnail.route.ts";
+import { getVideosRoute } from "./infra/http/routes/internal/video/get-videos.route.ts";
+import { generateVideoRoute } from "./infra/http/routes/internal/video/generate-video.route.ts";
 import { presignUploadRoute } from "./infra/http/routes/internal/upload/presign-upload.route.ts";
 import { completeMultipartUploadRoute } from "./infra/http/routes/internal/upload/complete-multipart-upload.route.ts";
 import { abortMultipartUploadRoute } from "./infra/http/routes/internal/upload/abort-multipart-upload.route.ts";
@@ -201,6 +203,9 @@ server.register(getActivitiesRoute);
 server.register(addInspirationalThumbnailRoute);
 server.register(getInspirationalThumbnailsRoute);
 server.register(deleteInspirationalThumbnailRoute);
+
+server.register(getVideosRoute);
+server.register(generateVideoRoute);
 
 server.register(presignUploadRoute);
 server.register(completeMultipartUploadRoute);

@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { VideoPlayground } from "./-components/video-playground";
+import { Suspense } from "react";
+import { GenerateVideoForm } from "./-components/generate-video-form";
+import { Videos } from "./-components/videos";
+import { VideosLoading } from "./-components/videos-loading";
 
 export const Route = createFileRoute("/orgs/$slug/channels/$channel/ai/")({
   head: () => ({
@@ -24,7 +27,11 @@ function AIPage() {
         </p>
       </header>
 
-      <VideoPlayground />
+      <GenerateVideoForm />
+
+      <Suspense fallback={<VideosLoading />}>
+        <Videos />
+      </Suspense>
     </div>
   );
 }

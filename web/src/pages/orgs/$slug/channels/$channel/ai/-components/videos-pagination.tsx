@@ -7,13 +7,13 @@ import {
 } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
 
-type GenerationHistoryPaginationProps = {
+type VideosPaginationProps = {
   totalPages: number;
 };
 
-export function GenerationHistoryPagination({
+export function VideosPagination({
   totalPages,
-}: GenerationHistoryPaginationProps) {
+}: VideosPaginationProps) {
   const [currentPage, setCurrentPage] = useQueryState(
     "generation_page",
     parseAsInteger.withDefault(0),

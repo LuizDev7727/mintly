@@ -6,6 +6,7 @@ import { postsTable } from "./posts.table.ts";
 import { integrationsTable } from "./integrations.table.ts";
 import { foldersTable } from "./folders.table.ts";
 import { inspirationalThumbnailsTable } from "./inspirational-thumbnail.table.ts";
+import { videosTable } from "./videos.table.ts";
 
 export const channelsTable = pgTable("channels", {
   id: text("id")
@@ -25,6 +26,7 @@ export const channelsRelations = relations(channelsTable, ({ one, many }) => ({
   integrations: many(integrationsTable),
   folders: many(foldersTable),
   inspirationalThumbnails: many(inspirationalThumbnailsTable),
+  videos: many(videosTable),
   organization: one(organizationsTable, {
     fields: [channelsTable.organizationSlug],
     references: [organizationsTable.slug],

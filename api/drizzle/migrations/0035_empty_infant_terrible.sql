@@ -1,0 +1,1 @@
+ALTER TABLE "videos" ALTER COLUMN "filename" SET DATA TYPE varchar;

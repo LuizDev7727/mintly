@@ -10,6 +10,7 @@ import { postsTable, postsRelations } from "./posts.table.ts";
 import { sessionsTable } from "./sessions.table.ts";
 import { usersTable } from "./users.table.ts";
 import { verificationsTable } from "./verifications.table.ts";
+import { videosTable, videosRelations } from "./videos.table.ts";
 
 export const tables = {
   accountsTable,
@@ -26,5 +27,7 @@ export const tables = {
   usersTable,
   verificationsTable,
   activitiesTable,
-  inspirationalThumbnailsTable
+  inspirationalThumbnailsTable,
+  videosTable,
+  videosRelations,
 };

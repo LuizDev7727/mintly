@@ -1,6 +1,6 @@
 # py/ — Serviços Modal
 
-Três serviços Python independentes, hospedados no **Modal** (GPU sob demanda), fora do processo principal da API (`api/`). Cada um é um app Modal separado, com sua própria imagem/deploy — não há um pacote Python compartilhado entre eles (por isso algumas coisas, como a tabela de preço de GPU, aparecem duplicadas nos arquivos).
+Quatro serviços Python independentes, hospedados no **Modal** (GPU sob demanda), fora do processo principal da API (`api/`). Cada um é um app Modal separado, com sua própria imagem/deploy — não há um pacote Python compartilhado entre eles (por isso algumas coisas, como a tabela de preço de GPU, aparecem duplicadas nos arquivos).
 
 São chamados pelo Node (`api/src/infra/trigger/*.task.ts`) via HTTP, usando o padrão de waitpoint do Trigger.dev (ver `api/src/infra/trigger/CLAUDE.md`) — o Node dispara a chamada, gera um token de espera e fica suspenso até o Modal chamar de volta via `callback_url`.
 
@@ -35,9 +35,17 @@ Classe `TextGenerationService` (`@app.cls(gpu="A10G", ...)`). Os pesos do modelo
 
 Secret do Modal: `mintly-generate-text-secret` (`HF_TOKEN`, opcional — Qwen2.5 não é gated, só acelera o download).
 
+### `generate_video.py` — `mintly-generate-video`
+
+Geração de vídeo a partir de texto via **Wan2.1 T2V 1.3B** (`Wan-AI/Wan2.1-T2V-1.3B-Diffusers`, `diffusers` — o mesmo modelo do repo `Wan-AI/Wan2.1-T2V-1.3B`, convertido pro formato do diffusers). Recebe `prompt`, `image_url` (opcional) e `callback_url`; gera um vídeo 832x480, 81 frames a 15 fps (~5s), sobe o mp4 pro R2 (`videos/<run_id>.mp4`) e chama o callback com `status`, `output_key` e `cost`. **O modelo é text-to-video apenas: `image_url` é aceita no contrato mas ignorada** (imagem como condição seria o Wan2.1-I2V, outro modelo).
+
+Classe `VideoGenerationService` (`@app.cls(gpu="A10G", timeout=1800, ...)`). Os pesos ficam num `modal.Volume` (`wan-models`) montado em `/cache`, mesmo motivo dos outros: `HF_HOME` precisa ser setado *antes* de importar `diffusers`.
+
+Secret do Modal: `mintly-generate-video-secret` (`R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`; `HF_TOKEN` opcional — o modelo não é gated).
+
 ## Padrão: endpoint HTTP + job assíncrono + callback
 
-Os dois serviços seguem exatamente o mesmo formato — ao criar um serviço novo aqui, replique isso:
+Os serviços seguem exatamente o mesmo formato — ao criar um serviço novo aqui, replique isso:
 
 ```python
 @app.cls(gpu="A10G", timeout=900, retries=0, scaledown_window=20, secrets=[...])
@@ -98,9 +106,10 @@ cd py
 modal deploy main.py
 modal deploy transcribe_audio.py
 modal deploy generate_text.py
+modal deploy generate_video.py
 ```
 
-As URLs dos endpoints ficam no Infisical (`MODAL_URL`, `MODAL_TRANSCRIBE_AUDIO_URL`, `MODAL_GENERATE_TEXT_URL`), lidas pelo Node via `getInfisicalSecret`.
+As URLs dos endpoints ficam no Infisical (`MODAL_URL`, `MODAL_TRANSCRIBE_AUDIO_URL`, `MODAL_GENERATE_TEXT_URL`, `MODAL_GENERATE_VIDEO_URL`), lidas pelo Node via `getInfisicalSecret`.
 
 ## `instructions.md`
 
