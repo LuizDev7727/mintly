@@ -40,8 +40,15 @@ import {
   X,
   XIcon,
 } from "lucide-react";
-import { useState, type ChangeEvent, type DragEvent } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useRef, useState, type ChangeEvent, type DragEvent } from "react";
+import { useFieldArray, useForm, type FieldErrors } from "react-hook-form";
+import { toast } from "sonner";
+import {
+  describeBatchResult,
+  summarizeUploadBatch,
+  type UploadOutcome,
+} from "./upload-batch";
+import { getFirstErrorMessage } from "./get-first-error-message";
 
 export type UploadStatus =
   | "pending"
@@ -63,9 +70,15 @@ type CreatePostFormProps = {
 export function CreatePostForm({ integrations }: CreatePostFormProps) {
   const [isDragging, setIsDragging] = useState(false);
 
+  // O progresso é guardado pelo id do cartão (e não pelo índice do array): os
+  // cartões saem do meio da lista quando o post deles é criado.
   const [uploadProgressMap, setUploadProgressMap] = useState(
-    new Map<number, UploadEntry>(),
+    new Map<string, UploadEntry>(),
   );
+
+  // Chaves dos uploads já concluídos, para não reenviar o arquivo quando a
+  // criação dos posts falha e o usuário tenta de novo.
+  const uploadedKeys = useRef(new Map<string, string>());
 
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
@@ -78,20 +91,23 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     watch,
     handleSubmit,
     getValues,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
     setValue,
   } = useForm<CreatePostsFormType>({
     resolver: zodResolver(createPostSchema),
     defaultValues: { posts: [] },
   });
 
-  console.log({ errors })
-
   const {
     fields: posts,
     append: addPost,
     remove: removePost,
   } = useFieldArray({ control, name: "posts" });
+
+  // O `handleCreatePosts` termina bem depois de ser chamado: ele precisa dos
+  // cartões de agora, e não dos da renderização em que o envio começou.
+  const postsRef = useRef(posts);
+  postsRef.current = posts;
 
   const isPostsEmpty = posts.length === 0;
   const totalSize = posts.reduce(
@@ -164,91 +180,130 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
 
   const { mutateAsync: createPosts } = useMutation({
     mutationFn: createPostsHttp,
-    onSuccess: () => {
-      navigate({ to: "/orgs/$slug/channels/$channel", params: { slug, channel } });
-    },
   });
 
+  function setUploadProgress(id: string, entry: UploadEntry) {
+    setUploadProgressMap((prev) => new Map(prev).set(id, entry));
+  }
+
   async function handleCreatePosts(formBody: CreatePostsFormType) {
-    const uploadResults = await Promise.all(
-      formBody.posts.map(async (post, index) => {
-        const abortController = new AbortController();
+    const fieldIds = posts.map((post) => post.id);
 
-        setUploadProgressMap((prev) => {
-          const next = new Map(prev);
-          next.set(index, { status: "uploading", progress: 0, abortController });
-          return next;
-        });
+    const outcomes = await Promise.all(
+      formBody.posts.map(
+        async (
+          post,
+          index,
+        ): Promise<UploadOutcome<CreatePostsFormType["posts"][number]>> => {
+          const id = fieldIds[index];
 
-        try {
-          const { key } = await uploadFile({
-            file: post.file,
-            signal: abortController.signal,
-            onProgress: (progress) => {
-              setUploadProgressMap((prev) => {
-                const next = new Map(prev);
-                const hasCompletedUpload = progress === 100;
-                next.set(index, { status: hasCompletedUpload ? "completed" : "uploading", progress, abortController });
-                return next;
-              });
-            },
-          });
+          const alreadyUploadedKey = uploadedKeys.current.get(id);
 
-          return { post, key };
-        } catch (error) {
-          // usuário cancelou este upload — os outros arquivos do lote seguem normalmente
-          if (axios.isCancel(error)) {
-            setUploadProgressMap((prev) => {
-              const next = new Map(prev);
-              next.set(index, { status: "cancelled", progress: 0, abortController });
-              return next;
-            });
-            return null;
+          if (alreadyUploadedKey) {
+            return { status: "uploaded", id, item: post, key: alreadyUploadedKey };
           }
 
-          // erro de verdade (rede, R2, etc.) — não derruba os outros uploads do lote
-          setUploadProgressMap((prev) => {
-            const next = new Map(prev);
-            next.set(index, { status: "error", progress: 0, abortController });
-            return next;
-          });
-          return null;
-        }
-      }),
+          const abortController = new AbortController();
+
+          setUploadProgress(id, { status: "uploading", progress: 0, abortController });
+
+          try {
+            const { key } = await uploadFile({
+              file: post.file,
+              signal: abortController.signal,
+              onProgress: (progress) => {
+                setUploadProgress(id, {
+                  status: progress === 100 ? "completed" : "uploading",
+                  progress,
+                  abortController,
+                });
+              },
+            });
+
+            uploadedKeys.current.set(id, key);
+
+            return { status: "uploaded", id, item: post, key };
+          } catch (error) {
+            // usuário cancelou este upload — os outros arquivos do lote seguem normalmente
+            if (axios.isCancel(error)) {
+              setUploadProgress(id, { status: "cancelled", progress: 0, abortController });
+              return { status: "cancelled", id };
+            }
+
+            // erro de verdade (rede, R2, etc.) — não derruba os outros uploads do lote
+            setUploadProgress(id, { status: "error", progress: 0, abortController });
+            return { status: "failed", id };
+          }
+        },
+      ),
     );
 
-    const uploadedPosts = uploadResults.filter(
-      (result): result is { post: CreatePostsFormType["posts"][number]; key: string } =>
-        result !== null,
-    );
+    const { uploaded, notUploadedCount } = summarizeUploadBatch(outcomes);
 
-    if (uploadedPosts.length === 0) {
-      return;
+    // Cartões que ainda existem depois de remover os posts criados. Conta o que
+    // há agora, e não o `posts` da renderização em que o envio começou.
+    let postsLeft = postsRef.current.length;
+
+    if (uploaded.length > 0) {
+      await createPosts({
+        orgSlug: slug,
+        channelId: channel,
+        posts: uploaded.map(({ item: post, key }) => ({
+          file: {
+            name: sanitizeFilename({ filename: post.file.name }),
+            key,
+            type: post.file.type,
+            size: post.file.size,
+            duration: post.duration,
+          },
+          shouldGenerateThumbnail: post.shouldGenerateThumbnail,
+          shouldGenerateShorts: post.shouldGenerateShorts,
+          scheduledTo: post.scheduledTo
+            ? new Date(post.scheduledTo).toISOString()
+            : null,
+          socialsToPost: post.socialsToPost,
+        })),
+      });
+
+      // Os posts já existem: saem do formulário. Os que não subiram ficam, com
+      // o status visível, para o usuário tentar de novo ou removê-los.
+      const currentIds = postsRef.current.map((post) => post.id);
+      const createdIds = uploaded.map(({ id }) => id);
+
+      const createdIndexes = createdIds
+        .map((id) => currentIds.indexOf(id))
+        .filter((index) => index >= 0);
+
+      removePost(createdIndexes);
+      postsLeft -= createdIndexes.length;
+
+      createdIds.forEach((id) => uploadedKeys.current.delete(id));
+      setUploadProgressMap((prev) => {
+        const next = new Map(prev);
+        createdIds.forEach((id) => next.delete(id));
+        return next;
+      });
     }
 
-    await createPosts({
-      orgSlug: slug,
-      channelId: channel,
-      posts: uploadedPosts.map(({ post, key }) => ({
-        file: {
-          name: sanitizeFilename({ filename: post.file.name }),
-          key,
-          type: post.file.type,
-          size: post.file.size,
-          duration: post.duration,
-        },
-        shouldGenerateThumbnail: post.shouldGenerateThumbnail,
-        shouldGenerateShorts: post.shouldGenerateShorts,
-        scheduledTo: post.scheduledTo
-          ? new Date(post.scheduledTo).toISOString()
-          : null,
-        socialsToPost: post.socialsToPost,
-      })),
+    const { type, message } = describeBatchResult({
+      createdCount: uploaded.length,
+      notUploadedCount,
     });
+    toast[type](message);
+
+    if (uploaded.length > 0 && postsLeft === 0) {
+      navigate({ to: "/orgs/$slug/channels/$channel", params: { slug, channel } });
+    }
+  }
+
+  // Sem isto, enviar um post com algum campo inválido (por exemplo, sem
+  // nenhuma rede escolhida) não fazia nada na tela.
+  function handleInvalidSubmit(formErrors: FieldErrors<CreatePostsFormType>) {
+    toast.error(getFirstErrorMessage(formErrors) ?? "Some fields are invalid.");
   }
 
   function handleCancelUpload(postIndex: number) {
-    uploadProgressMap.get(postIndex)?.abortController.abort();
+    uploadProgressMap.get(posts[postIndex].id)?.abortController.abort();
 
     const file = getValues(`posts.${postIndex}.file`);
     const match = findResumableUpload({
@@ -301,7 +356,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
 
       <Separator />
 
-      <form onSubmit={handleSubmit(handleCreatePosts)} className="space-y-4">
+      <form onSubmit={handleSubmit(handleCreatePosts, handleInvalidSubmit)} className="space-y-4">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
             <div className="px-2.5 py-1.5 dark:bg-zinc-900/20 border dark:text-primary border-input rounded-md">
@@ -371,7 +426,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
 
           const hasSelectedScheduledDate = !!watch(`posts.${postIndex}.scheduledTo`);
 
-          const uploadEntry = uploadProgressMap.get(postIndex);
+          const uploadEntry = uploadProgressMap.get(post.id);
           const isUploading = uploadEntry?.status === "uploading";
 
           return (
