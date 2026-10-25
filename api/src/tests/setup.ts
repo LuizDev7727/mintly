@@ -12,6 +12,26 @@ vi.mock("@/utils/generate-realtime-token.ts", () => ({
   generateRealtimeToken: vi.fn(async () => "test-realtime-token"),
 }));
 
+// Same reason for the two mocks below: tests must never reach R2 or start a
+// real Trigger.dev run. They live here (and not in each test file) because this
+// file imports the app before any test file runs, so a vi.mock declared later
+// would not replace the modules the app already loaded.
+vi.mock("@/utils/cloudflare/check-file-exists.ts", () => ({
+  checkFileExists: vi.fn(async () => undefined),
+}));
+
+vi.mock("@trigger.dev/sdk", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@trigger.dev/sdk")>();
+
+  return {
+    ...actual,
+    tasks: {
+      ...actual.tasks,
+      trigger: vi.fn(async () => ({ id: "run_test" })),
+    },
+  };
+});
+
 export let testUser: ReturnType<typeof test.createUser>;
 export let testOrgSlug: string;
 export let authHeaders: Record<string, string>;

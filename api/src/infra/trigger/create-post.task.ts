@@ -12,12 +12,17 @@ import { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
 import { transcribeAudioTask } from "./transcribe-audio.task.ts";
 import { seoEnrichmentTask } from "./seo-enrichment.task.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
+import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { eq } from "drizzle-orm";
 import { generateThubmnailTask } from "./generate-thumbnail.task.ts";
 import { db } from "@/infra/db/client.ts";
 import { uploadPostToYoutubeTask } from "./upload-post-to-youtube.task.ts";
 import { uploadPostToTiktokTask } from "./upload-post-to-tiktok.task.ts";
 import { uploadPostToInstagramTask } from "./upload-post-to-instagram.task.ts";
+
+// Validade do link do arquivo, gerado depois da espera do agendamento. Precisa
+// cobrir a pipeline inteira (conversão, transcrição, SEO e uploads).
+const FILE_URL_EXPIRES_IN_SECONDS = 60 * 60 * 2; // 2 hours
 
 // Falha a run inteira quando uma etapa filha falha. `AbortTaskRunError` não
 // dispara retry da task pai: um retry reexecutaria as etapas anteriores e
@@ -30,7 +35,7 @@ export const createPostTask = schemaTask({
   id: "process-post",
   schema: z.object({
     post: z.object({
-      fileUrl: z.url(),
+      fileKey: z.string(),
       size: z.number(),
       duration: z.number(),
       shouldGenerateThumbnail: z.boolean(),
@@ -126,10 +131,15 @@ export const createPostTask = schemaTask({
       shouldGenerateShorts,
       shouldGenerateThumbnail,
       socialsToPost,
-      fileUrl,
+      fileKey,
       size,
       duration,
     } = post;
+
+    const fileUrl = await generateSignedUrl({
+      key: fileKey,
+      expiresIn: FILE_URL_EXPIRES_IN_SECONDS,
+    });
 
     logger.log("Video Url: ", { fileUrl });
     logger.log("Sould generate thumbnail: ", { shouldGenerateThumbnail });
