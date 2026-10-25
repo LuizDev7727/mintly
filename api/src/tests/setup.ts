@@ -29,6 +29,10 @@ vi.mock("@trigger.dev/sdk", async (importOriginal) => {
       ...actual.tasks,
       trigger: vi.fn(async () => ({ id: "run_test" })),
     },
+    runs: {
+      ...actual.runs,
+      cancel: vi.fn(async () => undefined),
+    },
   };
 });
 
