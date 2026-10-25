@@ -9,7 +9,6 @@ import { createReadStream, createWriteStream } from "node:fs";
 import { db } from "@/infra/db/client.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
 import { eq } from "drizzle-orm";
-import { postsTable } from "@/infra/db/tables/posts.table.ts";
 
 export const uploadPostToYoutubeTask = schemaTask({
   id: "upload-post-to-youtube",
@@ -21,34 +20,6 @@ export const uploadPostToYoutubeTask = schemaTask({
     tags: z.array(z.string()),
     postId: z.uuidv7(),
   }),
-
-  onStart: async ({ payload }) => {
-    await db
-      .update(postsTable)
-      .set({
-        status: "PUBLISHING",
-      })
-      .where(eq(postsTable.id, payload.postId));
-  },
-
-  onSuccess: async ({ payload }) => {
-    await db
-      .update(postsTable)
-      .set({
-        status: "PUBLISHED",
-      })
-      .where(eq(postsTable.id, payload.postId));
-  },
-
-  onFailure: async ({ payload }) => {
-    const { postId } = payload;
-    await db
-      .update(postsTable)
-      .set({
-        status: "ERROR",
-      })
-      .where(eq(postsTable.id, postId));
-  },
 
   // Set an optional maxDuration to prevent tasks from running indefinitely
   maxDuration: 300, // Stop executing after 300 secs (5 mins) of compute
