@@ -3,6 +3,7 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { createActivity } from "@/utils/create-activity.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
@@ -43,6 +44,10 @@ export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
       span.setAttribute("files.count", files.length);
 
       await checkMembership({ organizationSlug: slug, userId });
+
+      for (const file of files) {
+        assertKeyOwnedByUser({ key: file.key, userId });
+      }
 
       await createProject({
         channelId,

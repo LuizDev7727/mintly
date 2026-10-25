@@ -2,6 +2,7 @@ import { completeMultipartUpload } from "@/utils/cloudflare/complete-multipart-u
 import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const completeMultipartUploadRoute: FastifyPluginAsyncZod = async (
@@ -29,6 +30,9 @@ export const completeMultipartUploadRoute: FastifyPluginAsyncZod = async (
     },
     async (request, reply) => {
       const { key, uploadId, parts } = request.body;
+      const { id: userId } = request.user;
+
+      assertKeyOwnedByUser({ key, userId });
 
       const span = tracer.startSpan("completeMultipartUpload");
       span.setAttribute("upload.key", key);
