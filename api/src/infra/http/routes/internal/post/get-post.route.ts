@@ -61,7 +61,7 @@ export const getPostRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { slug, postId } = request.params;
+      const { slug, channelId, postId } = request.params;
       const { id: userId } = request.user;
 
       const span = tracer.startSpan("get-post");
@@ -69,7 +69,7 @@ export const getPostRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      const post = await getPost({ postId });
+      const post = await getPost({ channelId, postId });
 
       span.end();
 

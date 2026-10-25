@@ -26,7 +26,7 @@ export const deleteInspirationalThumbnailRoute: FastifyPluginAsyncZod = async (
       },
     },
     async (request, reply) => {
-      const { slug, inspirationalThumbnailId } = request.params;
+      const { slug, channelId, inspirationalThumbnailId } = request.params;
       const { id: userId } = request.user;
 
       const span = tracer.startSpan("deleteInspirationalThumbnail");
@@ -34,7 +34,7 @@ export const deleteInspirationalThumbnailRoute: FastifyPluginAsyncZod = async (
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      await deleteInspirationalThumbnail({ inspirationalThumbnailId });
+      await deleteInspirationalThumbnail({ channelId, inspirationalThumbnailId });
 
       span.end();
 

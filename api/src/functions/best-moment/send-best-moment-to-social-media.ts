@@ -3,6 +3,7 @@ import { db } from "@/infra/db/client.ts"
 import { bestMomentsTable } from "@/infra/db/tables/best-moments.table.ts"
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts"
 import { postsTable } from "@/infra/db/tables/posts.table.ts"
+import { projectsTable } from "@/infra/db/tables/projects.table.ts"
 import { socialsToPostTable } from "@/infra/db/tables/socials-to-post.table.ts"
 import { uploadPostToYoutubeTask } from "@/infra/trigger/upload-post-to-youtube.task.ts"
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts"
@@ -20,11 +21,20 @@ export async function sendBestMomentToSocialMedia(params: SendBestMomentToSocial
 
   const { bestMomentId, integrationId, channelId, ownerId } = params
 
+  // O clipe precisa ser de um projeto do canal da URL: só o id do clipe faria
+  // o arquivo de outra organização ser publicado nas redes deste canal.
   const [bestMoment] = await
-    db.select()
+    db.select({
+      title: bestMomentsTable.title,
+      storageKey: bestMomentsTable.storageKey,
+    })
       .from(bestMomentsTable)
+      .innerJoin(projectsTable, eq(bestMomentsTable.projectId, projectsTable.id))
       .where(
-        eq(bestMomentsTable.id, bestMomentId)
+        and(
+          eq(bestMomentsTable.id, bestMomentId),
+          eq(projectsTable.channelId, channelId),
+        )
     )
 
   if(!bestMoment) {

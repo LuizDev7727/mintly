@@ -35,7 +35,7 @@ export const deleteFolderRoute: FastifyPluginAsyncZod = async (app) => {
         userId
       })
 
-      await deleteFolder({ folderId });
+      await deleteFolder({ channelId, folderId });
 
       span.end();
 

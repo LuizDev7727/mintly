@@ -3,21 +3,27 @@ import { db } from "@/infra/db/client.ts";
 import { inspirationalThumbnailsTable } from "@/infra/db/tables/inspirational-thumbnail.table.ts";
 import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 type DeleteInspirationalThumbnailParams = {
+  channelId: string;
   inspirationalThumbnailId: string;
 };
 
 export async function deleteInspirationalThumbnail(
   params: DeleteInspirationalThumbnailParams,
 ): Promise<void> {
-  const { inspirationalThumbnailId } = params;
+  const { channelId, inspirationalThumbnailId } = params;
 
   const [inspirationalThumbnail] = await db
     .select()
     .from(inspirationalThumbnailsTable)
-    .where(eq(inspirationalThumbnailsTable.id, inspirationalThumbnailId));
+    .where(
+      and(
+        eq(inspirationalThumbnailsTable.id, inspirationalThumbnailId),
+        eq(inspirationalThumbnailsTable.channelId, channelId),
+      ),
+    );
 
   if (!inspirationalThumbnail) {
     throw new ResourceNotFoundError("Inspirational thumbnail not found");
