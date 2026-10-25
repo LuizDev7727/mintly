@@ -7,6 +7,17 @@ import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
+const scheduledToSchema = z
+  .string()
+  .nullable()
+  .refine((value) => !value || !Number.isNaN(new Date(value).getTime()), {
+    error: "The date is invalid",
+    abort: true,
+  })
+  .refine((value) => !value || new Date(value) > new Date(), {
+    error: "The date cannot be in the past",
+  });
+
 export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/organizations/:slug/channels/:channelId/posts",
@@ -32,7 +43,7 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
                 }),
                 shouldGenerateThumbnail: z.boolean(),
                 shouldGenerateShorts: z.boolean(),
-                scheduledTo: z.string().nullable(),
+                scheduledTo: scheduledToSchema,
                 socialsToPost: z
                   .array(
                     z.object({

@@ -17,7 +17,11 @@ type Overrides = Partial<
 
 export async function makeFakeOrganization(ownerId: string, data = {} as Overrides) {
   const name = data.name ?? faker.company.name();
-  const slug = data.slug ?? faker.helpers.slugify(name).toLowerCase();
+  // O sufixo evita colisão de slug: o faker repete nomes de empresa, e os
+  // dados de execuções anteriores continuam no banco.
+  const slug =
+    data.slug ??
+    `${faker.helpers.slugify(name).toLowerCase()}-${faker.string.alphanumeric(6).toLowerCase()}`;
 
   await db.insert(organizationsTable).values({
     name,
