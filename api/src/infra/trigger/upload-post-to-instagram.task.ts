@@ -3,7 +3,6 @@ import { z } from "zod";
 import { db } from "@/infra/db/client.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
 import { eq } from "drizzle-orm";
-import { postsTable } from "@/infra/db/tables/posts.table.ts";
 
 const InstagramMediaContainerSchema = z.object({
   id: z.string(),
@@ -29,34 +28,6 @@ export const uploadPostToInstagramTask = schemaTask({
     postId: z.uuidv7(),
     fileSizeInBytes: z.number(),
   }),
-
-  onStart: async ({ payload }) => {
-    await db
-      .update(postsTable)
-      .set({
-        status: "PUBLISHING",
-      })
-      .where(eq(postsTable.id, payload.postId));
-  },
-
-  onSuccess: async ({ payload }) => {
-    await db
-      .update(postsTable)
-      .set({
-        status: "PUBLISHED",
-      })
-      .where(eq(postsTable.id, payload.postId));
-  },
-
-  onFailure: async ({ payload }) => {
-    const { postId } = payload;
-    await db
-      .update(postsTable)
-      .set({
-        status: "ERROR",
-      })
-      .where(eq(postsTable.id, postId));
-  },
 
   // Set an optional maxDuration to prevent tasks from running indefinitely
   maxDuration: 300, // Stop executing after 300 secs (5 mins) of compute

@@ -1,4 +1,12 @@
-import { logger, metadata, schemaTask, tasks, wait } from "@trigger.dev/sdk";
+import {
+  AbortTaskRunError,
+  batch,
+  logger,
+  metadata,
+  schemaTask,
+  tasks,
+  wait,
+} from "@trigger.dev/sdk";
 import { z } from "zod";
 import { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
 import { transcribeAudioTask } from "./transcribe-audio.task.ts";
@@ -10,6 +18,13 @@ import { db } from "@/infra/db/client.ts";
 import { uploadPostToYoutubeTask } from "./upload-post-to-youtube.task.ts";
 import { uploadPostToTiktokTask } from "./upload-post-to-tiktok.task.ts";
 import { uploadPostToInstagramTask } from "./upload-post-to-instagram.task.ts";
+
+// Falha a run inteira quando uma etapa filha falha. `AbortTaskRunError` não
+// dispara retry da task pai: um retry reexecutaria as etapas anteriores e
+// poderia publicar o mesmo vídeo de novo em redes que já deram certo.
+function failStep(step: string): never {
+  throw new AbortTaskRunError(`Step "${step}" failed`);
+}
 
 export const createPostTask = schemaTask({
   id: "process-post",
@@ -132,11 +147,8 @@ export const createPostTask = schemaTask({
       duration,
     });
 
-    const { ok: hasConvertVideoTop3TaskCompleted } =
-      convertVideoToMp3TaskResponse;
-
-    if (!hasConvertVideoTop3TaskCompleted) {
-      return;
+    if (!convertVideoToMp3TaskResponse.ok) {
+      failStep("convert-video-to-mp3");
     }
 
     const { audioUrl } = convertVideoToMp3TaskResponse.output;
@@ -151,10 +163,8 @@ export const createPostTask = schemaTask({
       type: "post",
     });
 
-    const { ok: hasTranscribeAudioTaskCompleted } = transcribeAudioTaskResponse;
-
-    if (!hasTranscribeAudioTaskCompleted) {
-      return;
+    if (!transcribeAudioTaskResponse.ok) {
+      failStep("transcribe-audio");
     }
 
     const { transcription } = transcribeAudioTaskResponse.output;
@@ -171,7 +181,7 @@ export const createPostTask = schemaTask({
     });
 
     if (!seoEnrichmentResponse.ok) {
-      return;
+      failStep("seo-enrichment");
     }
 
     const {
@@ -190,47 +200,65 @@ export const createPostTask = schemaTask({
     }
 
     metadata.set("status", "PUBLISHING");
+    await db
+      .update(postsTable)
+      .set({ status: "PUBLISHING" })
+      .where(eq(postsTable.id, postId));
 
-    for (const social of socialsToPost) {
-      switch(social.provider) {
+    // Os uploads rodam em paralelo e a run só termina quando todos acabam: o
+    // `onSuccess` (PUBLISHED) só dispara se todas as redes deram certo, e
+    // qualquer falha cai no `onFailure` (ERROR).
+    const uploads = socialsToPost.map((social) => {
+      switch (social.provider) {
         case "YOUTUBE":
-          await tasks.trigger<typeof uploadPostToYoutubeTask>(
-            "upload-post-to-youtube",
-            {
+          return {
+            id: "upload-post-to-youtube" as const,
+            payload: {
               title: newPostTitle,
               description: postDescription,
               tags,
               videoUrl: fileUrl,
               postId,
             },
-          );
-          break;
+          };
 
         case "INSTAGRAM":
-          await tasks.trigger<typeof uploadPostToInstagramTask>(
-            "upload-post-to-instagram",
-            {
+          return {
+            id: "upload-post-to-instagram" as const,
+            payload: {
               title: newPostTitle,
               fileUrl,
               fileSizeInBytes: size,
               postId,
             },
-          );
-          break;
+          };
 
         case "TIKTOK":
-          await tasks.trigger<typeof uploadPostToTiktokTask>(
-            "upload-post-to-tiktok",
-            {
+          return {
+            id: "upload-post-to-tiktok" as const,
+            payload: {
               title: newPostTitle,
               fileSizeInBytes: size,
               fileUrl,
               postId,
               channelId,
             },
-          );
-          break;
+          };
       }
+    });
+
+    const uploadsResult = await batch.triggerAndWait<
+      | typeof uploadPostToYoutubeTask
+      | typeof uploadPostToInstagramTask
+      | typeof uploadPostToTiktokTask
+    >(uploads);
+
+    const failedUploads = uploadsResult.runs
+      .filter((run) => !run.ok)
+      .map((run) => run.taskIdentifier);
+
+    if (failedUploads.length > 0) {
+      failStep(failedUploads.join(", "));
     }
   },
 });
