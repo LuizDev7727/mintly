@@ -18,7 +18,15 @@ beforeAll(async () => {
   ({ channelId: channelOfAnotherOrg } = await makeFakeChannel(anotherOrgSlug));
 });
 
-function makePost(name: string, scheduledTo: string | null = null) {
+type Provider = "YOUTUBE" | "TIKTOK" | "INSTAGRAM";
+
+function makePost(
+  name: string,
+  scheduledTo: string | null = null,
+  options: { type?: string; providers?: Provider[] } = {},
+) {
+  const { type = "video/mp4", providers = ["YOUTUBE"] } = options;
+
   // Chaves de upload têm o prefixo do usuário que enviou o arquivo.
   const key = `${testUser.id}/${name}`;
 
@@ -26,16 +34,19 @@ function makePost(name: string, scheduledTo: string | null = null) {
     file: {
       name: `${name}.mp4`,
       key,
-      type: "video/mp4",
+      type,
       size: 1024,
       duration: 10,
     },
     shouldGenerateThumbnail: false,
     shouldGenerateShorts: false,
     scheduledTo,
-    socialsToPost: [
-      { id: "social-id", name: "Channel", provider: "YOUTUBE", avatarUrl: null },
-    ],
+    socialsToPost: providers.map((provider) => ({
+      id: `social-${provider}`,
+      name: "Channel",
+      provider,
+      avatarUrl: null,
+    })),
   };
 }
 
@@ -94,5 +105,63 @@ describe("POST [/api/organizations/:slug/channels/:channelId/posts]", () => {
 
     expect(response.status).toEqual(400);
     expect(await postsOf(channelId)).toHaveLength(0);
+  });
+
+  test("should create a post for a JPEG image published on Instagram and trigger the task with its type", async () => {
+    const { channelId } = await makeFakeChannel(testOrgSlug);
+    vi.mocked(tasks.trigger).mockClear();
+
+    const response = await createPosts(channelId, [
+      makePost("sunset", null, { type: "image/jpeg", providers: ["INSTAGRAM"] }),
+    ]);
+
+    expect(response.status).toEqual(201);
+    expect(await postsOf(channelId)).toHaveLength(1);
+
+    const [, payload] = vi.mocked(tasks.trigger).mock.calls[0];
+    expect((payload as { post: object }).post).toMatchObject({
+      mimeType: "image/jpeg",
+      title: "sunset.mp4",
+    });
+  });
+
+  test.each([
+    ["YOUTUBE", ["YOUTUBE"]],
+    ["TIKTOK", ["TIKTOK"]],
+    ["YOUTUBE and INSTAGRAM", ["YOUTUBE", "INSTAGRAM"]],
+  ] as [string, Provider[]][])(
+    "should return 400 and create no post for an image published on %s",
+    async (_, providers) => {
+      const { channelId } = await makeFakeChannel(testOrgSlug);
+
+      const response = await createPosts(channelId, [
+        makePost("photo", null, { type: "image/png", providers }),
+      ]);
+
+      expect(response.status).toEqual(400);
+      expect(await postsOf(channelId)).toHaveLength(0);
+    },
+  );
+
+  test.each(["image/gif", "application/pdf", "video/quicktime"])(
+    "should return 400 and create no post for the unsupported type %s",
+    async (type) => {
+      const { channelId } = await makeFakeChannel(testOrgSlug);
+
+      const response = await createPosts(channelId, [
+        makePost("file", null, { type, providers: ["INSTAGRAM"] }),
+      ]);
+
+      expect(response.status).toEqual(400);
+      expect(await postsOf(channelId)).toHaveLength(0);
+    },
+  );
+
+  test("should still accept an MP4 video on YouTube", async () => {
+    const { channelId } = await makeFakeChannel(testOrgSlug);
+
+    const response = await createPosts(channelId, [makePost("clip")]);
+
+    expect(response.status).toEqual(201);
   });
 });

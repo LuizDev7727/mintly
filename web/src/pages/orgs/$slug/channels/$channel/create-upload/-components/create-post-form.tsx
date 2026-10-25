@@ -48,6 +48,11 @@ import {
   summarizeUploadBatch,
   type UploadOutcome,
 } from "./upload-batch";
+import {
+  POST_FILE_ACCEPT,
+  isImageFile,
+  isSupportedPostFile,
+} from "./post-file-types";
 import { getFirstErrorMessage } from "./get-first-error-message";
 
 export type UploadStatus =
@@ -120,7 +125,18 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
       return;
     }
 
-    for (const file of Array.from(files)) {
+    // O `accept` do input só vale para o seletor de arquivos: arrastar e soltar
+    // aceita qualquer arquivo, e a API recusaria o tipo depois do upload.
+    const supportedFiles = Array.from(files).filter(isSupportedPostFile);
+    const skippedCount = files.length - supportedFiles.length;
+
+    if (skippedCount > 0) {
+      toast.error(
+        `${skippedCount} ${skippedCount === 1 ? "file was" : "files were"} skipped: only MP4, JPG, PNG and WebP are supported.`,
+      );
+    }
+
+    for (const file of supportedFiles) {
 
       const duration = file.type === "video/mp4" ? await getVideoDuration(file) : null;
 
@@ -329,7 +345,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
         multiple
         className="sr-only"
         onChange={handleSelectedVideos}
-        accept=".mp4,video/mp4,.png,.jpg,.jpeg"
+        accept={POST_FILE_ACCEPT}
       />
 
       <label
@@ -349,7 +365,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
             Drag & Drop your files
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            or click to browse — MP4, PNG, JPG, JPEG
+            or click to browse — MP4, JPG, PNG, WebP
           </p>
         </div>
       </label>
@@ -423,6 +439,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
           );
           const socialsToPost = watch(`posts.${postIndex}.socialsToPost`);
           const isVideo = post.file.type === "video/mp4";
+          const isImage = isImageFile(post.file);
 
           const hasSelectedScheduledDate = !!watch(`posts.${postIndex}.scheduledTo`);
 
@@ -574,19 +591,33 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                     <h4 className="text-sm font-semibold text-foreground">
                       Share to social media
                     </h4>
+                    {isImage && (
+                      <p className="max-w-56 text-xs text-muted-foreground">
+                        Images can only be published on Instagram
+                        {integrations.some(
+                          (integration) => integration.provider === "INSTAGRAM",
+                        )
+                          ? "."
+                          : ", and this channel has no Instagram account connected."}
+                      </p>
+                    )}
                     {integrations.map((integration) => {
                       const isSelected = socialsToPost.some(
                         (s) => s.id === integration.id,
                       );
+                      // O Instagram é a única rede que publica imagem.
+                      const isUnavailableForFile =
+                        isImage && integration.provider !== "INSTAGRAM";
                       return (
                         <button
                           key={integration.id}
                           type="button"
+                          disabled={isUnavailableForFile}
                           onClick={() =>
                             handleToggleIntegration(postIndex, integration)
                           }
                           data-selected={isSelected}
-                          className="flex items-center border-border data-[selected=true]:border-primary cursor-pointer gap-2 rounded-md border bg-background px-3 py-2 text-sm transition-colors hover:bg-accent/50"
+                          className="flex items-center border-border data-[selected=true]:border-primary cursor-pointer gap-2 rounded-md border bg-background px-3 py-2 text-sm transition-colors hover:bg-accent/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-background"
                         >
                           {integration.provider === "YOUTUBE" && (
                             <YoutubeIcon />

@@ -27,12 +27,14 @@ export const uploadPostToInstagramTask = schemaTask({
     fileSizeInBytes: z.number(),
     integrationId: z.string(),
     channelId: z.string(),
+    // Uma imagem é publicada com `image_url`; um vídeo, como Reels.
+    mediaType: z.enum(["VIDEO", "IMAGE"]),
   }),
 
   // Set an optional maxDuration to prevent tasks from running indefinitely
   maxDuration: 300, // Stop executing after 300 secs (5 mins) of compute
   run: async (payload, _) => {
-    const { fileUrl, title } = payload;
+    const { fileUrl, title, mediaType } = payload;
 
     // The Instagram Business Account id is stored in `email` — connect-instagram.ts
     // repurposes that column for the IG user id instead of a real email address.
@@ -47,8 +49,13 @@ export const uploadPostToInstagramTask = schemaTask({
     const createContainerUrl = new URL(
       `https://graph.instagram.com/${instagramUserId}/media`,
     );
-    createContainerUrl.searchParams.set("media_type", "REELS");
-    createContainerUrl.searchParams.set("video_url", fileUrl);
+    if (mediaType === "IMAGE") {
+      // A API do Instagram só aceita JPEG; a task `process-post` converte antes.
+      createContainerUrl.searchParams.set("image_url", fileUrl);
+    } else {
+      createContainerUrl.searchParams.set("media_type", "REELS");
+      createContainerUrl.searchParams.set("video_url", fileUrl);
+    }
     createContainerUrl.searchParams.set("caption", title);
     createContainerUrl.searchParams.set("access_token", accessToken);
 
