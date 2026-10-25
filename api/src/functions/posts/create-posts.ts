@@ -3,7 +3,6 @@ import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { socialsToPostTable } from "@/infra/db/tables/socials-to-post.table.ts";
 import { createPostTask } from "@/infra/trigger/create-post.task.ts";
 import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
-import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { tasks } from "@trigger.dev/sdk";
 
 type CreatePostsParams = {
@@ -28,8 +27,6 @@ type CreatePostsParams = {
   ownerId: string
   channelId: string
 };
-
-const SIGNED_URL_SCHEDULE_BUFFER_IN_SECONDS = 60 * 60 * 2; // 2 hours
 
 export async function createPosts(params:CreatePostsParams) {
   const { posts, ownerId, channelId } = params;
@@ -65,20 +62,15 @@ export async function createPosts(params:CreatePostsParams) {
       });
     }
 
-    const expiresIn = scheduledToDate
-      ? Math.floor((scheduledToDate.getTime() - Date.now()) / 1000) +
-        SIGNED_URL_SCHEDULE_BUFFER_IN_SECONDS
-      : undefined;
-
-    const fileUrl = await generateSignedUrl({ key: file.key, expiresIn })
-
     await tasks.trigger<typeof createPostTask>("process-post", {
       post: {
         scheduledTo,
         shouldGenerateShorts,
         shouldGenerateThumbnail,
         socialsToPost: socialsToPost,
-        fileUrl,
+        // O link assinado é gerado pela própria task, depois da espera do
+        // agendamento: um link criado agora não pode valer por mais de 7 dias.
+        fileKey: file.key,
         size: file.size,
         duration,
       },
