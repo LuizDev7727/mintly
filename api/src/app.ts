@@ -15,6 +15,7 @@ import scalarAPIReference from "@scalar/fastify-api-reference";
 import { env } from "./env.ts";
 import { getInfisicalSecret } from "./utils/infisical/get-infisical-secret.ts";
 import { errorHandler } from "./infra/http/routes/error-handler.ts";
+import { protectChannelRoutes } from "./infra/http/middleware/check-channel.ts";
 import { getHealthRoute } from "./infra/http/routes/internal/health/get-health.route.ts";
 import { authRoute } from "./infra/http/routes/internal/auth/auth.route.ts";
 import { getChannelsRoute } from "./infra/http/routes/internal/channel/get-channels.route.ts";
@@ -98,6 +99,10 @@ export const server = fastify({
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 server.setErrorHandler(errorHandler);
+
+// Precisa vir antes de qualquer `server.register(rota)`: o hook só enxerga rotas
+// registradas depois dele.
+server.addHook("onRoute", protectChannelRoutes);
 
 if (env.NODE_ENV === "development") {
   server.register(fastifySwagger, {
