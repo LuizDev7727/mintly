@@ -18,10 +18,13 @@ beforeAll(async () => {
   ({ channelId: channelOfAnotherOrg } = await makeFakeChannel(anotherOrgSlug));
 });
 
-function makePost(key: string, scheduledTo: string | null = null) {
+function makePost(name: string, scheduledTo: string | null = null) {
+  // Chaves de upload têm o prefixo do usuário que enviou o arquivo.
+  const key = `${testUser.id}/${name}`;
+
   return {
     file: {
-      name: `${key}.mp4`,
+      name: `${name}.mp4`,
       key,
       type: "video/mp4",
       size: 1024,
@@ -76,7 +79,7 @@ describe("POST [/api/organizations/:slug/channels/:channelId/posts]", () => {
     expect(taskId).toEqual("process-post");
     expect(payload).toMatchObject({
       channelId,
-      post: { fileKey: "file-key", scheduledTo },
+      post: { fileKey: `${testUser.id}/file-key`, scheduledTo },
     });
     expect((payload as { post: object }).post).not.toHaveProperty("fileUrl");
   });

@@ -3,6 +3,7 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 
 export const presignUploadRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -40,11 +41,16 @@ export const presignUploadRoute: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { file, resume } = request.body;
+      const { id: userId } = request.user;
 
       const span = tracer.startSpan("presignUpload");
       span.setAttribute("file.name", file.name);
 
-      const result = await generateUploadSignedUrls({ file, resume });
+      if (resume) {
+        assertKeyOwnedByUser({ key: resume.key, userId });
+      }
+
+      const result = await generateUploadSignedUrls({ userId, file, resume });
 
       span.end();
 
