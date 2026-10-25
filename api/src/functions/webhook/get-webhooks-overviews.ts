@@ -26,7 +26,6 @@ type RecentDelivery = {
   status: WebhookLogStatus
   method: string
   pathname: string
-  ip: string
   statusCode: number
   contentType: string | null
   contentLength: number | null
@@ -173,7 +172,6 @@ export async function getWebhooksOverviews(
           status: webhookLogsTable.status,
           method: webhookLogsTable.method,
           pathname: webhookLogsTable.pathname,
-          ip: webhookLogsTable.ip,
           statusCode: webhookLogsTable.statusCode,
           contentType: webhookLogsTable.contentType,
           contentLength: webhookLogsTable.contentLength,
@@ -271,7 +269,6 @@ export async function getWebhooksOverviews(
       status: delivery.status,
       method: delivery.method,
       pathname: delivery.pathname,
-      ip: delivery.ip,
       statusCode: delivery.statusCode,
       contentType: delivery.contentType,
       contentLength: delivery.contentLength,

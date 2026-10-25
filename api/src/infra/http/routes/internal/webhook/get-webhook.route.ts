@@ -14,7 +14,6 @@ const webhookLogSchema = z.object({
   status: webhookLogStatusSchema,
   method: z.string(),
   pathname: z.string(),
-  ip: z.string(),
   statusCode: z.number(),
   contentType: z.string().nullable(),
   contentLength: z.number().nullable(),

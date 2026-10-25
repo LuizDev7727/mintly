@@ -52,9 +52,9 @@ export async function handleWebhookEvent({
 
     await db.insert(webhookLogsTable).values({
       id: webhookLogId,
-      ip: "asdasdasdasdasd",
       method: "POST",
-      pathname: "",
+      // Só o caminho da URL de destino; o host e a query ficam em `url`.
+      pathname: new URL(deliverTo).pathname,
       webhookId,
       status: 'PENDING',
       statusCode: 200,
