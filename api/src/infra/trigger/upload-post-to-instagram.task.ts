@@ -1,8 +1,6 @@
 import { logger, schemaTask } from "@trigger.dev/sdk";
 import { z } from "zod";
-import { db } from "@/infra/db/client.ts";
-import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
-import { eq } from "drizzle-orm";
+import { getIntegrationForUpload } from "@/functions/integration/get-integration-for-upload.ts";
 
 const InstagramMediaContainerSchema = z.object({
   id: z.string(),
@@ -27,6 +25,8 @@ export const uploadPostToInstagramTask = schemaTask({
     title: z.string(),
     postId: z.uuidv7(),
     fileSizeInBytes: z.number(),
+    integrationId: z.string(),
+    channelId: z.string(),
   }),
 
   // Set an optional maxDuration to prevent tasks from running indefinitely
@@ -36,13 +36,11 @@ export const uploadPostToInstagramTask = schemaTask({
 
     // The Instagram Business Account id is stored in `email` — connect-instagram.ts
     // repurposes that column for the IG user id instead of a real email address.
-    const [{ accessToken, email: instagramUserId }] = await db
-      .select({
-        accessToken: integrationsTable.accessToken,
-        email: integrationsTable.email,
-      })
-      .from(integrationsTable)
-      .where(eq(integrationsTable.provider, "INSTAGRAM"));
+    const { accessToken, email: instagramUserId } = await getIntegrationForUpload({
+      integrationId: payload.integrationId,
+      channelId: payload.channelId,
+      provider: "INSTAGRAM",
+    });
 
     logger.log("Creating Instagram media container", { instagramUserId });
 
