@@ -3,6 +3,7 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { createActivity } from "@/utils/create-activity.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { isImageMimeType, POST_MIME_TYPES } from "@/utils/media-type.ts";
 import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
@@ -38,7 +39,7 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
                 file: z.object({
                   name: z.string(),
                   key: z.string(),
-                  type: z.string(),
+                  type: z.enum(POST_MIME_TYPES),
                   size: z.number(),
                   duration: z.number().nullable(),
                 }),
@@ -57,7 +58,16 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
                   .min(1, {
                     error: "Post needs at least one integration selected",
                   }),
-              }),
+              })
+              .refine(
+                (post) =>
+                  !isImageMimeType(post.file.type) ||
+                  post.socialsToPost.every((social) => social.provider === "INSTAGRAM"),
+                {
+                  error: "Images can only be published on Instagram",
+                  path: ["socialsToPost"],
+                },
+              ),
             )
             .min(1),
         }),

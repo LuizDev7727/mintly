@@ -15,6 +15,12 @@ import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { eq } from "drizzle-orm";
 import { generateThubmnailTask } from "./generate-thumbnail.task.ts";
+import { convertImageToJpegTask } from "./convert-image-to-jpeg.task.ts";
+import {
+  getCaptionFromFileName,
+  isImageMimeType,
+  needsJpegConversion,
+} from "@/utils/media-type.ts";
 import { db } from "@/infra/db/client.ts";
 import { uploadPostToYoutubeTask } from "./upload-post-to-youtube.task.ts";
 import { uploadPostToTiktokTask } from "./upload-post-to-tiktok.task.ts";
@@ -31,10 +37,142 @@ function failStep(step: string): never {
   throw new AbortTaskRunError(`Step "${step}" failed`);
 }
 
+type PreparedPost = {
+  title: string;
+  description: string;
+  tags: string[];
+  // Arquivo que as redes recebem (pode ser diferente do enviado pelo usuário).
+  publishUrl: string;
+};
+
+// Vídeo: converte o áudio, transcreve, gera título/descrição/tags e, se pedido,
+// a thumbnail.
+async function prepareVideo(params: {
+  fileUrl: string;
+  postId: string;
+  duration: number;
+  shouldGenerateThumbnail: boolean;
+}): Promise<PreparedPost> {
+  const { fileUrl, postId, duration, shouldGenerateThumbnail } = params;
+
+  metadata.set("status", "ENCODING");
+
+  const convertVideoToMp3TaskResponse = await tasks.triggerAndWait<
+    typeof convertVideoToMp3Task
+  >("convert-video-to-mp3", {
+    videoUrl: fileUrl,
+    basePathToSaveOnR2: "posthub/posts",
+    type: "post",
+    postId,
+    duration,
+  });
+
+  if (!convertVideoToMp3TaskResponse.ok) {
+    failStep("convert-video-to-mp3");
+  }
+
+  const { audioUrl } = convertVideoToMp3TaskResponse.output;
+
+  metadata.set("status", "TRANSCRIBING");
+
+  const transcribeAudioTaskResponse = await tasks.triggerAndWait<
+    typeof transcribeAudioTask
+  >("transcribe-audio", {
+    audioUrl,
+    postId,
+    type: "post",
+  });
+
+  if (!transcribeAudioTaskResponse.ok) {
+    failStep("transcribe-audio");
+  }
+
+  const { transcription } = transcribeAudioTaskResponse.output;
+
+  logger.log("Transcription: ", { transcription });
+
+  metadata.set("status", "SEO_GENERATING");
+
+  const seoEnrichmentResponse = await tasks.triggerAndWait<
+    typeof seoEnrichmentTask
+  >("seo-enrichment", {
+    postId,
+    transcription,
+  });
+
+  if (!seoEnrichmentResponse.ok) {
+    failStep("seo-enrichment");
+  }
+
+  const {
+    title: newPostTitle,
+    description: postDescription,
+    tags,
+  } = seoEnrichmentResponse.output;
+
+  if (shouldGenerateThumbnail) {
+    metadata.set("status", "GENERATING_THUMBNAIL");
+    await tasks.trigger<typeof generateThubmnailTask>("generate-thumbnail", {
+      postId,
+      videoUrl: fileUrl,
+      postDescription,
+    });
+  }
+
+  return {
+    title: newPostTitle,
+    description: postDescription,
+    tags,
+    publishUrl: fileUrl,
+  };
+}
+
+// Imagem: não há áudio para converter nem transcrever, então não há SEO. A
+// legenda é o nome do arquivo. O Instagram só aceita JPEG, então PNG e WebP são
+// convertidos antes.
+async function prepareImage(params: {
+  fileUrl: string;
+  postId: string;
+  mimeType: string;
+  title: string;
+}): Promise<PreparedPost> {
+  const { fileUrl, postId, mimeType, title } = params;
+
+  let publishUrl = fileUrl;
+
+  if (needsJpegConversion(mimeType)) {
+    metadata.set("status", "ENCODING");
+    await db
+      .update(postsTable)
+      .set({ status: "ENCODING" })
+      .where(eq(postsTable.id, postId));
+
+    const conversion = await tasks.triggerAndWait<typeof convertImageToJpegTask>(
+      "convert-image-to-jpeg",
+      { imageUrl: fileUrl, postId },
+    );
+
+    if (!conversion.ok) {
+      failStep("convert-image-to-jpeg");
+    }
+
+    publishUrl = conversion.output.jpegUrl;
+  }
+
+  return {
+    title: getCaptionFromFileName(title),
+    description: "",
+    tags: [],
+    publishUrl,
+  };
+}
+
 export const createPostTask = schemaTask({
   id: "process-post",
   schema: z.object({
     post: z.object({
+      title: z.string(),
+      mimeType: z.string(),
       fileKey: z.string(),
       size: z.number(),
       duration: z.number(),
@@ -128,6 +266,8 @@ export const createPostTask = schemaTask({
     const { post, postId, channelId } = payload;
 
     const {
+      title,
+      mimeType,
       shouldGenerateShorts,
       shouldGenerateThumbnail,
       socialsToPost,
@@ -145,69 +285,18 @@ export const createPostTask = schemaTask({
     logger.log("Sould generate thumbnail: ", { shouldGenerateThumbnail });
     logger.log("Sould generate shorts: ", { shouldGenerateShorts });
 
-    metadata.set("status", "ENCODING");
+    const isImage = isImageMimeType(mimeType);
 
-    const convertVideoToMp3TaskResponse = await tasks.triggerAndWait<
-      typeof convertVideoToMp3Task
-    >("convert-video-to-mp3", {
-      videoUrl: fileUrl,
-      basePathToSaveOnR2: "posthub/posts",
-      type: "post",
-      postId,
-      duration,
-    });
-
-    if (!convertVideoToMp3TaskResponse.ok) {
-      failStep("convert-video-to-mp3");
+    if (isImage && socialsToPost.some((social) => social.provider !== "INSTAGRAM")) {
+      // A API já recusa essa combinação; aqui é só a última barreira.
+      failStep("images can only be published on Instagram");
     }
 
-    const { audioUrl } = convertVideoToMp3TaskResponse.output;
+    const prepared = isImage
+      ? await prepareImage({ fileUrl, postId, mimeType, title })
+      : await prepareVideo({ fileUrl, postId, duration, shouldGenerateThumbnail });
 
-    metadata.set("status", "TRANSCRIBING");
-
-    const transcribeAudioTaskResponse = await tasks.triggerAndWait<
-      typeof transcribeAudioTask
-    >("transcribe-audio", {
-      audioUrl,
-      postId,
-      type: "post",
-    });
-
-    if (!transcribeAudioTaskResponse.ok) {
-      failStep("transcribe-audio");
-    }
-
-    const { transcription } = transcribeAudioTaskResponse.output;
-
-    logger.log("Transcription: ", { transcription });
-
-    metadata.set("status", "SEO_GENERATING");
-
-    const seoEnrichmentResponse = await tasks.triggerAndWait<
-      typeof seoEnrichmentTask
-    >("seo-enrichment", {
-      postId,
-      transcription,
-    });
-
-    if (!seoEnrichmentResponse.ok) {
-      failStep("seo-enrichment");
-    }
-
-    const {
-      title: newPostTitle,
-      description: postDescription,
-      tags,
-    } = seoEnrichmentResponse.output;
-
-    if (shouldGenerateThumbnail) {
-      metadata.set("status", "GENERATING_THUMBNAIL");
-      await tasks.trigger<typeof generateThubmnailTask>("generate-thumbnail", {
-        postId,
-        videoUrl: fileUrl,
-        postDescription,
-      });
-    }
+    const { title: publishTitle, description, tags, publishUrl } = prepared;
 
     metadata.set("status", "PUBLISHING");
     await db
@@ -224,10 +313,10 @@ export const createPostTask = schemaTask({
           return {
             id: "upload-post-to-youtube" as const,
             payload: {
-              title: newPostTitle,
-              description: postDescription,
+              title: publishTitle,
+              description,
               tags,
-              videoUrl: fileUrl,
+              videoUrl: publishUrl,
               postId,
               integrationId: social.id,
               channelId,
@@ -238,12 +327,13 @@ export const createPostTask = schemaTask({
           return {
             id: "upload-post-to-instagram" as const,
             payload: {
-              title: newPostTitle,
-              fileUrl,
+              title: publishTitle,
+              fileUrl: publishUrl,
               fileSizeInBytes: size,
               postId,
               integrationId: social.id,
               channelId,
+              mediaType: isImage ? ("IMAGE" as const) : ("VIDEO" as const),
             },
           };
 
@@ -251,9 +341,9 @@ export const createPostTask = schemaTask({
           return {
             id: "upload-post-to-tiktok" as const,
             payload: {
-              title: newPostTitle,
+              title: publishTitle,
               fileSizeInBytes: size,
-              fileUrl,
+              fileUrl: publishUrl,
               postId,
               channelId,
             },

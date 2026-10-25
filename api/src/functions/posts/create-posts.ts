@@ -64,6 +64,8 @@ export async function createPosts(params:CreatePostsParams) {
 
     await tasks.trigger<typeof createPostTask>("process-post", {
       post: {
+        title: file.name,
+        mimeType: file.type,
         scheduledTo,
         shouldGenerateShorts,
         shouldGenerateThumbnail,
