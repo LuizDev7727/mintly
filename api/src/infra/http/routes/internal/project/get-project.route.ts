@@ -30,7 +30,7 @@ export const getProjectRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { slug, projectId } = request.params;
+      const { slug, channelId, projectId } = request.params;
       const { id: userId } = request.user;
 
       const span = tracer.startSpan("get-project");
@@ -38,7 +38,7 @@ export const getProjectRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      const project = await getProject({ projectId });
+      const project = await getProject({ channelId, projectId });
 
       span.end();
 

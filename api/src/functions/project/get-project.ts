@@ -2,10 +2,11 @@ import { db } from "@/infra/db/client.ts";
 import { bestMomentsTable } from "@/infra/db/tables/best-moments.table.ts";
 import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
-import { count, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "../../errors/resource-not-found.error.ts";
 
 type GetProjectParams = {
+  channelId: string;
   projectId: string;
 };
 
@@ -20,7 +21,7 @@ type GetProjectResponse = {
 export async function getProject(
   params: GetProjectParams,
 ): Promise<GetProjectResponse> {
-  const { projectId } = params;
+  const { channelId, projectId } = params;
 
   const [project] = await db
     .select({
@@ -36,7 +37,7 @@ export async function getProject(
       eq(bestMomentsTable.projectId, projectsTable.id),
     )
     .innerJoin(usersTable, eq(projectsTable.ownerId, usersTable.id))
-    .where(eq(projectsTable.id, projectId))
+    .where(and(eq(projectsTable.id, projectId), eq(projectsTable.channelId, channelId)))
     .groupBy(projectsTable.id, usersTable.name);
 
   if (!project) {
