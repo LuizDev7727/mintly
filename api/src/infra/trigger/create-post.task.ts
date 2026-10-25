@@ -229,6 +229,8 @@ export const createPostTask = schemaTask({
               tags,
               videoUrl: fileUrl,
               postId,
+              integrationId: social.id,
+              channelId,
             },
           };
 
@@ -240,6 +242,8 @@ export const createPostTask = schemaTask({
               fileUrl,
               fileSizeInBytes: size,
               postId,
+              integrationId: social.id,
+              channelId,
             },
           };
 

@@ -88,6 +88,8 @@ export async function sendBestMomentToSocialMedia(params: SendBestMomentToSocial
           description: "",
           tags: [],
           postId: post.id,
+          integrationId: integration.id,
+          channelId,
         });
 
         break;
