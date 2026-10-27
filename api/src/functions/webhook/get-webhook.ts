@@ -5,10 +5,11 @@ import {
   webhooksTable,
   type WebhookEventTrigger,
 } from "@/infra/db/tables/webhooks.table.ts"
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 
 type GetWebhookParams = {
   webhookId: string
+  organizationSlug: string
 }
 
 type WebhookLogStatus = "PENDING" | "SUCCESS" | "FAILED"
@@ -43,13 +44,16 @@ type GetWebhookResponse = {
 export async function getWebhook(
   params: GetWebhookParams,
 ): Promise<GetWebhookResponse> {
-  const { webhookId } = params
+  const { webhookId, organizationSlug } = params
 
   const [webhook] = await db
     .select()
     .from(webhooksTable)
     .where(
-      eq(webhooksTable.id, webhookId)
+      and(
+        eq(webhooksTable.id, webhookId),
+        eq(webhooksTable.organizationSlug, organizationSlug),
+      ),
     )
 
   if (!webhook) {

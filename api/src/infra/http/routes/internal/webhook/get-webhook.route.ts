@@ -60,7 +60,7 @@ export const getWebhookRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      const webhook = await getWebhook({ webhookId });
+      const webhook = await getWebhook({ webhookId, organizationSlug: slug });
 
       span.setAttribute("logs-count", webhook.logs.length);
       span.end();
