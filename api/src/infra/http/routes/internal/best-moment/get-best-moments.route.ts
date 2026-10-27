@@ -7,7 +7,7 @@ import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const getBestMomentsRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
-    "/api/organizations/:slug/channels/:id/projects/:projectId/best-moments",
+    "/api/organizations/:slug/channels/:channelId/projects/:projectId/best-moments",
     {
       preHandler: [
         checkUserSession,
@@ -15,7 +15,7 @@ export const getBestMomentsRoute: FastifyPluginAsyncZod = async (app) => {
       schema: {
         params: z.object({
           slug: z.string(),
-          id: z.uuidv7(),
+          channelId: z.uuidv7(),
           projectId: z.string(),
         }),
         querystring: z.object({
@@ -37,7 +37,7 @@ export const getBestMomentsRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { slug, projectId } = request.params;
+      const { slug, channelId, projectId } = request.params;
       const { cursor } = request.query;
       const { id: userId } = request.user;
 
@@ -51,6 +51,7 @@ export const getBestMomentsRoute: FastifyPluginAsyncZod = async (app) => {
 
       const { bestMoments, nextCursor } = await getBestMoments({
         projectId,
+        channelId,
         cursor,
       });
 
