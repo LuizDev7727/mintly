@@ -4,6 +4,7 @@ import { socialsToPostTable } from "@/infra/db/tables/socials-to-post.table.ts";
 import { createPostTask } from "@/infra/trigger/create-post.task.ts";
 import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
 import { tasks } from "@trigger.dev/sdk";
+import { eq } from "drizzle-orm";
 
 type CreatePostsParams = {
   posts: {
@@ -30,11 +31,14 @@ type CreatePostsParams = {
 
 export async function createPosts(params:CreatePostsParams) {
   const { posts, ownerId, channelId } = params;
+
+  // Confere todos os arquivos antes de gravar qualquer coisa: se um deles não
+  // existe, o lote falha sem ter criado nenhum post.
+  await Promise.all(posts.map(({ file }) => checkFileExists({ key: file.key })));
+
   for (const post of posts) {
 
     const { file, shouldGenerateThumbnail, shouldGenerateShorts, scheduledTo, socialsToPost } = post;
-
-    await checkFileExists({ key: file.key });
 
     const scheduledToDate = scheduledTo ? new Date(scheduledTo) : null;
 
@@ -52,15 +56,14 @@ export async function createPosts(params:CreatePostsParams) {
       ownerId,
     }).returning({ postInsertedId: postsTable.id })
 
-    for(let i = 0; i < socialsToPost.length; i++) {
-      const social = socialsToPost[i];
-      await db.insert(socialsToPostTable).values({
+    await db.insert(socialsToPostTable).values(
+      socialsToPost.map((social) => ({
         postId: postInsertedId,
         social: social.provider,
         socialName: social.name,
         avatarUrl: social.avatarUrl,
-      });
-    }
+      })),
+    );
 
     await tasks.trigger<typeof createPostTask>("process-post", {
       post: {
@@ -78,6 +81,15 @@ export async function createPosts(params:CreatePostsParams) {
       },
       postId: postInsertedId,
       channelId,
+    }).catch(async (error) => {
+      // Sem run, nada vai processar este post: ele aparece como falho em vez de
+      // ficar para sempre em PROCESSING ou SCHEDULED.
+      await db
+        .update(postsTable)
+        .set({ status: "ERROR" })
+        .where(eq(postsTable.id, postInsertedId));
+
+      throw error;
     });
   }
 }
