@@ -12,7 +12,6 @@ export type WebhookLog = {
   status: WebhookLogStatus;
   method: string;
   pathname: string;
-  ip: string;
   statusCode: number;
   contentType: string | null;
   contentLength: number | null;

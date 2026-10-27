@@ -54,7 +54,6 @@ export function createMockWebhookLogs(now = Date.now()): WebhookLog[] {
         status,
         method: "POST",
         pathname,
-        ip: "203.0.113.10",
         statusCode: failed ? 504 : status === "SUCCESS" ? 200 : 0,
         contentType: "application/json",
         contentLength: 512,

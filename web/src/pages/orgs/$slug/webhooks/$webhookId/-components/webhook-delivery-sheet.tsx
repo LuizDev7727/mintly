@@ -99,7 +99,6 @@ function DeliveryDetails({ log }: { log: WebhookLog }) {
     },
     { key: "method", value: log.method },
     { key: "url", value: log.url },
-    { key: "ip", value: log.ip },
     { key: "content-type", value: log.contentType ?? "—" },
     {
       key: "content-length",
