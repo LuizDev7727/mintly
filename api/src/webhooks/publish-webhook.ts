@@ -1,8 +1,7 @@
 import { WebhookEvent } from "./webhook-event.ts"
 import { getOrganizationWebhooksForTrigger } from "./get-organization-webhooks-for-trigger.ts"
 import { env } from "@/env.ts"
-import { qstash } from "@/lib/qstash.ts"
-import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts"
+import { qstash, qstashTopicUrl } from "@/lib/qstash.ts"
 import { WebhookPublishError } from "@/errors/webhook-publish.error.ts"
 
 export type PublishWebhookEventsParams = Parameters<typeof publishWebhookEvents>
@@ -38,8 +37,6 @@ export async function publishWebhookEvents<T extends WebhookEvent['trigger']>({
     return
   }
 
-  const topic = await getInfisicalSecret({ secretName: "QSTASH_TOPIC_URL" })
-
   // Uma lista plana de envios. O `allSettled` espera todos terminarem, mesmo
   // quando algum falha, e nunca rejeita: assim nenhuma rejeição fica solta e
   // os envios que deram certo não são interrompidos pelos que falharam.
@@ -47,7 +44,7 @@ export async function publishWebhookEvents<T extends WebhookEvent['trigger']>({
     organizationWebhooksForTrigger.flatMap((webhook) =>
       events.map((payload) =>
         qstash.publishJSON({
-          topic,
+          topic: qstashTopicUrl,
           contentBasedDeduplication: true,
           body: {
             deliverTo: webhook.url,
