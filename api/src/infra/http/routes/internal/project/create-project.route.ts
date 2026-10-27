@@ -3,6 +3,7 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { createActivity } from "@/utils/create-activity.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
 import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
@@ -63,6 +64,12 @@ export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
             ? `Created project ${files[0].name}`
             : `Created ${files.length} projects`,
         orgSlug: slug,
+      });
+
+      await publishWebhookEvents({
+        orgSlug: slug,
+        trigger: "project.created",
+        events: [{ message: "Project(s) created successfully." }],
       });
 
       span.end();
