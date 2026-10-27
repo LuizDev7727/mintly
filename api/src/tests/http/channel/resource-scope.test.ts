@@ -210,6 +210,15 @@ describe("recursos de outro canal respondem 404", () => {
     expect(response.status).toEqual(404);
   });
 
+  test("GET [/projects/:projectId/best-moments] should not return the clips of a project of another organization", async () => {
+    const response = await request(server.server)
+      .get(`${base()}/${ownChannelId}/projects/${foreignProjectId}/best-moments`)
+      .set(authHeaders);
+
+    expect(response.status).toEqual(404);
+    expect(JSON.stringify(response.body)).not.toContain("foreign-clip-key");
+  });
+
   test("POST [/best-moments/:id/send] should not publish a clip of another organization", async () => {
     const ownIntegrationId = await makeIntegration(ownChannelId);
 
@@ -230,6 +239,24 @@ describe("recursos de outro canal respondem 404", () => {
 });
 
 describe("recursos do próprio canal continuam funcionando", () => {
+  test("GET [/projects/:projectId/best-moments] should return the clips of a project of the channel", async () => {
+    const { projectId } = await makeFakeProject(ownChannelId, testUser.id);
+
+    const [{ id: bestMomentId }] = await db
+      .insert(bestMomentsTable)
+      .values({ title: "own clip", storageKey: "own-clip-key", projectId })
+      .returning({ id: bestMomentsTable.id });
+
+    const response = await request(server.server)
+      .get(`${base()}/${ownChannelId}/projects/${projectId}/best-moments`)
+      .set(authHeaders);
+
+    expect(response.status).toEqual(200);
+    expect(response.body.bestMoments).toHaveLength(1);
+    expect(response.body.bestMoments[0]).toMatchObject({ id: bestMomentId, title: "own clip" });
+    expect(response.body.nextCursor).toBeNull();
+  });
+
   test("PUT [/posts/:postId/cancel] should cancel the run stored in the post and ignore a runId sent by the client", async () => {
     const postId = await makePost(ownChannelId, "run_own_post");
 
