@@ -5,6 +5,8 @@ import { tasks } from "@trigger.dev/sdk";
 import { server } from "@/app.ts";
 import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
+import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
+import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
 import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
 import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
@@ -163,5 +165,48 @@ describe("POST [/api/organizations/:slug/channels/:channelId/posts]", () => {
     const response = await createPosts(channelId, [makePost("clip")]);
 
     expect(response.status).toEqual(201);
+  });
+
+  test("should return 404 and create no post when one of the files does not exist", async () => {
+    const { channelId } = await makeFakeChannel(testOrgSlug);
+    vi.mocked(checkFileExists)
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new ResourceNotFoundError("File not found"));
+
+    const response = await createPosts(channelId, [makePost("file-a"), makePost("missing-file")]);
+
+    expect(response.status).toEqual(404);
+    expect(await postsOf(channelId)).toHaveLength(0);
+  });
+
+  test("should mark the post as ERROR when its run cannot be triggered", async () => {
+    const { channelId } = await makeFakeChannel(testOrgSlug);
+    vi.mocked(tasks.trigger).mockRejectedValueOnce(new Error("trigger is down"));
+
+    const response = await createPosts(channelId, [makePost("file-a")]);
+
+    expect(response.status).toEqual(500);
+
+    const posts = await postsOf(channelId);
+    expect(posts).toHaveLength(1);
+    expect(posts[0].status).toEqual("ERROR");
+  });
+
+  test("should keep the posts already triggered, mark the failed one as ERROR and create none after it", async () => {
+    const { channelId } = await makeFakeChannel(testOrgSlug);
+    vi.mocked(tasks.trigger)
+      .mockResolvedValueOnce({ id: "run_ok" } as never)
+      .mockRejectedValueOnce(new Error("trigger is down"));
+
+    const response = await createPosts(channelId, [
+      makePost("file-a"),
+      makePost("file-b"),
+      makePost("file-c"),
+    ]);
+
+    expect(response.status).toEqual(500);
+
+    const statuses = (await postsOf(channelId)).map(({ status }) => status).sort();
+    expect(statuses).toEqual(["ERROR", "PROCESSING"]);
   });
 });
