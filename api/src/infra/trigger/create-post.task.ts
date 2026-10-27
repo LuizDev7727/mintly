@@ -13,6 +13,10 @@ import { transcribeAudioTask } from "./transcribe-audio.task.ts";
 import { seoEnrichmentTask } from "./seo-enrichment.task.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
+import {
+  publishPostFailedWebhook,
+  publishPostPostedWebhook,
+} from "@/webhooks/publish-post-webhooks.ts";
 import { eq } from "drizzle-orm";
 import { generateThubmnailTask } from "./generate-thumbnail.task.ts";
 import { convertImageToJpegTask } from "./convert-image-to-jpeg.task.ts";
@@ -167,6 +171,14 @@ async function prepareImage(params: {
   };
 }
 
+// O que a `run` devolve e o `onSuccess` usa no webhook `post.posted`. Os hooks
+// recebem o `output` sem tipo, então ele é validado aqui.
+const postOutputSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  tags: z.array(z.string()),
+});
+
 export const createPostTask = schemaTask({
   id: "process-post",
   schema: z.object({
@@ -211,8 +223,8 @@ export const createPostTask = schemaTask({
       .where(eq(postsTable.id, postId));
   },
 
-  onSuccess: async ({ payload }) => {
-    const { postId } = payload;
+  onSuccess: async ({ payload, output }) => {
+    const { postId, channelId } = payload;
     metadata.set("status", "PUBLISHED");
     await db
       .update(postsTable)
@@ -220,10 +232,20 @@ export const createPostTask = schemaTask({
         status: "PUBLISHED",
       })
       .where(eq(postsTable.id, postId));
+
+    // Um webhook que falha não pode mudar o resultado do post: só é registrado.
+    const published = postOutputSchema.safeParse(output);
+
+    if (published.success) {
+      await publishPostPostedWebhook({ channelId, ...published.data }).catch(
+        (error) =>
+          logger.error("Failed to publish the post.posted webhook", { error }),
+      );
+    }
   },
 
-  onFailure: async ({ payload }) => {
-    const { postId } = payload;
+  onFailure: async ({ payload, error }) => {
+    const { postId, channelId } = payload;
     metadata.set("status", "ERROR");
     await db
       .update(postsTable)
@@ -231,6 +253,15 @@ export const createPostTask = schemaTask({
         status: "ERROR",
       })
       .where(eq(postsTable.id, postId));
+
+    const reason = error instanceof Error ? error.message : String(error);
+
+    await publishPostFailedWebhook({
+      channelId,
+      message: `Failed to process the post: ${reason}`,
+    }).catch((webhookError) =>
+      logger.error("Failed to publish the post.failed webhook", { webhookError }),
+    );
   },
 
   onCancel: async ({ payload }) => {
@@ -364,5 +395,8 @@ export const createPostTask = schemaTask({
     if (failedUploads.length > 0) {
       failStep(failedUploads.join(", "));
     }
+
+    // O `onSuccess` usa isto no webhook `post.posted`.
+    return { title: publishTitle, description, tags };
   },
 });
