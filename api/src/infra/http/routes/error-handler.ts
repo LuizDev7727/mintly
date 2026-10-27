@@ -3,6 +3,7 @@ import { FolderAlreadyExistsError } from "@/errors/folder-already-exists.error.t
 import { OrganizationAlreadyCreatedError } from "@/errors/organization-already-created.ts";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { UnauthorizedError } from "@/errors/unauthorized.error.ts";
+import { UnsupportedProviderError } from "@/errors/unsupported-provider.error.ts";
 import { UserNotBelongsToTheOrganizationError } from "@/errors/user-not-belongs-to-the-organization.ts";
 import { WebhookPublishError } from "@/errors/webhook-publish.error.ts";
 import type { FastifyInstance } from "fastify";
@@ -20,6 +21,12 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
 
   if (error instanceof UnauthorizedError) {
     return reply.status(401).send({
+      message: error.message,
+    });
+  }
+
+  if (error instanceof UnsupportedProviderError) {
+    return reply.status(422).send({
       message: error.message,
     });
   }
