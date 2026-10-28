@@ -8,6 +8,7 @@ import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-use
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { uuidv7 } from "uuidv7";
 
 const scheduledToSchema = z
   .string()
@@ -110,7 +111,10 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
       await publishWebhookEvents({
         orgSlug: slug,
         trigger: "post.created",
+        // O QStash descarta mensagens de corpo idêntico; o `eventId` torna cada
+        // evento único e serve de chave de idempotência para quem o recebe.
         events: [{
+          eventId: uuidv7(),
           message: "Post(s) created successfully."
         }]
       })

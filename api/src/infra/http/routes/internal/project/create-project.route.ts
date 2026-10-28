@@ -7,6 +7,7 @@ import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
 import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { uuidv7 } from "uuidv7";
 
 export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -69,7 +70,9 @@ export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
       await publishWebhookEvents({
         orgSlug: slug,
         trigger: "project.created",
-        events: [{ message: "Project(s) created successfully." }],
+        // O QStash descarta mensagens de corpo idêntico; o `eventId` torna cada
+        // evento único e serve de chave de idempotência para quem o recebe.
+        events: [{ eventId: uuidv7(), message: "Project(s) created successfully." }],
       });
 
       span.end();
