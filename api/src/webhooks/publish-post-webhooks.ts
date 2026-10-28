@@ -3,6 +3,7 @@ import { publishWebhookEvents } from "./publish-webhook.ts"
 
 type PublishPostPostedWebhookParams = {
   channelId: string
+  postId: string
   title: string
   description: string
   tags: string[]
@@ -12,17 +13,18 @@ type PublishPostPostedWebhookParams = {
 export async function publishPostPostedWebhook(
   params: PublishPostPostedWebhookParams,
 ) {
-  const { channelId, title, description, tags } = params
+  const { channelId, postId, title, description, tags } = params
 
   await publishWebhookEvents({
     orgSlug: await getChannelOrganizationSlug({ channelId }),
     trigger: 'post.posted',
-    events: [{ title, description, tags }],
+    events: [{ postId, title, description, tags }],
   })
 }
 
 type PublishPostFailedWebhookParams = {
   channelId: string
+  postId: string
   message: string
 }
 
@@ -31,11 +33,11 @@ type PublishPostFailedWebhookParams = {
 export async function publishPostFailedWebhook(
   params: PublishPostFailedWebhookParams,
 ) {
-  const { channelId, message } = params
+  const { channelId, postId, message } = params
 
   await publishWebhookEvents({
     orgSlug: await getChannelOrganizationSlug({ channelId }),
     trigger: 'post.failed',
-    events: [{ message }],
+    events: [{ postId, message }],
   })
 }
