@@ -10,6 +10,9 @@ import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
 import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
 import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { makeFakeMember } from "@/tests/factories/make-fake-member.ts";
+import { webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
+import { qstash } from "@/lib/qstash.ts";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -208,5 +211,46 @@ describe("POST [/api/organizations/:slug/channels/:channelId/posts]", () => {
 
     const statuses = (await postsOf(channelId)).map(({ status }) => status).sort();
     expect(statuses).toEqual(["ERROR", "PROCESSING"]);
+  });
+});
+
+// Fica numa organização só dele: um webhook de `post.created` na organização
+// dos outros testes faria todos eles publicarem no QStash.
+describe("post.created webhook of POST [/api/organizations/:slug/channels/:channelId/posts]", () => {
+  test("should publish a different body for each request, with an eventId", async () => {
+    const { organizationSlug } = await makeFakeOrganization(testUser.id);
+    await makeFakeMember(organizationSlug, testUser.id);
+    const { channelId } = await makeFakeChannel(organizationSlug);
+
+    await db.insert(webhooksTable).values({
+      url: "https://example.com/post-created",
+      signingKey: "key",
+      triggers: ["post.created"],
+      organizationSlug,
+    });
+
+    const publishJSON = vi
+      .spyOn(qstash, "publishJSON")
+      .mockResolvedValue({ messageId: "msg" } as never);
+
+    // O QStash descarta mensagens de corpo idêntico: duas criações seguidas não
+    // podem gerar o mesmo evento.
+    for (const name of ["first", "second"]) {
+      const response = await request(server.server)
+        .post(`/api/organizations/${organizationSlug}/channels/${channelId}/posts`)
+        .set(authHeaders)
+        .send({ posts: [makePost(name)] });
+
+      expect(response.status).toEqual(201);
+    }
+
+    expect(publishJSON).toHaveBeenCalledTimes(2);
+
+    const bodies = publishJSON.mock.calls.map(([request]) => request.body as { trigger: string; payload: { eventId?: string } });
+    expect(bodies[0].trigger).toEqual("post.created");
+    expect(bodies[0].payload.eventId).toEqual(expect.any(String));
+    expect(JSON.stringify(bodies[0])).not.toEqual(JSON.stringify(bodies[1]));
+
+    publishJSON.mockRestore();
   });
 });
