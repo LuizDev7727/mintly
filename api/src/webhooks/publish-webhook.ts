@@ -2,7 +2,6 @@ import { WebhookEvent } from "./webhook-event.ts"
 import { getOrganizationWebhooksForTrigger } from "./get-organization-webhooks-for-trigger.ts"
 import { env } from "@/env.ts"
 import { qstash, qstashTopicUrl } from "@/lib/qstash.ts"
-import { WebhookPublishError } from "@/errors/webhook-publish.error.ts"
 
 export type PublishWebhookEventsParams = Parameters<typeof publishWebhookEvents>
 
@@ -61,7 +60,13 @@ export async function publishWebhookEvents<T extends WebhookEvent['trigger']>({
     (result): result is PromiseRejectedResult => result.status === "rejected",
   )
 
+  // Quem chama já criou o post ou o projeto. Um erro aqui faria a requisição
+  // responder 5xx com o recurso criado, e o cliente, ao tentar de novo, o
+  // duplicaria. A falha só é registrada.
   if (failures.length > 0) {
-    throw new WebhookPublishError(failures.length, results.length, failures[0].reason)
+    console.error(
+      `[Webhook] Failed to publish ${failures.length} of ${results.length} "${trigger}" event(s) of "${orgSlug}"`,
+      failures[0].reason,
+    )
   }
 }
