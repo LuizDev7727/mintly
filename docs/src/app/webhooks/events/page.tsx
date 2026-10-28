@@ -117,6 +117,7 @@ export default function WebhookEvents() {
               code: `export interface PostPostedWebhookEvent {
   trigger: "post.posted";
   payload: {
+    postId: string;
     title: string;
     description: string;
     tags: string[];
@@ -135,6 +136,9 @@ export default function WebhookEvents() {
                   </span>
                   {";"}
                   {"\n  payload: {"}
+                  {"\n    postId: "}
+                  <span className="text-emerald-300">string</span>
+                  {";"}
                   {"\n    title: "}
                   <span className="text-emerald-300">string</span>
                   {";"}
@@ -153,6 +157,7 @@ export default function WebhookEvents() {
               code: `{
   "trigger": "post.posted",
   "payload": {
+    "postId": "0198f3c2-7b1e-7c4a-9d2e-5a6b8c9d0e1f",
     "title": "My awesome video",
     "description": "Check out this new upload!",
     "tags": ["marketing", "launch"]
@@ -171,6 +176,13 @@ export default function WebhookEvents() {
                   {"\n  "}
                   <span className="text-sky-300">&quot;payload&quot;</span>
                   {": {"}
+                  {"\n    "}
+                  <span className="text-sky-300">&quot;postId&quot;</span>
+                  {": "}
+                  <span className="text-orange-300">
+                    &quot;0198f3c2-7b1e-7c4a-9d2e-5a6b8c9d0e1f&quot;
+                  </span>
+                  {","}
                   {"\n    "}
                   <span className="text-sky-300">&quot;title&quot;</span>
                   {": "}
@@ -203,6 +215,7 @@ export default function WebhookEvents() {
             }}
             zodSchema={{
               code: `export const postPostedSchema = z.object({
+  postId: z.string(),
   title: z.string(),
   description: z.string(),
   tags: z.array(z.string()),
@@ -212,6 +225,9 @@ export default function WebhookEvents() {
                   export const{" "}
                   <span className="text-sky-300">postPostedSchema</span> =
                   z.object({"{"}
+                  {"\n  postId: "}
+                  <span className="text-emerald-300">z.string()</span>
+                  {","}
                   {"\n  title: "}
                   <span className="text-emerald-300">z.string()</span>
                   {","}
@@ -242,6 +258,7 @@ export default function WebhookEvents() {
               code: `export interface PostFailedWebhookEvent {
   trigger: "post.failed";
   payload: {
+    postId: string;
     message: string;
   };
 }`,
@@ -258,6 +275,9 @@ export default function WebhookEvents() {
                   </span>
                   {";"}
                   {"\n  payload: {"}
+                  {"\n    postId: "}
+                  <span className="text-emerald-300">string</span>
+                  {";"}
                   {"\n    message: "}
                   <span className="text-emerald-300">string</span>
                   {";"}
@@ -270,6 +290,7 @@ export default function WebhookEvents() {
               code: `{
   "trigger": "post.failed",
   "payload": {
+    "postId": "0198f3c2-7b1e-7c4a-9d2e-5a6b8c9d0e1f",
     "message": "Your post failed to be published."
   }
 }`,
@@ -287,6 +308,13 @@ export default function WebhookEvents() {
                   <span className="text-sky-300">&quot;payload&quot;</span>
                   {": {"}
                   {"\n    "}
+                  <span className="text-sky-300">&quot;postId&quot;</span>
+                  {": "}
+                  <span className="text-orange-300">
+                    &quot;0198f3c2-7b1e-7c4a-9d2e-5a6b8c9d0e1f&quot;
+                  </span>
+                  {","}
+                  {"\n    "}
                   <span className="text-sky-300">&quot;message&quot;</span>
                   {": "}
                   <span className="text-orange-300">
@@ -299,6 +327,7 @@ export default function WebhookEvents() {
             }}
             zodSchema={{
               code: `export const postFailedSchema = z.object({
+  postId: z.string(),
   message: z.string(),
 })`,
               content: (
@@ -306,6 +335,9 @@ export default function WebhookEvents() {
                   export const{" "}
                   <span className="text-sky-300">postFailedSchema</span>{" "}
                   = z.object({"{"}
+                  {"\n  postId: "}
+                  <span className="text-emerald-300">z.string()</span>
+                  {","}
                   {"\n  message: "}
                   <span className="text-emerald-300">z.string()</span>
                   {","}
