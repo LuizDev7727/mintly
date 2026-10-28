@@ -1,7 +1,6 @@
 import { describe, test, expect, vi, beforeAll, afterEach } from "vitest";
 import { db } from "@/infra/db/client.ts";
 import { webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
-import { WebhookPublishError } from "@/errors/webhook-publish.error.ts";
 import { qstash } from "@/lib/qstash.ts";
 import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
 import { testOrgSlug } from "@/tests/setup.ts";
@@ -61,16 +60,17 @@ describe("publishWebhookEvents", () => {
     ]);
   });
 
-  test("should reject with WebhookPublishError when a publish fails, after trying all of them", async () => {
+  test("should not throw when a publish fails, and still try all of them, logging the failure", async () => {
     const publishJSON = vi
       .spyOn(qstash, "publishJSON")
       .mockRejectedValueOnce(new Error("qstash is down"))
       .mockResolvedValue({ messageId: "msg" } as never);
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
-    const result = publish();
+    await expect(publish()).resolves.toBeUndefined();
 
-    await expect(result).rejects.toBeInstanceOf(WebhookPublishError);
-    await expect(result).rejects.toThrow("Failed to publish 1 of 2 webhook event(s)");
     expect(publishJSON).toHaveBeenCalledTimes(2);
+    expect(consoleError).toHaveBeenCalledTimes(1);
+    expect(consoleError.mock.calls[0][0]).toContain("Failed to publish 1 of 2");
   });
 });

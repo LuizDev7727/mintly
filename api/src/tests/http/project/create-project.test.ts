@@ -49,6 +49,20 @@ describe("POST [/api/organizations/:slug/channels/:channelId/projects]", () => {
     );
   });
 
+  // O projeto já foi criado quando o webhook é publicado: um erro aqui faria o
+  // cliente tentar de novo e duplicar o projeto.
+  test("should still return 201 when the webhook cannot be published", async () => {
+    vi.spyOn(qstash, "publishJSON").mockRejectedValue(new Error("qstash is down"));
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    const response = await request(server.server)
+      .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/projects`)
+      .set(authHeaders)
+      .send({ files: [{ name: "video.mp4", key: `${testUser.id}/video` }] });
+
+    expect(response.status).toEqual(201);
+  });
+
   // O QStash descarta mensagens de corpo idêntico: o evento de duas criações
   // seguidas não pode ser o mesmo.
   test("should publish a different project.created body for each request", async () => {

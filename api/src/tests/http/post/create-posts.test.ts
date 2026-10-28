@@ -253,4 +253,32 @@ describe("post.created webhook of POST [/api/organizations/:slug/channels/:chann
 
     publishJSON.mockRestore();
   });
+
+  // Os posts já foram criados e as runs disparadas quando o webhook é publicado:
+  // um erro aqui faria o cliente tentar de novo e duplicar os posts.
+  test("should still return 201 when the webhook cannot be published", async () => {
+    const { organizationSlug } = await makeFakeOrganization(testUser.id);
+    await makeFakeMember(organizationSlug, testUser.id);
+    const { channelId } = await makeFakeChannel(organizationSlug);
+
+    await db.insert(webhooksTable).values({
+      url: "https://example.com/post-created",
+      signingKey: "key",
+      triggers: ["post.created"],
+      organizationSlug,
+    });
+
+    vi.spyOn(qstash, "publishJSON").mockRejectedValue(new Error("qstash is down"));
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    const response = await request(server.server)
+      .post(`/api/organizations/${organizationSlug}/channels/${channelId}/posts`)
+      .set(authHeaders)
+      .send({ posts: [makePost("webhook-down")] });
+
+    expect(response.status).toEqual(201);
+    expect(await postsOf(channelId)).toHaveLength(1);
+
+    vi.restoreAllMocks();
+  });
 });
