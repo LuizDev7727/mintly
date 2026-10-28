@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { integer, jsonb, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { index, integer, jsonb, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
 import { webhooksTable } from './webhooks.table.ts'
 
@@ -37,7 +37,14 @@ export const webhookLogsTable = pgTable("webhook_logs", {
       onDelete: "cascade",
       onUpdate: "cascade",
     }),
-});
+}, (table) => [
+  // Listagem de entregas de um webhook: filtra por webhook e ordena pelas mais
+  // recentes.
+  index("webhook_logs_webhook_id_created_at_idx").on(
+    table.webhookId,
+    table.createdAt.desc(),
+  ),
+]);
 
 export const webhookLogRelations = relations(webhookLogsTable, ({ one }) => ({
   webhook: one(webhooksTable, {

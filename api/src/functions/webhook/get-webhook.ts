@@ -5,7 +5,12 @@ import {
   webhooksTable,
   type WebhookEventTrigger,
 } from "@/infra/db/tables/webhooks.table.ts"
-import { and, desc, eq } from "drizzle-orm"
+import { and, desc, eq, gte } from "drizzle-orm"
+
+// A página mostra as entregas dos últimos 7 dias (o maior intervalo do gráfico).
+// O teto evita devolver um histórico sem fim para um webhook muito movimentado.
+const LOGS_WINDOW_IN_MS = 7 * 24 * 60 * 60 * 1000
+const LOGS_LIMIT = 500
 
 type GetWebhookParams = {
   webhookId: string
@@ -63,8 +68,14 @@ export async function getWebhook(
   const logs = await db
     .select()
     .from(webhookLogsTable)
-    .where(eq(webhookLogsTable.webhookId, webhookId))
+    .where(
+      and(
+        eq(webhookLogsTable.webhookId, webhookId),
+        gte(webhookLogsTable.createdAt, new Date(Date.now() - LOGS_WINDOW_IN_MS)),
+      ),
+    )
     .orderBy(desc(webhookLogsTable.createdAt))
+    .limit(LOGS_LIMIT)
 
   return {
     id: webhook.id,
