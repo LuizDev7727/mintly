@@ -237,7 +237,7 @@ export const createPostTask = schemaTask({
     const published = postOutputSchema.safeParse(output);
 
     if (published.success) {
-      await publishPostPostedWebhook({ channelId, ...published.data }).catch(
+      await publishPostPostedWebhook({ channelId, postId, ...published.data }).catch(
         (error) =>
           logger.error("Failed to publish the post.posted webhook", { error }),
       );
@@ -258,6 +258,7 @@ export const createPostTask = schemaTask({
 
     await publishPostFailedWebhook({
       channelId,
+      postId,
       message: `Failed to process the post: ${reason}`,
     }).catch((webhookError) =>
       logger.error("Failed to publish the post.failed webhook", { webhookError }),

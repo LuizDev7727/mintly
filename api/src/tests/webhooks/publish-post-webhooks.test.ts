@@ -48,6 +48,7 @@ describe("publishPostPostedWebhook", () => {
 
     await publishPostPostedWebhook({
       channelId,
+      postId: "post-1",
       title: "My video",
       description: "About something",
       tags: ["a", "b"],
@@ -58,7 +59,12 @@ describe("publishPostPostedWebhook", () => {
     expect(request.body).toMatchObject({
       deliverTo: "https://example.com/posted",
       trigger: "post.posted",
-      payload: { title: "My video", description: "About something", tags: ["a", "b"] },
+      payload: {
+        postId: "post-1",
+        title: "My video",
+        description: "About something",
+        tags: ["a", "b"],
+      },
     });
   });
 
@@ -68,6 +74,7 @@ describe("publishPostPostedWebhook", () => {
     await expect(
       publishPostPostedWebhook({
         channelId: "does-not-exist",
+        postId: "post-1",
         title: "t",
         description: "d",
         tags: [],
@@ -82,6 +89,7 @@ describe("publishPostFailedWebhook", () => {
 
     await publishPostFailedWebhook({
       channelId,
+      postId: "post-1",
       message: "Failed to process the post: Step \"transcribe-audio\" failed",
     });
 
@@ -90,7 +98,41 @@ describe("publishPostFailedWebhook", () => {
     expect(request.body).toMatchObject({
       deliverTo: "https://example.com/failed",
       trigger: "post.failed",
-      payload: { message: "Failed to process the post: Step \"transcribe-audio\" failed" },
+      payload: {
+        postId: "post-1",
+        message: "Failed to process the post: Step \"transcribe-audio\" failed",
+      },
     });
+  });
+});
+
+// O QStash descarta mensagens de corpo idêntico (`contentBasedDeduplication`).
+// Dois posts que falham pelo mesmo motivo, ou duas imagens com o mesmo nome,
+// geravam o mesmo corpo e o segundo webhook nunca era entregue.
+describe("posts with the same content publish different webhook bodies", () => {
+  test("should publish different bodies for two posts that fail with the same message", async () => {
+    const publishJSON = spyOnPublish();
+    const message = "Failed to process the post: Step \"transcribe-audio\" failed";
+
+    await publishPostFailedWebhook({ channelId, postId: "post-1", message });
+    await publishPostFailedWebhook({ channelId, postId: "post-2", message });
+
+    const [first, second] = publishJSON.mock.calls.map(([request]) =>
+      JSON.stringify(request.body),
+    );
+    expect(first).not.toEqual(second);
+  });
+
+  test("should publish different bodies for two image posts with the same name", async () => {
+    const publishJSON = spyOnPublish();
+    const post = { channelId, title: "photo", description: "", tags: [] };
+
+    await publishPostPostedWebhook({ ...post, postId: "post-1" });
+    await publishPostPostedWebhook({ ...post, postId: "post-2" });
+
+    const [first, second] = publishJSON.mock.calls.map(([request]) =>
+      JSON.stringify(request.body),
+    );
+    expect(first).not.toEqual(second);
   });
 });
