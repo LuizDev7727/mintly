@@ -18,17 +18,13 @@ export const cancelPostRoute: FastifyPluginAsyncZod = async (app) => {
           channelId: z.string(),
           postId: z.string(),
         }),
-        body: z.object({
-          runId: z.string(),
-        }),
         response: {
           204: z.void(),
         },
       },
     },
     async (request, reply) => {
-      const { slug, postId } = request.params;
-      const { runId } = request.body;
+      const { slug, channelId, postId } = request.params;
       const { id: userId } = request.user;
 
       const span = tracer.startSpan("cancel-post");
@@ -36,7 +32,7 @@ export const cancelPostRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      await cancelPost({ postId, runId });
+      await cancelPost({ postId, channelId });
 
       span.end();
 

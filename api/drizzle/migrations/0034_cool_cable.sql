@@ -1,0 +1,1 @@
+CREATE INDEX "webhook_logs_webhook_id_created_at_idx" ON "webhook_logs" USING btree ("webhook_id","created_at" DESC NULLS LAST);

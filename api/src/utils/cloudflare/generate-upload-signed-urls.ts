@@ -14,6 +14,8 @@ const PART_SIZE = 10 * 1024 * 1024;
 const MULTIPART_THRESHOLD = 100 * 1024 * 1024;
 
 type GenerateUploadSignedUrlsParams = {
+  // Dono do arquivo: entra no prefixo da chave (`<userId>/<uuid>`).
+  userId: string;
   expiresIn?: number;
   file: {
     name: string;
@@ -34,6 +36,7 @@ type GenerateUploadSignedUrlsResponse = {
 }
 
 export async function generateUploadSignedUrls({
+  userId,
   expiresIn,
   file,
   resume,
@@ -63,7 +66,7 @@ export async function generateUploadSignedUrls({
     return { key, uploadId, parts };
   }
 
-  const key = `${uuidv7()}`;
+  const key = `${userId}/${uuidv7()}`;
 
   const exceedsMultipartThreshold = file.size > MULTIPART_THRESHOLD;
 

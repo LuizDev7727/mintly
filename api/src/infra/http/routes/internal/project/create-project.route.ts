@@ -3,8 +3,11 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { createActivity } from "@/utils/create-activity.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
+import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { uuidv7 } from "uuidv7";
 
 export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -44,6 +47,10 @@ export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({ organizationSlug: slug, userId });
 
+      for (const file of files) {
+        assertKeyOwnedByUser({ key: file.key, userId });
+      }
+
       await createProject({
         channelId,
         ownerId: userId,
@@ -58,6 +65,14 @@ export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
             ? `Created project ${files[0].name}`
             : `Created ${files.length} projects`,
         orgSlug: slug,
+      });
+
+      await publishWebhookEvents({
+        orgSlug: slug,
+        trigger: "project.created",
+        // O QStash descarta mensagens de corpo idêntico; o `eventId` torna cada
+        // evento único e serve de chave de idempotência para quem o recebe.
+        events: [{ eventId: uuidv7(), message: "Project(s) created successfully." }],
       });
 
       span.end();

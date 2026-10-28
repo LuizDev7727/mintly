@@ -23,12 +23,14 @@ import { Search } from "./search";
 import { ThemeToggle } from "./theme-toggle";
 import { PendingInvites } from "./pending-invites";
 import { SwitchViewMode } from "./switch-view-mode";
+import { useScrollFade } from "@/hooks/use-scroll-fade";
 
 type AppSidebarProps = ComponentProps<typeof Sidebar>;
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
 
   const { state } = useSidebar();
+  const { ref: contentRef } = useScrollFade<HTMLDivElement>();
 
   const matchRoute = useMatch({
     from: "/orgs/$slug/channels/$channel",
@@ -55,7 +57,10 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         }
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent
+        ref={contentRef}
+        className="[mask-image:linear-gradient(to_bottom,transparent,black_var(--fade-top,0px),black_calc(100%-var(--fade-bottom,0px)),transparent)]"
+      >
         <div className="px-2">
           <Search />
         </div>

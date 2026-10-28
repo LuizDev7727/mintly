@@ -50,7 +50,6 @@ export function WebhookDeliveryDetailsSheet({
               ? `${item.contentLength} bytes`
               : "—",
         },
-        { key: "IP", value: item.ip },
         { key: "Path", value: item.pathname },
       ]
     : []

@@ -24,7 +24,7 @@ export const deleteIntegrationRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { slug, integrationId } = request.params;
+      const { slug, channelId, integrationId } = request.params;
       const { id: userId } = request.user;
 
       const span = tracer.startSpan("delete-integration");
@@ -33,7 +33,8 @@ export const deleteIntegrationRoute: FastifyPluginAsyncZod = async (app) => {
       await checkMembership({ organizationSlug: slug, userId });
 
       await deleteIntegration({
-        integrationId
+        channelId,
+        integrationId,
       });
 
       span.end();

@@ -1,14 +1,13 @@
 import { z } from "zod";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CreditCard, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GeneralTab } from "./-components/general/general-tab";
-import { BillingTab } from "./-components/billing/billing-tab";
 import { getActiveOrganizationHttp } from "@/http/organization/get-active-organization.http";
 import { useQuery } from "@tanstack/react-query";
 
 const settingsSearchSchema = z.object({
-  tab: z.enum(["general", "billing"]).default("general"),
+  tab: z.enum(["general"]).default("general"),
 });
 
 export const Route = createFileRoute("/orgs/$slug/settings/")({
@@ -24,7 +23,6 @@ export const Route = createFileRoute("/orgs/$slug/settings/")({
 
 const navItems = [
   { id: "general", label: "General", icon: Settings },
-  { id: "billing", label: "Billing", icon: CreditCard },
 ] as const;
 
 function SettingsPage() {
@@ -76,7 +74,6 @@ function SettingsPage() {
               avatarUrl={organization!.logo}
             />
           )}
-          {tab === "billing" && <BillingTab />}
         </div>
       </div>
     </div>

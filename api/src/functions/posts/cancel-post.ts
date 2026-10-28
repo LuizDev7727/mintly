@@ -1,29 +1,33 @@
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { runs } from "@trigger.dev/sdk";
 
 type CancelPostParams = {
   postId: string;
-  runId: string;
+  channelId: string;
 };
 
-export async function cancelPost({ postId, runId }: CancelPostParams) {
+export async function cancelPost({ postId, channelId }: CancelPostParams) {
   const [post] = await db
-    .select({ id: postsTable.id })
+    .select({ id: postsTable.id, runId: postsTable.runId })
     .from(postsTable)
-    .where(eq(postsTable.id, postId))
+    .where(and(eq(postsTable.id, postId), eq(postsTable.channelId, channelId)))
     .limit(1);
 
   if (!post) {
     throw new ResourceNotFoundError("Post not found");
   }
 
-  await runs.cancel(runId);
+  // O runId vem do próprio post. Aceitá-lo do cliente permitiria cancelar
+  // qualquer run do projeto no Trigger.dev, de qualquer organização.
+  if (post.runId) {
+    await runs.cancel(post.runId);
+  }
 
   await db
     .update(postsTable)
     .set({ status: "CANCELED" })
-    .where(eq(postsTable.id, postId));
+    .where(and(eq(postsTable.id, postId), eq(postsTable.channelId, channelId)));
 }

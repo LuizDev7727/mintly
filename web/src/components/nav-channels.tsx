@@ -1,14 +1,15 @@
 import {
+  AnimatedSidebarMenu,
+  AnimatedSidebarMenuItem,
+} from "./animated-sidebar-menu";
+import { SidebarNavButton } from "./sidebar-nav-button";
+import {
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarMenu,
   SidebarMenuBadge,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Bot, Settings, Workflow, Video, Clapperboard, Toolbox } from "lucide-react";
 import { useParams } from "@tanstack/react-router";
-import { NavLink } from "./nav-link";
 import { getIntegrationsHttp } from "@/http/integration/get-integrations.http";
 import { useQuery } from "@tanstack/react-query";
 
@@ -25,101 +26,34 @@ export function NavChannels() {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Channel</SidebarGroupLabel>
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink
-              to={"/orgs/$slug/channels/$channel"}
-              params={{ slug, channel }}
-              activeOptions={{ exact: true }}
-            >
-              <Video />
-              <span>Posts</span>
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+      <AnimatedSidebarMenu>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={Video} label="Posts" description="Browse and manage this channel's posts" to={"/orgs/$slug/channels/$channel"} params={{ slug, channel }} activeOptions={{ exact: true }} />
+        </AnimatedSidebarMenuItem>
 
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink
-              to={"/orgs/$slug/channels/$channel/projects"}
-              params={{ slug, channel }}
-            >
-              <Clapperboard />
-              <span>Projects</span>
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={Clapperboard} label="Projects" description="Your video projects and generated clips" to={"/orgs/$slug/channels/$channel/projects"} params={{ slug, channel }} />
+        </AnimatedSidebarMenuItem>
 
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink
-              to={"/orgs/$slug/channels/$channel/brand-kit"}
-              params={{ slug, channel }}
-            >
-              <Toolbox />
-              <span>Brand Kit</span>
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={Toolbox} label="Brand Kit" description="Visual identity used in your clips" to={"/orgs/$slug/channels/$channel/brand-kit"} params={{ slug, channel }} />
+        </AnimatedSidebarMenuItem>
 
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink
-              to={"/orgs/$slug/channels/$channel/ai"}
-              params={{ slug, channel }}
-            >
-              <Bot />
-              <span>AI</span>
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={Bot} label="AI" description="Generate content with AI" to={"/orgs/$slug/channels/$channel/ai"} params={{ slug, channel }} />
+        </AnimatedSidebarMenuItem>
 
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink
-              to={"/orgs/$slug/channels/$channel/integrations"}
-              params={{ slug, channel }}
-            >
-              <Workflow />
-              <span>Integrations</span>
-            </NavLink>
-          </SidebarMenuButton>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={Workflow} label="Integrations" description="Connect your social networks" to={"/orgs/$slug/channels/$channel/integrations"} params={{ slug, channel }} />
           {
             integrationsData && <SidebarMenuBadge>{integrationsData.integrations.length}</SidebarMenuBadge>
           }
-        </SidebarMenuItem>
+        </AnimatedSidebarMenuItem>
 
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink
-              to={"/orgs/$slug/channels/$channel/settings"}
-              params={{ slug, channel }}
-            >
-              <Settings />
-              <span>Settings</span>
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={Settings} label="Settings" description="Manage channel settings" to={"/orgs/$slug/channels/$channel/settings"} params={{ slug, channel }} />
+        </AnimatedSidebarMenuItem>
+      </AnimatedSidebarMenu>
     </SidebarGroup>
   );
 }
