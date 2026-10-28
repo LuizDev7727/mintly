@@ -5,7 +5,6 @@ import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { UnauthorizedError } from "@/errors/unauthorized.error.ts";
 import { UnsupportedProviderError } from "@/errors/unsupported-provider.error.ts";
 import { UserNotBelongsToTheOrganizationError } from "@/errors/user-not-belongs-to-the-organization.ts";
-import { WebhookPublishError } from "@/errors/webhook-publish.error.ts";
 import type { FastifyInstance } from "fastify";
 import { hasZodFastifySchemaValidationErrors } from "fastify-type-provider-zod";
 
@@ -57,12 +56,6 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
 
   if (error instanceof OrganizationAlreadyCreatedError) {
     return reply.status(409).send({
-      message: error.message,
-    });
-  }
-
-  if (error instanceof WebhookPublishError) {
-    return reply.status(502).send({
       message: error.message,
     });
   }
