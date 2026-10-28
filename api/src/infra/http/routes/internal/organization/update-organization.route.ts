@@ -35,7 +35,7 @@ export const updateOrganizationRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      await updateOrganization({ slug, name, avatarKey });
+      await updateOrganization({ userId, slug, name, avatarKey });
 
       span.end();
 

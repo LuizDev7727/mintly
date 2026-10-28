@@ -27,7 +27,7 @@ export const updateFolderRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { slug, folderId } = request.params;
+      const { slug, channelId, folderId } = request.params;
       const { title } = request.body;
       const { id: userId } = request.user;
 
@@ -36,7 +36,7 @@ export const updateFolderRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      await updateFolder({ folderId, title });
+      await updateFolder({ channelId, folderId, title });
 
       span.end();
 

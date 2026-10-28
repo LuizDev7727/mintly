@@ -232,6 +232,20 @@
       "when": 1790952004357,
       "tag": "0032_large_masque",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1792971625533,
+      "tag": "0033_young_cobalt_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793146467142,
+      "tag": "0034_cool_cable",
+      "breakpoints": true
     }
   ]
 }

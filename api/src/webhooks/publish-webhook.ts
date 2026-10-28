@@ -1,8 +1,7 @@
 import { WebhookEvent } from "./webhook-event.ts"
 import { getOrganizationWebhooksForTrigger } from "./get-organization-webhooks-for-trigger.ts"
 import { env } from "@/env.ts"
-import { qstash } from "@/lib/qstash.ts"
-import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts"
+import { qstash, qstashTopicUrl } from "@/lib/qstash.ts"
 
 export type PublishWebhookEventsParams = Parameters<typeof publishWebhookEvents>
 
@@ -37,11 +36,14 @@ export async function publishWebhookEvents<T extends WebhookEvent['trigger']>({
     return
   }
 
-  await Promise.all(
-    organizationWebhooksForTrigger.flatMap(async (webhook) => {
-      return events.map(async (payload) => {
-        return qstash.publishJSON({
-          topic: await getInfisicalSecret({ secretName: "QSTASH_TOPIC_URL" }),
+  // Uma lista plana de envios. O `allSettled` espera todos terminarem, mesmo
+  // quando algum falha, e nunca rejeita: assim nenhuma rejeição fica solta e
+  // os envios que deram certo não são interrompidos pelos que falharam.
+  const results = await Promise.allSettled(
+    organizationWebhooksForTrigger.flatMap((webhook) =>
+      events.map((payload) =>
+        qstash.publishJSON({
+          topic: qstashTopicUrl,
           contentBasedDeduplication: true,
           body: {
             deliverTo: webhook.url,
@@ -49,8 +51,22 @@ export async function publishWebhookEvents<T extends WebhookEvent['trigger']>({
             trigger,
             payload,
           },
-        })
-      })
-    }),
+        }),
+      ),
+    ),
   )
+
+  const failures = results.filter(
+    (result): result is PromiseRejectedResult => result.status === "rejected",
+  )
+
+  // Quem chama já criou o post ou o projeto. Um erro aqui faria a requisição
+  // responder 5xx com o recurso criado, e o cliente, ao tentar de novo, o
+  // duplicaria. A falha só é registrada.
+  if (failures.length > 0) {
+    console.error(
+      `[Webhook] Failed to publish ${failures.length} of ${results.length} "${trigger}" event(s) of "${orgSlug}"`,
+      failures[0].reason,
+    )
+  }
 }

@@ -15,6 +15,7 @@ import scalarAPIReference from "@scalar/fastify-api-reference";
 import { env } from "./env.ts";
 import { getInfisicalSecret } from "./utils/infisical/get-infisical-secret.ts";
 import { errorHandler } from "./infra/http/routes/error-handler.ts";
+import { protectChannelRoutes } from "./infra/http/middleware/check-channel.ts";
 import { getHealthRoute } from "./infra/http/routes/internal/health/get-health.route.ts";
 import { authRoute } from "./infra/http/routes/internal/auth/auth.route.ts";
 import { getChannelsRoute } from "./infra/http/routes/internal/channel/get-channels.route.ts";
@@ -61,11 +62,9 @@ import { acceptInviteRoute } from "./infra/http/routes/internal/invitation/accep
 import { declineInviteRoute } from "./infra/http/routes/internal/invitation/decline-invite.route.ts";
 import { revokeInviteRoute } from "./infra/http/routes/internal/organization/revoke-invite.route.ts";
 import { updateOrganizationRoute } from "./infra/http/routes/internal/organization/update-organization.route.ts";
-import { createBillingPortalSessionRoute } from "./infra/http/routes/internal/organization/create-billing-portal-session.route.ts";
 import { getOrganizationPaymentMethodStatusRoute } from "./infra/http/routes/internal/organization/get-organization-payment-method-status.route.ts";
 import { getInvoicesRoute } from "./infra/http/routes/internal/organization/get-invoices.route.ts";
 import { getInvoiceRoute } from "./infra/http/routes/internal/organization/get-invoice.route.ts";
-import { getPaymentMethodsRoute } from "./infra/http/routes/internal/organization/get-payment-methods.route.ts";
 import { getUsageRoute } from "./infra/http/routes/internal/organization/get-usage.route.ts";
 import { createCheckoutSessionRoute } from "./infra/http/routes/internal/organization/create-checkout-session.route.ts";
 import { requestYoutubeIntegrationUrlRoute } from "./infra/http/routes/internal/integration/request-youtube-integration-url.route.ts";
@@ -100,6 +99,10 @@ export const server = fastify({
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 server.setErrorHandler(errorHandler);
+
+// Precisa vir antes de qualquer `server.register(rota)`: o hook só enxerga rotas
+// registradas depois dele.
+server.addHook("onRoute", protectChannelRoutes);
 
 if (env.NODE_ENV === "development") {
   server.register(fastifySwagger, {
@@ -184,11 +187,9 @@ server.register(acceptInviteRoute);
 server.register(declineInviteRoute);
 server.register(revokeInviteRoute);
 server.register(updateOrganizationRoute);
-server.register(createBillingPortalSessionRoute);
 server.register(getOrganizationPaymentMethodStatusRoute);
 server.register(getInvoicesRoute);
 server.register(getInvoiceRoute);
-server.register(getPaymentMethodsRoute);
 server.register(getUsageRoute);
 server.register(createCheckoutSessionRoute);
 

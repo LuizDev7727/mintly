@@ -3,9 +3,23 @@ import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { createActivity } from "@/utils/create-activity.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { isImageMimeType, POST_MIME_TYPES } from "@/utils/media-type.ts";
+import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { uuidv7 } from "uuidv7";
+
+const scheduledToSchema = z
+  .string()
+  .nullable()
+  .refine((value) => !value || !Number.isNaN(new Date(value).getTime()), {
+    error: "The date is invalid",
+    abort: true,
+  })
+  .refine((value) => !value || new Date(value) > new Date(), {
+    error: "The date cannot be in the past",
+  });
 
 export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -26,13 +40,13 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
                 file: z.object({
                   name: z.string(),
                   key: z.string(),
-                  type: z.string(),
+                  type: z.enum(POST_MIME_TYPES),
                   size: z.number(),
                   duration: z.number().nullable(),
                 }),
                 shouldGenerateThumbnail: z.boolean(),
                 shouldGenerateShorts: z.boolean(),
-                scheduledTo: z.string().nullable(),
+                scheduledTo: scheduledToSchema,
                 socialsToPost: z
                   .array(
                     z.object({
@@ -45,7 +59,16 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
                   .min(1, {
                     error: "Post needs at least one integration selected",
                   }),
-              }),
+              })
+              .refine(
+                (post) =>
+                  !isImageMimeType(post.file.type) ||
+                  post.socialsToPost.every((social) => social.provider === "INSTAGRAM"),
+                {
+                  error: "Images can only be published on Instagram",
+                  path: ["socialsToPost"],
+                },
+              ),
             )
             .min(1),
         }),
@@ -64,6 +87,10 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
       span.setAttribute("posts.count", posts.length);
 
       await checkMembership({ organizationSlug: slug, userId });
+
+      for (const { file } of posts) {
+        assertKeyOwnedByUser({ key: file.key, userId });
+      }
 
       await createPosts({
         posts,
@@ -84,7 +111,10 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
       await publishWebhookEvents({
         orgSlug: slug,
         trigger: "post.created",
+        // O QStash descarta mensagens de corpo idêntico; o `eventId` torna cada
+        // evento único e serve de chave de idempotência para quem o recebe.
         events: [{
+          eventId: uuidv7(),
           message: "Post(s) created successfully."
         }]
       })

@@ -2,6 +2,7 @@ import { addInspirationalThumbnail } from "@/functions/inspirational-thumbnail/a
 import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
 import { createActivity } from "@/utils/create-activity.ts";
@@ -44,6 +45,8 @@ export const addInspirationalThumbnailRoute: FastifyPluginAsyncZod = async (
       span.setAttribute("file.name", name);
 
       await checkMembership({ organizationSlug: slug, userId });
+
+      assertKeyOwnedByUser({ key, userId });
 
       await checkFileExists({ key });
 

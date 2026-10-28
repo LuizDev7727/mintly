@@ -6,10 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { uuidv7 } from "uuidv7";
 import { createReadStream, createWriteStream } from "node:fs";
-import { db } from "@/infra/db/client.ts";
-import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
-import { eq } from "drizzle-orm";
-import { postsTable } from "@/infra/db/tables/posts.table.ts";
+import { getIntegrationForUpload } from "@/functions/integration/get-integration-for-upload.ts";
 
 export const uploadPostToYoutubeTask = schemaTask({
   id: "upload-post-to-youtube",
@@ -20,35 +17,9 @@ export const uploadPostToYoutubeTask = schemaTask({
     description: z.string(),
     tags: z.array(z.string()),
     postId: z.uuidv7(),
+    integrationId: z.string(),
+    channelId: z.string(),
   }),
-
-  onStart: async ({ payload }) => {
-    await db
-      .update(postsTable)
-      .set({
-        status: "PUBLISHING",
-      })
-      .where(eq(postsTable.id, payload.postId));
-  },
-
-  onSuccess: async ({ payload }) => {
-    await db
-      .update(postsTable)
-      .set({
-        status: "PUBLISHED",
-      })
-      .where(eq(postsTable.id, payload.postId));
-  },
-
-  onFailure: async ({ payload }) => {
-    const { postId } = payload;
-    await db
-      .update(postsTable)
-      .set({
-        status: "ERROR",
-      })
-      .where(eq(postsTable.id, postId));
-  },
 
   // Set an optional maxDuration to prevent tasks from running indefinitely
   maxDuration: 300, // Stop executing after 300 secs (5 mins) of compute
@@ -96,14 +67,15 @@ export const uploadPostToYoutubeTask = schemaTask({
       auth: tmpOauthClient,
     });
 
-    const [{ access_token, refresh_token, expiresIn }] = await db
-      .select({
-        access_token: integrationsTable.accessToken,
-        refresh_token: integrationsTable.refresh_token,
-        expiresIn: integrationsTable.expiry_in,
-      })
-      .from(integrationsTable)
-      .where(eq(integrationsTable.provider, "YOUTUBE"));
+    const {
+      accessToken: access_token,
+      refresh_token,
+      expiry_in: expiresIn,
+    } = await getIntegrationForUpload({
+      integrationId: payload.integrationId,
+      channelId: payload.channelId,
+      provider: "YOUTUBE",
+    });
 
     tmpOauthClient.setCredentials({
       access_token,

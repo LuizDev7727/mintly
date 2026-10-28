@@ -5,9 +5,10 @@ import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { socialsToPostTable } from "@/infra/db/tables/socials-to-post.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 type GetPostParams = {
+  channelId: string;
   postId: string;
 };
 
@@ -48,7 +49,7 @@ type GetPostResponse = {
 export async function getPost(
   params: GetPostParams,
 ): Promise<GetPostResponse> {
-  const { postId } = params;
+  const { channelId, postId } = params;
 
   const [post] = await db
     .select({
@@ -84,7 +85,7 @@ export async function getPost(
       socialsToPostTable,
       eq(postsTable.id, socialsToPostTable.postId),
     )
-    .where(eq(postsTable.id, postId))
+    .where(and(eq(postsTable.id, postId), eq(postsTable.channelId, channelId)))
     .groupBy(
       postsTable.id,
       usersTable.name,

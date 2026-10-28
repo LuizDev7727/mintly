@@ -3,7 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Posts } from "./-components/posts";
-import { CreateFolderDialog } from "./-components/create-folder-dialog";
 import { PostsFilter } from "./-components/posts-filter";
 import { CurrentFolderBadge } from "./-components/current-folder-badge";
 import { FolderTreeDropdown } from "./-components/folder-tree-dropdown";
@@ -33,7 +32,6 @@ function ChannelPage() {
             <CurrentFolderBadge />
           </div>
           <div className="flex items-center gap-x-2">
-            <CreateFolderDialog />
             <Button asChild>
               <Link
                 to="/orgs/$slug/channels/$channel/create-upload"

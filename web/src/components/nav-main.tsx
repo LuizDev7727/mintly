@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  AnimatedSidebarMenu,
+  AnimatedSidebarMenuItem,
+} from "./animated-sidebar-menu";
+import { SidebarNavButton } from "./sidebar-nav-button";
+import {
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarMenu,
   SidebarMenuAction,
   SidebarMenuBadge,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
@@ -22,7 +24,6 @@ import {
   LayoutDashboard
 } from "lucide-react";
 import { Link, useParams } from "@tanstack/react-router";
-import { NavLink } from "./nav-link";
 import {
   Collapsible,
   CollapsibleContent,
@@ -47,102 +48,42 @@ export function NavMain() {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Organization</SidebarGroupLabel>
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink
-              to={"/orgs/$slug"}
-              params={{ slug }}
-              activeOptions={{ exact: true }}
-            >
-              <LayoutDashboard/>
-              <span>Overview</span>
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+      <AnimatedSidebarMenu>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={LayoutDashboard} label="Overview" description="Summary of your organization's activity" to={"/orgs/$slug"} params={{ slug }} activeOptions={{ exact: true }} />
+        </AnimatedSidebarMenuItem>
 
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink to={"/orgs/$slug/channels"} params={{ slug }}>
-              <TvMinimal />
-              <span>Channels</span>
-            </NavLink>
-          </SidebarMenuButton>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={TvMinimal} label="Channels" description="Manage your organization's channels" to={"/orgs/$slug/channels"} params={{ slug }} />
           {
             channelsData && <SidebarMenuBadge>{channelsData.channels.length}</SidebarMenuBadge>
           }
-        </SidebarMenuItem>
+        </AnimatedSidebarMenuItem>
 
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink to={"/orgs/$slug/usage"} params={{ slug }}>
-              <ChartPieIcon />
-              <span>Usage & Billing</span>
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={ChartPieIcon} label="Usage & Billing" description="Track usage, costs and billing" to={"/orgs/$slug/usage"} params={{ slug }} />
+        </AnimatedSidebarMenuItem>
 
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink to={"/orgs/$slug/activities"} params={{ slug }}>
-              <Activity />
-              <span>Activities</span>
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={Activity} label="Activities" description="History of actions in your organization" to={"/orgs/$slug/activities"} params={{ slug }} />
+        </AnimatedSidebarMenuItem>
 
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink to={"/orgs/$slug/webhooks"} params={{ slug }}>
-              <Webhook />
-              <span>API & Webhooks</span>
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={Webhook} label="API & Webhooks" description="Manage API keys and webhooks" to={"/orgs/$slug/webhooks"} params={{ slug }} />
+        </AnimatedSidebarMenuItem>
 
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-            asChild
-          >
-            <NavLink to={"/orgs/$slug/members"} params={{ slug }}>
-              <UsersIcon />
-              <span>Members</span>
-            </NavLink>
-          </SidebarMenuButton>
+        <AnimatedSidebarMenuItem>
+          <SidebarNavButton icon={UsersIcon} label="Members" description="Manage members and invitations" to={"/orgs/$slug/members"} params={{ slug }} />
           {
             membersCountData && <SidebarMenuBadge>{membersCountData.count}</SidebarMenuBadge>
           }
-        </SidebarMenuItem>
+        </AnimatedSidebarMenuItem>
 
         <Collapsible>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              className="data-[current=true]:bg-sidebar-primary data-[current=true]:text-sidebar-primary-foreground data-[current=true]:font-medium"
-              asChild
-            >
-              <NavLink to={"/orgs/$slug/settings"} params={{ slug }}>
-                <Settings2Icon />
-                <span>Settings</span>
-              </NavLink>
-            </SidebarMenuButton>
+          <AnimatedSidebarMenuItem>
+            <SidebarNavButton icon={Settings2Icon} label="Settings" description="Manage organization settings" to={"/orgs/$slug/settings"} params={{ slug }} />
             <CollapsibleTrigger asChild>
-              <SidebarMenuAction className="cursor-pointer data-[state=open]:rotate-90 peer-data-[current=true]/menu-button:text-sidebar-primary-foreground">
+              <SidebarMenuAction className="cursor-pointer data-[state=open]:rotate-90 ">
                 <ChevronRight />
                 <span className="sr-only">Toggle</span>
               </SidebarMenuAction>
@@ -160,22 +101,11 @@ export function NavMain() {
                     </Link>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
-                <SidebarMenuSubItem>
-                  <SidebarMenuSubButton asChild>
-                    <Link
-                      to="/orgs/$slug/settings"
-                      params={{ slug }}
-                      search={{ tab: "billing" }}
-                    >
-                      <span>Billing</span>
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
               </SidebarMenuSub>
             </CollapsibleContent>
-          </SidebarMenuItem>
+          </AnimatedSidebarMenuItem>
         </Collapsible>
-      </SidebarMenu>
+      </AnimatedSidebarMenu>
     </SidebarGroup>
   );
 }
