@@ -165,6 +165,26 @@ describe("recursos de outro canal respondem 404", () => {
     expect(rows).toHaveLength(1);
   });
 
+  test("PUT [/posts/move-to-folder] should not link a post of the channel to a folder of another organization", async () => {
+    // Canal próprio só deste teste: outros testes do arquivo contam os posts de
+    // `ownChannelId`.
+    const { channelId } = await makeFakeChannel(testOrgSlug);
+    const postId = await makePost(channelId);
+
+    const response = await request(server.server)
+      .put(`${base()}/${channelId}/posts/move-to-folder`)
+      .set(authHeaders)
+      .send({ postIds: [postId], folderId: foreignFolderId });
+
+    expect(response.status).toEqual(404);
+
+    const [post] = await db
+      .select({ folderId: postsTable.folderId })
+      .from(postsTable)
+      .where(eq(postsTable.id, postId));
+    expect(post.folderId).toBeNull();
+  });
+
   test("PUT [/folders/:folderId] should not rename a folder of another organization", async () => {
     const response = await request(server.server)
       .put(`${base()}/${ownChannelId}/folders/${foreignFolderId}`)
@@ -294,6 +314,36 @@ describe("recursos do próprio canal continuam funcionando", () => {
       .set(authHeaders);
 
     expect(response.status).toEqual(200);
+  });
+
+  test("PUT [/posts/move-to-folder] should move a post to a folder of the channel and back out of it", async () => {
+    const { channelId } = await makeFakeChannel(testOrgSlug);
+    const postId = await makePost(channelId);
+    const folderId = await makeFolder(channelId);
+
+    const move = await request(server.server)
+      .put(`${base()}/${channelId}/posts/move-to-folder`)
+      .set(authHeaders)
+      .send({ postIds: [postId], folderId });
+    expect(move.status).toEqual(204);
+
+    const [moved] = await db
+      .select({ folderId: postsTable.folderId })
+      .from(postsTable)
+      .where(eq(postsTable.id, postId));
+    expect(moved.folderId).toEqual(folderId);
+
+    const remove = await request(server.server)
+      .put(`${base()}/${channelId}/posts/move-to-folder`)
+      .set(authHeaders)
+      .send({ postIds: [postId], folderId: null });
+    expect(remove.status).toEqual(204);
+
+    const [removed] = await db
+      .select({ folderId: postsTable.folderId })
+      .from(postsTable)
+      .where(eq(postsTable.id, postId));
+    expect(removed.folderId).toBeNull();
   });
 
   test("PUT and DELETE [/folders/:folderId] should rename and delete a folder of the channel", async () => {
