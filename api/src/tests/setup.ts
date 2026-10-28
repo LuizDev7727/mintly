@@ -36,6 +36,21 @@ vi.mock("@trigger.dev/sdk", async (importOriginal) => {
   };
 });
 
+// The OAuth callbacks exchange the code with Google, TikTok and Instagram. A
+// test must never reach them, so only the exchange is replaced: the state
+// validation that runs before it is the real one.
+vi.mock("@/functions/integration/connect-youtube.ts", () => ({
+  connectYoutube: vi.fn(async () => undefined),
+}));
+
+vi.mock("@/functions/integration/connect-tiktok.ts", () => ({
+  connectTikTok: vi.fn(async () => undefined),
+}));
+
+vi.mock("@/functions/integration/connect-instagram.ts", () => ({
+  connectInstagram: vi.fn(async () => undefined),
+}));
+
 export let testUser: ReturnType<typeof test.createUser>;
 export let testOrgSlug: string;
 export let authHeaders: Record<string, string>;
