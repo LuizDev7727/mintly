@@ -1,6 +1,8 @@
+import { createOAuthState } from "./create-oauth-state.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 type RequestYoutubeIntegrationUrlParams = {
+  userId: string;
   orgSlug: string;
   channelId: string;
 };
@@ -17,16 +19,24 @@ const SCOPES = [
 ];
 
 export async function requestYoutubeIntegrationUrl({
+  userId,
   orgSlug,
   channelId,
 }: RequestYoutubeIntegrationUrlParams): Promise<RequestYoutubeIntegrationUrlResponse> {
+  const { state } = await createOAuthState({
+    provider: "YOUTUBE",
+    userId,
+    orgSlug,
+    channelId,
+  });
+
   const googleURL = new URL("o/oauth2/v2/auth", "https://accounts.google.com");
 
   googleURL.searchParams.set("client_id", await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_ID" }));
   googleURL.searchParams.set("redirect_uri", await getInfisicalSecret({ secretName: "GOOGLE_REDIRECT_URI" }));
   googleURL.searchParams.set("response_type", "code");
   googleURL.searchParams.set("include_granted_scopes", "true");
-  googleURL.searchParams.set("state", [orgSlug, channelId].join(","));
+  googleURL.searchParams.set("state", state);
   googleURL.searchParams.set("scope", SCOPES.join(" "));
   googleURL.searchParams.set("access_type", "offline");
   googleURL.searchParams.set("prompt", "consent");

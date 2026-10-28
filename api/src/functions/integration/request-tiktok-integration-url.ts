@@ -1,14 +1,24 @@
+import { createOAuthState } from "./create-oauth-state.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 type RequestTiktokIntegrationUrlProps = {
+  userId: string;
   orgSlug: string;
   channelId: string;
 };
 
 export async function requestTiktokIntegrationUrl({
+  userId,
   orgSlug,
   channelId,
 }: RequestTiktokIntegrationUrlProps) {
+  const { state } = await createOAuthState({
+    provider: "TIKTOK",
+    userId,
+    orgSlug,
+    channelId,
+  });
+
   const tiktokURL = new URL("https://www.tiktok.com/v2/auth/authorize/");
 
   const scopes = ["user.info.basic", "video.publish"];
@@ -17,7 +27,7 @@ export async function requestTiktokIntegrationUrl({
   tiktokURL.searchParams.set("scope", scopes.join(","));
   tiktokURL.searchParams.set("redirect_uri", await getInfisicalSecret({ secretName: "TIKTOK_REDIRECT_URI" }));
   tiktokURL.searchParams.set("response_type", "code");
-  tiktokURL.searchParams.set("state", [orgSlug, channelId].join(","));
+  tiktokURL.searchParams.set("state", state);
 
   return {
     url: tiktokURL.toString(),

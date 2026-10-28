@@ -1,6 +1,7 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { tracer } from "../../../tracer/tracer.ts";
+import { consumeOAuthState } from "@/functions/integration/consume-oauth-state.ts";
 import { connectTikTok } from "@/functions/integration/connect-tiktok.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
@@ -21,7 +22,10 @@ export const tiktokCallbackRoute: FastifyPluginAsyncZod = async (app) => {
     async (request, reply) => {
       const { code, state } = request.query;
 
-      const [orgSlug, channelId] = state.split(",");
+      const { orgSlug, channelId } = await consumeOAuthState({
+        provider: "TIKTOK",
+        state,
+      });
 
       const span = tracer.startSpan("tiktok-callback");
 

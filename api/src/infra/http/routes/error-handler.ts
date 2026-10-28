@@ -1,5 +1,6 @@
 import { ChannelAlreadyExistsError } from "@/errors/channel-already-exists.error.ts";
 import { FolderAlreadyExistsError } from "@/errors/folder-already-exists.error.ts";
+import { InvalidOAuthStateError } from "@/errors/invalid-oauth-state.error.ts";
 import { OrganizationAlreadyCreatedError } from "@/errors/organization-already-created.ts";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { UnauthorizedError } from "@/errors/unauthorized.error.ts";
@@ -20,6 +21,12 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
   }
 
   if (error instanceof UnauthorizedError) {
+    return reply.status(401).send({
+      message: error.message,
+    });
+  }
+
+  if (error instanceof InvalidOAuthStateError) {
     return reply.status(401).send({
       message: error.message,
     });

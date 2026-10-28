@@ -37,6 +37,7 @@ export const requestTiktokIntegrationUrlRoute: FastifyPluginAsyncZod = async (
       await checkMembership({ organizationSlug: slug, userId });
 
       const { url } = await requestTiktokIntegrationUrl({
+        userId,
         channelId,
         orgSlug: slug,
       });

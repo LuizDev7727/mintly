@@ -1,4 +1,5 @@
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
+import { consumeOAuthState } from "@/functions/integration/consume-oauth-state.ts";
 import { connectInstagram } from "@/functions/integration/connect-instagram.ts";
 import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
@@ -21,7 +22,10 @@ export const instagramCallbackRoute: FastifyPluginAsyncZod = async (app) => {
     async (request, reply) => {
       const { code, state } = request.query;
 
-      const [orgSlug, channelId] = state.split(",");
+      const { orgSlug, channelId } = await consumeOAuthState({
+        provider: "INSTAGRAM",
+        state,
+      });
 
       const span = tracer.startSpan("instagram-callback");
 

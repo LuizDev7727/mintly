@@ -1,6 +1,8 @@
+import { createOAuthState } from "./create-oauth-state.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 type RequestInstagramIntegrationUrlParams = {
+  userId: string;
   orgSlug: string;
   channelId: string;
 };
@@ -15,16 +17,24 @@ const SCOPES = [
 ];
 
 export async function requestInstagramIntegrationUrl({
+  userId,
   orgSlug,
   channelId,
 }: RequestInstagramIntegrationUrlParams): Promise<RequestInstagramIntegrationUrlResponse> {
+  const { state } = await createOAuthState({
+    provider: "INSTAGRAM",
+    userId,
+    orgSlug,
+    channelId,
+  });
+
   const instagramURL = new URL("https://api.instagram.com/oauth/authorize");
 
   instagramURL.searchParams.set("client_id", await getInfisicalSecret({ secretName: "INSTAGRAM_APP_ID" }));
   instagramURL.searchParams.set("redirect_uri", await getInfisicalSecret({ secretName: "INSTAGRAM_REDIRECT_URI" }));
   instagramURL.searchParams.set("response_type", "code");
   instagramURL.searchParams.set("scope", SCOPES.join(","));
-  instagramURL.searchParams.set("state", [orgSlug, channelId].join(","));
+  instagramURL.searchParams.set("state", state);
 
   const url = instagramURL.toString();
 
