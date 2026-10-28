@@ -30,6 +30,7 @@ export default function WebhookEvents() {
               code: `export interface PostCreatedWebhookEvent {
   trigger: "post.created";
   payload: {
+    eventId?: string;
     message: string;
   };
 }`,
@@ -46,6 +47,9 @@ export default function WebhookEvents() {
                   </span>
                   {";"}
                   {"\n  payload: {"}
+                  {"\n    eventId?: "}
+                  <span className="text-emerald-300">string</span>
+                  {";"}
                   {"\n    message: "}
                   <span className="text-emerald-300">string</span>
                   {";"}
@@ -58,6 +62,7 @@ export default function WebhookEvents() {
               code: `{
   "trigger": "post.created",
   "payload": {
+    "eventId": "0198f3c2-7b1e-7c4a-9d2e-5a6b8c9d0e1f",
     "message": "Your post has been created."
   }
 }`,
@@ -75,6 +80,13 @@ export default function WebhookEvents() {
                   <span className="text-sky-300">&quot;payload&quot;</span>
                   {": {"}
                   {"\n    "}
+                  <span className="text-sky-300">&quot;eventId&quot;</span>
+                  {": "}
+                  <span className="text-orange-300">
+                    &quot;0198f3c2-7b1e-7c4a-9d2e-5a6b8c9d0e1f&quot;
+                  </span>
+                  {","}
+                  {"\n    "}
                   <span className="text-sky-300">&quot;message&quot;</span>
                   {": "}
                   <span className="text-orange-300">
@@ -87,6 +99,7 @@ export default function WebhookEvents() {
             }}
             zodSchema={{
               code: `export const postCreatedSchema = z.object({
+  eventId: z.string().optional(),
   message: z.string(),
 })`,
               content: (
@@ -94,6 +107,11 @@ export default function WebhookEvents() {
                   export const{" "}
                   <span className="text-sky-300">postCreatedSchema</span>{" "}
                   = z.object({"{"}
+                  {"\n  eventId: "}
+                  <span className="text-emerald-300">
+                    z.string().optional()
+                  </span>
+                  {","}
                   {"\n  message: "}
                   <span className="text-emerald-300">z.string()</span>
                   {","}
@@ -360,6 +378,7 @@ export default function WebhookEvents() {
               code: `export interface ProjectCreatedWebhookEvent {
   trigger: "project.created";
   payload: {
+    eventId?: string;
     message: string;
   };
 }`,
@@ -376,6 +395,9 @@ export default function WebhookEvents() {
                   </span>
                   {";"}
                   {"\n  payload: {"}
+                  {"\n    eventId?: "}
+                  <span className="text-emerald-300">string</span>
+                  {";"}
                   {"\n    message: "}
                   <span className="text-emerald-300">string</span>
                   {";"}
@@ -388,6 +410,7 @@ export default function WebhookEvents() {
               code: `{
   "trigger": "project.created",
   "payload": {
+    "eventId": "0198f3c2-7b1e-7c4a-9d2e-5a6b8c9d0e1f",
     "message": "A new project has been created."
   }
 }`,
@@ -405,6 +428,13 @@ export default function WebhookEvents() {
                   <span className="text-sky-300">&quot;payload&quot;</span>
                   {": {"}
                   {"\n    "}
+                  <span className="text-sky-300">&quot;eventId&quot;</span>
+                  {": "}
+                  <span className="text-orange-300">
+                    &quot;0198f3c2-7b1e-7c4a-9d2e-5a6b8c9d0e1f&quot;
+                  </span>
+                  {","}
+                  {"\n    "}
                   <span className="text-sky-300">&quot;message&quot;</span>
                   {": "}
                   <span className="text-orange-300">
@@ -417,6 +447,7 @@ export default function WebhookEvents() {
             }}
             zodSchema={{
               code: `export const projectCreatedSchema = z.object({
+  eventId: z.string().optional(),
   message: z.string(),
 })`,
               content: (
@@ -426,6 +457,11 @@ export default function WebhookEvents() {
                     projectCreatedSchema
                   </span>{" "}
                   = z.object({"{"}
+                  {"\n  eventId: "}
+                  <span className="text-emerald-300">
+                    z.string().optional()
+                  </span>
+                  {","}
                   {"\n  message: "}
                   <span className="text-emerald-300">z.string()</span>
                   {","}

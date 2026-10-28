@@ -44,5 +44,28 @@ describe("POST [/api/organizations/:slug/channels/:channelId/projects]", () => {
       trigger: "project.created",
       payload: { message: "Project(s) created successfully." },
     });
+    expect((published.body as { payload: { eventId?: string } }).payload.eventId).toEqual(
+      expect.any(String),
+    );
+  });
+
+  // O QStash descarta mensagens de corpo idêntico: o evento de duas criações
+  // seguidas não pode ser o mesmo.
+  test("should publish a different project.created body for each request", async () => {
+    const publishJSON = vi
+      .spyOn(qstash, "publishJSON")
+      .mockResolvedValue({ messageId: "msg" } as never);
+
+    for (const name of ["first", "second"]) {
+      const response = await request(server.server)
+        .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/projects`)
+        .set(authHeaders)
+        .send({ files: [{ name: `${name}.mp4`, key: `${testUser.id}/${name}` }] });
+
+      expect(response.status).toEqual(201);
+    }
+
+    const [first, second] = publishJSON.mock.calls.map(([request]) => JSON.stringify(request.body));
+    expect(first).not.toEqual(second);
   });
 });
