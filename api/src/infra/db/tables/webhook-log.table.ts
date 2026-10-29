@@ -18,9 +18,6 @@ export const webhookLogsTable = pgTable("webhook_logs", {
   status: webhookLogStatus('status').default('PENDING').notNull(),
   method: text().notNull(),
   pathname: text().notNull(),
-  // Obsoleta: nada mais grava nem expõe esta coluna (só guardava um valor fixo).
-  // Opcional por segurança do deploy; será apagada num segundo passo.
-  ip: text(),
   statusCode: integer('status_code').notNull().default(200),
   contentType: text('content_type'),
   contentLength: integer('content_length'),
