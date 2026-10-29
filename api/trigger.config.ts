@@ -33,7 +33,9 @@ export default defineConfig({
       new OTLPTraceExporter({
         url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT!,
         headers: {
-          Authorization: `Bearer ${process.env.OTEL_EXPORTER_OTLP_HEADERS!.replace(/^Authorization=Basic/, "")}`,
+          // Este arquivo também é carregado no build, onde a variável pode não
+          // existir; sem o `?? ""` o `.replace` lançava e o deploy não saía do build.
+          Authorization: `Bearer ${(process.env.OTEL_EXPORTER_OTLP_HEADERS ?? "").replace(/^Authorization=Basic/, "")}`,
         },
       }),
     ],
