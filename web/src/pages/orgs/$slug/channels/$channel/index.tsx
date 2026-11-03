@@ -6,6 +6,7 @@ import { Posts } from "./-components/posts";
 import { PostsFilter } from "./-components/posts-filter";
 import { CurrentFolderBadge } from "./-components/current-folder-badge";
 import { FolderTreeDropdown } from "./-components/folder-tree-dropdown";
+import { PostLogsSheet } from "./-components/post-logs-sheet";
 
 
 export const Route = createFileRoute("/orgs/$slug/channels/$channel/")({
@@ -47,6 +48,8 @@ function ChannelPage() {
           A home for the content you want to keep close.
         </p>
       </header>
+
+      <PostLogsSheet/>
 
       <div className="flex items-center justify-between gap-2">
         <PostsFilter />
