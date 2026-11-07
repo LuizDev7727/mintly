@@ -190,6 +190,8 @@ export const createPostTask = schemaTask({
       duration: z.number(),
       shouldGenerateThumbnail: z.boolean(),
       shouldGenerateShorts: z.boolean(),
+      // Opcional no payload: runs agendadas antes desta feature não o têm.
+      affiliateUrl: z.string().nullish(),
       scheduledTo: z
         .string()
         .nullable()
@@ -306,6 +308,7 @@ export const createPostTask = schemaTask({
       fileKey,
       size,
       duration,
+      affiliateUrl,
     } = post;
 
     const fileUrl = await generateSignedUrl({
@@ -328,7 +331,13 @@ export const createPostTask = schemaTask({
       ? await prepareImage({ fileUrl, postId, mimeType, title })
       : await prepareVideo({ fileUrl, postId, duration, shouldGenerateThumbnail });
 
-    const { title: publishTitle, description, tags, publishUrl } = prepared;
+    const { title: publishTitle, tags, publishUrl } = prepared;
+
+    // O link vai no começo da descrição. É montado a cada execução a partir da
+    // descrição gerada, então um retry da run não o duplica.
+    const description = affiliateUrl
+      ? `${affiliateUrl}\n\n${prepared.description}`.trim()
+      : prepared.description;
 
     metadata.set("status", "PUBLISHING");
     await db

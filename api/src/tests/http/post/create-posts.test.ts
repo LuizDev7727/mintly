@@ -62,7 +62,10 @@ async function postsOf(channelId: string) {
     .where(eq(postsTable.channelId, channelId));
 }
 
-function createPosts(channelId: string, posts: ReturnType<typeof makePost>[]) {
+function createPosts(
+  channelId: string,
+  posts: (ReturnType<typeof makePost> & { affiliateUrl?: string })[],
+) {
   return request(server.server)
     .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/posts`)
     .set(authHeaders)
@@ -169,6 +172,55 @@ describe("POST [/api/organizations/:slug/channels/:channelId/posts]", () => {
 
     expect(response.status).toEqual(201);
   });
+
+  test("should store the affiliate link and send it to the task", async () => {
+    const { channelId } = await makeFakeChannel(testOrgSlug);
+    vi.mocked(tasks.trigger).mockClear();
+    const affiliateUrl = "https://example.com/buy?ref=mintly";
+
+    const response = await createPosts(channelId, [
+      { ...makePost("with-link"), affiliateUrl },
+    ]);
+
+    expect(response.status).toEqual(201);
+
+    const [post] = await db
+      .select({ affiliateUrl: postsTable.affiliateUrl })
+      .from(postsTable)
+      .where(eq(postsTable.channelId, channelId));
+    expect(post.affiliateUrl).toEqual(affiliateUrl);
+
+    const [, payload] = vi.mocked(tasks.trigger).mock.calls[0];
+    expect((payload as { post: object }).post).toMatchObject({ affiliateUrl });
+  });
+
+  test("should leave the affiliate link null when none is sent", async () => {
+    const { channelId } = await makeFakeChannel(testOrgSlug);
+
+    const response = await createPosts(channelId, [makePost("no-link")]);
+
+    expect(response.status).toEqual(201);
+
+    const [post] = await db
+      .select({ affiliateUrl: postsTable.affiliateUrl })
+      .from(postsTable)
+      .where(eq(postsTable.channelId, channelId));
+    expect(post.affiliateUrl).toBeNull();
+  });
+
+  test.each(["javascript:alert(1)", "ftp://example.com/file", "not a url"])(
+    "should return 400 and create no post for the affiliate link %s",
+    async (affiliateUrl) => {
+      const { channelId } = await makeFakeChannel(testOrgSlug);
+
+      const response = await createPosts(channelId, [
+        { ...makePost("bad-link"), affiliateUrl },
+      ]);
+
+      expect(response.status).toEqual(400);
+      expect(await postsOf(channelId)).toHaveLength(0);
+    },
+  );
 
   test("should return 404 and create no post when one of the files does not exist", async () => {
     const { channelId } = await makeFakeChannel(testOrgSlug);

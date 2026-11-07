@@ -18,6 +18,7 @@ type CreatePostsParams = {
     shouldGenerateThumbnail: boolean
     shouldGenerateShorts: boolean
     scheduledTo: string | null,
+    affiliateUrl: string | null
     socialsToPost: {
       id: string;
       name: string;
@@ -38,7 +39,7 @@ export async function createPosts(params:CreatePostsParams) {
 
   for (const post of posts) {
 
-    const { file, shouldGenerateThumbnail, shouldGenerateShorts, scheduledTo, socialsToPost } = post;
+    const { file, shouldGenerateThumbnail, shouldGenerateShorts, scheduledTo, affiliateUrl, socialsToPost } = post;
 
     const scheduledToDate = scheduledTo ? new Date(scheduledTo) : null;
 
@@ -53,6 +54,7 @@ export async function createPosts(params:CreatePostsParams) {
       status: scheduledToDate ? "SCHEDULED" : "PROCESSING",
       size: file.size,
       scheduledTo: scheduledToDate,
+      affiliateUrl,
       ownerId,
     }).returning({ postInsertedId: postsTable.id })
 
@@ -70,6 +72,7 @@ export async function createPosts(params:CreatePostsParams) {
         title: file.name,
         mimeType: file.type,
         scheduledTo,
+        affiliateUrl,
         shouldGenerateShorts,
         shouldGenerateThumbnail,
         socialsToPost: socialsToPost,

@@ -47,6 +47,7 @@ export const postsTable = pgTable(
     status: statusEnum().notNull().default("PROCESSING"),
     transcription: jsonb("transcription"),
     scheduledTo: timestamp("scheduled_to", { withTimezone: true }),
+    affiliateUrl: varchar("affiliate_url", { length: 2048 }),
 
     ownerId: text("owner_id")
       .notNull()
