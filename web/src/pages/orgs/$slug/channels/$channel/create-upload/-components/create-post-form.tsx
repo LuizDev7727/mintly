@@ -1,6 +1,8 @@
 import { TikTokIcon } from "@/components/tiktok-icon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
@@ -31,6 +33,7 @@ import {
   Calendar,
   CirclePlus,
   FileVideo,
+  Link2,
   ListVideo,
   Scissors,
   Sparkles,
@@ -144,6 +147,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
         file,
         duration,
         scheduledTo: null,
+        affiliateUrl: "",
         shouldGenerateThumbnail: false,
         shouldGenerateShorts: false,
         shouldGenerateVideoMetadata: false,
@@ -277,6 +281,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
           scheduledTo: post.scheduledTo
             ? new Date(post.scheduledTo).toISOString()
             : null,
+          affiliateUrl: post.affiliateUrl.trim() || null,
           socialsToPost: post.socialsToPost,
         })),
       });
@@ -581,6 +586,31 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                       />
                     </label>
                   </div>
+                </div>
+
+                <Separator />
+
+                {/* Affiliate link */}
+                <div className="flex flex-col gap-2">
+                  <Label
+                    htmlFor={`affiliate-url-${post.id}`}
+                    className="text-sm font-semibold text-foreground"
+                  >
+                    <Link2 className="mr-1.5 inline-block size-3.5 text-muted-foreground" />
+                    Affiliate link
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Optional. Added at the start of the description when the post
+                    is published.
+                  </p>
+                  <Input
+                    id={`affiliate-url-${post.id}`}
+                    type="text"
+                    inputMode="url"
+                    placeholder="https://example.com/product?ref=you"
+                    disabled={isUploading}
+                    {...register(`posts.${postIndex}.affiliateUrl`)}
+                  />
                 </div>
 
                 <Separator />
