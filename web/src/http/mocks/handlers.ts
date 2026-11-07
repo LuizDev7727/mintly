@@ -1,4 +1,5 @@
 import { getOrganizationMetricsMock } from "./get-organization-metrics-mock";
+import { getActiveOrganizationMock } from "./get-active-organization-mock";
 import { getOrganizationsMock } from "./get-organizations-mock";
 import { getChannelsMock } from "./get-channels-mock";
 import { getSessionMock } from "./get-session-mock";
@@ -17,6 +18,7 @@ import { getMembersCountMock } from "./get-members-count-mock";
 import { getOrganizationPendingInvitesMock } from "./get-organization-pending-invites-mock";
 
 export const handlers = [
+  getActiveOrganizationMock,
   getOrganizationsMock,
   getChannelsMock,
   getSessionMock,

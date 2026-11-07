@@ -8,6 +8,7 @@ import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import { TooltipProvider } from "../src/components/ui/tooltip";
 import {
   createMemoryHistory,
+  createRoute,
   createRootRoute,
   createRouter,
   RouterProvider,
@@ -15,26 +16,45 @@ import {
 
 initialize({ onUnhandledRequest: "bypass" });
 
-const withProviders: Decorator = (Story) => {
+// Components read route params with `useParams({ from })`, which throws when
+// the route is not in the active matches. The in-memory router therefore
+// mirrors the org/channel routes and starts at a URL that matches them.
+const DEFAULT_INITIAL_ENTRY = "/orgs/mintly/channels/1";
+
+const withProviders: Decorator = (Story, context) => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
 
+  const rootRoute = createRootRoute({
+    component: () => (
+      <ThemeProvider defaultTheme="system" storageKey="mintly-ui-theme">
+        <QueryClientProvider client={queryClient}>
+          <NuqsAdapter>
+            <TooltipProvider>
+              <Story />
+            </TooltipProvider>
+          </NuqsAdapter>
+        </QueryClientProvider>
+      </ThemeProvider>
+    ),
+  });
+  const orgRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/orgs/$slug",
+  });
+  const channelRoute = createRoute({
+    getParentRoute: () => orgRoute,
+    path: "/channels/$channel",
+  });
+
   const router = createRouter({
-    routeTree: createRootRoute({
-      component: () => (
-        <ThemeProvider defaultTheme="system" storageKey="mintly-ui-theme">
-          <QueryClientProvider client={queryClient}>
-            <NuqsAdapter>
-              <TooltipProvider>
-                <Story />
-              </TooltipProvider>
-            </NuqsAdapter>
-          </QueryClientProvider>
-        </ThemeProvider>
-      ),
+    routeTree: rootRoute.addChildren([orgRoute.addChildren([channelRoute])]),
+    history: createMemoryHistory({
+      initialEntries: [
+        context.parameters.initialEntry ?? DEFAULT_INITIAL_ENTRY,
+      ],
     }),
-    history: createMemoryHistory(),
   });
 
   return <RouterProvider router={router} />;
