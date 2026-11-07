@@ -1,6 +1,7 @@
 import { accountsTable } from "./accounts.table.ts";
 import { activitiesTable } from "./activities.table.ts";
 import { channelsTable, channelsRelations } from "./channels.table.ts";
+import { colorsTable, colorsRelations } from "./colors.table.ts";
 import { foldersTable, foldersRelations } from "./folders.table.ts";
 import { inspirationalThumbnailsTable } from "./inspirational-thumbnail.table.ts";
 import { invitationsTable } from "./invitations.table.ts";
@@ -15,6 +16,8 @@ export const tables = {
   accountsTable,
   channelsTable,
   channelsRelations,
+  colorsTable,
+  colorsRelations,
   foldersTable,
   foldersRelations,
   invitationsTable,

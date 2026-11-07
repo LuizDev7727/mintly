@@ -253,6 +253,20 @@
       "when": 1793237429267,
       "tag": "0035_oval_meggan",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1793745838472,
+      "tag": "0036_public_blue_blade",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1793745878521,
+      "tag": "0037_wonderful_harrier",
+      "breakpoints": true
     }
   ]
 }
