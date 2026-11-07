@@ -605,7 +605,8 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                   </p>
                   <Input
                     id={`affiliate-url-${post.id}`}
-                    type="url"
+                    type="text"
+                    inputMode="url"
                     placeholder="https://example.com/product?ref=you"
                     disabled={isUploading}
                     {...register(`posts.${postIndex}.affiliateUrl`)}

@@ -173,6 +173,16 @@ describe("POST [/api/organizations/:slug/channels/:channelId/posts]", () => {
     expect(response.status).toEqual(201);
   });
 
+  test("should return 401 when not authenticated", async () => {
+    const { channelId } = await makeFakeChannel(testOrgSlug);
+
+    const response = await request(server.server)
+      .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/posts`)
+      .send({ posts: [{ ...makePost("file-key"), affiliateUrl: "https://example.com" }] });
+
+    expect(response.status).toEqual(401);
+  });
+
   test("should store the affiliate link and send it to the task", async () => {
     const { channelId } = await makeFakeChannel(testOrgSlug);
     vi.mocked(tasks.trigger).mockClear();
