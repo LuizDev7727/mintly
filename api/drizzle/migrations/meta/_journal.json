@@ -257,15 +257,8 @@
     {
       "idx": 36,
       "version": "7",
-      "when": 1793745838472,
-      "tag": "0036_public_blue_blade",
-      "breakpoints": true
-    },
-    {
-      "idx": 37,
-      "version": "7",
-      "when": 1793745878521,
-      "tag": "0037_wonderful_harrier",
+      "when": 1794011396773,
+      "tag": "0036_aberrant_corsair",
       "breakpoints": true
     }
   ]

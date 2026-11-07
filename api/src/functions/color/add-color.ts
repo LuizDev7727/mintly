@@ -1,5 +1,9 @@
 import { db } from "@/infra/db/client.ts";
 import { colorsTable } from "@/infra/db/tables/colors.table.ts";
+import { count, eq } from "drizzle-orm";
+import { ColorLimitReachedError } from "../../errors/color-limit-reached.error.ts";
+
+const MAX_COLORS_PER_CHANNEL = 5;
 
 type AddColorParams = {
   channelId: string;
@@ -22,6 +26,15 @@ export async function addColor(
   params: AddColorParams,
 ): Promise<AddColorResponse> {
   const { channelId, rgb } = params;
+
+  const [{ total }] = await db
+    .select({ total: count() })
+    .from(colorsTable)
+    .where(eq(colorsTable.channelId, channelId));
+
+  if (total >= MAX_COLORS_PER_CHANNEL) {
+    throw new ColorLimitReachedError();
+  }
 
   const hex = `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
 

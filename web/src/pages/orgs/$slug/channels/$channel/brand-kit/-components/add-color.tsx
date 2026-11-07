@@ -9,7 +9,7 @@ import {
   ColorPickerHexInput,
   ColorPickerHue,
   ColorPickerTrigger,
-} from "@/components/motion/color-picker";
+} from "./color-picker";
 import { Button } from "@/components/ui/button";
 import { addColorHttp } from "@/http/color/add-color.http";
 

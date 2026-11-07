@@ -46,6 +46,30 @@ describe("POST [/api/organizations/:slug/channels/:channelId/colors]", () => {
     );
   });
 
+  test("should return 409 when the channel already has 5 colors", async () => {
+    const { channelId: fullChannelId } = await makeFakeChannel(testOrgSlug);
+    const url = `/api/organizations/${testOrgSlug}/channels/${fullChannelId}/colors`;
+
+    for (let i = 0; i < 5; i++) {
+      const created = await request(server.server)
+        .post(url)
+        .set(authHeaders)
+        .send({ r: i, g: i, b: i });
+
+      expect(created.status).toEqual(201);
+    }
+
+    const response = await request(server.server)
+      .post(url)
+      .set(authHeaders)
+      .send({ r: 9, g: 9, b: 9 });
+
+    expect(response.status).toEqual(409);
+    expect(response.body.message).toEqual(
+      "Color limit reached for this channel",
+    );
+  });
+
   test("should return 400 when a channel is out of the 0-255 range", async () => {
     const response = await request(server.server)
       .post(`/api/organizations/${testOrgSlug}/channels/${channelId}/colors`)

@@ -8,7 +8,7 @@ import {
   ColorPickerHexInput,
   ColorPickerHue,
   ColorPickerTrigger,
-} from "@/components/motion/color-picker";
+} from "./color-picker";
 import { Button } from "@/components/ui/button";
 import { deleteColorHttp } from "@/http/color/delete-color.http";
 

@@ -14,7 +14,7 @@ import {
   useSpring,
   useTransform,
   useVelocity,
-} from "motion/react";
+} from "framer-motion";
 import {
   Children,
   type ComponentPropsWithRef,
@@ -32,8 +32,8 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_GLIDE, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
-import { useDismiss } from "@/lib/hooks/use-dismiss";
-import { PresenceGate } from "@/lib/presence-gate";
+import { useDismiss } from "./use-dismiss";
+import { PresenceGate } from "./presence-gate";
 import { capturePointer, releasePointer, TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 

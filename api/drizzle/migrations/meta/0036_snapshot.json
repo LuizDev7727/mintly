@@ -1,5 +1,5 @@
 {
-  "id": "7ddefb55-c909-4de7-aef3-5e02e19f2968",
+  "id": "d42da41c-5b31-4717-93db-e1f3ce0e8e75",
   "prevId": "5e18d1de-9851-44bc-946c-e039bb880e83",
   "version": "7",
   "dialect": "postgresql",
@@ -339,12 +339,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
         "hex": {
           "name": "hex",
           "type": "varchar(9)",
@@ -365,7 +359,23 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "colors_channel_id_idx": {
+          "name": "colors_channel_id_idx",
+          "columns": [
+            {
+              "expression": "channel_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "colors_channel_id_channels_id_fk": {
           "name": "colors_channel_id_channels_id_fk",

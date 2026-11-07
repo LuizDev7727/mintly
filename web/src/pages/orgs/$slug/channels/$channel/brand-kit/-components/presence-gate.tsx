@@ -1,6 +1,6 @@
 "use client";
 
-import { useIsPresent } from "motion/react";
+import { useIsPresent } from "framer-motion";
 import type { ReactNode } from "react";
 
 export interface PresenceGateRenderProps {
