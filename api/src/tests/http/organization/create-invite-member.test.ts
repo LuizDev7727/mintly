@@ -1,8 +1,8 @@
-﻿import { describe, test, expect } from "vitest";
+﻿import { faker } from "@faker-js/faker";
 import request from "supertest";
+import { describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
-import { faker } from "@faker-js/faker";
 
 describe("POST [/api/organizations/:slug/invites]", () => {
   test("should return 201 with inviteId", async () => {

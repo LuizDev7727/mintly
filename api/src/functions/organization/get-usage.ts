@@ -1,7 +1,7 @@
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
-import { and, eq, sql } from "drizzle-orm";
 
 type GetUsageParams = {
   organizationSlug: string;
@@ -73,11 +73,7 @@ function buildMockSeries({
     startDate.getUTCMonth(),
     startDate.getUTCDate(),
   );
-  const lastDay = Date.UTC(
-    endDate.getUTCFullYear(),
-    endDate.getUTCMonth(),
-    endDate.getUTCDate(),
-  );
+  const lastDay = Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), endDate.getUTCDate());
 
   for (let day = firstDay, index = 0; day <= lastDay; day += DAY_IN_MS, index++) {
     series.push({
@@ -111,20 +107,14 @@ export async function getUsage({
       .select({
         date: sql<string>`TO_CHAR(t.day, 'YYYY-MM-DD')`.as("date"),
       })
-      .from(
-        sql`generate_series(${startDate}::date, ${endDate}::date, interval '1 day') as t(day)`,
-      ),
+      .from(sql`generate_series(${startDate}::date, ${endDate}::date, interval '1 day') as t(day)`),
   );
 
   const postsSizePerDay = db.$with("posts_size_per_day").as(
     db
       .select({
-        postDate: sql<string>`TO_CHAR(${postsTable.createdAt}, 'YYYY-MM-DD')`.as(
-          "post_date",
-        ),
-        totalSize: sql<number>`coalesce(sum(${postsTable.size}), 0)::float8`.as(
-          "total_size",
-        ),
+        postDate: sql<string>`TO_CHAR(${postsTable.createdAt}, 'YYYY-MM-DD')`.as("post_date"),
+        totalSize: sql<number>`coalesce(sum(${postsTable.size}), 0)::float8`.as("total_size"),
       })
       .from(postsTable)
       .innerJoin(channelsTable, eq(postsTable.channelId, channelsTable.id))
@@ -193,10 +183,7 @@ export async function getUsage({
     storage: {
       currentBytes: currentStorageBytes,
       previousBytes: previousStorageBytes,
-      changePercentage: calculateChangePercentage(
-        currentStorageBytes,
-        previousStorageBytes,
-      ),
+      changePercentage: calculateChangePercentage(currentStorageBytes, previousStorageBytes),
     },
     series,
     storageSeries,

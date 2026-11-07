@@ -1,10 +1,10 @@
+import { and, eq } from "drizzle-orm";
+import type { FastifyRequest, onRouteHookHandler } from "fastify";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { UnauthorizedError } from "@/errors/unauthorized.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
-import { and, eq } from "drizzle-orm";
-import type { FastifyRequest, onRouteHookHandler } from "fastify";
 
 type CheckChannelProps = {
   organizationSlug: string;
@@ -21,10 +21,7 @@ export async function checkChannel(props: CheckChannelProps) {
     .select({ id: channelsTable.id })
     .from(channelsTable)
     .where(
-      and(
-        eq(channelsTable.id, channelId),
-        eq(channelsTable.organizationSlug, organizationSlug),
-      ),
+      and(eq(channelsTable.id, channelId), eq(channelsTable.organizationSlug, organizationSlug)),
     )
     .limit(1);
 
@@ -59,8 +56,7 @@ async function checkChannelOfRequest(request: FastifyRequest) {
   await checkChannel({ organizationSlug, channelId });
 }
 
-const CHANNEL_ROUTE_PATTERN =
-  /^\/api\/organizations\/:(slug|orgSlug)\/channels\/:channelId(\/|$)/;
+const CHANNEL_ROUTE_PATTERN = /^\/api\/organizations\/:(slug|orgSlug)\/channels\/:channelId(\/|$)/;
 
 // Hook global (registrado no `app.ts` antes das rotas): toda rota
 // `/api/organizations/:slug/channels/:channelId/...` ganha a checagem de canal

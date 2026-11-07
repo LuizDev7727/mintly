@@ -1,17 +1,11 @@
 import { relations } from "drizzle-orm";
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-  integer,
-} from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
-import { sessionsTable } from "./sessions.table.ts";
 import { accountsTable } from "./accounts.table.ts";
-import { membersTable } from "./members.table.ts";
 import { invitationsTable } from "./invitations.table.ts";
+import { membersTable } from "./members.table.ts";
 import { organizationsTable } from "./organizations.table.ts";
+import { sessionsTable } from "./sessions.table.ts";
 
 export const usersTable = pgTable("users", {
   id: text("id")

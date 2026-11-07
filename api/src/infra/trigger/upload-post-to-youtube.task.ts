@@ -1,12 +1,12 @@
-import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
-import { logger, schemaTask } from "@trigger.dev/sdk";
-import { google } from "googleapis";
-import { z } from "zod";
+import { createReadStream, createWriteStream } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { logger, schemaTask } from "@trigger.dev/sdk";
+import { google } from "googleapis";
 import { uuidv7 } from "uuidv7";
-import { createReadStream, createWriteStream } from "node:fs";
+import { z } from "zod";
 import { getIntegrationForUpload } from "@/functions/integration/get-integration-for-upload.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 export const uploadPostToYoutubeTask = schemaTask({
   id: "upload-post-to-youtube",

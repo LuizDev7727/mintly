@@ -1,10 +1,10 @@
+import { and, countDistinct, desc, eq, isNull, like, sql } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { socialsToPostTable } from "@/infra/db/tables/socials-to-post.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { generateRealtimeToken } from "@/utils/generate-realtime-token.ts";
-import { and, countDistinct, desc, eq, isNull, like, sql } from "drizzle-orm";
 
 type PostStatus =
   | "PROCESSING"
@@ -65,7 +65,7 @@ type GetPostsResponse = {
     totalCount: number;
     totalPages: number;
   };
-}
+};
 
 export async function getPosts(params: GetPostsParams): Promise<GetPostsResponse> {
   const { titleFilter, pageIndex, channelId, folderId, statusFilter, ownerId } = params;
@@ -86,7 +86,12 @@ export async function getPosts(params: GetPostsParams): Promise<GetPostsResponse
         createdAt: postsTable.createdAt,
         publishAt: postsTable.scheduledTo,
         socialsToPost: sql<
-          { id: string; social: "YOUTUBE" | "TIKTOK" | "INSTAGRAM"; socialName: string; avatarUrl: string | null }[]
+          {
+            id: string;
+            social: "YOUTUBE" | "TIKTOK" | "INSTAGRAM";
+            socialName: string;
+            avatarUrl: string | null;
+          }[]
         >`
                     json_agg(
                       json_build_object(
@@ -104,19 +109,14 @@ export async function getPosts(params: GetPostsParams): Promise<GetPostsResponse
       .from(postsTable)
       .where(
         and(
-          folderId
-            ? eq(postsTable.folderId, folderId)
-            : isNull(postsTable.folderId),
+          folderId ? eq(postsTable.folderId, folderId) : isNull(postsTable.folderId),
           titleFilter ? like(postsTable.title, `%${titleFilter}%`) : undefined,
           eq(postsTable.channelId, channelId),
           statusFilter ? eq(postsTable.status, statusFilter) : undefined,
           ownerId ? eq(postsTable.ownerId, ownerId) : undefined,
         ),
       )
-      .innerJoin(
-        socialsToPostTable,
-        eq(postsTable.id, socialsToPostTable.postId),
-      )
+      .innerJoin(socialsToPostTable, eq(postsTable.id, socialsToPostTable.postId))
       .innerJoin(usersTable, eq(postsTable.ownerId, usersTable.id))
       .orderBy(desc(postsTable.createdAt))
       .offset(pageIndex * PAGE_SIZE)
@@ -132,15 +132,10 @@ export async function getPosts(params: GetPostsParams): Promise<GetPostsResponse
         totalPostsCount: countDistinct(postsTable.id),
       })
       .from(postsTable)
-      .innerJoin(
-        socialsToPostTable,
-        eq(postsTable.id, socialsToPostTable.postId),
-      )
+      .innerJoin(socialsToPostTable, eq(postsTable.id, socialsToPostTable.postId))
       .where(
         and(
-          folderId
-            ? eq(postsTable.folderId, folderId)
-            : isNull(postsTable.folderId),
+          folderId ? eq(postsTable.folderId, folderId) : isNull(postsTable.folderId),
           titleFilter ? like(postsTable.title, `%${titleFilter}%`) : undefined,
           eq(postsTable.channelId, channelId),
           statusFilter ? eq(postsTable.status, statusFilter) : undefined,
@@ -150,7 +145,6 @@ export async function getPosts(params: GetPostsParams): Promise<GetPostsResponse
   ]);
 
   const totalPages = Math.ceil(totalPostsCount / PAGE_SIZE);
-
 
   // The code below generates the realtime token only for active post statuses.
   // To not generate token where posts has already been published or error or scheduled.
@@ -169,9 +163,7 @@ export async function getPosts(params: GetPostsParams): Promise<GetPostsResponse
         thumbnailUrl: thumbnailStorageKey
           ? await generateSignedUrl({ key: thumbnailStorageKey })
           : null,
-        realtimeToken: (ACTIVE_POST_STATUSES as readonly string[]).includes(
-          post.status,
-        )
+        realtimeToken: (ACTIVE_POST_STATUSES as readonly string[]).includes(post.status)
           ? await generateRealtimeToken({ runId })
           : null,
       };

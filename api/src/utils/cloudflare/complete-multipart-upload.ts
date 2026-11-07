@@ -1,5 +1,5 @@
-import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
 import { CompleteMultipartUploadCommand } from "@aws-sdk/client-s3";
+import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
 
 type CompleteMultipartUploadParams = {
   key: string;

@@ -1,19 +1,15 @@
-import { removeStarredFolder } from "@/functions/folder/remove-starred-folder.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { removeStarredFolder } from "@/functions/folder/remove-starred-folder.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
-export const removeStarredFolderRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const removeStarredFolderRoute: FastifyPluginAsyncZod = async (app) => {
   app.delete(
     "/api/organizations/:slug/channels/:channelId/starred-folders/:folderId",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -35,8 +31,8 @@ export const removeStarredFolderRoute: FastifyPluginAsyncZod = async (
 
       await checkMembership({
         organizationSlug: slug,
-        userId
-      })
+        userId,
+      });
 
       await removeStarredFolder({ folderId, channelId });
 

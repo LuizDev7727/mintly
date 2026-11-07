@@ -1,14 +1,14 @@
-import { createPosts } from "@/functions/posts/create-posts.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
-import { createActivity } from "@/utils/create-activity.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { z } from "zod";
-import { isImageMimeType, POST_MIME_TYPES } from "@/utils/media-type.ts";
-import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
-import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
-import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 import { uuidv7 } from "uuidv7";
+import { z } from "zod";
+import { createPosts } from "@/functions/posts/create-posts.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
+import { createActivity } from "@/utils/create-activity.ts";
+import { isImageMimeType, POST_MIME_TYPES } from "@/utils/media-type.ts";
+import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 const scheduledToSchema = z
   .string()
@@ -31,9 +31,7 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/organizations/:slug/channels/:channelId/posts",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -42,40 +40,41 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
         body: z.object({
           posts: z
             .array(
-              z.object({
-                file: z.object({
-                  name: z.string(),
-                  key: z.string(),
-                  type: z.enum(POST_MIME_TYPES),
-                  size: z.number(),
-                  duration: z.number().nullable(),
-                }),
-                shouldGenerateThumbnail: z.boolean(),
-                shouldGenerateShorts: z.boolean(),
-                scheduledTo: scheduledToSchema,
-                affiliateUrl: affiliateUrlSchema.default(null),
-                socialsToPost: z
-                  .array(
-                    z.object({
-                      id: z.string(),
-                      name: z.string(),
-                      provider: z.enum(["YOUTUBE", "TIKTOK", "INSTAGRAM"]),
-                      avatarUrl: z.string().nullable(),
-                    }),
-                  )
-                  .min(1, {
-                    error: "Post needs at least one integration selected",
+              z
+                .object({
+                  file: z.object({
+                    name: z.string(),
+                    key: z.string(),
+                    type: z.enum(POST_MIME_TYPES),
+                    size: z.number(),
+                    duration: z.number().nullable(),
                   }),
-              })
-              .refine(
-                (post) =>
-                  !isImageMimeType(post.file.type) ||
-                  post.socialsToPost.every((social) => social.provider === "INSTAGRAM"),
-                {
-                  error: "Images can only be published on Instagram",
-                  path: ["socialsToPost"],
-                },
-              ),
+                  shouldGenerateThumbnail: z.boolean(),
+                  shouldGenerateShorts: z.boolean(),
+                  scheduledTo: scheduledToSchema,
+                  affiliateUrl: affiliateUrlSchema.default(null),
+                  socialsToPost: z
+                    .array(
+                      z.object({
+                        id: z.string(),
+                        name: z.string(),
+                        provider: z.enum(["YOUTUBE", "TIKTOK", "INSTAGRAM"]),
+                        avatarUrl: z.string().nullable(),
+                      }),
+                    )
+                    .min(1, {
+                      error: "Post needs at least one integration selected",
+                    }),
+                })
+                .refine(
+                  (post) =>
+                    !isImageMimeType(post.file.type) ||
+                    post.socialsToPost.every((social) => social.provider === "INSTAGRAM"),
+                  {
+                    error: "Images can only be published on Instagram",
+                    path: ["socialsToPost"],
+                  },
+                ),
             )
             .min(1),
         }),
@@ -120,11 +119,13 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
         trigger: "post.created",
         // O QStash descarta mensagens de corpo idêntico; o `eventId` torna cada
         // evento único e serve de chave de idempotência para quem o recebe.
-        events: [{
-          eventId: uuidv7(),
-          message: "Post(s) created successfully."
-        }]
-      })
+        events: [
+          {
+            eventId: uuidv7(),
+            message: "Post(s) created successfully.",
+          },
+        ],
+      });
 
       span.end();
 

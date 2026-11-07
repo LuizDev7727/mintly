@@ -1,18 +1,18 @@
-import { describe, test, expect, beforeAll, vi } from "vitest";
-import request from "supertest";
-import { eq } from "drizzle-orm";
 import { tasks } from "@trigger.dev/sdk";
+import { eq } from "drizzle-orm";
+import request from "supertest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { server } from "@/app.ts";
+import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
-import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
-import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
-import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
-import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
-import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
-import { makeFakeMember } from "@/tests/factories/make-fake-member.ts";
 import { webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
 import { qstash } from "@/lib/qstash.ts";
+import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { makeFakeMember } from "@/tests/factories/make-fake-member.ts";
+import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
+import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
+import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -188,9 +188,7 @@ describe("POST [/api/organizations/:slug/channels/:channelId/posts]", () => {
     vi.mocked(tasks.trigger).mockClear();
     const affiliateUrl = "https://example.com/buy?ref=mintly";
 
-    const response = await createPosts(channelId, [
-      { ...makePost("with-link"), affiliateUrl },
-    ]);
+    const response = await createPosts(channelId, [{ ...makePost("with-link"), affiliateUrl }]);
 
     expect(response.status).toEqual(201);
 
@@ -223,9 +221,7 @@ describe("POST [/api/organizations/:slug/channels/:channelId/posts]", () => {
     async (affiliateUrl) => {
       const { channelId } = await makeFakeChannel(testOrgSlug);
 
-      const response = await createPosts(channelId, [
-        { ...makePost("bad-link"), affiliateUrl },
-      ]);
+      const response = await createPosts(channelId, [{ ...makePost("bad-link"), affiliateUrl }]);
 
       expect(response.status).toEqual(400);
       expect(await postsOf(channelId)).toHaveLength(0);
@@ -308,7 +304,9 @@ describe("post.created webhook of POST [/api/organizations/:slug/channels/:chann
 
     expect(publishJSON).toHaveBeenCalledTimes(2);
 
-    const bodies = publishJSON.mock.calls.map(([request]) => request.body as { trigger: string; payload: { eventId?: string } });
+    const bodies = publishJSON.mock.calls.map(
+      ([request]) => request.body as { trigger: string; payload: { eventId?: string } },
+    );
     expect(bodies[0].trigger).toEqual("post.created");
     expect(bodies[0].payload.eventId).toEqual(expect.any(String));
     expect(JSON.stringify(bodies[0])).not.toEqual(JSON.stringify(bodies[1]));

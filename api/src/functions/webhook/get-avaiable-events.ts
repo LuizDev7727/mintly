@@ -1,11 +1,11 @@
 type AvailableEvent = {
-  trigger: string
-  description: string
-}
+  trigger: string;
+  description: string;
+};
 
 type GetAvaiableEventsResponse = {
-  triggers: AvailableEvent[]
-}
+  triggers: AvailableEvent[];
+};
 
 export async function getAvaiableEvents(): Promise<GetAvaiableEventsResponse> {
   const triggers: AvailableEvent[] = [
@@ -25,7 +25,7 @@ export async function getAvaiableEvents(): Promise<GetAvaiableEventsResponse> {
       trigger: "project.created",
       description: "Occurs whenever a project is created.",
     },
-  ]
+  ];
 
-  return { triggers }
+  return { triggers };
 }

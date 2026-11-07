@@ -1,9 +1,9 @@
-import { describe, test, expect, vi, beforeAll, afterEach } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { db } from "@/infra/db/client.ts";
 import { webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
 import { qstash } from "@/lib/qstash.ts";
-import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
 import { testOrgSlug } from "@/tests/setup.ts";
+import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
 
 afterEach(() => {
   vi.restoreAllMocks();

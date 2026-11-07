@@ -1,6 +1,6 @@
+import { count, eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
-import { count, eq } from "drizzle-orm";
 
 type GetMembersCountParams = {
   orgSlug: string;

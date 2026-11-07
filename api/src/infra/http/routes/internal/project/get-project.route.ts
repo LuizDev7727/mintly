@@ -1,17 +1,15 @@
-import { getProject } from "@/functions/project/get-project.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { getProject } from "@/functions/project/get-project.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { tracer } from "../../../tracer/tracer.ts";
-import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const getProjectRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:slug/channels/:channelId/projects/:projectId",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),

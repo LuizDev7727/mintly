@@ -1,9 +1,9 @@
+import { eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
-import { eq } from "drizzle-orm";
 
 type UpdateOrganizationProps = {
   userId: string;
@@ -34,7 +34,7 @@ export async function updateOrganization({
     assertKeyOwnedByUser({ key: avatarKey, userId });
 
     // checks if the avatar is uploaded on R2 by key
-    await checkFileExists({ key: avatarKey })
+    await checkFileExists({ key: avatarKey });
   }
 
   await db
@@ -43,7 +43,5 @@ export async function updateOrganization({
       name: name,
       logo: avatarKey,
     })
-    .where(
-      eq(organizationsTable.slug, slug),
-    )
+    .where(eq(organizationsTable.slug, slug));
 }

@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
+import { db } from "@/infra/db/client.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import type { Replace } from "./replace.ts";
-import { db } from "@/infra/db/client.ts";
 
 type OrganizationProps = typeof organizationsTable.$inferInsert;
 

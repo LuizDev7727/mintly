@@ -1,8 +1,8 @@
 import { trace } from "@opentelemetry/api";
-import { addColor } from "@/functions/color/add-color.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { addColor } from "@/functions/color/add-color.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const addColorRoute: FastifyPluginAsyncZod = async (app) => {

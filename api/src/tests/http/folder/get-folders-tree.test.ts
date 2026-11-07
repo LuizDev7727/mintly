@@ -1,8 +1,8 @@
-import { describe, test, expect, beforeAll } from "vitest";
+import { faker } from "@faker-js/faker";
 import request from "supertest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
-import { faker } from "@faker-js/faker";
 
 let channelId: string;
 let rootTitle: string;
@@ -40,19 +40,15 @@ beforeAll(async () => {
 describe("GET [/api/organizations/:orgSlug/channels/:channelId/folders/tree]", () => {
   test("should return all folders in depth-first order with their depth", async () => {
     const response = await request(server.server)
-      .get(
-        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/tree`,
-      )
+      .get(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders/tree`)
       .set(authHeaders);
 
     expect(response.status).toEqual(200);
     expect(
-      response.body.folders.map(
-        (folder: { title: string; depth: number }) => [
-          folder.title,
-          folder.depth,
-        ],
-      ),
+      response.body.folders.map((folder: { title: string; depth: number }) => [
+        folder.title,
+        folder.depth,
+      ]),
     ).toEqual([
       [rootTitle, 0],
       [childTitle, 1],
@@ -62,18 +58,14 @@ describe("GET [/api/organizations/:orgSlug/channels/:channelId/folders/tree]", (
 
   test("should flag which folders have children", async () => {
     const response = await request(server.server)
-      .get(
-        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/tree`,
-      )
+      .get(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders/tree`)
       .set(authHeaders);
 
     const hasChildrenByTitle = Object.fromEntries(
-      response.body.folders.map(
-        (folder: { title: string; hasChildren: boolean }) => [
-          folder.title,
-          folder.hasChildren,
-        ],
-      ),
+      response.body.folders.map((folder: { title: string; hasChildren: boolean }) => [
+        folder.title,
+        folder.hasChildren,
+      ]),
     );
 
     expect(hasChildrenByTitle[rootTitle]).toBe(true);
@@ -83,14 +75,10 @@ describe("GET [/api/organizations/:orgSlug/channels/:channelId/folders/tree]", (
 
   test("should return parentId for nested folders", async () => {
     const response = await request(server.server)
-      .get(
-        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/tree`,
-      )
+      .get(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders/tree`)
       .set(authHeaders);
 
-    const child = response.body.folders.find(
-      (folder: { id: string }) => folder.id === childId,
-    );
+    const child = response.body.folders.find((folder: { id: string }) => folder.id === childId);
 
     expect(child.parentId).toBe(rootId);
   });

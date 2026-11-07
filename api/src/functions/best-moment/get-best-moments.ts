@@ -1,9 +1,9 @@
+import { and, desc, eq, lt } from "drizzle-orm";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { bestMomentsTable } from "@/infra/db/tables/best-moments.table.ts";
 import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import { and, desc, eq, lt } from "drizzle-orm";
 
 type GetBestMomentsParams = {
   projectId: string;
@@ -31,9 +31,7 @@ export async function getBestMoments(
   const [project] = await db
     .select({ id: projectsTable.id })
     .from(projectsTable)
-    .where(
-      and(eq(projectsTable.id, projectId), eq(projectsTable.channelId, channelId)),
-    );
+    .where(and(eq(projectsTable.id, projectId), eq(projectsTable.channelId, channelId)));
 
   if (!project) {
     throw new ResourceNotFoundError("Project not found");

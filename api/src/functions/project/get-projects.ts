@@ -1,9 +1,9 @@
+import { and, count, desc, eq, like } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { bestMomentsTable } from "@/infra/db/tables/best-moments.table.ts";
 import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { generateRealtimeToken } from "@/utils/generate-realtime-token.ts";
-import { and, count, desc, eq, like } from "drizzle-orm";
 import { getChannel } from "../channel/get-channel.ts";
 
 type GetProjectsParams = {
@@ -40,9 +40,7 @@ const PAGE_SIZE = 12;
 
 const ACTIVE_PROJECT_STATUSES = ["ENCODING"] as const;
 
-export async function getProjects(
-  params: GetProjectsParams,
-): Promise<GetProjectsResponse> {
+export async function getProjects(params: GetProjectsParams): Promise<GetProjectsResponse> {
   const { organizationSlug, channelId, pageIndex, titleFilter, statusFilter, ownerId } = params;
 
   await getChannel({ channelId, organizationSlug });
@@ -71,10 +69,7 @@ export async function getProjects(
       })
       .from(projectsTable)
       .where(filters)
-      .leftJoin(
-        bestMomentsTable,
-        eq(bestMomentsTable.projectId, projectsTable.id),
-      )
+      .leftJoin(bestMomentsTable, eq(bestMomentsTable.projectId, projectsTable.id))
       .innerJoin(usersTable, eq(projectsTable.ownerId, usersTable.id))
       .groupBy(projectsTable.id, usersTable.name, usersTable.image)
       .orderBy(desc(projectsTable.createdAt))
@@ -99,9 +94,7 @@ export async function getProjects(
       return {
         ...project,
         runId,
-        realtimeToken: (ACTIVE_PROJECT_STATUSES as readonly string[]).includes(
-          project.status,
-        )
+        realtimeToken: (ACTIVE_PROJECT_STATUSES as readonly string[]).includes(project.status)
           ? await generateRealtimeToken({ runId })
           : null,
       };

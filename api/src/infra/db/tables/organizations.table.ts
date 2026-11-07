@@ -1,20 +1,12 @@
 import { relations } from "drizzle-orm";
-import {
-  json,
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-  uniqueIndex,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { json, pgEnum, pgTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
+import { activitiesTable } from "./activities.table.ts";
 import { channelsTable } from "./channels.table.ts";
+import { integrationsTable } from "./integrations.table.ts";
 import { invitationsTable } from "./invitations.table.ts";
 import { membersTable } from "./members.table.ts";
 import { usersTable } from "./users.table.ts";
-import { integrationsTable } from "./integrations.table.ts";
-import { activitiesTable } from "./activities.table.ts";
 import { webhooksTable } from "./webhooks.table.ts";
 
 export const planEnum = pgEnum("plan", ["free", "pro"]);
@@ -32,11 +24,11 @@ export const organizationsTable = pgTable(
     plan: planEnum("plan").notNull().default("free"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     metadata: text("metadata"),
-    apiKey: json('api_key').$type<{
-      ciphertext: string
-      iv: string
+    apiKey: json("api_key").$type<{
+      ciphertext: string;
+      iv: string;
     }>(),
-    apiKeyHash: text('api_key_hash').unique(),
+    apiKeyHash: text("api_key_hash").unique(),
     ownerId: text("owner_id")
       .notNull()
       .references(() => usersTable.id, {
@@ -46,18 +38,15 @@ export const organizationsTable = pgTable(
   (table) => [uniqueIndex("organization_id_uidx").on(table.id)],
 );
 
-export const organizationRelations = relations(
-  organizationsTable,
-  ({ many, one }) => ({
-    members: many(membersTable),
-    invitations: many(invitationsTable),
-    channels: many(channelsTable),
-    webhooks: many(webhooksTable),
-    integrations: many(integrationsTable),
-    activities: many(activitiesTable),
-    owner: one(usersTable, {
-      fields: [organizationsTable.ownerId],
-      references: [usersTable.id],
-    }),
+export const organizationRelations = relations(organizationsTable, ({ many, one }) => ({
+  members: many(membersTable),
+  invitations: many(invitationsTable),
+  channels: many(channelsTable),
+  webhooks: many(webhooksTable),
+  integrations: many(integrationsTable),
+  activities: many(activitiesTable),
+  owner: one(usersTable, {
+    fields: [organizationsTable.ownerId],
+    references: [usersTable.id],
   }),
-);
+}));

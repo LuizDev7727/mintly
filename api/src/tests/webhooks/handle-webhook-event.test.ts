@@ -1,10 +1,10 @@
-import { describe, test, expect, vi, beforeAll, afterEach } from "vitest";
 import { and, eq } from "drizzle-orm";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { db } from "@/infra/db/client.ts";
 import { webhookLogsTable } from "@/infra/db/tables/webhook-log.table.ts";
 import { webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
-import { handleWebhookEvent } from "@/webhooks/handle-webhook-event.ts";
 import { testOrgSlug } from "@/tests/setup.ts";
+import { handleWebhookEvent } from "@/webhooks/handle-webhook-event.ts";
 
 let webhookId: string;
 
@@ -39,12 +39,7 @@ async function logOf(deliverTo: string) {
   const [log] = await db
     .select()
     .from(webhookLogsTable)
-    .where(
-      and(
-        eq(webhookLogsTable.webhookId, webhookId),
-        eq(webhookLogsTable.url, deliverTo),
-      ),
-    );
+    .where(and(eq(webhookLogsTable.webhookId, webhookId), eq(webhookLogsTable.url, deliverTo)));
 
   return log;
 }

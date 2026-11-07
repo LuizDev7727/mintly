@@ -1,17 +1,15 @@
-import { getStarredFolders } from "@/functions/folder/get-starred-folders.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { getStarredFolders } from "@/functions/folder/get-starred-folders.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const getStarredFoldersRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:slug/channels/:channelId/starred-folders",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -40,8 +38,8 @@ export const getStarredFoldersRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({
         organizationSlug: slug,
-        userId
-      })
+        userId,
+      });
 
       const { folders } = await getStarredFolders({ channelId });
 

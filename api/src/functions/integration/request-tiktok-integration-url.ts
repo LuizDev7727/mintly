@@ -13,9 +13,15 @@ export async function requestTiktokIntegrationUrl({
 
   const scopes = ["user.info.basic", "video.publish"];
 
-  tiktokURL.searchParams.set("client_key", await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_KEY" }));
+  tiktokURL.searchParams.set(
+    "client_key",
+    await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_KEY" }),
+  );
   tiktokURL.searchParams.set("scope", scopes.join(","));
-  tiktokURL.searchParams.set("redirect_uri", await getInfisicalSecret({ secretName: "TIKTOK_REDIRECT_URI" }));
+  tiktokURL.searchParams.set(
+    "redirect_uri",
+    await getInfisicalSecret({ secretName: "TIKTOK_REDIRECT_URI" }),
+  );
   tiktokURL.searchParams.set("response_type", "code");
   tiktokURL.searchParams.set("state", [orgSlug, channelId].join(","));
 

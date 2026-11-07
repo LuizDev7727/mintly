@@ -1,6 +1,6 @@
+import { Receiver } from "@upstash/qstash";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Receiver } from "@upstash/qstash";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { handleWebhookEvent } from "@/webhooks/handle-webhook-event.ts";
 import { webhookEventSchema } from "@/webhooks/webhook-event.ts";
@@ -16,10 +16,8 @@ export const handleWebhookEventRoute: FastifyPluginAsyncZod = async (app) => {
   // route keeps the body as a string instead of letting Fastify's default
   // JSON parser touch it — re-serializing a parsed object can produce a
   // different byte sequence and break verification.
-  app.addContentTypeParser(
-    "application/json",
-    { parseAs: "string" },
-    (_request, body, done) => done(null, body),
+  app.addContentTypeParser("application/json", { parseAs: "string" }, (_request, body, done) =>
+    done(null, body),
   );
 
   app.post(

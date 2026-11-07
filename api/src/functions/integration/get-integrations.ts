@@ -1,6 +1,6 @@
+import { eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
-import { eq } from "drizzle-orm";
 
 type GetIntegrationsParams = {
   channelId: string;

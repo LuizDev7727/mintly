@@ -1,18 +1,14 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { getOrganization } from "@/functions/organization/get-organization.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { tracer } from "../../../tracer/tracer.ts";
-import { getOrganization } from "@/functions/organization/get-organization.ts";
 
-export const getActiveOrganizationRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const getActiveOrganizationRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organization/active",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         response: {
           200: z.object({

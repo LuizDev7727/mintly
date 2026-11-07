@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeAll, beforeEach, vi } from "vitest";
-import request from "supertest";
-import { eq } from "drizzle-orm";
 import { runs, tasks } from "@trigger.dev/sdk";
+import { eq } from "drizzle-orm";
+import request from "supertest";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { server } from "@/app.ts";
 import { db } from "@/infra/db/client.ts";
 import { bestMomentsTable } from "@/infra/db/tables/best-moments.table.ts";
@@ -10,10 +10,10 @@ import { inspirationalThumbnailsTable } from "@/infra/db/tables/inspirational-th
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { socialsToPostTable } from "@/infra/db/tables/socials-to-post.table.ts";
-import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
 import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
 import { makeFakeProject } from "@/tests/factories/make-fake-project.ts";
+import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 
 // Os recursos "alheios" pertencem a um canal de OUTRA organização. A URL usa o
 // canal próprio (que passa no hook de canal), e o id do recurso é o alheio: a

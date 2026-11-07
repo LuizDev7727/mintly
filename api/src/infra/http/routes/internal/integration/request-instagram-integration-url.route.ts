@@ -1,19 +1,15 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { tracer } from "../../../tracer/tracer.ts";
 import { requestInstagramIntegrationUrl } from "@/functions/integration/request-instagram-integration-url.ts";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { tracer } from "../../../tracer/tracer.ts";
 
-export const requestInstagramIntegrationUrlRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const requestInstagramIntegrationUrlRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:slug/channels/:channelId/integrations/instagram/request-url",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),

@@ -1,12 +1,12 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
-import { organizationsTable } from "./organizations.table.ts";
-import { postsTable } from "./posts.table.ts";
-import { integrationsTable } from "./integrations.table.ts";
+import { colorsTable } from "./colors.table.ts";
 import { foldersTable } from "./folders.table.ts";
 import { inspirationalThumbnailsTable } from "./inspirational-thumbnail.table.ts";
-import { colorsTable } from "./colors.table.ts";
+import { integrationsTable } from "./integrations.table.ts";
+import { organizationsTable } from "./organizations.table.ts";
+import { postsTable } from "./posts.table.ts";
 
 export const channelsTable = pgTable("channels", {
   id: text("id")

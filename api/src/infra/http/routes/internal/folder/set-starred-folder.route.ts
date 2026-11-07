@@ -1,18 +1,16 @@
 import { trace } from "@opentelemetry/api";
-import { setStarredFolder } from "@/functions/folder/set-starred-folder.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { setStarredFolder } from "@/functions/folder/set-starred-folder.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const setStarredFolderRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/organizations/:slug/channels/:channelId/starred-folders",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -40,7 +38,7 @@ export const setStarredFolderRoute: FastifyPluginAsyncZod = async (app) => {
       await checkMembership({
         organizationSlug: slug,
         userId,
-      })
+      });
 
       const { starredFolderId } = await setStarredFolder({
         folderId,
@@ -49,9 +47,7 @@ export const setStarredFolderRoute: FastifyPluginAsyncZod = async (app) => {
 
       span.end();
 
-      trace
-        .getActiveSpan()
-        ?.setAttribute("starred_folder.id", starredFolderId);
+      trace.getActiveSpan()?.setAttribute("starred_folder.id", starredFolderId);
 
       return reply.status(201).send({ starredFolderId });
     },

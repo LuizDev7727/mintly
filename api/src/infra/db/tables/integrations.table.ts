@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgEnum, pgTable, varchar, text, integer } from "drizzle-orm/pg-core";
+import { integer, pgEnum, pgTable, text, varchar } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
 import { channelsTable } from "./channels.table.ts";
 
@@ -24,12 +24,9 @@ export const integrationsTable = pgTable("integrations", {
     }),
 });
 
-export const integrationsRelations = relations(
-  integrationsTable,
-  ({ one }) => ({
-    channel: one(channelsTable, {
-      fields: [integrationsTable.channelId],
-      references: [channelsTable.id],
-    }),
+export const integrationsRelations = relations(integrationsTable, ({ one }) => ({
+  channel: one(channelsTable, {
+    fields: [integrationsTable.channelId],
+    references: [channelsTable.id],
   }),
-);
+}));

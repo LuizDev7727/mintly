@@ -1,8 +1,8 @@
+import { and, eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
-import { and, eq } from "drizzle-orm";
 
 type RevokeInviteParams = {
   orgSlug: string;

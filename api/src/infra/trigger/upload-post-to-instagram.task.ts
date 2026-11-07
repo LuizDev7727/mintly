@@ -46,9 +46,7 @@ export const uploadPostToInstagramTask = schemaTask({
 
     logger.log("Creating Instagram media container", { instagramUserId });
 
-    const createContainerUrl = new URL(
-      `https://graph.instagram.com/${instagramUserId}/media`,
-    );
+    const createContainerUrl = new URL(`https://graph.instagram.com/${instagramUserId}/media`);
     if (mediaType === "IMAGE") {
       // A API do Instagram só aceita JPEG; a task `process-post` converte antes.
       createContainerUrl.searchParams.set("image_url", fileUrl);
@@ -70,15 +68,12 @@ export const uploadPostToInstagramTask = schemaTask({
       );
     }
 
-    const { id: containerId } = InstagramMediaContainerSchema.parse(
-      createContainerJson,
-    );
+    const { id: containerId } = InstagramMediaContainerSchema.parse(createContainerJson);
 
     logger.log("Instagram media container created", { containerId });
 
-    let containerStatus: z.infer<
-      typeof InstagramContainerStatusSchema
-    >["status_code"] = "IN_PROGRESS";
+    let containerStatus: z.infer<typeof InstagramContainerStatusSchema>["status_code"] =
+      "IN_PROGRESS";
 
     for (let attempt = 0; attempt < CONTAINER_MAX_POLL_ATTEMPTS; attempt++) {
       const statusUrl = new URL(`https://graph.instagram.com/${containerId}`);
@@ -104,25 +99,17 @@ export const uploadPostToInstagramTask = schemaTask({
       }
 
       if (status_code === "ERROR" || status_code === "EXPIRED") {
-        throw new Error(
-          `Instagram media container failed to process: ${status_code}`,
-        );
+        throw new Error(`Instagram media container failed to process: ${status_code}`);
       }
 
-      await new Promise((resolve) =>
-        setTimeout(resolve, CONTAINER_POLL_INTERVAL_MS),
-      );
+      await new Promise((resolve) => setTimeout(resolve, CONTAINER_POLL_INTERVAL_MS));
     }
 
     if (containerStatus !== "FINISHED") {
-      throw new Error(
-        "Timed out waiting for Instagram media container to finish processing",
-      );
+      throw new Error("Timed out waiting for Instagram media container to finish processing");
     }
 
-    const publishUrl = new URL(
-      `https://graph.instagram.com/${instagramUserId}/media_publish`,
-    );
+    const publishUrl = new URL(`https://graph.instagram.com/${instagramUserId}/media_publish`);
     publishUrl.searchParams.set("creation_id", containerId);
     publishUrl.searchParams.set("access_token", accessToken);
 
@@ -130,9 +117,7 @@ export const uploadPostToInstagramTask = schemaTask({
     const publishJson = await publishResponse.json();
 
     if (!publishResponse.ok) {
-      throw new Error(
-        `Failed to publish Instagram media: ${JSON.stringify(publishJson)}`,
-      );
+      throw new Error(`Failed to publish Instagram media: ${JSON.stringify(publishJson)}`);
     }
 
     const { id: mediaId } = InstagramPublishSchema.parse(publishJson);

@@ -1,8 +1,8 @@
+import { runs } from "@trigger.dev/sdk";
+import { and, eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
-import { and, eq } from "drizzle-orm";
-import { runs } from "@trigger.dev/sdk";
 
 type CancelPostParams = {
   postId: string;

@@ -1,9 +1,9 @@
+import { eq } from "drizzle-orm";
+import type { FastifyRequest } from "fastify";
 import { UnauthorizedError } from "@/errors/unauthorized.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { hashApiKey } from "@/utils/crypto/hash-api-key.ts";
-import { eq } from "drizzle-orm";
-import { FastifyRequest } from "fastify";
 
 export async function checkApiKey(request: FastifyRequest) {
   const authorization = request.headers.authorization;
@@ -23,9 +23,7 @@ export async function checkApiKey(request: FastifyRequest) {
       ownerId: organizationsTable.ownerId,
     })
     .from(organizationsTable)
-    .where(
-      eq(organizationsTable.apiKeyHash, apiKeyHash)
-    );
+    .where(eq(organizationsTable.apiKeyHash, apiKeyHash));
 
   if (!organization) {
     throw new UnauthorizedError();

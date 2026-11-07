@@ -1,6 +1,6 @@
+import { eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { colorsTable } from "@/infra/db/tables/colors.table.ts";
-import { eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "../../errors/resource-not-found.error.ts";
 
 type DeleteColorParams = {

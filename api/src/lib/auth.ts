@@ -1,20 +1,20 @@
-import { eq } from "drizzle-orm";
 import { betterAuth } from "better-auth";
-import { customSession, organization, testUtils } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { sessionsTable } from "@/infra/db/tables/sessions.table.ts";
-import { usersTable } from "@/infra/db/tables/users.table.ts";
-import { verificationsTable } from "@/infra/db/tables/verifications.table.ts";
+import { customSession, organization, testUtils } from "better-auth/plugins";
+import { eq } from "drizzle-orm";
 import { env } from "@/env.ts";
-import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
+import { createOrganization } from "@/functions/organization/create-organization.ts";
 import { db } from "@/infra/db/client.ts";
-import { tables } from "@/infra/db/tables/index.ts";
 import { accountsTable } from "@/infra/db/tables/accounts.table.ts";
+import { tables } from "@/infra/db/tables/index.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
-import { createOrganization } from "@/functions/organization/create-organization.ts";
+import { sessionsTable } from "@/infra/db/tables/sessions.table.ts";
+import { usersTable } from "@/infra/db/tables/users.table.ts";
+import { verificationsTable } from "@/infra/db/tables/verifications.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { createSlug } from "./create-slug.ts";
 
 export const auth = betterAuth({
@@ -41,7 +41,7 @@ export const auth = betterAuth({
     google: {
       clientId: await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_ID" }),
       clientSecret: await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_SECRET" }),
-    }
+    },
   },
   advanced: {
     database: {
@@ -116,11 +116,7 @@ export const auth = betterAuth({
     testUtils(),
     organization(),
     customSession(async ({ user, session }) => {
-
-      const avatarUrl =
-        user.image
-          ? await generateSignedUrl({ key: user.image })
-          : user.image;
+      const avatarUrl = user.image ? await generateSignedUrl({ key: user.image }) : user.image;
 
       return { user: { ...user, image: avatarUrl }, session };
     }),

@@ -1,5 +1,5 @@
-import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
 import { ListPartsCommand } from "@aws-sdk/client-s3";
+import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
 
 type ListMultipartUploadPartsParams = {
   key: string;
@@ -30,11 +30,7 @@ export async function listMultipartUploadParts({
     );
 
     for (const part of response.Parts ?? []) {
-      if (
-        part.PartNumber !== undefined &&
-        part.ETag !== undefined &&
-        part.Size !== undefined
-      ) {
+      if (part.PartNumber !== undefined && part.ETag !== undefined && part.Size !== undefined) {
         parts.push({
           partNumber: part.PartNumber,
           eTag: part.ETag,

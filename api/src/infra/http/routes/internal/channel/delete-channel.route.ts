@@ -1,17 +1,15 @@
-import { deleteChannel } from "@/functions/channel/delete-channel.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { deleteChannel } from "@/functions/channel/delete-channel.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const deleteChannelRoute: FastifyPluginAsyncZod = async (app) => {
   app.delete(
     "/api/organizations/:slug/channels/:channelId",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -31,8 +29,8 @@ export const deleteChannelRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({
         organizationSlug: slug,
-        userId
-      })
+        userId,
+      });
 
       await deleteChannel({ channelId });
 

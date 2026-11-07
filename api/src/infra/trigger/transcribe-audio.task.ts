@@ -1,12 +1,12 @@
-import { logger, wait, schemaTask } from "@trigger.dev/sdk";
+import { logger, schemaTask, wait } from "@trigger.dev/sdk";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { projectsTable } from "@/infra/db/tables/projects.table.ts";
-import { channelsTable } from "@/infra/db/tables/channels.table.ts";
-import { eq } from "drizzle-orm";
-import { db } from "../db/client.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { setUsage } from "@/utils/set-usage.ts";
+import { db } from "../db/client.ts";
 
 type ModalTranscribeAudioCallbackPayload = {
   status: "SUCCESS" | "ERROR";
@@ -28,7 +28,7 @@ type ModalTranscribeAudioCallbackPayload = {
     amount: number;
     currency: string;
   };
-}
+};
 
 export const transcribeAudioTask = schemaTask({
   id: "transcribe-audio",
@@ -48,39 +48,39 @@ export const transcribeAudioTask = schemaTask({
   onStart: async ({ payload }) => {
     const { type } = payload;
 
-    if (type === 'post') {
+    if (type === "post") {
       await db
-      .update(postsTable)
-      .set({
-        status: "TRANSCRIBING",
-      })
-      .where(eq(postsTable.id, payload.postId));
+        .update(postsTable)
+        .set({
+          status: "TRANSCRIBING",
+        })
+        .where(eq(postsTable.id, payload.postId));
     } else {
       await db
-      .update(postsTable)
-      .set({
-        status: "TRANSCRIBING",
-      })
-      .where(eq(postsTable.id, payload.projectId));
+        .update(postsTable)
+        .set({
+          status: "TRANSCRIBING",
+        })
+        .where(eq(postsTable.id, payload.projectId));
     }
   },
 
   onFailure: async ({ payload }) => {
     const { type } = payload;
-    if (type === 'post') {
+    if (type === "post") {
       await db
-      .update(postsTable)
-      .set({
-        status: "ERROR",
-      })
-      .where(eq(postsTable.id, payload.postId));
+        .update(postsTable)
+        .set({
+          status: "ERROR",
+        })
+        .where(eq(postsTable.id, payload.postId));
     } else {
       await db
-      .update(postsTable)
-      .set({
-        status: "ERROR",
-      })
-      .where(eq(postsTable.id, payload.projectId));
+        .update(postsTable)
+        .set({
+          status: "ERROR",
+        })
+        .where(eq(postsTable.id, payload.projectId));
     }
   },
 
@@ -115,8 +115,8 @@ export const transcribeAudioTask = schemaTask({
     });
 
     const modalTranscribeAudioUrl = await getInfisicalSecret({
-      secretName: "MODAL_TRANSCRIBE_AUDIO_URL"
-    })
+      secretName: "MODAL_TRANSCRIBE_AUDIO_URL",
+    });
 
     await fetch(modalTranscribeAudioUrl, {
       method: "POST",
@@ -127,7 +127,7 @@ export const transcribeAudioTask = schemaTask({
         audio_url: audioUrl,
         callback_url: token.url,
       }),
-    })
+    });
 
     const result = await wait.forToken<ModalTranscribeAudioCallbackPayload>(token).unwrap();
 
@@ -138,9 +138,7 @@ export const transcribeAudioTask = schemaTask({
       eventName: "audio_transcribed",
       cost: result.cost,
       metadata: {
-        ...(type === "post"
-          ? { postId: payload.postId }
-          : { projectId: payload.projectId }),
+        ...(type === "post" ? { postId: payload.postId } : { projectId: payload.projectId }),
       },
     });
 

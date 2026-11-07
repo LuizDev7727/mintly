@@ -1,8 +1,8 @@
+import { asc, count, eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import { asc, count, eq } from "drizzle-orm";
 
 type GetMembersParams = {
   orgSlug: string;
@@ -25,16 +25,14 @@ type GetMembersResponse = {
       avatarUrl: string | null;
       bio: string | null;
     };
-  }[],
+  }[];
   meta: {
     totalCount: number;
     totalPages: number;
   };
-}
+};
 
-export async function getMembers(
-  params: GetMembersParams
-): Promise<GetMembersResponse> {
+export async function getMembers(params: GetMembersParams): Promise<GetMembersResponse> {
   const { orgSlug, pageIndex } = params;
 
   const membersQuery = db
@@ -70,9 +68,7 @@ export async function getMembers(
 
   const members = await Promise.all(
     membersQueryResult.map(async ({ id, role, createdAt, user }) => {
-      const avatarUrl = user.image
-        ? await generateSignedUrl({ key: user.image })
-        : null;
+      const avatarUrl = user.image ? await generateSignedUrl({ key: user.image }) : null;
 
       return {
         id,

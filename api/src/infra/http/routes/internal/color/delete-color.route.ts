@@ -1,7 +1,7 @@
-import { deleteColor } from "@/functions/color/delete-color.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { deleteColor } from "@/functions/color/delete-color.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const deleteColorRoute: FastifyPluginAsyncZod = async (app) => {

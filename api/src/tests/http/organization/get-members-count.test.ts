@@ -1,15 +1,15 @@
-import { describe, test, expect, beforeAll, afterAll } from "vitest";
-import request from "supertest";
-import { server } from "@/app.ts";
-import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
-import { test as authTest } from "@/lib/auth.ts";
 import { inArray } from "drizzle-orm";
+import request from "supertest";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { server } from "@/app.ts";
 import { db } from "@/infra/db/client.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
-import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
+import { test as authTest } from "@/lib/auth.ts";
 import { makeFakeMember } from "@/tests/factories/make-fake-member.ts";
 import { makeFakeMembers } from "@/tests/factories/make-fake-members.ts";
+import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
 import { makeFakeUser } from "@/tests/factories/make-fake-user.ts";
+import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 
 describe("GET [/api/organizations/:slug/members/count]", () => {
   // testOrgSlug has exactly one member (testUser); anotherOrgSlug has 13.
@@ -28,8 +28,7 @@ describe("GET [/api/organizations/:slug/members/count]", () => {
     // A member of some other organization, but not of anotherOrgSlug. (With no
     // membership at all, the session hook would create an org and a Polar customer.)
     ({ userId: strangerId } = await makeFakeUser());
-    const { organizationSlug: strangerOrgSlug } =
-      await makeFakeOrganization(strangerId);
+    const { organizationSlug: strangerOrgSlug } = await makeFakeOrganization(strangerId);
     await makeFakeMember(strangerOrgSlug, strangerId, { role: "owner" });
     strangerHeaders = Object.fromEntries(
       (await authTest.getAuthHeaders({ userId: strangerId })).entries(),
@@ -37,9 +36,7 @@ describe("GET [/api/organizations/:slug/members/count]", () => {
   });
 
   afterAll(async () => {
-    await db
-      .delete(usersTable)
-      .where(inArray(usersTable.id, [...otherMemberIds, strangerId]));
+    await db.delete(usersTable).where(inArray(usersTable.id, [...otherMemberIds, strangerId]));
   });
 
   test("should return 200 with the total number of members of the organization", async () => {

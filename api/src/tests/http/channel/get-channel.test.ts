@@ -1,10 +1,10 @@
-import { describe, test, expect, beforeAll } from "vitest";
-import request from "supertest";
 import { faker } from "@faker-js/faker";
+import request from "supertest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
-import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
-import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
 import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
+import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 
 let ownChannelId: string;
 let channelOfAnotherOrg: string;

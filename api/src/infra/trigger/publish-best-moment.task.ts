@@ -1,9 +1,9 @@
 import { AbortTaskRunError, schemaTask, tasks } from "@trigger.dev/sdk";
-import { z } from "zod";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
-import { uploadPostToYoutubeTask } from "./upload-post-to-youtube.task.ts";
+import type { uploadPostToYoutubeTask } from "./upload-post-to-youtube.task.ts";
 
 // Publica um melhor momento (clipe já pronto) no YouTube e acompanha o status
 // do post. O status fica aqui, e não em `upload-post-to-youtube`, porque essa
@@ -34,10 +34,7 @@ export const publishBestMomentTask = schemaTask({
   },
 
   onFailure: async ({ payload }) => {
-    await db
-      .update(postsTable)
-      .set({ status: "ERROR" })
-      .where(eq(postsTable.id, payload.postId));
+    await db.update(postsTable).set({ status: "ERROR" }).where(eq(postsTable.id, payload.postId));
   },
 
   onCancel: async ({ payload }) => {

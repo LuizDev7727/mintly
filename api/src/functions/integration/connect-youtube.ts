@@ -1,8 +1,8 @@
-import { db } from "@/infra/db/client.ts";
-import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
-import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
+import { db } from "@/infra/db/client.ts";
+import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 type ConnectYoutubeParams = {
   channelId: string;
@@ -13,9 +13,18 @@ export async function connectYoutube(params: ConnectYoutubeParams) {
   const { channelId, code } = params;
 
   const googleOauthUrl = new URL("https://oauth2.googleapis.com/token");
-  googleOauthUrl.searchParams.set("client_id", await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_ID" }));
-  googleOauthUrl.searchParams.set("client_secret", await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_SECRET" }));
-  googleOauthUrl.searchParams.set("redirect_uri", await getInfisicalSecret({ secretName: "GOOGLE_REDIRECT_URI" }));
+  googleOauthUrl.searchParams.set(
+    "client_id",
+    await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_ID" }),
+  );
+  googleOauthUrl.searchParams.set(
+    "client_secret",
+    await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_SECRET" }),
+  );
+  googleOauthUrl.searchParams.set(
+    "redirect_uri",
+    await getInfisicalSecret({ secretName: "GOOGLE_REDIRECT_URI" }),
+  );
   googleOauthUrl.searchParams.set("grant_type", "authorization_code");
   googleOauthUrl.searchParams.set("access_type", "offline");
   googleOauthUrl.searchParams.set("prompt", "consent");
@@ -42,12 +51,9 @@ export async function connectYoutube(params: ConnectYoutubeParams) {
     })
     .parse(await tokenRequest.json());
 
-  const profileRequest = await fetch(
-    "https://www.googleapis.com/oauth2/v3/userinfo",
-    {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    },
-  );
+  const profileRequest = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 
   if (!profileRequest.ok) {
     throw new Error("Failed to fetch YouTube account profile.");
@@ -67,10 +73,7 @@ export async function connectYoutube(params: ConnectYoutubeParams) {
     .select({ id: integrationsTable.id })
     .from(integrationsTable)
     .where(
-      and(
-        eq(integrationsTable.channelId, channelId),
-        eq(integrationsTable.provider, "YOUTUBE"),
-      ),
+      and(eq(integrationsTable.channelId, channelId), eq(integrationsTable.provider, "YOUTUBE")),
     );
 
   if (!existing) {

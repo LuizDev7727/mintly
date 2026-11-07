@@ -1,9 +1,9 @@
-import { beforeAll, afterAll, vi } from "vitest";
+import { faker } from "@faker-js/faker";
+import { afterAll, beforeAll, vi } from "vitest";
 import { server } from "@/app.ts";
 import { test } from "@/lib/auth.ts";
-import { faker } from "@faker-js/faker";
-import { makeFakeOrganization } from "./factories/make-fake-organization.ts";
 import { makeFakeMember } from "./factories/make-fake-member.ts";
+import { makeFakeOrganization } from "./factories/make-fake-organization.ts";
 
 // Tests must not call Trigger.dev. The real generateRealtimeToken needs
 // TRIGGER_SECRET_KEY, which exists in a developer's .env but not in CI, so any
@@ -51,9 +51,9 @@ beforeAll(async () => {
 
   const orgName = faker.company.name();
 
-  const { organizationSlug } = await makeFakeOrganization(testUser.id, { name: orgName })
+  const { organizationSlug } = await makeFakeOrganization(testUser.id, { name: orgName });
 
-  await makeFakeMember(organizationSlug, testUser.id)
+  await makeFakeMember(organizationSlug, testUser.id);
 
   const headers = await test.getAuthHeaders({ userId: testUser.id });
   authHeaders = Object.fromEntries(headers.entries());

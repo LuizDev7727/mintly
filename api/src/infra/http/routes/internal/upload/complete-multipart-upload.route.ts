@@ -1,13 +1,11 @@
-import { completeMultipartUpload } from "@/utils/cloudflare/complete-multipart-upload.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
+import { completeMultipartUpload } from "@/utils/cloudflare/complete-multipart-upload.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
-export const completeMultipartUploadRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const completeMultipartUploadRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/uploads/complete-multipart",
     {

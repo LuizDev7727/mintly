@@ -34,8 +34,7 @@ export function calculateGeminiCost({
 
   const costInDollars =
     (billableInputTokens / 1_000_000) * PRICE_PER_MILLION_TOKENS_USD.input +
-    (cachedContentTokenCount / 1_000_000) *
-      PRICE_PER_MILLION_TOKENS_USD.cachedInput +
+    (cachedContentTokenCount / 1_000_000) * PRICE_PER_MILLION_TOKENS_USD.cachedInput +
     (outputTokens / 1_000_000) * PRICE_PER_MILLION_TOKENS_USD.output;
 
   return {

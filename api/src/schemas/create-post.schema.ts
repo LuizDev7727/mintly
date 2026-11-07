@@ -26,4 +26,4 @@ export const createPostSchema = z.object({
       .min(1, { error: "Post needs at least one integration selected" }),
   }),
   postId: z.uuidv7(),
-})
+});

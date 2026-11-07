@@ -1,7 +1,7 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { projectsTable } from "./projects.table.ts";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
+import { projectsTable } from "./projects.table.ts";
 
 export const bestMomentsTable = pgTable("best_moments", {
   id: text("id")

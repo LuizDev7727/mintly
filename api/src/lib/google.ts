@@ -1,5 +1,5 @@
-import { GoogleGenAI } from "@google/genai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { GoogleGenAI } from "@google/genai";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 const apiKey = await getInfisicalSecret({ secretName: "GEMINI_API_KEY" });

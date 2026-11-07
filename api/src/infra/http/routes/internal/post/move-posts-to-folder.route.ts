@@ -1,17 +1,15 @@
-import { movePostsToFolder } from "@/functions/posts/move-posts-to-folder.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { movePostsToFolder } from "@/functions/posts/move-posts-to-folder.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const movePostsToFolderRoute: FastifyPluginAsyncZod = async (app) => {
   app.put(
     "/api/organizations/:slug/channels/:channelId/posts/move-to-folder",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),

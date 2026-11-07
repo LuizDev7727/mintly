@@ -1,8 +1,8 @@
-﻿import { describe, test, expect, beforeAll } from "vitest";
+﻿import { faker } from "@faker-js/faker";
 import request from "supertest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
-import { faker } from "@faker-js/faker";
 
 let channelId: string;
 
@@ -36,9 +36,7 @@ describe("PUT [/api/organizations/:slug/channels/:channelId]", () => {
 
   test("should return 404 for non-existent channel", async () => {
     const response = await request(server.server)
-      .put(
-        `/api/organizations/${testOrgSlug}/channels/${faker.string.uuid()}`,
-      )
+      .put(`/api/organizations/${testOrgSlug}/channels/${faker.string.uuid()}`)
       .set(authHeaders)
       .send({ name: faker.word.noun(), description: faker.lorem.sentence() });
 

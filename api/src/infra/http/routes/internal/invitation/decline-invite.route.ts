@@ -1,6 +1,6 @@
-import { declineInvite } from "@/functions/invitation/decline-invite.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { declineInvite } from "@/functions/invitation/decline-invite.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { tracer } from "../../../tracer/tracer.ts";
 
@@ -8,9 +8,7 @@ export const declineInviteRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/invitations/:inviteId/decline",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           inviteId: z.string(),

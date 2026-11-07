@@ -1,8 +1,8 @@
+import { and, desc, eq, lt } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { activitiesTable } from "@/infra/db/tables/activities.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import { and, desc, eq, lt } from "drizzle-orm";
 
 type ActivityAction =
   | "CREATED_CHANNEL"
@@ -40,9 +40,7 @@ type GetActivitiesResponse = {
 
 const PAGE_SIZE = 10;
 
-export async function getActivities(
-  params: GetActivitiesParams,
-): Promise<GetActivitiesResponse> {
+export async function getActivities(params: GetActivitiesParams): Promise<GetActivitiesResponse> {
   const { orgSlug, cursor, actionFilter, authorId } = params;
 
   const resultQuery = await db
@@ -78,7 +76,9 @@ export async function getActivities(
       ...activity,
       author: {
         name: activity.author.name,
-        avatarUrl: activity.author.avatarUrl ? await generateSignedUrl({ key: activity.author.avatarUrl }) : null,
+        avatarUrl: activity.author.avatarUrl
+          ? await generateSignedUrl({ key: activity.author.avatarUrl })
+          : null,
       },
     })),
   );

@@ -1,17 +1,15 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { getAvaiableEvents } from "@/functions/webhook/get-avaiable-events.ts";
-import { tracer } from "../../../tracer/tracer.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { tracer } from "../../../tracer/tracer.ts";
 
 export const getAvailableEventsRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:slug/webhooks/available-events",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),

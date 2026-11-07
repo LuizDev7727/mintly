@@ -1,14 +1,14 @@
-import { describe, test, expect, beforeAll } from "vitest";
-import request from "supertest";
 import { eq } from "drizzle-orm";
+import request from "supertest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { db } from "@/infra/db/client.ts";
 import { inspirationalThumbnailsTable } from "@/infra/db/tables/inspirational-thumbnail.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { projectsTable } from "@/infra/db/tables/projects.table.ts";
-import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 
 // As chaves de upload são `<userId>/<uuid>`. Uma chave de outro usuário, ou sem
 // prefixo (legada ou inventada), nunca pode ser usada: responde 404 como um

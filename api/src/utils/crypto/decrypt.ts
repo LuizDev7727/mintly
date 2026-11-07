@@ -1,38 +1,32 @@
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
-export async function decrypt(
-  ciphertext: string,
-  iv: string,
-) {
-
+export async function decrypt(ciphertext: string, iv: string) {
   const key = await getInfisicalSecret({ secretName: "AES_ENCRYPTION_KEY" });
 
-  const rawKey = Uint8Array.from(atob(key), (c) => c.charCodeAt(0))
-  const rawIV = Uint8Array.from(atob(iv), (c) => c.charCodeAt(0))
+  const rawKey = Uint8Array.from(atob(key), (c) => c.charCodeAt(0));
+  const rawIV = Uint8Array.from(atob(iv), (c) => c.charCodeAt(0));
 
-  const ciphertextBuffer = Uint8Array.from(atob(ciphertext), (c) =>
-    c.charCodeAt(0),
-  )
+  const ciphertextBuffer = Uint8Array.from(atob(ciphertext), (c) => c.charCodeAt(0));
 
   const secretKey = await crypto.subtle.importKey(
-    'raw',
+    "raw",
     rawKey,
     {
-      name: 'AES-GCM',
+      name: "AES-GCM",
       length: 256,
     },
     true,
-    ['encrypt', 'decrypt'],
-  )
+    ["encrypt", "decrypt"],
+  );
 
   const cleartextBuffer = await crypto.subtle.decrypt(
     {
-      name: 'AES-GCM',
+      name: "AES-GCM",
       iv: rawIV,
     },
     secretKey,
     ciphertextBuffer,
-  )
+  );
 
-  return new TextDecoder().decode(cleartextBuffer)
+  return new TextDecoder().decode(cleartextBuffer);
 }

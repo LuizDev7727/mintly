@@ -1,9 +1,9 @@
-import { getInvoice } from "@/functions/organization/get-invoice.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { getInvoice } from "@/functions/organization/get-invoice.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { tracer } from "../../../tracer/tracer.ts";
-import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const getInvoiceRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(

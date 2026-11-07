@@ -1,22 +1,18 @@
-import { addInspirationalThumbnail } from "@/functions/inspirational-thumbnail/add-inspirational-thumbnail.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { addInspirationalThumbnail } from "@/functions/inspirational-thumbnail/add-inspirational-thumbnail.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkFileExists } from "@/utils/cloudflare/check-file-exists.ts";
 import { createActivity } from "@/utils/create-activity.ts";
-import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
-export const addInspirationalThumbnailRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const addInspirationalThumbnailRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/organizations/:slug/channels/:channelId/inspirational-thumbnails",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -63,7 +59,7 @@ export const addInspirationalThumbnailRoute: FastifyPluginAsyncZod = async (
         authorId: userId,
         description: `Uploaded inspirational thumbnail ${name}`,
         orgSlug: slug,
-      })
+      });
 
       span.end();
 

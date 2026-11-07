@@ -17,11 +17,9 @@ export async function makeFakeInvitations(
 
   for (let index = 0; index < amount; index++) {
     // One second apart, so invitations come back in exactly this order.
-    const { invitationId } = await makeFakeInvitation(
-      organizationSlug,
-      inviterId,
-      { createdAt: new Date(startAt.getTime() + index * 1000) },
-    );
+    const { invitationId } = await makeFakeInvitation(organizationSlug, inviterId, {
+      createdAt: new Date(startAt.getTime() + index * 1000),
+    });
 
     invitationIds.push(invitationId);
   }

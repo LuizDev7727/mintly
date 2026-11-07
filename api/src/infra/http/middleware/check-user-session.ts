@@ -1,7 +1,7 @@
+import { fromNodeHeaders } from "better-auth/node";
+import type { FastifyRequest } from "fastify";
 import { UnauthorizedError } from "@/errors/unauthorized.error.ts";
 import { auth } from "@/lib/auth.ts";
-import { fromNodeHeaders } from "better-auth/node";
-import { FastifyRequest } from "fastify";
 
 export async function checkUserSession(request: FastifyRequest) {
   const headers = fromNodeHeaders(request.headers);

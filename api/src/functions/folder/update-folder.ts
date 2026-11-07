@@ -1,6 +1,6 @@
+import { and, eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { foldersTable } from "@/infra/db/tables/folders.table.ts";
-import { and, eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "../../errors/resource-not-found.error.ts";
 
 type UpdateFolderParams = {

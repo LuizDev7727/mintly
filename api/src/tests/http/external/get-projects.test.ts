@@ -1,15 +1,15 @@
-import { describe, test, expect, beforeAll } from "vitest";
-import request from "supertest";
-import { eq } from "drizzle-orm";
 import { faker } from "@faker-js/faker";
+import { eq } from "drizzle-orm";
+import request from "supertest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { db } from "@/infra/db/client.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
-import { hashApiKey } from "@/utils/crypto/hash-api-key.ts";
-import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
-import { makeFakeProject } from "@/tests/factories/make-fake-project.ts";
-import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
 import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
+import { makeFakeProject } from "@/tests/factories/make-fake-project.ts";
+import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
+import { hashApiKey } from "@/utils/crypto/hash-api-key.ts";
 
 const API_KEY = "test-external-api-key";
 
@@ -42,9 +42,7 @@ beforeAll(async () => {
 
 describe("GET [/api/v1/projects]", () => {
   test("should return 401 without an API key", async () => {
-    const response = await request(server.server)
-      .get("/api/v1/projects")
-      .query({ channelId });
+    const response = await request(server.server).get("/api/v1/projects").query({ channelId });
 
     expect(response.status).toEqual(401);
   });

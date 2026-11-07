@@ -1,11 +1,11 @@
-import { logger, wait, schemaTask } from "@trigger.dev/sdk/v3";
+import { logger, schemaTask, wait } from "@trigger.dev/sdk/v3";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/infra/db/client.ts";
-import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
-import { eq } from "drizzle-orm";
-import { setUsage } from "@/utils/set-usage.ts";
+import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
+import { setUsage } from "@/utils/set-usage.ts";
 
 const seoResponseSchema = z.object({
   title: z.string(),
@@ -88,21 +88,16 @@ export const seoEnrichmentTask = schemaTask({
 
     const token = await wait.createToken({ timeout: "10m" });
 
-    await fetch(
-      await getInfisicalSecret({ secretName: "MODAL_GENERATE_TEXT_URL" }),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt,
-          callback_url: token.url,
-        }),
-      },
-    );
+    await fetch(await getInfisicalSecret({ secretName: "MODAL_GENERATE_TEXT_URL" }), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prompt,
+        callback_url: token.url,
+      }),
+    });
 
-    const result = await wait
-      .forToken<ModalGenerateTextCallbackPayload>(token)
-      .unwrap();
+    const result = await wait.forToken<ModalGenerateTextCallbackPayload>(token).unwrap();
 
     logger.log("SEO generation result: ", { result });
 
@@ -122,9 +117,7 @@ export const seoEnrichmentTask = schemaTask({
     const rawText = result.text ?? "";
     const cleaned = rawText.replace(/```json|```/g, "").trim();
 
-    const { title, description, tags } = seoResponseSchema.parse(
-      JSON.parse(cleaned),
-    );
+    const { title, description, tags } = seoResponseSchema.parse(JSON.parse(cleaned));
 
     logger.log("SEO Enrichment result: ", { title, description, tags });
 

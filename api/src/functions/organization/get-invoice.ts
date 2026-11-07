@@ -48,9 +48,7 @@ const MOCK_TAX_RATE = 0.08;
 
 // TODO: mockado enquanto o billing via Polar está fora do ar. Os detalhes são
 // derivados do invoice da listagem (get-invoices) para os valores baterem.
-export async function getInvoice(
-  params: GetInvoiceParams,
-): Promise<GetInvoiceResponse> {
+export async function getInvoice(params: GetInvoiceParams): Promise<GetInvoiceResponse> {
   const { invoiceId } = params;
 
   const listedInvoice = MOCK_INVOICES.find((invoice) => invoice.id === invoiceId);
@@ -63,9 +61,7 @@ export async function getInvoice(
 
   const tax = Math.round((totalAmount * MOCK_TAX_RATE) / (1 + MOCK_TAX_RATE));
   const net = totalAmount - tax;
-  const isSettled = ["paid", "refunded", "partially_refunded", "void"].includes(
-    status,
-  );
+  const isSettled = ["paid", "refunded", "partially_refunded", "void"].includes(status);
 
   let refunded = 0;
   if (status === "refunded") refunded = totalAmount;

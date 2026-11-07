@@ -1,12 +1,12 @@
+import { and, eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
-import { and, eq } from "drizzle-orm";
 
 type DeleteIntegrationParams = {
   channelId: string;
   integrationId: string;
-}
+};
 
 export async function deleteIntegration(params: DeleteIntegrationParams) {
   const { channelId, integrationId } = params;
@@ -17,11 +17,11 @@ export async function deleteIntegration(params: DeleteIntegrationParams) {
     eq(integrationsTable.channelId, channelId),
   );
 
-  const [integration] = await db.select().from(integrationsTable).where(ownedByChannel)
+  const [integration] = await db.select().from(integrationsTable).where(ownedByChannel);
 
   if (!integration) {
-    throw new ResourceNotFoundError(`Integration not found: ${integrationId}`)
-  };
+    throw new ResourceNotFoundError(`Integration not found: ${integrationId}`);
+  }
 
-  await db.delete(integrationsTable).where(ownedByChannel)
+  await db.delete(integrationsTable).where(ownedByChannel);
 }

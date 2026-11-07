@@ -1,9 +1,9 @@
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { and, eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { inspirationalThumbnailsTable } from "@/infra/db/tables/inspirational-thumbnail.table.ts";
 import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { and, eq } from "drizzle-orm";
 
 type DeleteInspirationalThumbnailParams = {
   channelId: string;

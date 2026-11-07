@@ -1,8 +1,8 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { tracer } from "../../../tracer/tracer.ts";
 import { connectTikTok } from "@/functions/integration/connect-tiktok.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
+import { tracer } from "../../../tracer/tracer.ts";
 
 const FRONTEND_URL = await getInfisicalSecret({ secretName: "TIKTOK_REDIRECT_CALLBACK_URI" });
 
@@ -32,9 +32,7 @@ export const tiktokCallbackRoute: FastifyPluginAsyncZod = async (app) => {
 
       span.end();
 
-      return reply.redirect(
-        `${FRONTEND_URL}/orgs/${orgSlug}/channels/${channelId}/integrations`,
-      );
+      return reply.redirect(`${FRONTEND_URL}/orgs/${orgSlug}/channels/${channelId}/integrations`);
     },
   );
 };

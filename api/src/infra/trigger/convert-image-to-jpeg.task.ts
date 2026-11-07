@@ -1,9 +1,9 @@
-import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
-import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
+import { spawn } from "node:child_process";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { logger, schemaTask } from "@trigger.dev/sdk";
-import { spawn } from "node:child_process";
 import { z } from "zod";
+import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
+import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 
 // Validade do link da imagem convertida. Cobre o upload para as redes.
 const JPEG_URL_EXPIRES_IN_SECONDS = 60 * 60 * 2; // 2 hours

@@ -1,39 +1,39 @@
-import { WebhookEvent } from "./webhook-event.ts"
-import { getOrganizationWebhooksForTrigger } from "./get-organization-webhooks-for-trigger.ts"
-import { env } from "@/env.ts"
-import { qstash, qstashTopicUrl } from "@/lib/qstash.ts"
+import { env } from "@/env.ts";
+import { qstash, qstashTopicUrl } from "@/lib/qstash.ts";
+import { getOrganizationWebhooksForTrigger } from "./get-organization-webhooks-for-trigger.ts";
+import type { WebhookEvent } from "./webhook-event.ts";
 
-export type PublishWebhookEventsParams = Parameters<typeof publishWebhookEvents>
+export type PublishWebhookEventsParams = Parameters<typeof publishWebhookEvents>;
 
-export async function publishWebhookEvents<T extends WebhookEvent['trigger']>({
+export async function publishWebhookEvents<T extends WebhookEvent["trigger"]>({
   orgSlug,
   trigger,
   events,
 }: {
-  orgSlug: string
-  trigger: T
-  events: Array<Extract<WebhookEvent, { trigger: T }>['payload']>
+  orgSlug: string;
+  trigger: T;
+  events: Array<Extract<WebhookEvent, { trigger: T }>["payload"]>;
 }) {
   const organizationWebhooksForTrigger = await getOrganizationWebhooksForTrigger({
     orgSlug,
     trigger,
-  })
+  });
 
   if (organizationWebhooksForTrigger.length === 0) {
-    return
+    return;
   }
 
-  if (env.NODE_ENV === 'development') {
+  if (env.NODE_ENV === "development") {
     console.log(
-      '---------------------------------',
-      '\n',
+      "---------------------------------",
+      "\n",
       `[Skipped] [Webhook] Event: "${trigger}":`,
-      '\n',
+      "\n",
       JSON.stringify(events, null, 2),
-      '\n',
-      '---------------------------------',
-    )
-    return
+      "\n",
+      "---------------------------------",
+    );
+    return;
   }
 
   // Uma lista plana de envios. O `allSettled` espera todos terminarem, mesmo
@@ -54,11 +54,11 @@ export async function publishWebhookEvents<T extends WebhookEvent['trigger']>({
         }),
       ),
     ),
-  )
+  );
 
   const failures = results.filter(
     (result): result is PromiseRejectedResult => result.status === "rejected",
-  )
+  );
 
   // Quem chama já criou o post ou o projeto. Um erro aqui faria a requisição
   // responder 5xx com o recurso criado, e o cliente, ao tentar de novo, o
@@ -67,6 +67,6 @@ export async function publishWebhookEvents<T extends WebhookEvent['trigger']>({
     console.error(
       `[Webhook] Failed to publish ${failures.length} of ${results.length} "${trigger}" event(s) of "${orgSlug}"`,
       failures[0].reason,
-    )
+    );
   }
 }

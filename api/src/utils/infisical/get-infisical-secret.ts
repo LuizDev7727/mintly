@@ -46,13 +46,13 @@ type Env = {
 
 type GetInfisicalSecretProps = {
   secretName: keyof Env;
-}
+};
 
 type GetInfisicalSecretResponse = Promise<string>;
 
-export async function getInfisicalSecret(
-  { secretName }: GetInfisicalSecretProps,
-): GetInfisicalSecretResponse {
+export async function getInfisicalSecret({
+  secretName,
+}: GetInfisicalSecretProps): GetInfisicalSecretResponse {
   const singleSecret = await retryOnRateLimit(() =>
     infisical.secrets().getSecret({
       environment: env.INFISICAL_ENVIRONMENT,
@@ -63,5 +63,5 @@ export async function getInfisicalSecret(
 
   const value = singleSecret.secretValue;
 
-  return value
+  return value;
 }

@@ -1,11 +1,11 @@
-import { describe, test, expect, beforeAll } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
+import { getIntegrationForUpload } from "@/functions/integration/get-integration-for-upload.ts";
 import { db } from "@/infra/db/client.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
-import { getIntegrationForUpload } from "@/functions/integration/get-integration-for-upload.ts";
-import { testOrgSlug, testUser } from "@/tests/setup.ts";
 import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
 import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
+import { testOrgSlug, testUser } from "@/tests/setup.ts";
 
 async function makeIntegration(
   channelId: string,

@@ -1,6 +1,6 @@
+import { and, eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
-import { and, eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "../../errors/resource-not-found.error.ts";
 
 type GetChannelParams = {
@@ -15,9 +15,7 @@ type GetChannelResponse = {
   name: string;
 };
 
-export async function getChannel(
-  params: GetChannelParams,
-): Promise<GetChannelResponse> {
+export async function getChannel(params: GetChannelParams): Promise<GetChannelResponse> {
   const { channelId, organizationSlug } = params;
 
   const [channel] = await db
@@ -27,10 +25,7 @@ export async function getChannel(
     })
     .from(channelsTable)
     .where(
-      and(
-        eq(channelsTable.id, channelId),
-        eq(channelsTable.organizationSlug, organizationSlug),
-      ),
+      and(eq(channelsTable.id, channelId), eq(channelsTable.organizationSlug, organizationSlug)),
     )
     .limit(1);
 

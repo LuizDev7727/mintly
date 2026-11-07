@@ -1,17 +1,17 @@
-import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
-import { z } from 'zod'
-import { organizationsTable } from './organizations.table.ts'
-import { uuidv7 } from 'uuidv7'
+import { relations } from "drizzle-orm";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { uuidv7 } from "uuidv7";
+import { z } from "zod";
+import { organizationsTable } from "./organizations.table.ts";
 
 export const webhookEventTrigger = z.enum([
-  'post.created',
-  'post.failed',
-  'post.posted',
-  'project.created',
-])
+  "post.created",
+  "post.failed",
+  "post.posted",
+  "project.created",
+]);
 
-export type WebhookEventTrigger = z.infer<typeof webhookEventTrigger>
+export type WebhookEventTrigger = z.infer<typeof webhookEventTrigger>;
 
 export const webhooksTable = pgTable("webhooks", {
   id: text("id")

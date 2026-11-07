@@ -1,7 +1,7 @@
+import { eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
-import { eq } from "drizzle-orm";
 
 type UpdateChannelParams = {
   channelId: string;
@@ -9,9 +9,7 @@ type UpdateChannelParams = {
   description?: string;
 };
 
-export async function updateChannel(
-  params: UpdateChannelParams,
-): Promise<void> {
+export async function updateChannel(params: UpdateChannelParams): Promise<void> {
   const { channelId, name, description } = params;
 
   const [updated] = await db

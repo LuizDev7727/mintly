@@ -1,17 +1,15 @@
+import { eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { UserNotBelongsToTheOrganizationError } from "@/errors/user-not-belongs-to-the-organization.ts";
 import { db } from "@/infra/db/client.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
-import { eq } from "drizzle-orm";
 
 type DeclineInviteParams = {
   inviteId: string;
   email: string;
 };
 
-export async function declineInvite(
-  params: DeclineInviteParams,
-): Promise<void> {
+export async function declineInvite(params: DeclineInviteParams): Promise<void> {
   const { inviteId, email } = params;
 
   const [invite] = await db

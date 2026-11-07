@@ -1,19 +1,15 @@
-import { sendBestMomentToSocialMedia } from "@/functions/best-moment/send-best-moment-to-social-media.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { sendBestMomentToSocialMedia } from "@/functions/best-moment/send-best-moment-to-social-media.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
-export const sendBestMomentToSocialMediaRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const sendBestMomentToSocialMediaRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/organizations/:slug/channels/:channelId/best-moments/:bestMomentId/send",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -37,7 +33,7 @@ export const sendBestMomentToSocialMediaRoute: FastifyPluginAsyncZod = async (
       await checkMembership({
         organizationSlug: slug,
         userId: ownerId,
-      })
+      });
 
       const span = tracer.startSpan("send-best-moment-to-social-media");
       span.setAttribute("channel.id", channelId);

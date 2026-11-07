@@ -1,21 +1,19 @@
-import { createProject } from "@/functions/project/create-project.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
-import { createActivity } from "@/utils/create-activity.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { z } from "zod";
-import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
-import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
-import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 import { uuidv7 } from "uuidv7";
+import { z } from "zod";
+import { createProject } from "@/functions/project/create-project.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
+import { createActivity } from "@/utils/create-activity.ts";
+import { publishWebhookEvents } from "@/webhooks/publish-webhook.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const createProjectRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/organizations/:slug/channels/:channelId/projects",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),

@@ -1,9 +1,9 @@
+import { eq } from "drizzle-orm";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { UserNotBelongsToTheOrganizationError } from "@/errors/user-not-belongs-to-the-organization.ts";
 import { db } from "@/infra/db/client.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
-import { eq } from "drizzle-orm";
 
 type AcceptInviteParams = {
   inviteId: string;

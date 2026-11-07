@@ -1,46 +1,42 @@
-import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts"
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 export async function encrypt(plaintext: string) {
-
   const key = await getInfisicalSecret({ secretName: "AES_ENCRYPTION_KEY" });
 
-  const iv = crypto.getRandomValues(new Uint8Array(12))
+  const iv = crypto.getRandomValues(new Uint8Array(12));
 
-  const encodedPlaintext = new TextEncoder().encode(plaintext)
+  const encodedPlaintext = new TextEncoder().encode(plaintext);
 
-  const rawKey = Uint8Array.from(atob(key), (c) => c.charCodeAt(0))
+  const rawKey = Uint8Array.from(atob(key), (c) => c.charCodeAt(0));
 
   const secretKey = await crypto.subtle.importKey(
-    'raw',
+    "raw",
     rawKey,
     {
-      name: 'AES-GCM',
+      name: "AES-GCM",
       length: 256,
     },
     true,
-    ['encrypt', 'decrypt'],
-  )
+    ["encrypt", "decrypt"],
+  );
 
   const ciphertextBuffer = await crypto.subtle.encrypt(
     {
-      name: 'AES-GCM',
+      name: "AES-GCM",
       iv,
     },
     secretKey,
     encodedPlaintext,
-  )
+  );
 
   const ciphertext = btoa(
-    String.fromCharCode.apply(
-      null,
-      Array.from(new Uint8Array(ciphertextBuffer)),
-    ),
-  )
+    String.fromCharCode.apply(null, Array.from(new Uint8Array(ciphertextBuffer))),
+  );
 
-  const base64IV = btoa(String.fromCharCode.apply(null, Array.from(iv)))
+  const base64IV = btoa(String.fromCharCode.apply(null, Array.from(iv)));
 
   return {
     ciphertext,
     iv: base64IV,
-  }
+  };
 }

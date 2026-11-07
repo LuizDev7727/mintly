@@ -45,22 +45,18 @@ export function WelcomeTemplate({ name }: WelcomeTemplateProps) {
             </Heading>
 
             <Text className="mb-6 text-[15px] leading-6 text-muted-foreground">
-              Sua conta foi criada com sucesso. Agora você pode organizar seus
-              canais, convidar sua equipe e começar a publicar direto do
-              Mintly.
+              Sua conta foi criada com sucesso. Agora você pode organizar seus canais, convidar sua
+              equipe e começar a publicar direto do Mintly.
             </Text>
 
-            <Button
-              className="inline-block rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground no-underline"
-            >
+            <Button className="inline-block rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground no-underline">
               Acessar o Mintly
             </Button>
 
             <Hr className="my-8 border-border" />
 
             <Text className="m-0 text-xs text-muted-foreground">
-              Se você não criou essa conta, pode ignorar este e-mail com
-              segurança.
+              Se você não criou essa conta, pode ignorar este e-mail com segurança.
             </Text>
           </Container>
         </Body>

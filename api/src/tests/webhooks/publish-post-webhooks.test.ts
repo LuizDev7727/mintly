@@ -1,14 +1,14 @@
-import { describe, test, expect, vi, beforeAll, afterEach } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
-import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { qstash } from "@/lib/qstash.ts";
+import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { testOrgSlug } from "@/tests/setup.ts";
 import {
   publishPostFailedWebhook,
   publishPostPostedWebhook,
 } from "@/webhooks/publish-post-webhooks.ts";
-import { testOrgSlug } from "@/tests/setup.ts";
-import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
 
 let channelId: string;
 
@@ -37,9 +37,7 @@ afterEach(() => {
 });
 
 function spyOnPublish() {
-  return vi
-    .spyOn(qstash, "publishJSON")
-    .mockResolvedValue({ messageId: "msg" } as never);
+  return vi.spyOn(qstash, "publishJSON").mockResolvedValue({ messageId: "msg" } as never);
 }
 
 describe("publishPostPostedWebhook", () => {
@@ -90,7 +88,7 @@ describe("publishPostFailedWebhook", () => {
     await publishPostFailedWebhook({
       channelId,
       postId: "post-1",
-      message: "Failed to process the post: Step \"transcribe-audio\" failed",
+      message: 'Failed to process the post: Step "transcribe-audio" failed',
     });
 
     expect(publishJSON).toHaveBeenCalledTimes(1);
@@ -100,7 +98,7 @@ describe("publishPostFailedWebhook", () => {
       trigger: "post.failed",
       payload: {
         postId: "post-1",
-        message: "Failed to process the post: Step \"transcribe-audio\" failed",
+        message: 'Failed to process the post: Step "transcribe-audio" failed',
       },
     });
   });
@@ -112,14 +110,12 @@ describe("publishPostFailedWebhook", () => {
 describe("posts with the same content publish different webhook bodies", () => {
   test("should publish different bodies for two posts that fail with the same message", async () => {
     const publishJSON = spyOnPublish();
-    const message = "Failed to process the post: Step \"transcribe-audio\" failed";
+    const message = 'Failed to process the post: Step "transcribe-audio" failed';
 
     await publishPostFailedWebhook({ channelId, postId: "post-1", message });
     await publishPostFailedWebhook({ channelId, postId: "post-2", message });
 
-    const [first, second] = publishJSON.mock.calls.map(([request]) =>
-      JSON.stringify(request.body),
-    );
+    const [first, second] = publishJSON.mock.calls.map(([request]) => JSON.stringify(request.body));
     expect(first).not.toEqual(second);
   });
 
@@ -130,9 +126,7 @@ describe("posts with the same content publish different webhook bodies", () => {
     await publishPostPostedWebhook({ ...post, postId: "post-1" });
     await publishPostPostedWebhook({ ...post, postId: "post-2" });
 
-    const [first, second] = publishJSON.mock.calls.map(([request]) =>
-      JSON.stringify(request.body),
-    );
+    const [first, second] = publishJSON.mock.calls.map(([request]) => JSON.stringify(request.body));
     expect(first).not.toEqual(second);
   });
 });

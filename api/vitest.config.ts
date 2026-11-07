@@ -20,10 +20,10 @@ export default defineConfig({
     testTimeout: 30_000,
     coverage: {
       enabled: true,
-      provider: 'v8',
-      reporter: ['text', 'text-summary', 'html'],
-      include: ['src/tests/http/*.ts'],
-      exclude: ['**/*.test.ts', 'src/tests/**'],
+      provider: "v8",
+      reporter: ["text", "text-summary", "html"],
+      include: ["src/tests/http/*.ts"],
+      exclude: ["**/*.test.ts", "src/tests/**"],
     },
   },
 });

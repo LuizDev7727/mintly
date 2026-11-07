@@ -1,4 +1,4 @@
-import { relations, sql, type SQL } from "drizzle-orm";
+import { relations, type SQL, sql } from "drizzle-orm";
 import {
   index,
   integer,
@@ -10,11 +10,11 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
-import { foldersTable } from "./folders.table.ts";
-import { usersTable } from "./users.table.ts";
-import { socialsToPostTable } from "./socials-to-post.table.ts";
 import { channelsTable } from "./channels.table.ts";
 import { tsVector } from "./columns/ts-vector.column.ts";
+import { foldersTable } from "./folders.table.ts";
+import { socialsToPostTable } from "./socials-to-post.table.ts";
+import { usersTable } from "./users.table.ts";
 
 export const statusEnum = pgEnum("post_status", [
   "PROCESSING",

@@ -1,6 +1,6 @@
-import { acceptInvite } from "@/functions/invitation/accept-invite.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { acceptInvite } from "@/functions/invitation/accept-invite.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { tracer } from "../../../tracer/tracer.ts";
 
@@ -8,9 +8,7 @@ export const acceptInviteRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/invitations/:inviteId/accept",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           inviteId: z.string(),

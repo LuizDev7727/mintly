@@ -1,4 +1,3 @@
-import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
 import {
   CreateMultipartUploadCommand,
   PutObjectCommand,
@@ -6,6 +5,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { uuidv7 } from "uuidv7";
+import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
 
 // 10 MB per part
 const PART_SIZE = 10 * 1024 * 1024;
@@ -33,7 +33,7 @@ type GenerateUploadSignedUrlsResponse = {
   key: string;
   uploadId: string | null;
   parts: { partNumber: number; url: string }[];
-}
+};
 
 export async function generateUploadSignedUrls({
   userId,
@@ -41,8 +41,6 @@ export async function generateUploadSignedUrls({
   file,
   resume,
 }: GenerateUploadSignedUrlsParams): Promise<GenerateUploadSignedUrlsResponse> {
-
-
   if (resume) {
     const { key, uploadId, partNumbers } = resume;
 
@@ -100,22 +98,20 @@ export async function generateUploadSignedUrls({
   const partCount = Math.ceil(file.size / PART_SIZE);
 
   const parts = await Promise.all(
-    Array.from({ length: partCount }, (_, index) => index + 1).map(
-      async (partNumber) => {
-        const url = await getSignedUrl(
-          r2Client,
-          new UploadPartCommand({
-            Bucket: BUCKET_NAME,
-            Key: key,
-            UploadId,
-            PartNumber: partNumber,
-          }),
-          { expiresIn: expiresIn ?? 3600 },
-        );
+    Array.from({ length: partCount }, (_, index) => index + 1).map(async (partNumber) => {
+      const url = await getSignedUrl(
+        r2Client,
+        new UploadPartCommand({
+          Bucket: BUCKET_NAME,
+          Key: key,
+          UploadId,
+          PartNumber: partNumber,
+        }),
+        { expiresIn: expiresIn ?? 3600 },
+      );
 
-        return { partNumber, url };
-      },
-    ),
+      return { partNumber, url };
+    }),
   );
 
   return { key, uploadId: UploadId, parts };

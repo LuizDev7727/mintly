@@ -22,8 +22,14 @@ export async function requestYoutubeIntegrationUrl({
 }: RequestYoutubeIntegrationUrlParams): Promise<RequestYoutubeIntegrationUrlResponse> {
   const googleURL = new URL("o/oauth2/v2/auth", "https://accounts.google.com");
 
-  googleURL.searchParams.set("client_id", await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_ID" }));
-  googleURL.searchParams.set("redirect_uri", await getInfisicalSecret({ secretName: "GOOGLE_REDIRECT_URI" }));
+  googleURL.searchParams.set(
+    "client_id",
+    await getInfisicalSecret({ secretName: "GOOGLE_CLIENT_ID" }),
+  );
+  googleURL.searchParams.set(
+    "redirect_uri",
+    await getInfisicalSecret({ secretName: "GOOGLE_REDIRECT_URI" }),
+  );
   googleURL.searchParams.set("response_type", "code");
   googleURL.searchParams.set("include_granted_scopes", "true");
   googleURL.searchParams.set("state", [orgSlug, channelId].join(","));

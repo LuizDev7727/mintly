@@ -1,8 +1,8 @@
+import { and, desc, eq, lt } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { inspirationalThumbnailsTable } from "@/infra/db/tables/inspirational-thumbnail.table.ts";
-import { and, desc, eq, lt } from "drizzle-orm";
-import { getChannel } from "../channel/get-channel.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
+import { getChannel } from "../channel/get-channel.ts";
 
 type GetInspirationalThumbnailsParams = {
   organizationSlug: string;
@@ -18,20 +18,21 @@ export async function getInspirationalThumbnails(params: GetInspirationalThumbna
   await getChannel({
     channelId,
     organizationSlug,
-  })
+  });
 
-  const result = await db.select({
-    id: inspirationalThumbnailsTable.id,
-    name: inspirationalThumbnailsTable.name,
-    key: inspirationalThumbnailsTable.key,
-    sizeInBytes: inspirationalThumbnailsTable.sizeInBytes,
-  })
+  const result = await db
+    .select({
+      id: inspirationalThumbnailsTable.id,
+      name: inspirationalThumbnailsTable.name,
+      key: inspirationalThumbnailsTable.key,
+      sizeInBytes: inspirationalThumbnailsTable.sizeInBytes,
+    })
     .from(inspirationalThumbnailsTable)
     .where(
       and(
         eq(inspirationalThumbnailsTable.channelId, channelId),
         cursor ? lt(inspirationalThumbnailsTable.id, cursor) : undefined,
-      )
+      ),
     )
     .orderBy(desc(inspirationalThumbnailsTable.id))
     .limit(PAGE_SIZE + 1);
@@ -40,15 +41,17 @@ export async function getInspirationalThumbnails(params: GetInspirationalThumbna
   const page = hasMore ? result.slice(0, PAGE_SIZE) : result;
   const nextCursor = hasMore ? page[page.length - 1].id : null;
 
-  const inspirationalThumbnails = await Promise.all(page.map(async ({ key, ...rest }) => {
-    return {
-      ...rest,
-      url: await generateSignedUrl({ key })
-    }
-  }))
+  const inspirationalThumbnails = await Promise.all(
+    page.map(async ({ key, ...rest }) => {
+      return {
+        ...rest,
+        url: await generateSignedUrl({ key }),
+      };
+    }),
+  );
 
   return {
     inspirationalThumbnails,
     nextCursor,
-  }
+  };
 }

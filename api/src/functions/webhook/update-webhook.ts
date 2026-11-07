@@ -1,28 +1,21 @@
-import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts"
-import { db } from "@/infra/db/client.ts"
-import {
-  webhooksTable,
-  type WebhookEventTrigger,
-} from "@/infra/db/tables/webhooks.table.ts"
-import { eq } from "drizzle-orm"
+import { eq } from "drizzle-orm";
+import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
+import { db } from "@/infra/db/client.ts";
+import { type WebhookEventTrigger, webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
 
 type UpdateWebhookParams = {
-  webhookId: string,
-  url: string,
-  triggers: WebhookEventTrigger[]
-}
+  webhookId: string;
+  url: string;
+  triggers: WebhookEventTrigger[];
+};
 
 export async function updateWebhook(params: UpdateWebhookParams) {
+  const { webhookId, url, triggers } = params;
 
-  const { webhookId, url, triggers } = params
-
-  const [webhook] = await db
-    .select()
-    .from(webhooksTable)
-    .where(eq(webhooksTable.id, webhookId))
+  const [webhook] = await db.select().from(webhooksTable).where(eq(webhooksTable.id, webhookId));
 
   if (!webhook) {
-    throw new ResourceNotFoundError(`Webhook with id ${webhookId} not found`)
+    throw new ResourceNotFoundError(`Webhook with id ${webhookId} not found`);
   }
 
   await db
@@ -31,6 +24,5 @@ export async function updateWebhook(params: UpdateWebhookParams) {
       url: url,
       triggers: triggers,
     })
-    .where(eq(webhooksTable.id, webhookId))
-
+    .where(eq(webhooksTable.id, webhookId));
 }

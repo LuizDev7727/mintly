@@ -1,19 +1,15 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { tracer } from "../../../tracer/tracer.ts";
 import { requestYoutubeIntegrationUrl } from "@/functions/integration/request-youtube-integration-url.ts";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { tracer } from "../../../tracer/tracer.ts";
 
-export const requestYoutubeIntegrationUrlRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const requestYoutubeIntegrationUrlRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:slug/channels/:channelId/integrations/youtube/request-url",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),

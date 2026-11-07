@@ -1,3 +1,4 @@
+import { and, eq, sql } from "drizzle-orm";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { foldersTable } from "@/infra/db/tables/folders.table.ts";
@@ -5,7 +6,6 @@ import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { socialsToPostTable } from "@/infra/db/tables/socials-to-post.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import { and, eq, sql } from "drizzle-orm";
 
 type GetPostParams = {
   channelId: string;
@@ -46,9 +46,7 @@ type GetPostResponse = {
   }[];
 };
 
-export async function getPost(
-  params: GetPostParams,
-): Promise<GetPostResponse> {
+export async function getPost(params: GetPostParams): Promise<GetPostResponse> {
   const { channelId, postId } = params;
 
   const [post] = await db
@@ -67,9 +65,7 @@ export async function getPost(
         name: usersTable.name,
         avatarUrl: usersTable.image,
       },
-      socialsToPost: sql<
-        { social: "YOUTUBE" | "TIKTOK" | "INSTAGRAM"; socialName: string }[]
-      >`
+      socialsToPost: sql<{ social: "YOUTUBE" | "TIKTOK" | "INSTAGRAM"; socialName: string }[]>`
                     json_agg(
                       json_build_object(
                         'social', ${socialsToPostTable.social},
@@ -81,18 +77,9 @@ export async function getPost(
     .from(postsTable)
     .innerJoin(usersTable, eq(postsTable.ownerId, usersTable.id))
     .leftJoin(foldersTable, eq(postsTable.folderId, foldersTable.id))
-    .innerJoin(
-      socialsToPostTable,
-      eq(postsTable.id, socialsToPostTable.postId),
-    )
+    .innerJoin(socialsToPostTable, eq(postsTable.id, socialsToPostTable.postId))
     .where(and(eq(postsTable.id, postId), eq(postsTable.channelId, channelId)))
-    .groupBy(
-      postsTable.id,
-      usersTable.name,
-      usersTable.image,
-      foldersTable.id,
-      foldersTable.title,
-    )
+    .groupBy(postsTable.id, usersTable.name, usersTable.image, foldersTable.id, foldersTable.title)
     .limit(1);
 
   if (!post) {
@@ -103,10 +90,7 @@ export async function getPost(
 
   return {
     ...rest,
-    folder:
-      folderId !== null && folderTitle !== null
-        ? { id: folderId, title: folderTitle }
-        : null,
+    folder: folderId !== null && folderTitle !== null ? { id: folderId, title: folderTitle } : null,
     thumbnailUrl: thumbnailStorageKey
       ? await generateSignedUrl({ key: thumbnailStorageKey })
       : null,

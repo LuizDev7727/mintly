@@ -1,19 +1,15 @@
-import { createInviteMember } from "@/functions/organization/create-invite-member.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { createInviteMember } from "@/functions/organization/create-invite-member.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { tracer } from "../../../tracer/tracer.ts";
-import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
-export const createInviteMemberRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const createInviteMemberRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/organizations/:slug/invites",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -44,8 +40,8 @@ export const createInviteMemberRoute: FastifyPluginAsyncZod = async (
         email,
         inviter: {
           id: inviter.id,
-          name: inviter.name
-        }
+          name: inviter.name,
+        },
       });
 
       span.end();

@@ -1,16 +1,16 @@
-import { logger, schemaTask, streams } from "@trigger.dev/sdk";
-import { z } from "zod";
 import { spawn } from "node:child_process";
 import { PassThrough } from "node:stream";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { logger, schemaTask, streams } from "@trigger.dev/sdk";
+import { eq } from "drizzle-orm";
 import { uuidv7 } from "uuidv7";
-import { postsTable } from "@/infra/db/tables/posts.table.ts";
+import { z } from "zod";
 // import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { db } from "@/infra/db/client.ts";
-import { eq } from "drizzle-orm";
+import { postsTable } from "@/infra/db/tables/posts.table.ts";
+import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
 import { projectsTable } from "../db/tables/projects.table.ts";
 
 // Lê os blocos "key=value" que o ffmpeg escreve via `-progress pipe:3`
@@ -42,10 +42,7 @@ async function* readFfmpegProgress(
         const elapsedSeconds = Number(block.out_time_us ?? 0) / 1_000_000;
         const percent =
           durationInSeconds > 0
-            ? Math.min(
-                100,
-                Math.max(0, (elapsedSeconds / durationInSeconds) * 100),
-              )
+            ? Math.min(100, Math.max(0, (elapsedSeconds / durationInSeconds) * 100))
             : 0;
 
         yield { percent: Math.round(percent) };
@@ -131,9 +128,7 @@ export const convertVideoToMp3Task = schemaTask({
     logger.log("Path to save on R2: ", { basePathToSaveOnR2 });
 
     const durationInSeconds =
-      payload.type === "post"
-        ? payload.duration
-        : await getVideoDurationInSeconds(videoUrl);
+      payload.type === "post" ? payload.duration : await getVideoDurationInSeconds(videoUrl);
 
     const audioStream = new PassThrough();
 
@@ -169,11 +164,9 @@ export const convertVideoToMp3Task = schemaTask({
     // Progresso de conversão em tempo real, pra post e project
     const progressStream = ffmpegCommand.stdio[3] as NodeJS.ReadableStream;
 
-    streams.pipe(
-      "encoding-progress",
-      readFfmpegProgress(progressStream, durationInSeconds),
-      { target: "parent" },
-    );
+    streams.pipe("encoding-progress", readFfmpegProgress(progressStream, durationInSeconds), {
+      target: "parent",
+    });
 
     // Tratamento de erros do ffmpeg
     const ffmpegDone = new Promise<void>((resolve, reject) => {

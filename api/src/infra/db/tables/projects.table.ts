@@ -1,11 +1,10 @@
-import { relations, sql, type SQL } from "drizzle-orm";
-import { index, pgEnum, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { relations, type SQL, sql } from "drizzle-orm";
+import { index, pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
-import { timestamp } from "drizzle-orm/pg-core";
-import { channelsTable } from "./channels.table.ts";
-import { usersTable } from "./users.table.ts";
 import { bestMomentsTable } from "./best-moments.table.ts";
+import { channelsTable } from "./channels.table.ts";
 import { tsVector } from "./columns/ts-vector.column.ts";
+import { usersTable } from "./users.table.ts";
 
 export const projectStatusEnum = pgEnum("project_status", [
   "SUCCESS",
@@ -38,9 +37,7 @@ export const projectsTable = pgTable(
       (): SQL => sql`immutable_to_tsvector(coalesce(title, ''))`,
     ),
   },
-  (table) => [
-    index("projects_search_vector_idx").using("gin", table.searchVector),
-  ],
+  (table) => [index("projects_search_vector_idx").using("gin", table.searchVector)],
 );
 
 export const projectsRelations = relations(projectsTable, ({ one, many }) => ({

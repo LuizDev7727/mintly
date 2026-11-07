@@ -1,9 +1,9 @@
-﻿import { describe, test, expect, beforeAll } from "vitest";
+﻿import { faker } from "@faker-js/faker";
 import request from "supertest";
+import { uuidv7 } from "uuidv7";
+import { beforeAll, describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
-import { faker } from "@faker-js/faker";
-import { uuidv7 } from "uuidv7";
 
 let channelId: string;
 
@@ -34,9 +34,7 @@ describe("DELETE [/api/organizations/:slug/channels/:channelId/folders/:folderId
 
   test("should return 404 for non-existent folder", async () => {
     const response = await request(server.server)
-      .delete(
-        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${uuidv7()}`,
-      )
+      .delete(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${uuidv7()}`)
       .set(authHeaders);
 
     expect(response.status).toEqual(404);

@@ -1,17 +1,15 @@
-import { updateChannel } from "@/functions/channel/update-channel.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { updateChannel } from "@/functions/channel/update-channel.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const updateChannelRoute: FastifyPluginAsyncZod = async (app) => {
   app.put(
     "/api/organizations/:slug/channels/:channelId",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -36,8 +34,8 @@ export const updateChannelRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({
         organizationSlug: slug,
-        userId
-      })
+        userId,
+      });
 
       await updateChannel({ channelId, name, description });
 

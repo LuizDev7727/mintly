@@ -1,8 +1,8 @@
 import { db } from "@/infra/db/client.ts";
-import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { accountsTable } from "@/infra/db/tables/accounts.table.ts";
-import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { membersTable } from "@/infra/db/tables/members.table.ts";
+import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
+import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { createSlug } from "@/lib/create-slug.ts";
 import { channelsTable } from "./tables/channels.table.ts";
 

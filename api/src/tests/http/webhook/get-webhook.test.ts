@@ -1,11 +1,11 @@
-import { beforeAll, describe, expect, test } from "vitest";
 import request from "supertest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { db } from "@/infra/db/client.ts";
 import { webhookLogsTable } from "@/infra/db/tables/webhook-log.table.ts";
 import { webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
-import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
+import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 
 let ownWebhookId: string;
 let foreignWebhookId: string;
@@ -36,9 +36,7 @@ const base = () => `/api/organizations/${testOrgSlug}/webhooks`;
 
 describe("get webhook (GET /api/organizations/:slug/webhooks/:webhookId)", () => {
   test("should return the webhook of the organization with its signing secret", async () => {
-    const response = await request(server.server)
-      .get(`${base()}/${ownWebhookId}`)
-      .set(authHeaders);
+    const response = await request(server.server).get(`${base()}/${ownWebhookId}`).set(authHeaders);
 
     expect(response.status).toEqual(200);
     expect(response.body).toMatchObject({
@@ -96,9 +94,7 @@ describe("delivery logs of GET /api/organizations/:slug/webhooks/:webhookId", ()
       new Date(now - HOUR),
     ]);
 
-    const response = await request(server.server)
-      .get(`${base()}/${webhookId}`)
-      .set(authHeaders);
+    const response = await request(server.server).get(`${base()}/${webhookId}`).set(authHeaders);
 
     expect(response.status).toEqual(200);
 
@@ -118,9 +114,7 @@ describe("delivery logs of GET /api/organizations/:slug/webhooks/:webhookId", ()
     const createdAts = Array.from({ length: 501 }, (_, minute) => new Date(now - minute * 60_000));
     await makeLogs(webhookId, createdAts);
 
-    const response = await request(server.server)
-      .get(`${base()}/${webhookId}`)
-      .set(authHeaders);
+    const response = await request(server.server).get(`${base()}/${webhookId}`).set(authHeaders);
 
     expect(response.status).toEqual(200);
     expect(response.body.logs).toHaveLength(500);
@@ -134,9 +128,7 @@ describe("delivery logs of GET /api/organizations/:slug/webhooks/:webhookId", ()
   test("should not return the deliveries of another webhook", async () => {
     const webhookId = await makeWebhook(testOrgSlug, "logs-isolation-key");
 
-    const response = await request(server.server)
-      .get(`${base()}/${webhookId}`)
-      .set(authHeaders);
+    const response = await request(server.server).get(`${base()}/${webhookId}`).set(authHeaders);
 
     expect(response.body.logs).toEqual([]);
   });

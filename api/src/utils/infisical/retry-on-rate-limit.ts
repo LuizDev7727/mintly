@@ -16,8 +16,7 @@ function defaultSleep(ms: number): Promise<void> {
 // "[StatusCode=429] Rate limit exceeded. Please try again in 11 seconds".
 function readRateLimitWaitMs(error: unknown, attempt: number): number | null {
   const message = error instanceof Error ? error.message : "";
-  const isRateLimit =
-    message.includes("StatusCode=429") || /rate limit exceeded/i.test(message);
+  const isRateLimit = message.includes("StatusCode=429") || /rate limit exceeded/i.test(message);
 
   if (!isRateLimit) return null;
 

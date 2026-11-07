@@ -1,3 +1,4 @@
+import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { bestMomentsTable } from "@/infra/db/tables/best-moments.table.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
@@ -5,7 +6,6 @@ import { foldersTable } from "@/infra/db/tables/folders.table.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import { and, desc, eq, sql } from "drizzle-orm";
 
 const RESULTS_PER_TYPE = 5;
 

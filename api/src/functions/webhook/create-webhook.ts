@@ -1,28 +1,22 @@
-import { db } from "@/infra/db/client.ts"
-import {
-  webhooksTable,
-  type WebhookEventTrigger,
-} from "@/infra/db/tables/webhooks.table.ts"
+import { db } from "@/infra/db/client.ts";
+import { type WebhookEventTrigger, webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
 import { generateSigningKey } from "@/utils/generate-signing-key.ts";
 
 type CreateWebhookParams = {
-  orgSlug: string,
-  url: string,
-  triggers: WebhookEventTrigger[],
-}
+  orgSlug: string;
+  url: string;
+  triggers: WebhookEventTrigger[];
+};
 
 type CreateWebhookResponse = {
-  id: string
-  signingKey: string
-}
+  id: string;
+  signingKey: string;
+};
 
-export async function createWebhook(
-  params: CreateWebhookParams,
-): Promise<CreateWebhookResponse> {
-
+export async function createWebhook(params: CreateWebhookParams): Promise<CreateWebhookResponse> {
   const { url, triggers, orgSlug } = params;
 
-  const signingKey = generateSigningKey()
+  const signingKey = generateSigningKey();
 
   const [{ id }] = await db
     .insert(webhooksTable)
@@ -31,10 +25,11 @@ export async function createWebhook(
       triggers,
       organizationSlug: orgSlug,
       signingKey,
-    }).returning({ id: webhooksTable.id })
+    })
+    .returning({ id: webhooksTable.id });
 
   return {
     id,
     signingKey,
-  }
+  };
 }

@@ -16,16 +16,13 @@ import { emailTailwindConfig } from "./theme.ts";
 type InviteMemberTemplateProps = {
   inviter: {
     name: string;
-  }
+  };
   organization: {
     name: string;
-  }
+  };
 };
 
-export function InviteMemberTemplate({
-  inviter,
-  organization,
-}: InviteMemberTemplateProps) {
+export function InviteMemberTemplate({ inviter, organization }: InviteMemberTemplateProps) {
   return (
     <Tailwind config={emailTailwindConfig}>
       <Html>
@@ -55,16 +52,16 @@ export function InviteMemberTemplate({
             </Heading>
 
             <Text className="mb-6 text-[15px] leading-6 text-muted-foreground">
-              <strong>{inviter.name}</strong> te convidou para participar da
-              organização <strong>{organization.name}</strong>
+              <strong>{inviter.name}</strong> te convidou para participar da organização{" "}
+              <strong>{organization.name}</strong>
               no Mintly.
             </Text>
 
             <Hr className="my-8 border-border" />
 
             <Text className="m-0 text-xs text-muted-foreground">
-              Este convite expira em 7 dias. Se você não esperava este
-              e-mail, pode ignorá-lo com segurança.
+              Este convite expira em 7 dias. Se você não esperava este e-mail, pode ignorá-lo com
+              segurança.
             </Text>
           </Container>
         </Body>

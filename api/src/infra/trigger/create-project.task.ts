@@ -1,16 +1,16 @@
 import { logger, metadata, schemaTask, tasks, wait } from "@trigger.dev/sdk";
-import { z } from "zod";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/infra/db/client.ts";
-import { projectsTable } from "../db/tables/projects.table.ts";
-import { channelsTable } from "../db/tables/channels.table.ts";
-import { transcribeAudioTask } from "./transcribe-audio.task.ts";
-import { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
 import { googleAi } from "@/lib/google.ts";
-import { bestMomentsTable } from "../db/tables/best-moments.table.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
-import { setUsage } from "@/utils/set-usage.ts";
 import { calculateGeminiCost } from "@/utils/polar/calculate-gemini-cost.ts";
+import { setUsage } from "@/utils/set-usage.ts";
+import { bestMomentsTable } from "../db/tables/best-moments.table.ts";
+import { channelsTable } from "../db/tables/channels.table.ts";
+import { projectsTable } from "../db/tables/projects.table.ts";
+import type { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
+import type { transcribeAudioTask } from "./transcribe-audio.task.ts";
 
 type ModalCallbackPayload = {
   output_key: string;
@@ -88,17 +88,17 @@ export const createProjectTask = schemaTask({
       .innerJoin(channelsTable, eq(projectsTable.channelId, channelsTable.id))
       .where(eq(projectsTable.id, projectId));
 
-    const convertVideoToMp3TaskResponse = await tasks.triggerAndWait<
-      typeof convertVideoToMp3Task
-    >("convert-video-to-mp3", {
-      videoUrl,
-      basePathToSaveOnR2: "",
-      type: "project",
-      projectId,
-    });
+    const convertVideoToMp3TaskResponse = await tasks.triggerAndWait<typeof convertVideoToMp3Task>(
+      "convert-video-to-mp3",
+      {
+        videoUrl,
+        basePathToSaveOnR2: "",
+        type: "project",
+        projectId,
+      },
+    );
 
-    const { ok: hasConvertVideoTop3TaskCompleted } =
-      convertVideoToMp3TaskResponse;
+    const { ok: hasConvertVideoTop3TaskCompleted } = convertVideoToMp3TaskResponse;
 
     if (!hasConvertVideoTop3TaskCompleted) {
       return;
@@ -108,13 +108,14 @@ export const createProjectTask = schemaTask({
 
     metadata.set("status", "PROCESSING");
 
-    const transcribeAudioTaskResponse = await tasks.triggerAndWait<
-      typeof transcribeAudioTask
-    >("transcribe-audio", {
-      audioUrl,
-      projectId,
-      type: "project",
-    });
+    const transcribeAudioTaskResponse = await tasks.triggerAndWait<typeof transcribeAudioTask>(
+      "transcribe-audio",
+      {
+        audioUrl,
+        projectId,
+        type: "project",
+      },
+    );
 
     const { ok: hasTranscribeAudioTaskCompleted } = transcribeAudioTaskResponse;
 
@@ -182,9 +183,7 @@ export const createProjectTask = schemaTask({
 
     const bestMoments = clips.map((clip) => ({
       ...clip,
-      words: words.filter(
-        (w) => w.start >= clip.startTime && w.start <= clip.endTime,
-      ),
+      words: words.filter((w) => w.start >= clip.startTime && w.start <= clip.endTime),
     }));
 
     logger.log("Best moments generated: ", { bestMoments });
@@ -207,9 +206,9 @@ export const createProjectTask = schemaTask({
           end_time: endTime,
           title: title,
           callback_url: callbackUrl,
-          words: words
+          words: words,
         }),
-      })
+      });
 
       const result = await wait.forToken<ModalCallbackPayload>(token).unwrap();
 
@@ -223,15 +222,13 @@ export const createProjectTask = schemaTask({
           projectId,
           title,
         },
-      })
+      });
 
       await db.insert(bestMomentsTable).values({
         title: title,
         storageKey: result.output_key,
         projectId: projectId,
       });
-
     }
-
   },
 });

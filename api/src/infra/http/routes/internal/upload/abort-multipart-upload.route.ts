@@ -1,13 +1,11 @@
-import { abortMultipartUpload } from "@/utils/cloudflare/abort-multipart-upload.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { abortMultipartUpload } from "@/utils/cloudflare/abort-multipart-upload.ts";
 import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
-export const abortMultipartUploadRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const abortMultipartUploadRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/uploads/abort-multipart",
     {

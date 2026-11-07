@@ -1,17 +1,13 @@
 import { faker } from "@faker-js/faker";
+import { db } from "@/infra/db/client.ts";
 import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import type { Replace } from "./replace.ts";
-import { db } from "@/infra/db/client.ts";
 
 type ProjectProps = typeof projectsTable.$inferInsert;
 
 type Overrides = Partial<Replace<ProjectProps, {}>>;
 
-export async function makeFakeProject(
-  channelId: string,
-  ownerId: string,
-  data = {} as Overrides,
-) {
+export async function makeFakeProject(channelId: string, ownerId: string, data = {} as Overrides) {
   const title = data.title ?? faker.lorem.words({ min: 3, max: 8 });
 
   const [{ projectId }] = await db

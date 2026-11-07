@@ -1,17 +1,15 @@
+import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
+import { z } from "zod";
 import { updateFolder } from "@/functions/folder/update-folder.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 import { tracer } from "@/infra/http/tracer/tracer.ts";
-import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const updateFolderRoute: FastifyPluginAsyncZod = async (app) => {
   app.put(
     "/api/organizations/:slug/channels/:channelId/folders/:folderId",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),

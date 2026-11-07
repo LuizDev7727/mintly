@@ -1,15 +1,15 @@
+import { eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
-import { eq } from "drizzle-orm";
 
 type CreateInviteMemberParams = {
   orgSlug: string;
   email: string;
   inviter: {
-    id: string
-    name: string
-  }
+    id: string;
+    name: string;
+  };
 };
 
 type CreateInviteMemberResponse = {

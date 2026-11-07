@@ -1,6 +1,6 @@
-import { auth } from "@/lib/auth.ts";
-import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { fromNodeHeaders } from "better-auth/node";
+import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
+import { auth } from "@/lib/auth.ts";
 
 export const authRoute: FastifyPluginAsyncZod = async (app) => {
   app.route({

@@ -1,12 +1,12 @@
-import { describe, test, expect } from "vitest";
 import request from "supertest";
+import { describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
-import { authHeaders, testUser } from "@/tests/setup.ts";
-import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
-import { makeFakeMember } from "@/tests/factories/make-fake-member.ts";
 import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { makeFakeMember } from "@/tests/factories/make-fake-member.ts";
+import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
+import { authHeaders, testUser } from "@/tests/setup.ts";
 
 const GIGABYTE = 1024 * 1024 * 1024;
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
@@ -48,12 +48,10 @@ describe("GET [/api/organizations/:slug/usage]", () => {
   });
 
   test("should return 401 when not authenticated", async () => {
-    const response = await request(server.server)
-      .get("/api/organizations/any-org/usage")
-      .query({
-        startDate: new Date().toISOString(),
-        endDate: new Date().toISOString(),
-      });
+    const response = await request(server.server).get("/api/organizations/any-org/usage").query({
+      startDate: new Date().toISOString(),
+      endDate: new Date().toISOString(),
+    });
 
     expect(response.status).toEqual(401);
   });

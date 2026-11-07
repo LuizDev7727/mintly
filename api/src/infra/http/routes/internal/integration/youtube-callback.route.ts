@@ -1,8 +1,8 @@
-import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
-import { connectYoutube } from "@/functions/integration/connect-youtube.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { connectYoutube } from "@/functions/integration/connect-youtube.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 const FRONTEND_URL = await getInfisicalSecret({ secretName: "GOOGLE_REDIRECT_CALLBACK_URI" });
 
@@ -31,9 +31,7 @@ export const youtubeCallbackRoute: FastifyPluginAsyncZod = async (app) => {
 
       span.end();
 
-      return reply.redirect(
-        `${FRONTEND_URL}/orgs/${orgSlug}/channels/${channelId}/integrations`,
-      );
+      return reply.redirect(`${FRONTEND_URL}/orgs/${orgSlug}/channels/${channelId}/integrations`);
     },
   );
 };

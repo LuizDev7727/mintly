@@ -1,8 +1,8 @@
-import { db } from "@/infra/db/client.ts";
-import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
-import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
+import { db } from "@/infra/db/client.ts";
+import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
+import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 type ConnectTikTokParams = {
   channelId: string;
@@ -32,20 +32,17 @@ export async function connectTikTok(params: ConnectTikTokParams) {
 
   const nowInSeconds = Math.floor(Date.now() / 1000);
 
-  const tokenRequest = await fetch(
-    "https://open.tiktokapis.com/v2/oauth/token/",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        client_key: await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_KEY" }),
-        client_secret: await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_SECRET" }),
-        code,
-        grant_type: "authorization_code",
-        redirect_uri: await getInfisicalSecret({ secretName: "TIKTOK_REDIRECT_URI" }),
-      }),
-    },
-  );
+  const tokenRequest = await fetch("https://open.tiktokapis.com/v2/oauth/token/", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_key: await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_KEY" }),
+      client_secret: await getInfisicalSecret({ secretName: "TIKTOK_CLIENT_SECRET" }),
+      code,
+      grant_type: "authorization_code",
+      redirect_uri: await getInfisicalSecret({ secretName: "TIKTOK_REDIRECT_URI" }),
+    }),
+  });
 
   if (!tokenRequest.ok) {
     throw new Error("Failed to exchange TikTok OAuth code.");

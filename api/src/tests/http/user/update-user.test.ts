@@ -1,7 +1,7 @@
-import { describe, test, expect } from "vitest";
-import request from "supertest";
-import { eq } from "drizzle-orm";
 import { faker } from "@faker-js/faker";
+import { eq } from "drizzle-orm";
+import request from "supertest";
+import { describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { db } from "@/infra/db/client.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";

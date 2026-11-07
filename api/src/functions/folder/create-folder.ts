@@ -1,6 +1,6 @@
+import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { foldersTable } from "@/infra/db/tables/folders.table.ts";
-import { and, eq, isNull } from "drizzle-orm";
 import { FolderAlreadyExistsError } from "../../errors/folder-already-exists.error.ts";
 
 type CreateFolderParams = {
@@ -13,9 +13,7 @@ type CreateFolderResponse = {
   folderId: string;
 };
 
-export async function createFolder(
-  params: CreateFolderParams,
-): Promise<CreateFolderResponse> {
+export async function createFolder(params: CreateFolderParams): Promise<CreateFolderResponse> {
   const { title, channelId, parentId } = params;
 
   const [duplicate] = await db
@@ -25,9 +23,7 @@ export async function createFolder(
       and(
         eq(foldersTable.title, title),
         eq(foldersTable.channelId, channelId),
-        parentId
-          ? eq(foldersTable.parentId, parentId)
-          : isNull(foldersTable.parentId),
+        parentId ? eq(foldersTable.parentId, parentId) : isNull(foldersTable.parentId),
       ),
     )
     .limit(1);

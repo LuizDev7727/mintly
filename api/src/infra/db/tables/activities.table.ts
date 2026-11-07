@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
 import { organizationsTable } from "./organizations.table.ts";
 import { usersTable } from "./users.table.ts";

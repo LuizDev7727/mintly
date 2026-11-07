@@ -7,28 +7,28 @@ import {
   tasks,
   wait,
 } from "@trigger.dev/sdk";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
-import { transcribeAudioTask } from "./transcribe-audio.task.ts";
-import { seoEnrichmentTask } from "./seo-enrichment.task.ts";
+import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import {
-  publishPostFailedWebhook,
-  publishPostPostedWebhook,
-} from "@/webhooks/publish-post-webhooks.ts";
-import { eq } from "drizzle-orm";
-import { generateThubmnailTask } from "./generate-thumbnail.task.ts";
-import { convertImageToJpegTask } from "./convert-image-to-jpeg.task.ts";
 import {
   getCaptionFromFileName,
   isImageMimeType,
   needsJpegConversion,
 } from "@/utils/media-type.ts";
-import { db } from "@/infra/db/client.ts";
-import { uploadPostToYoutubeTask } from "./upload-post-to-youtube.task.ts";
-import { uploadPostToTiktokTask } from "./upload-post-to-tiktok.task.ts";
-import { uploadPostToInstagramTask } from "./upload-post-to-instagram.task.ts";
+import {
+  publishPostFailedWebhook,
+  publishPostPostedWebhook,
+} from "@/webhooks/publish-post-webhooks.ts";
+import type { convertImageToJpegTask } from "./convert-image-to-jpeg.task.ts";
+import type { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
+import type { generateThubmnailTask } from "./generate-thumbnail.task.ts";
+import type { seoEnrichmentTask } from "./seo-enrichment.task.ts";
+import type { transcribeAudioTask } from "./transcribe-audio.task.ts";
+import type { uploadPostToInstagramTask } from "./upload-post-to-instagram.task.ts";
+import type { uploadPostToTiktokTask } from "./upload-post-to-tiktok.task.ts";
+import type { uploadPostToYoutubeTask } from "./upload-post-to-youtube.task.ts";
 
 // Validade do link do arquivo, gerado depois da espera do agendamento. Precisa
 // cobrir a pipeline inteira (conversão, transcrição, SEO e uploads).
@@ -61,15 +61,16 @@ async function prepareVideo(params: {
 
   metadata.set("status", "ENCODING");
 
-  const convertVideoToMp3TaskResponse = await tasks.triggerAndWait<
-    typeof convertVideoToMp3Task
-  >("convert-video-to-mp3", {
-    videoUrl: fileUrl,
-    basePathToSaveOnR2: "posthub/posts",
-    type: "post",
-    postId,
-    duration,
-  });
+  const convertVideoToMp3TaskResponse = await tasks.triggerAndWait<typeof convertVideoToMp3Task>(
+    "convert-video-to-mp3",
+    {
+      videoUrl: fileUrl,
+      basePathToSaveOnR2: "posthub/posts",
+      type: "post",
+      postId,
+      duration,
+    },
+  );
 
   if (!convertVideoToMp3TaskResponse.ok) {
     failStep("convert-video-to-mp3");
@@ -79,13 +80,14 @@ async function prepareVideo(params: {
 
   metadata.set("status", "TRANSCRIBING");
 
-  const transcribeAudioTaskResponse = await tasks.triggerAndWait<
-    typeof transcribeAudioTask
-  >("transcribe-audio", {
-    audioUrl,
-    postId,
-    type: "post",
-  });
+  const transcribeAudioTaskResponse = await tasks.triggerAndWait<typeof transcribeAudioTask>(
+    "transcribe-audio",
+    {
+      audioUrl,
+      postId,
+      type: "post",
+    },
+  );
 
   if (!transcribeAudioTaskResponse.ok) {
     failStep("transcribe-audio");
@@ -97,22 +99,19 @@ async function prepareVideo(params: {
 
   metadata.set("status", "SEO_GENERATING");
 
-  const seoEnrichmentResponse = await tasks.triggerAndWait<
-    typeof seoEnrichmentTask
-  >("seo-enrichment", {
-    postId,
-    transcription,
-  });
+  const seoEnrichmentResponse = await tasks.triggerAndWait<typeof seoEnrichmentTask>(
+    "seo-enrichment",
+    {
+      postId,
+      transcription,
+    },
+  );
 
   if (!seoEnrichmentResponse.ok) {
     failStep("seo-enrichment");
   }
 
-  const {
-    title: newPostTitle,
-    description: postDescription,
-    tags,
-  } = seoEnrichmentResponse.output;
+  const { title: newPostTitle, description: postDescription, tags } = seoEnrichmentResponse.output;
 
   if (shouldGenerateThumbnail) {
     metadata.set("status", "GENERATING_THUMBNAIL");
@@ -146,10 +145,7 @@ async function prepareImage(params: {
 
   if (needsJpegConversion(mimeType)) {
     metadata.set("status", "ENCODING");
-    await db
-      .update(postsTable)
-      .set({ status: "ENCODING" })
-      .where(eq(postsTable.id, postId));
+    await db.update(postsTable).set({ status: "ENCODING" }).where(eq(postsTable.id, postId));
 
     const conversion = await tasks.triggerAndWait<typeof convertImageToJpegTask>(
       "convert-image-to-jpeg",
@@ -239,9 +235,8 @@ export const createPostTask = schemaTask({
     const published = postOutputSchema.safeParse(output);
 
     if (published.success) {
-      await publishPostPostedWebhook({ channelId, postId, ...published.data }).catch(
-        (error) =>
-          logger.error("Failed to publish the post.posted webhook", { error }),
+      await publishPostPostedWebhook({ channelId, postId, ...published.data }).catch((error) =>
+        logger.error("Failed to publish the post.posted webhook", { error }),
       );
     }
   },
@@ -340,10 +335,7 @@ export const createPostTask = schemaTask({
       : prepared.description;
 
     metadata.set("status", "PUBLISHING");
-    await db
-      .update(postsTable)
-      .set({ status: "PUBLISHING" })
-      .where(eq(postsTable.id, postId));
+    await db.update(postsTable).set({ status: "PUBLISHING" }).where(eq(postsTable.id, postId));
 
     // Os uploads rodam em paralelo e a run só termina quando todos acabam: o
     // `onSuccess` (PUBLISHED) só dispara se todas as redes deram certo, e

@@ -1,8 +1,8 @@
-﻿import { describe, test, expect, beforeAll } from "vitest";
+﻿import { faker } from "@faker-js/faker";
 import request from "supertest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
-import { faker } from "@faker-js/faker";
 
 let inviteId: string;
 

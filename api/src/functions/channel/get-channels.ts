@@ -1,6 +1,6 @@
+import { eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
-import { eq } from "drizzle-orm";
 
 type GetChannelsParams = {
   orgSlug: string;
@@ -15,9 +15,7 @@ type GetChannelsResponse = {
   }[];
 };
 
-export async function getChannels(
-  params: GetChannelsParams,
-): Promise<GetChannelsResponse> {
+export async function getChannels(params: GetChannelsParams): Promise<GetChannelsResponse> {
   const { orgSlug } = params;
 
   const channels = await db

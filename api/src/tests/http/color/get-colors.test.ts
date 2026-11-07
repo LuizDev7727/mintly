@@ -1,9 +1,9 @@
-import { describe, test, expect, beforeAll } from "vitest";
 import request from "supertest";
-import { server } from "@/app.ts";
-import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
-import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
 import { uuidv7 } from "uuidv7";
+import { beforeAll, describe, expect, test } from "vitest";
+import { server } from "@/app.ts";
+import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
 
 let channelId: string;
 let otherChannelId: string;

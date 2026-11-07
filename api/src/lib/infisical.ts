@@ -1,6 +1,6 @@
-import { InfisicalSDK } from '@infisical/sdk'
-import { env } from '@/env.ts'
-import { retryOnRateLimit } from '@/utils/infisical/retry-on-rate-limit.ts'
+import { InfisicalSDK } from "@infisical/sdk";
+import { env } from "@/env.ts";
+import { retryOnRateLimit } from "@/utils/infisical/retry-on-rate-limit.ts";
 
 export const infisical = new InfisicalSDK();
 

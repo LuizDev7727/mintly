@@ -1,3 +1,5 @@
+import type { FastifyInstance } from "fastify";
+import { hasZodFastifySchemaValidationErrors } from "fastify-type-provider-zod";
 import { ChannelAlreadyExistsError } from "@/errors/channel-already-exists.error.ts";
 import { ColorLimitReachedError } from "@/errors/color-limit-reached.error.ts";
 import { FolderAlreadyExistsError } from "@/errors/folder-already-exists.error.ts";
@@ -6,8 +8,6 @@ import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { UnauthorizedError } from "@/errors/unauthorized.error.ts";
 import { UnsupportedProviderError } from "@/errors/unsupported-provider.error.ts";
 import { UserNotBelongsToTheOrganizationError } from "@/errors/user-not-belongs-to-the-organization.ts";
-import type { FastifyInstance } from "fastify";
-import { hasZodFastifySchemaValidationErrors } from "fastify-type-provider-zod";
 
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 

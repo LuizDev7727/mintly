@@ -1,4 +1,4 @@
-import { describe, test, expect, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { retryOnRateLimit } from "@/utils/infisical/retry-on-rate-limit.ts";
 
 const rateLimitError = (seconds?: number) =>
@@ -28,9 +28,7 @@ describe("retryOnRateLimit", () => {
       .mockRejectedValueOnce(rateLimitError(29))
       .mockResolvedValue("ok");
 
-    await expect(
-      retryOnRateLimit(operation, { sleep, random: noJitter }),
-    ).resolves.toBe("ok");
+    await expect(retryOnRateLimit(operation, { sleep, random: noJitter })).resolves.toBe("ok");
     expect(operation).toHaveBeenCalledTimes(3);
     expect(sleep.mock.calls.map(([ms]) => ms)).toEqual([11_000, 29_000]);
   });

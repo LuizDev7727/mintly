@@ -1,11 +1,11 @@
-import { describe, test, expect, vi, beforeAll, afterEach } from "vitest";
 import request from "supertest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { server } from "@/app.ts";
 import { db } from "@/infra/db/client.ts";
 import { webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
 import { qstash } from "@/lib/qstash.ts";
-import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 
 let channelId: string;
 

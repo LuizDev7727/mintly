@@ -1,3 +1,4 @@
+import { and, count, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { activitiesTable } from "@/infra/db/tables/activities.table.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
@@ -6,7 +7,6 @@ import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
 import { webhooksTable } from "@/infra/db/tables/webhooks.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import { and, count, desc, eq, sql } from "drizzle-orm";
 
 type GetOverviewProps = {
   orgSlug: string;
@@ -14,20 +14,20 @@ type GetOverviewProps = {
 
 type GetOverviewResponse = {
   overview: {
-    channelsCount: number,
-    membersCount: number,
+    channelsCount: number;
+    membersCount: number;
     usage: {
       totalUsage: number;
-    },
+    };
     storage: {
       totalStorage: number;
-      series: number[]
-    },
+      series: number[];
+    };
     channels: {
-      id: string,
+      id: string;
       name: string;
-      totalPosts: number
-    }[],
+      totalPosts: number;
+    }[];
     recentActivities: {
       action: string;
       description: string;
@@ -35,17 +35,16 @@ type GetOverviewResponse = {
       author: {
         name: string;
         avatarUrl: string | null;
-      }
-    }[],
+      };
+    }[];
     webhooks: {
       id: string;
-      url: string
-    }[]
-  }
+      url: string;
+    }[];
+  };
 };
 
 export async function getOverview({ orgSlug }: GetOverviewProps): Promise<GetOverviewResponse> {
-
   // One row per calendar day in the last 30 days, so the storage series
   // always has 30 points even for days without any uploads.
   const dateSeries = db.$with("date_series").as(
@@ -176,6 +175,6 @@ export async function getOverview({ orgSlug }: GetOverviewProps): Promise<GetOve
       },
       recentActivities,
       webhooks,
-    }
+    },
   };
 }

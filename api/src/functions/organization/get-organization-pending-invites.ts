@@ -1,6 +1,6 @@
+import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
-import { and, count, desc, eq } from "drizzle-orm";
 
 type GetOrganizationPendingInvitesParams = {
   orgSlug: string;

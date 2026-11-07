@@ -1,9 +1,9 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { getWebhooksOverviews } from "@/functions/webhook/get-webhooks-overviews.ts";
-import { tracer } from "../../../tracer/tracer.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { tracer } from "../../../tracer/tracer.ts";
 
 const metricSchema = z.object({
   value: z.number(),
@@ -46,9 +46,7 @@ export const getWebhooksOverviewRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:slug/webhooks/metrics",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),
@@ -78,17 +76,16 @@ export const getWebhooksOverviewRoute: FastifyPluginAsyncZod = async (app) => {
 
       await checkMembership({ organizationSlug: slug, userId });
 
-      const { metrics, recentDeliveries, webhooks, apiKey } =
-        await getWebhooksOverviews({ orgSlug: slug });
+      const { metrics, recentDeliveries, webhooks, apiKey } = await getWebhooksOverviews({
+        orgSlug: slug,
+      });
 
       span.setAttribute("total-deliveries", metrics.totalDeliveries.value);
       span.setAttribute("recent-deliveries-count", recentDeliveries.length);
       span.setAttribute("webhooks-count", webhooks.length);
       span.end();
 
-      return reply
-        .status(200)
-        .send({ metrics, recentDeliveries, webhooks, apiKey });
+      return reply.status(200).send({ metrics, recentDeliveries, webhooks, apiKey });
     },
   );
 };

@@ -1,12 +1,12 @@
-import { logger, schemaTask, wait } from "@trigger.dev/sdk";
-import { z } from "zod";
+import { createReadStream, createWriteStream } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { logger, schemaTask, wait } from "@trigger.dev/sdk";
+import { and, eq } from "drizzle-orm";
 import { uuidv7 } from "uuidv7";
-import { createReadStream, createWriteStream } from "node:fs";
+import { z } from "zod";
 import { db } from "@/infra/db/client.ts";
 import { integrationsTable } from "@/infra/db/tables/integrations.table.ts";
-import { and, eq } from "drizzle-orm";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 
 export const uploadPostToTiktokTask = schemaTask({
@@ -23,7 +23,6 @@ export const uploadPostToTiktokTask = schemaTask({
   // Set an optional maxDuration to prevent tasks from running indefinitely
   maxDuration: 300, // Stop executing after 300 secs (5 mins) of compute
   run: async (payload, _) => {
-
     const MAX_CHUNK_SIZE = 1024 * 1024 * 64; // 64MB
 
     const { fileUrl, title, fileSizeInBytes, channelId } = payload;
@@ -66,22 +65,14 @@ export const uploadPostToTiktokTask = schemaTask({
       .select()
       .from(integrationsTable)
       .where(
-        and(
-          eq(integrationsTable.provider, "TIKTOK"),
-          eq(integrationsTable.channelId, channelId),
-        ),
+        and(eq(integrationsTable.provider, "TIKTOK"), eq(integrationsTable.channelId, channelId)),
       );
 
     if (!integration) {
       throw new Error("TikTok integration not found for this channel.");
     }
 
-    const {
-      id: integrationId,
-      accessToken,
-      refresh_token,
-      expiry_in,
-    } = integration;
+    const { id: integrationId, accessToken, refresh_token, expiry_in } = integration;
 
     const nowInSeconds = Math.floor(Date.now() / 1000);
     const isAccessTokenValid = nowInSeconds < expiry_in;
@@ -89,10 +80,7 @@ export const uploadPostToTiktokTask = schemaTask({
     let tiktokAccessToken = accessToken;
 
     if (!isAccessTokenValid) {
-      const tiktokRefreshRequestUrl = new URL(
-        "/v2/oauth/token/",
-        "https://open.tiktokapis.com",
-      );
+      const tiktokRefreshRequestUrl = new URL("/v2/oauth/token/", "https://open.tiktokapis.com");
       const tiktokRefreshRequest = await fetch(tiktokRefreshRequestUrl, {
         method: "POST",
         headers: {
@@ -107,9 +95,7 @@ export const uploadPostToTiktokTask = schemaTask({
       });
 
       if (!tiktokRefreshRequest.ok) {
-        throw new Error(
-          "TikTok refresh token expired. User must reconnect their TikTok account.",
-        );
+        throw new Error("TikTok refresh token expired. User must reconnect their TikTok account.");
       }
 
       const {
@@ -144,31 +130,28 @@ export const uploadPostToTiktokTask = schemaTask({
       "https://open.tiktokapis.com",
     );
 
-    const tiktokUploadVideoResponse = await fetch(
-      tiktokUploadRequestUrl,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tiktokAccessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          post_info: {
-            title: title,
-            privacy_level: "PUBLIC_TO_EVERYONE",
-            disable_duet: false,
-            disable_comment: false,
-            disable_stitch: false,
-          },
-          source_info: {
-            source: "FILE_UPLOAD",
-            video_size: videoSize,
-            chunk_size: chunkSize,
-            total_chunk_count: totalChunkCount
-          },
-        }),
+    const tiktokUploadVideoResponse = await fetch(tiktokUploadRequestUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${tiktokAccessToken}`,
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({
+        post_info: {
+          title: title,
+          privacy_level: "PUBLIC_TO_EVERYONE",
+          disable_duet: false,
+          disable_comment: false,
+          disable_stitch: false,
+        },
+        source_info: {
+          source: "FILE_UPLOAD",
+          video_size: videoSize,
+          chunk_size: chunkSize,
+          total_chunk_count: totalChunkCount,
+        },
+      }),
+    });
 
     const tiktokUploadVideoJson = await tiktokUploadVideoResponse.json();
 
@@ -203,7 +186,6 @@ export const uploadPostToTiktokTask = schemaTask({
     const { publish_id, upload_url: uploadUrl } = data;
 
     for (let i = 0; i < totalChunkCount; i++) {
-
       const start = i * chunkSize;
       const end = Math.min(start + chunkSize, videoSize) - 1;
       const length = end - start + 1;
@@ -218,7 +200,7 @@ export const uploadPostToTiktokTask = schemaTask({
           "Content-Range": `bytes ${start}-${end}/${videoSize}`,
         },
         body: chunkStream,
-        duplex: "half"
+        duplex: "half",
       });
 
       if (!chunkResponse.ok) {
@@ -247,19 +229,23 @@ export const uploadPostToTiktokTask = schemaTask({
     // Finishing the upload does not mean the video was published: TikTok
     // processes it afterwards. Only PUBLISH_COMPLETE counts as success.
     for (let attempt = 1; attempt <= MAX_PUBLISH_STATUS_CHECKS; attempt++) {
-      const checkPublishStatusResponse = await fetch("https://open.tiktokapis.com/v2/post/publish/status/fetch/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tiktokAccessToken}`,
-          "Content-Type": "application/json; charset=UTF-8",
+      const checkPublishStatusResponse = await fetch(
+        "https://open.tiktokapis.com/v2/post/publish/status/fetch/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${tiktokAccessToken}`,
+            "Content-Type": "application/json; charset=UTF-8",
+          },
+          body: JSON.stringify({
+            publish_id,
+          }),
         },
-        body: JSON.stringify({
-          publish_id,
-        }),
-      });
+      );
 
-      const { data: publishStatus, error: publishStatusError } =
-        publishStatusResponseSchema.parse(await checkPublishStatusResponse.json());
+      const { data: publishStatus, error: publishStatusError } = publishStatusResponseSchema.parse(
+        await checkPublishStatusResponse.json(),
+      );
 
       logger.log("Check publish status: ", { attempt, publishStatus, publishStatusError });
 

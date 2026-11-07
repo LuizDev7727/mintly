@@ -1,8 +1,8 @@
+import { and, eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { usersTable } from "@/infra/db/tables/users.table.ts";
-import { and, eq } from "drizzle-orm";
 
 type GetPendingInvitesParams = {
   email: string;
@@ -26,17 +26,9 @@ export async function getPendingInvites({ email }: GetPendingInvitesParams) {
       },
     })
     .from(invitationsTable)
-    .innerJoin(
-      organizationsTable,
-      eq(invitationsTable.organizationSlug, organizationsTable.slug),
-    )
+    .innerJoin(organizationsTable, eq(invitationsTable.organizationSlug, organizationsTable.slug))
     .innerJoin(usersTable, eq(invitationsTable.inviterId, usersTable.id))
-    .where(
-      and(
-        eq(invitationsTable.email, email),
-        eq(invitationsTable.status, "pending"),
-      ),
-    );
+    .where(and(eq(invitationsTable.email, email), eq(invitationsTable.status, "pending")));
 
   return { invites };
 }

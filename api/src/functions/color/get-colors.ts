@@ -1,6 +1,6 @@
+import { asc, eq } from "drizzle-orm";
 import { db } from "@/infra/db/client.ts";
 import { colorsTable } from "@/infra/db/tables/colors.table.ts";
-import { asc, eq } from "drizzle-orm";
 
 type GetColorsParams = {
   channelId: string;
@@ -14,9 +14,7 @@ type GetColorsResponse = {
   }[];
 };
 
-export async function getColors(
-  params: GetColorsParams,
-): Promise<GetColorsResponse> {
+export async function getColors(params: GetColorsParams): Promise<GetColorsResponse> {
   const { channelId } = params;
 
   const colors = await db

@@ -19,12 +19,9 @@ export const socialsToPostTable = pgTable("socials_to_post", {
     }),
 });
 
-export const socialsToPostRelations = relations(
-  socialsToPostTable,
-  ({ one }) => ({
-    post: one(postsTable, {
-      fields: [socialsToPostTable.postId],
-      references: [postsTable.id],
-    }),
+export const socialsToPostRelations = relations(socialsToPostTable, ({ one }) => ({
+  post: one(postsTable, {
+    fields: [socialsToPostTable.postId],
+    references: [postsTable.id],
   }),
-);
+}));

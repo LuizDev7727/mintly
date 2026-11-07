@@ -1,8 +1,8 @@
-import { describe, test, expect, beforeAll } from "vitest";
+import { faker } from "@faker-js/faker";
 import request from "supertest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
 import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
-import { faker } from "@faker-js/faker";
 
 let channelId: string;
 let folderId: string;
@@ -26,9 +26,7 @@ beforeAll(async () => {
 describe("PUT [/api/organizations/:slug/channels/:channelId/folders/:folderId]", () => {
   test("should return 204 when title is updated", async () => {
     const response = await request(server.server)
-      .put(
-        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${folderId}`,
-      )
+      .put(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${folderId}`)
       .set(authHeaders)
       .send({ title: faker.word.noun() });
 
@@ -37,9 +35,7 @@ describe("PUT [/api/organizations/:slug/channels/:channelId/folders/:folderId]",
 
   test("should return 400 when title is empty", async () => {
     const response = await request(server.server)
-      .put(
-        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${folderId}`,
-      )
+      .put(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${folderId}`)
       .set(authHeaders)
       .send({ title: "" });
 
@@ -48,9 +44,7 @@ describe("PUT [/api/organizations/:slug/channels/:channelId/folders/:folderId]",
 
   test("should return 404 for non-existent folder", async () => {
     const response = await request(server.server)
-      .put(
-        `/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${faker.string.uuid()}`,
-      )
+      .put(`/api/organizations/${testOrgSlug}/channels/${channelId}/folders/${faker.string.uuid()}`)
       .set(authHeaders)
       .send({ title: faker.word.noun() });
 

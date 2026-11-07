@@ -1,9 +1,9 @@
-import { describe, test, expect, beforeAll } from "vitest";
 import request from "supertest";
-import { server } from "@/app.ts";
-import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
-import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
 import { uuidv7 } from "uuidv7";
+import { beforeAll, describe, expect, test } from "vitest";
+import { server } from "@/app.ts";
+import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { authHeaders, testOrgSlug } from "@/tests/setup.ts";
 
 let channelId: string;
 
@@ -65,9 +65,7 @@ describe("POST [/api/organizations/:slug/channels/:channelId/colors]", () => {
       .send({ r: 9, g: 9, b: 9 });
 
     expect(response.status).toEqual(409);
-    expect(response.body.message).toEqual(
-      "Color limit reached for this channel",
-    );
+    expect(response.body.message).toEqual("Color limit reached for this channel");
   });
 
   test("should return 400 when a channel is out of the 0-255 range", async () => {

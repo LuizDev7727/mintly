@@ -1,19 +1,15 @@
-import { getOrganizationPendingInvites } from "@/functions/organization/get-organization-pending-invites.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { getOrganizationPendingInvites } from "@/functions/organization/get-organization-pending-invites.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { tracer } from "../../../tracer/tracer.ts";
-import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
-export const getOrganizationPendingInvitesRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const getOrganizationPendingInvitesRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/organizations/:slug/invites/pending",
     {
-      preHandler: [
-        checkUserSession,
-      ],
+      preHandler: [checkUserSession],
       schema: {
         params: z.object({
           slug: z.string(),

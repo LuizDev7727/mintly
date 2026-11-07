@@ -1,9 +1,9 @@
-import { describe, test, expect, beforeAll } from "vitest";
 import request from "supertest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { server } from "@/app.ts";
-import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
-import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
 import { makeFakeChannel } from "@/tests/factories/make-fake-channel.ts";
+import { makeFakeOrganization } from "@/tests/factories/make-fake-organization.ts";
+import { authHeaders, testOrgSlug, testUser } from "@/tests/setup.ts";
 
 let ownChannelId: string;
 let channelOfAnotherOrg: string;
@@ -26,7 +26,9 @@ describe("GET [/api/organizations/:slug/channels/:channelId/inspirational-thumbn
 
   test("should return 404 when the channel belongs to another organization", async () => {
     const response = await request(server.server)
-      .get(`/api/organizations/${testOrgSlug}/channels/${channelOfAnotherOrg}/inspirational-thumbnails`)
+      .get(
+        `/api/organizations/${testOrgSlug}/channels/${channelOfAnotherOrg}/inspirational-thumbnails`,
+      )
       .set(authHeaders);
 
     expect(response.status).toEqual(404);

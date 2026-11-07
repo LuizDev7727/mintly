@@ -1,28 +1,30 @@
 import "./infra/http/instrumentation.ts";
 
-import fastify from "fastify";
-import {
-  validatorCompiler,
-  serializerCompiler,
-  type ZodTypeProvider,
-  jsonSchemaTransform,
-} from "fastify-type-provider-zod";
+import fastifyCookie from "@fastify/cookie";
+import { fastifyCors } from "@fastify/cors";
 
 import { fastifySwagger } from "@fastify/swagger";
-import { fastifyCors } from "@fastify/cors";
-import fastifyCookie from "@fastify/cookie";
 import scalarAPIReference from "@scalar/fastify-api-reference";
+import fastify from "fastify";
+import {
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+  type ZodTypeProvider,
+} from "fastify-type-provider-zod";
 import { env } from "./env.ts";
-import { getInfisicalSecret } from "./utils/infisical/get-infisical-secret.ts";
-import { errorHandler } from "./infra/http/routes/error-handler.ts";
 import { protectChannelRoutes } from "./infra/http/middleware/check-channel.ts";
-import { getHealthRoute } from "./infra/http/routes/internal/health/get-health.route.ts";
+import { errorHandler } from "./infra/http/routes/error-handler.ts";
+import { getProjectsExternalRoute } from "./infra/http/routes/external/get-projects.route.ts";
+import { getActivitiesRoute } from "./infra/http/routes/internal/activity/get-activities.route.ts";
 import { authRoute } from "./infra/http/routes/internal/auth/auth.route.ts";
-import { getChannelsRoute } from "./infra/http/routes/internal/channel/get-channels.route.ts";
-import { getChannelRoute } from "./infra/http/routes/internal/channel/get-channel.route.ts";
+import { getBestMomentsRoute } from "./infra/http/routes/internal/best-moment/get-best-moments.route.ts";
+import { sendBestMomentToSocialMediaRoute } from "./infra/http/routes/internal/best-moment/send-best-moment-to-social-media.route.ts";
 import { createChannelRoute } from "./infra/http/routes/internal/channel/create-channel.route.ts";
-import { updateChannelRoute } from "./infra/http/routes/internal/channel/update-channel.route.ts";
 import { deleteChannelRoute } from "./infra/http/routes/internal/channel/delete-channel.route.ts";
+import { getChannelRoute } from "./infra/http/routes/internal/channel/get-channel.route.ts";
+import { getChannelsRoute } from "./infra/http/routes/internal/channel/get-channels.route.ts";
+import { updateChannelRoute } from "./infra/http/routes/internal/channel/update-channel.route.ts";
 import { addColorRoute } from "./infra/http/routes/internal/color/add-color.route.ts";
 import { deleteColorRoute } from "./infra/http/routes/internal/color/delete-color.route.ts";
 import { getColorsRoute } from "./infra/http/routes/internal/color/get-colors.route.ts";
@@ -30,62 +32,60 @@ import { createFolderRoute } from "./infra/http/routes/internal/folder/create-fo
 import { deleteFolderRoute } from "./infra/http/routes/internal/folder/delete-folder.route.ts";
 import { getFoldersRoute } from "./infra/http/routes/internal/folder/get-folders.route.ts";
 import { getFoldersTreeRoute } from "./infra/http/routes/internal/folder/get-folders-tree.route.ts";
-import { updateFolderRoute } from "./infra/http/routes/internal/folder/update-folder.route.ts";
 import { getStarredFoldersRoute } from "./infra/http/routes/internal/folder/get-starred-folders.route.ts";
-import { setStarredFolderRoute } from "./infra/http/routes/internal/folder/set-starred-folder.route.ts";
 import { removeStarredFolderRoute } from "./infra/http/routes/internal/folder/remove-starred-folder.route.ts";
-import { getOrganizationOverviewRoute } from "./infra/http/routes/internal/organization/get-overview.route.ts";
-import { getWebhooksOverviewRoute } from "./infra/http/routes/internal/webhook/get-webhooks-overview.route.ts";
-import { getWebhookRoute } from "./infra/http/routes/internal/webhook/get-webhook.route.ts";
-import { getAvailableEventsRoute } from "./infra/http/routes/internal/webhook/get-available-events.route.ts";
-import { createWebhookRoute } from "./infra/http/routes/internal/webhook/create-webhook.route.ts";
-import { handleWebhookEventRoute } from "./infra/http/routes/internal/webhook/handle-webhook-event.route.ts";
-import { getPostsRoute } from "./infra/http/routes/internal/post/get-posts.route.ts";
-import { getPostRoute } from "./infra/http/routes/internal/post/get-post.route.ts";
-import { createPostsRoute } from "./infra/http/routes/internal/post/create-posts.route.ts";
-import { cancelPostRoute } from "./infra/http/routes/internal/post/cancel-post.route.ts";
-import { movePostsToFolderRoute } from "./infra/http/routes/internal/post/move-posts-to-folder.route.ts";
-import { getProjectsRoute } from "./infra/http/routes/internal/project/get-projects.route.ts";
-import { getProjectRoute } from "./infra/http/routes/internal/project/get-project.route.ts";
-import { searchResourcesRoute } from "./infra/http/routes/internal/search/search-resources.route.ts";
-import { createProjectRoute } from "./infra/http/routes/internal/project/create-project.route.ts";
-import { getBestMomentsRoute } from "./infra/http/routes/internal/best-moment/get-best-moments.route.ts";
-import { sendBestMomentToSocialMediaRoute } from "./infra/http/routes/internal/best-moment/send-best-moment-to-social-media.route.ts";
+import { setStarredFolderRoute } from "./infra/http/routes/internal/folder/set-starred-folder.route.ts";
+import { updateFolderRoute } from "./infra/http/routes/internal/folder/update-folder.route.ts";
+import { getHealthRoute } from "./infra/http/routes/internal/health/get-health.route.ts";
+import { addInspirationalThumbnailRoute } from "./infra/http/routes/internal/inspirational-thumbnail/add-inspirational-thumbnail.route.ts";
+import { deleteInspirationalThumbnailRoute } from "./infra/http/routes/internal/inspirational-thumbnail/delete-inspirational-thumbnail.route.ts";
+import { getInspirationalThumbnailsRoute } from "./infra/http/routes/internal/inspirational-thumbnail/get-inspirational-thumbnails.route.ts";
+import { deleteIntegrationRoute } from "./infra/http/routes/internal/integration/delete-integration.route.ts";
 import { getIntegrationsRoute } from "./infra/http/routes/internal/integration/get-integrations.route.ts";
-import { getOrganizationsRoute } from "./infra/http/routes/internal/organization/get-organizations.route.ts";
-import { getActiveOrganizationRoute } from "./infra/http/routes/internal/organization/get-active-organization.route.ts";
-import { setActiveOrganizationRoute } from "./infra/http/routes/internal/organization/set-active-organization.route.ts";
-import { createOrganizationRoute } from "./infra/http/routes/internal/organization/create-organization.route.ts";
-import { getMembersRoute } from "./infra/http/routes/internal/organization/get-members.route.ts";
-import { getMembersCountRoute } from "./infra/http/routes/internal/organization/get-members-count.route.ts";
-import { getOrganizationPendingInvitesRoute } from "./infra/http/routes/internal/organization/get-organization-pending-invites.route.ts";
-import { createInviteMemberRoute } from "./infra/http/routes/internal/organization/create-invite-member.route.ts";
-import { getPendingInvitesRoute } from "./infra/http/routes/internal/invitation/get-pending-invites.route.ts";
+import { instagramCallbackRoute } from "./infra/http/routes/internal/integration/instagram-callback.route.ts";
+import { requestInstagramIntegrationUrlRoute } from "./infra/http/routes/internal/integration/request-instagram-integration-url.route.ts";
+import { requestTiktokIntegrationUrlRoute } from "./infra/http/routes/internal/integration/request-tiktok-integration-url.route.ts";
+import { requestYoutubeIntegrationUrlRoute } from "./infra/http/routes/internal/integration/request-youtube-integration-url.route.ts";
+import { tiktokCallbackRoute } from "./infra/http/routes/internal/integration/tiktok-callback.route.ts";
+import { youtubeCallbackRoute } from "./infra/http/routes/internal/integration/youtube-callback.route.ts";
 import { acceptInviteRoute } from "./infra/http/routes/internal/invitation/accept-invite.route.ts";
 import { declineInviteRoute } from "./infra/http/routes/internal/invitation/decline-invite.route.ts";
-import { revokeInviteRoute } from "./infra/http/routes/internal/organization/revoke-invite.route.ts";
-import { updateOrganizationRoute } from "./infra/http/routes/internal/organization/update-organization.route.ts";
-import { getOrganizationPaymentMethodStatusRoute } from "./infra/http/routes/internal/organization/get-organization-payment-method-status.route.ts";
-import { getInvoicesRoute } from "./infra/http/routes/internal/organization/get-invoices.route.ts";
-import { getInvoiceRoute } from "./infra/http/routes/internal/organization/get-invoice.route.ts";
-import { getUsageRoute } from "./infra/http/routes/internal/organization/get-usage.route.ts";
+import { getPendingInvitesRoute } from "./infra/http/routes/internal/invitation/get-pending-invites.route.ts";
 import { createCheckoutSessionRoute } from "./infra/http/routes/internal/organization/create-checkout-session.route.ts";
-import { requestYoutubeIntegrationUrlRoute } from "./infra/http/routes/internal/integration/request-youtube-integration-url.route.ts";
-import { youtubeCallbackRoute } from "./infra/http/routes/internal/integration/youtube-callback.route.ts";
-import { deleteIntegrationRoute } from "./infra/http/routes/internal/integration/delete-integration.route.ts";
-import { getActivitiesRoute } from "./infra/http/routes/internal/activity/get-activities.route.ts";
-import { addInspirationalThumbnailRoute } from "./infra/http/routes/internal/inspirational-thumbnail/add-inspirational-thumbnail.route.ts";
-import { getInspirationalThumbnailsRoute } from "./infra/http/routes/internal/inspirational-thumbnail/get-inspirational-thumbnails.route.ts";
-import { deleteInspirationalThumbnailRoute } from "./infra/http/routes/internal/inspirational-thumbnail/delete-inspirational-thumbnail.route.ts";
-import { presignUploadRoute } from "./infra/http/routes/internal/upload/presign-upload.route.ts";
-import { completeMultipartUploadRoute } from "./infra/http/routes/internal/upload/complete-multipart-upload.route.ts";
+import { createInviteMemberRoute } from "./infra/http/routes/internal/organization/create-invite-member.route.ts";
+import { createOrganizationRoute } from "./infra/http/routes/internal/organization/create-organization.route.ts";
+import { getActiveOrganizationRoute } from "./infra/http/routes/internal/organization/get-active-organization.route.ts";
+import { getInvoiceRoute } from "./infra/http/routes/internal/organization/get-invoice.route.ts";
+import { getInvoicesRoute } from "./infra/http/routes/internal/organization/get-invoices.route.ts";
+import { getMembersRoute } from "./infra/http/routes/internal/organization/get-members.route.ts";
+import { getMembersCountRoute } from "./infra/http/routes/internal/organization/get-members-count.route.ts";
+import { getOrganizationPaymentMethodStatusRoute } from "./infra/http/routes/internal/organization/get-organization-payment-method-status.route.ts";
+import { getOrganizationPendingInvitesRoute } from "./infra/http/routes/internal/organization/get-organization-pending-invites.route.ts";
+import { getOrganizationsRoute } from "./infra/http/routes/internal/organization/get-organizations.route.ts";
+import { getOrganizationOverviewRoute } from "./infra/http/routes/internal/organization/get-overview.route.ts";
+import { getUsageRoute } from "./infra/http/routes/internal/organization/get-usage.route.ts";
+import { revokeInviteRoute } from "./infra/http/routes/internal/organization/revoke-invite.route.ts";
+import { setActiveOrganizationRoute } from "./infra/http/routes/internal/organization/set-active-organization.route.ts";
+import { updateOrganizationRoute } from "./infra/http/routes/internal/organization/update-organization.route.ts";
+import { cancelPostRoute } from "./infra/http/routes/internal/post/cancel-post.route.ts";
+import { createPostsRoute } from "./infra/http/routes/internal/post/create-posts.route.ts";
+import { getPostRoute } from "./infra/http/routes/internal/post/get-post.route.ts";
+import { getPostsRoute } from "./infra/http/routes/internal/post/get-posts.route.ts";
+import { movePostsToFolderRoute } from "./infra/http/routes/internal/post/move-posts-to-folder.route.ts";
+import { createProjectRoute } from "./infra/http/routes/internal/project/create-project.route.ts";
+import { getProjectRoute } from "./infra/http/routes/internal/project/get-project.route.ts";
+import { getProjectsRoute } from "./infra/http/routes/internal/project/get-projects.route.ts";
+import { searchResourcesRoute } from "./infra/http/routes/internal/search/search-resources.route.ts";
 import { abortMultipartUploadRoute } from "./infra/http/routes/internal/upload/abort-multipart-upload.route.ts";
+import { completeMultipartUploadRoute } from "./infra/http/routes/internal/upload/complete-multipart-upload.route.ts";
 import { listMultipartUploadPartsRoute } from "./infra/http/routes/internal/upload/list-multipart-upload-parts.route.ts";
-import { requestTiktokIntegrationUrlRoute } from "./infra/http/routes/internal/integration/request-tiktok-integration-url.route.ts";
-import { tiktokCallbackRoute } from "./infra/http/routes/internal/integration/tiktok-callback.route.ts";
-import { requestInstagramIntegrationUrlRoute } from "./infra/http/routes/internal/integration/request-instagram-integration-url.route.ts";
-import { instagramCallbackRoute } from "./infra/http/routes/internal/integration/instagram-callback.route.ts";
-import { getProjectsExternalRoute } from "./infra/http/routes/external/get-projects.route.ts";
+import { presignUploadRoute } from "./infra/http/routes/internal/upload/presign-upload.route.ts";
+import { createWebhookRoute } from "./infra/http/routes/internal/webhook/create-webhook.route.ts";
+import { getAvailableEventsRoute } from "./infra/http/routes/internal/webhook/get-available-events.route.ts";
+import { getWebhookRoute } from "./infra/http/routes/internal/webhook/get-webhook.route.ts";
+import { getWebhooksOverviewRoute } from "./infra/http/routes/internal/webhook/get-webhooks-overview.route.ts";
+import { handleWebhookEventRoute } from "./infra/http/routes/internal/webhook/handle-webhook-event.route.ts";
+import { getInfisicalSecret } from "./utils/infisical/get-infisical-secret.ts";
 
 export const server = fastify({
   logger: {
@@ -200,13 +200,13 @@ server.register(getInvoiceRoute);
 server.register(getUsageRoute);
 server.register(createCheckoutSessionRoute);
 
-server.register(deleteIntegrationRoute)
-server.register(requestYoutubeIntegrationUrlRoute)
-server.register(youtubeCallbackRoute)
-server.register(requestTiktokIntegrationUrlRoute)
-server.register(tiktokCallbackRoute)
-server.register(requestInstagramIntegrationUrlRoute)
-server.register(instagramCallbackRoute)
+server.register(deleteIntegrationRoute);
+server.register(requestYoutubeIntegrationUrlRoute);
+server.register(youtubeCallbackRoute);
+server.register(requestTiktokIntegrationUrlRoute);
+server.register(tiktokCallbackRoute);
+server.register(requestInstagramIntegrationUrlRoute);
+server.register(instagramCallbackRoute);
 
 server.register(getActivitiesRoute);
 

@@ -1,15 +1,15 @@
-import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
-import { replicate } from "@/lib/replicate.ts";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { logger, schemaTask, wait } from "@trigger.dev/sdk";
 import { spawn } from "node:child_process";
-import { z } from "zod";
-import type { Prediction } from "replicate";
 import { Readable } from "node:stream";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
+import { logger, schemaTask, wait } from "@trigger.dev/sdk";
+import { eq } from "drizzle-orm";
+import type { Prediction } from "replicate";
+import { z } from "zod";
 import { db } from "@/infra/db/client.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
-import { eq } from "drizzle-orm";
+import { BUCKET_NAME, r2Client } from "@/lib/r2.ts";
+import { replicate } from "@/lib/replicate.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 
 export const generateThubmnailTask = schemaTask({
@@ -221,9 +221,7 @@ export const generateThubmnailTask = schemaTask({
     const thumbnailResponse = await fetch(thumbnailUrl);
 
     if (!thumbnailResponse.ok || !thumbnailResponse.body) {
-      throw new Error(
-        `Failed to fetch thumbnail from Replicate: ${thumbnailResponse.statusText}`,
-      );
+      throw new Error(`Failed to fetch thumbnail from Replicate: ${thumbnailResponse.statusText}`);
     }
 
     const bodyStream = Readable.fromWeb(thumbnailResponse.body);

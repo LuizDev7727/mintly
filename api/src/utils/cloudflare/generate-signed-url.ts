@@ -11,9 +11,7 @@ export async function generateSignedUrl({
   key,
   expiresIn = 60 * 60, // 1 hora por padrão
 }: GenerateSignedUrlParams): Promise<string> {
-  return getSignedUrl(
-    r2Client,
-    new GetObjectCommand({ Bucket: BUCKET_NAME, Key: key }),
-    { expiresIn },
-  );
+  return getSignedUrl(r2Client, new GetObjectCommand({ Bucket: BUCKET_NAME, Key: key }), {
+    expiresIn,
+  });
 }

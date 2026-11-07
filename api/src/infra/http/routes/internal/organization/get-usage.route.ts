@@ -1,9 +1,9 @@
-import { getUsage } from "@/functions/organization/get-usage.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { getUsage } from "@/functions/organization/get-usage.ts";
+import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { tracer } from "../../../tracer/tracer.ts";
-import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
 export const getUsageRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(

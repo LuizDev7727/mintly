@@ -1,17 +1,16 @@
 export function generateSigningKey() {
-  const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  const charactersLength = characters.length
-  let result = ''
+  const charactersLength = characters.length;
+  let result = "";
 
-  const randomValues = new Uint32Array(32)
+  const randomValues = new Uint32Array(32);
 
-  crypto.getRandomValues(randomValues)
+  crypto.getRandomValues(randomValues);
 
   randomValues.forEach((value) => {
-    result += characters.charAt(value % charactersLength)
-  })
+    result += characters.charAt(value % charactersLength);
+  });
 
-  return result
+  return result;
 }

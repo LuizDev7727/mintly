@@ -1,7 +1,7 @@
-import { NodeSDK } from "@opentelemetry/sdk-node";
+import { FastifyOtelInstrumentation } from "@fastify/otel";
 import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 import { PgInstrumentation } from "@opentelemetry/instrumentation-pg";
-import { FastifyOtelInstrumentation } from "@fastify/otel";
+import { NodeSDK } from "@opentelemetry/sdk-node";
 
 const sdk = new NodeSDK({
   instrumentations: [

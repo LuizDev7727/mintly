@@ -1,9 +1,9 @@
-import { generateUploadSignedUrls } from "@/utils/cloudflare/generate-upload-signed-urls.ts";
-import { tracer } from "@/infra/http/tracer/tracer.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { checkUserSession } from "../../../middleware/check-user-session.ts";
+import { tracer } from "@/infra/http/tracer/tracer.ts";
 import { assertKeyOwnedByUser } from "@/utils/cloudflare/assert-key-owned-by-user.ts";
+import { generateUploadSignedUrls } from "@/utils/cloudflare/generate-upload-signed-urls.ts";
+import { checkUserSession } from "../../../middleware/check-user-session.ts";
 
 export const presignUploadRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(

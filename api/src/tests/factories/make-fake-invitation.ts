@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
+import { db } from "@/infra/db/client.ts";
 import { invitationsTable } from "@/infra/db/tables/invitations.table.ts";
 import type { Replace } from "./replace.ts";
-import { db } from "@/infra/db/client.ts";
 
 type InvitationProps = typeof invitationsTable.$inferInsert;
 

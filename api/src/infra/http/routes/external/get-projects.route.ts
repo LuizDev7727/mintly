@@ -1,12 +1,10 @@
-import { getProjects } from "@/functions/project/get-projects.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { getProjects } from "@/functions/project/get-projects.ts";
 import { checkApiKey } from "../../middleware/check-api-key.ts";
 import { tracer } from "../../tracer/tracer.ts";
 
-export const getProjectsExternalRoute: FastifyPluginAsyncZod = async (
-  app,
-) => {
+export const getProjectsExternalRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     "/api/v1/projects",
     {
@@ -24,13 +22,7 @@ export const getProjectsExternalRoute: FastifyPluginAsyncZod = async (
                 id: z.string(),
                 title: z.string(),
                 thumbnailUrl: z.string().nullable(),
-                status: z.enum([
-                  "SUCCESS",
-                  "PROCESSING",
-                  "ENCODING",
-                  "ERROR",
-                  "CANCELED",
-                ]),
+                status: z.enum(["SUCCESS", "PROCESSING", "ENCODING", "ERROR", "CANCELED"]),
                 createdAt: z.date(),
                 clipCount: z.number(),
                 owner: z.object({
