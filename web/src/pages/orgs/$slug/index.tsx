@@ -25,7 +25,7 @@ export const Route = createFileRoute("/orgs/$slug/")({
 function OverviewPage() {
   const { slug } = Route.useParams();
 
-  const { data, isPending, isError, refetch } = useQuery({
+  const { data, isPending, isError } = useQuery({
     queryKey: ['overview', slug],
     queryFn: () => getOrganizationOverviewHttp({
       orgSlug: slug
@@ -39,7 +39,7 @@ function OverviewPage() {
   // Sem isto, uma requisição que falha deixava `data` indefinido e a tela
   // ficava no skeleton para sempre, escondendo o erro.
   if (isError || !data) {
-    return <OverviewError onRetry={() => refetch()} />;
+    return <OverviewError />;
   }
 
   const { overview } = data;
