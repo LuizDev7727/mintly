@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!src/components/ui", "!src/route-tree.gen.ts", "!**/*.md"]
+    "includes": ["**", "!src/components/ui", "!src/route-tree.gen.ts", "!src/index.css", "!**/*.md"]
   },
   "formatter": {
     "enabled": true,
