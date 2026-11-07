@@ -1,3 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { SlidersHorizontal, X } from "lucide-react";
+import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,11 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { getMembersHttp } from "@/http/organization/get-members.http";
 import { getInitials } from "@/utils/get-initials";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { SlidersHorizontal, X } from "lucide-react";
-import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { ACTIVITY_ACTIONS, ACTIVITY_ACTION_CONFIG } from "./activity-action-config";
+import { ACTIVITY_ACTION_CONFIG, ACTIVITY_ACTIONS } from "./activity-action-config";
 
 export function ActivitiesFilter() {
   const { slug } = useParams({ from: "/orgs/$slug/activities/" });
@@ -65,9 +65,7 @@ export function ActivitiesFilter() {
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Filter Activities</SheetTitle>
-          <SheetDescription>
-            Narrow down activities by action or author.
-          </SheetDescription>
+          <SheetDescription>Narrow down activities by action or author.</SheetDescription>
         </SheetHeader>
 
         <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-4">
@@ -105,12 +103,8 @@ export function ActivitiesFilter() {
                   className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-left text-sm transition-colors hover:bg-accent/50 data-[selected=true]:border-primary"
                 >
                   <Avatar size="sm">
-                    {member.user.avatarUrl && (
-                      <AvatarImage src={member.user.avatarUrl} />
-                    )}
-                    <AvatarFallback>
-                      {getInitials(member.user.name)}
-                    </AvatarFallback>
+                    {member.user.avatarUrl && <AvatarImage src={member.user.avatarUrl} />}
+                    <AvatarFallback>{getInitials(member.user.name)}</AvatarFallback>
                   </Avatar>
                   {member.user.name}
                 </button>

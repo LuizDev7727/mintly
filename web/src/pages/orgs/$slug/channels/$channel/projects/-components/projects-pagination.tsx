@@ -1,21 +1,13 @@
-import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
+import { Button } from "@/components/ui/button";
 
 type ProjectsPaginationProps = {
   totalPages: number;
   totalCount: number;
 };
 
-export function ProjectsPagination({
-  totalPages,
-  totalCount,
-}: ProjectsPaginationProps) {
+export function ProjectsPagination({ totalPages, totalCount }: ProjectsPaginationProps) {
   const [currentPage, setCurrentPage] = useQueryState(
     "project_page",
     parseAsInteger.withDefault(0),
@@ -66,20 +58,10 @@ export function ProjectsPagination({
         <span className="text-xs text-muted-foreground px-1 tabular-nums">
           Page {currentPage + 1} of {totalPages}
         </span>
-        <Button
-          variant={"outline"}
-          size={"icon"}
-          onClick={goToNextPage}
-          disabled={!hasNextPage}
-        >
+        <Button variant={"outline"} size={"icon"} onClick={goToNextPage} disabled={!hasNextPage}>
           <ChevronRight className="size-4" />
         </Button>
-        <Button
-          variant={"outline"}
-          size={"icon"}
-          onClick={goToLastPage}
-          disabled={!hasNextPage}
-        >
+        <Button variant={"outline"} size={"icon"} onClick={goToLastPage} disabled={!hasNextPage}>
           <ChevronsRight className="size-4" />
         </Button>
       </div>

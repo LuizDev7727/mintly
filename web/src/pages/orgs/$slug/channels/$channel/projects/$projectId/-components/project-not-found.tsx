@@ -1,11 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
-import { useParams } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { ArrowLeft, FolderX } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function ProjectNotFound() {
   const { slug, channel } = useParams({
-    from: "/orgs/$slug/channels/$channel"
+    from: "/orgs/$slug/channels/$channel",
   });
 
   return (
@@ -20,10 +19,7 @@ export function ProjectNotFound() {
         </p>
       </div>
       <Button asChild variant="outline" size="sm">
-        <Link
-          to="/orgs/$slug/channels/$channel/projects"
-          params={{ slug, channel }}
-        >
+        <Link to="/orgs/$slug/channels/$channel/projects" params={{ slug, channel }}>
           <ArrowLeft className="size-4" />
           Back to projects
         </Link>

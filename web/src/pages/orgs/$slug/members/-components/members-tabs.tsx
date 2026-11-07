@@ -1,12 +1,7 @@
-import { Suspense } from "react";
 import { Mail, Search, Users } from "lucide-react";
+import { Suspense } from "react";
 import { Input } from "@/components/ui/input";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MembersList } from "./members-list";
 import { MembersListLoading } from "./members-list-loading";
 import { PendingInvitesList } from "./pending-invites-list";

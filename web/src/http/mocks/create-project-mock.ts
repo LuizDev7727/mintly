@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+import { HttpResponse, http } from "msw";
 
 type CreateProjectRequest = {
   files: {
@@ -7,10 +7,9 @@ type CreateProjectRequest = {
   }[];
 };
 
-export const createProjectMock = http.post<
-  { channelId: string },
-  CreateProjectRequest,
-  never
->("http://localhost:3000/api/channels/:channelId/projects", () => {
-  return new HttpResponse(null, { status: 201 });
-});
+export const createProjectMock = http.post<{ channelId: string }, CreateProjectRequest, never>(
+  "http://localhost:3000/api/channels/:channelId/projects",
+  () => {
+    return new HttpResponse(null, { status: 201 });
+  },
+);

@@ -1,3 +1,5 @@
+import { Link, useParams } from "@tanstack/react-router";
+import { Unplug } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -7,8 +9,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Link, useParams } from "@tanstack/react-router";
-import { Unplug } from "lucide-react";
 
 export function NoIntegrationsConnected() {
   const { slug, channel } = useParams({
@@ -23,16 +23,13 @@ export function NoIntegrationsConnected() {
         </EmptyMedia>
         <EmptyTitle>No integrations connected</EmptyTitle>
         <EmptyDescription>
-          You need to connect your channel to a YouTube or TikTok account before
-          you can create a post.
+          You need to connect your channel to a YouTube or TikTok account before you can create a
+          post.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <Button asChild size="sm">
-          <Link
-            to="/orgs/$slug/channels/$channel/integrations"
-            params={{ slug, channel }}
-          >
+          <Link to="/orgs/$slug/channels/$channel/integrations" params={{ slug, channel }}>
             Connect an account
           </Link>
         </Button>

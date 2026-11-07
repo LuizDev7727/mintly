@@ -1,13 +1,13 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Webhooks } from "./-components/webhooks";
-import { Activities } from "./-components/activities";
-import { OverviewLoading } from "./-components/overview-loading";
-import { OverviewError } from "./-components/overview-error";
 import { ChartPie, HardDrive, Package, Users } from "lucide-react";
 import { Sparkline } from "@/components/sparkline";
-import { useQuery } from "@tanstack/react-query";
 import { getOrganizationOverviewHttp } from "@/http/organization/get-organization-overview.http";
 import { formatBytes } from "@/utils/format-bytes";
+import { Activities } from "./-components/activities";
+import { OverviewError } from "./-components/overview-error";
+import { OverviewLoading } from "./-components/overview-loading";
+import { Webhooks } from "./-components/webhooks";
 
 export const Route = createFileRoute("/orgs/$slug/")({
   component: OverviewPage,
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/orgs/$slug/")({
       { title: "Overview | Mintly" },
       {
         name: "description",
-        content: "Organization overview."
+        content: "Organization overview.",
       },
     ],
   }),
@@ -26,11 +26,12 @@ function OverviewPage() {
   const { slug } = Route.useParams();
 
   const { data, isPending, isError } = useQuery({
-    queryKey: ['overview', slug],
-    queryFn: () => getOrganizationOverviewHttp({
-      orgSlug: slug
-    })
-  })
+    queryKey: ["overview", slug],
+    queryFn: () =>
+      getOrganizationOverviewHttp({
+        orgSlug: slug,
+      }),
+  });
 
   if (isPending) {
     return <OverviewLoading />;
@@ -44,14 +45,7 @@ function OverviewPage() {
 
   const { overview } = data;
 
-  const {
-    channelsCount,
-    membersCount,
-    usage,
-    storage,
-    recentActivities,
-    webhooks
-  } = overview;
+  const { channelsCount, membersCount, usage, storage, recentActivities, webhooks } = overview;
 
   const { totalUsage } = usage;
 
@@ -62,7 +56,6 @@ function OverviewPage() {
 
   return (
     <div className="space-y-4 h-full">
-
       <div>
         <h1 className="text-xl font-medium">Overview</h1>
         <p className="text-sm">Here's what's hapenning with your organization today.</p>
@@ -125,12 +118,9 @@ function OverviewPage() {
           <Webhooks webhooks={webhooks} />
         </div>
         <div className="space-y-4">
-          <Activities
-            activities={recentActivities}
-          />
+          <Activities activities={recentActivities} />
         </div>
       </div>
-
     </div>
   );
 }

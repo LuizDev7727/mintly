@@ -1,7 +1,6 @@
+import { Link, useParams } from "@tanstack/react-router";
 import { UploadCloud } from "lucide-react";
 import { Button } from "./ui/button";
-import { useParams } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
 import { useSidebar } from "./ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 

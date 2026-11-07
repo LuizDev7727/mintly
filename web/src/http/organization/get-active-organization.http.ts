@@ -12,8 +12,6 @@ export type GetActiveOrganizationResponse = {
 };
 
 export async function getActiveOrganizationHttp(): Promise<GetActiveOrganizationResponse> {
-  const { data } = await api.get<GetActiveOrganizationResponse>(
-    "/organization/active",
-  );
+  const { data } = await api.get<GetActiveOrganizationResponse>("/organization/active");
   return data;
 }

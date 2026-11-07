@@ -1,30 +1,3 @@
-import { TikTokIcon } from "@/components/tiktok-icon";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { YoutubeIcon } from "@/components/youtube-icon";
-import { abortMultipartUploadHttp } from "@/http/upload/abort-multipart-upload.http";
-import { createPostsHttp } from "@/http/posts/create-posts.http";
-import {
-  createPostSchema,
-  type CreatePostsFormType,
-} from "@/schemas/posts/create-posts.schema";
-import { findResumableUpload, removeResumableUpload } from "@/storage/resumable-upload-storage";
-import type { Integration } from "@/types/integration";
-import { formatBytes } from "@/utils/format-bytes";
-import { formatDuration } from "@/utils/format-duration";
-import { getFileExtension } from "@/utils/get-file-extension";
-import { getVideoDuration } from "@/utils/get-video-duration";
-import { sanitizeFilename } from "@/utils/sanitize-filename";
-import { uploadFile } from "@/utils/upload-file";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
@@ -43,27 +16,35 @@ import {
   X,
   XIcon,
 } from "lucide-react";
-import { useRef, useState, type ChangeEvent, type DragEvent } from "react";
-import { useFieldArray, useForm, type FieldErrors } from "react-hook-form";
+import { type ChangeEvent, type DragEvent, useRef, useState } from "react";
+import { type FieldErrors, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import {
-  describeBatchResult,
-  summarizeUploadBatch,
-  type UploadOutcome,
-} from "./upload-batch";
-import {
-  POST_FILE_ACCEPT,
-  isImageFile,
-  isSupportedPostFile,
-} from "./post-file-types";
+import { TikTokIcon } from "@/components/tiktok-icon";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
+import { YoutubeIcon } from "@/components/youtube-icon";
+import { createPostsHttp } from "@/http/posts/create-posts.http";
+import { abortMultipartUploadHttp } from "@/http/upload/abort-multipart-upload.http";
+import { type CreatePostsFormType, createPostSchema } from "@/schemas/posts/create-posts.schema";
+import { findResumableUpload, removeResumableUpload } from "@/storage/resumable-upload-storage";
+import type { Integration } from "@/types/integration";
+import { formatBytes } from "@/utils/format-bytes";
+import { formatDuration } from "@/utils/format-duration";
+import { getFileExtension } from "@/utils/get-file-extension";
+import { getVideoDuration } from "@/utils/get-video-duration";
+import { sanitizeFilename } from "@/utils/sanitize-filename";
+import { uploadFile } from "@/utils/upload-file";
 import { getFirstErrorMessage } from "./get-first-error-message";
+import { isImageFile, isSupportedPostFile, POST_FILE_ACCEPT } from "./post-file-types";
+import { describeBatchResult, summarizeUploadBatch, type UploadOutcome } from "./upload-batch";
 
-export type UploadStatus =
-  | "pending"
-  | "uploading"
-  | "cancelled"
-  | "completed"
-  | "error";
+export type UploadStatus = "pending" | "uploading" | "cancelled" | "completed" | "error";
 
 export type UploadEntry = {
   status: UploadStatus;
@@ -80,9 +61,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
 
   // O progresso é guardado pelo id do cartão (e não pelo índice do array): os
   // cartões saem do meio da lista quando o post deles é criado.
-  const [uploadProgressMap, setUploadProgressMap] = useState(
-    new Map<string, UploadEntry>(),
-  );
+  const [uploadProgressMap, setUploadProgressMap] = useState(new Map<string, UploadEntry>());
 
   // Chaves dos uploads já concluídos, para não reenviar o arquivo quando a
   // criação dos posts falha e o usuário tenta de novo.
@@ -118,10 +97,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
   postsRef.current = posts;
 
   const isPostsEmpty = posts.length === 0;
-  const totalSize = posts.reduce(
-    (acc, post) => acc + (post.file?.size ?? 0),
-    0,
-  );
+  const totalSize = posts.reduce((acc, post) => acc + (post.file?.size ?? 0), 0);
 
   async function addFiles(files: FileList | null) {
     if (!files) {
@@ -140,7 +116,6 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     }
 
     for (const file of supportedFiles) {
-
       const duration = file.type === "video/mp4" ? await getVideoDuration(file) : null;
 
       addPost({
@@ -183,10 +158,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     }
   }
 
-  function handleToggleIntegration(
-    postIndex: number,
-    integration: (typeof integrations)[0],
-  ) {
+  function handleToggleIntegration(postIndex: number, integration: (typeof integrations)[0]) {
     const current = getValues(`posts.${postIndex}.socialsToPost`);
     const isSelected = current.find((s) => s.id === integration.id);
 
@@ -211,10 +183,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
 
     const outcomes = await Promise.all(
       formBody.posts.map(
-        async (
-          post,
-          index,
-        ): Promise<UploadOutcome<CreatePostsFormType["posts"][number]>> => {
+        async (post, index): Promise<UploadOutcome<CreatePostsFormType["posts"][number]>> => {
           const id = fieldIds[index];
 
           const alreadyUploadedKey = uploadedKeys.current.get(id);
@@ -278,9 +247,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
           },
           shouldGenerateThumbnail: post.shouldGenerateThumbnail,
           shouldGenerateShorts: post.shouldGenerateShorts,
-          scheduledTo: post.scheduledTo
-            ? new Date(post.scheduledTo).toISOString()
-            : null,
+          scheduledTo: post.scheduledTo ? new Date(post.scheduledTo).toISOString() : null,
           affiliateUrl: post.affiliateUrl.trim() || null,
           socialsToPost: post.socialsToPost,
         })),
@@ -334,9 +301,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
     });
 
     if (match) {
-      abortMultipartUploadHttp({ key: match.key, uploadId: match.uploadId }).catch(
-        () => {},
-      );
+      abortMultipartUploadHttp({ key: match.key, uploadId: match.uploadId }).catch(() => {});
       removeResumableUpload(match.key);
     }
   }
@@ -366,9 +331,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
           <Video className="size-8 text-muted-foreground" />
         </div>
         <div>
-          <p className="text-sm font-medium text-foreground">
-            Drag & Drop your files
-          </p>
+          <p className="text-sm font-medium text-foreground">Drag & Drop your files</p>
           <p className="text-xs text-muted-foreground mt-1">
             or click to browse — MP4, JPG, PNG, WebP
           </p>
@@ -382,10 +345,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
           <div className="flex flex-wrap items-center gap-2">
             <div className="px-2.5 py-1.5 dark:bg-zinc-900/20 border dark:text-primary border-input rounded-md">
               <p className="text-muted-foreground">
-                Total:{" "}
-                <span className="text-primary font-medium">
-                  {formatBytes(totalSize)}
-                </span>{" "}
+                Total: <span className="text-primary font-medium">{formatBytes(totalSize)}</span>{" "}
                 will be add to your storage
               </p>
             </div>
@@ -406,12 +366,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
               <Trash2 className="size-4" />
               Delete All Posts
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isSubmitting}
-              asChild
-            >
+            <Button type="button" variant="outline" disabled={isSubmitting} asChild>
               <label htmlFor="file">
                 <CirclePlus className="size-4" />
                 Add Post(s)
@@ -420,12 +375,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="inline-flex">
-                  <Button
-                    type="submit"
-                    disabled={
-                      isSubmitting || isPostsEmpty
-                    }
-                  >
+                  <Button type="submit" disabled={isSubmitting || isPostsEmpty}>
                     <UploadCloudIcon className="size-4" />
                     Upload All ({posts.length})
                   </Button>
@@ -436,12 +386,8 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
         </header>
 
         {posts.map((post, postIndex) => {
-          const shouldGenerateThumbnail = watch(
-            `posts.${postIndex}.shouldGenerateThumbnail`,
-          );
-          const shouldGenerateShorts = watch(
-            `posts.${postIndex}.shouldGenerateShorts`,
-          );
+          const shouldGenerateThumbnail = watch(`posts.${postIndex}.shouldGenerateThumbnail`);
+          const shouldGenerateShorts = watch(`posts.${postIndex}.shouldGenerateShorts`);
           const socialsToPost = watch(`posts.${postIndex}.socialsToPost`);
           const isVideo = post.file.type === "video/mp4";
           const isImage = isImageFile(post.file);
@@ -452,10 +398,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
           const isUploading = uploadEntry?.status === "uploading";
 
           return (
-            <div
-              key={post.id}
-              className="w-full overflow-hidden rounded-md border border-input"
-            >
+            <div key={post.id} className="w-full overflow-hidden rounded-md border border-input">
               <div className="flex flex-col gap-6 p-6">
                 {/* File info + Actions */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -470,11 +413,12 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                       <Badge variant="outline" className="text-xs">
                         {getFileExtension(post.file.name)}
                       </Badge>
-                      {isVideo && <Badge
-                      >
-                        <FileVideo className="mr-1 size-3" />
-                        {formatDuration(post.duration!)}
-                      </Badge>}
+                      {isVideo && (
+                        <Badge>
+                          <FileVideo className="mr-1 size-3" />
+                          {formatDuration(post.duration!)}
+                        </Badge>
+                      )}
                     </div>
                   </div>
                   <Button
@@ -494,8 +438,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                   <div className="flex items-center gap-2">
                     <Progress value={uploadEntry.progress} className="flex-1" />
                     <span className="text-xs text-muted-foreground shrink-0">
-                      {uploadEntry.status === "uploading" &&
-                        `Uploading — ${uploadEntry.progress}%`}
+                      {uploadEntry.status === "uploading" && `Uploading — ${uploadEntry.progress}%`}
                       {uploadEntry.status === "completed" && "Uploaded"}
                       {uploadEntry.status === "cancelled" && "Cancelled"}
                       {uploadEntry.status === "error" && "Upload failed"}
@@ -519,12 +462,8 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                 {/* AI Options */}
                 <div className="flex flex-col gap-4">
                   <div>
-                    <h4 className="text-sm font-semibold text-foreground">
-                      AI Options
-                    </h4>
-                    <p className="text-xs text-muted-foreground">
-                      You can enable both options
-                    </p>
+                    <h4 className="text-sm font-semibold text-foreground">AI Options</h4>
+                    <p className="text-xs text-muted-foreground">You can enable both options</p>
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2">
@@ -565,9 +504,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                         <Scissors className="size-4 text-muted-foreground" />
                       </div>
                       <div className="flex flex-1 flex-col gap-0.5">
-                        <span className="text-sm font-medium text-foreground">
-                          Generate Shorts
-                        </span>
+                        <span className="text-sm font-medium text-foreground">Generate Shorts</span>
                         <span className="text-xs text-muted-foreground">
                           {isVideo
                             ? "Extract best moments with AI"
@@ -578,10 +515,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                         checked={shouldGenerateShorts}
                         disabled={!isVideo}
                         onCheckedChange={() =>
-                          setValue(
-                            `posts.${postIndex}.shouldGenerateShorts`,
-                            !shouldGenerateShorts,
-                          )
+                          setValue(`posts.${postIndex}.shouldGenerateShorts`, !shouldGenerateShorts)
                         }
                       />
                     </label>
@@ -600,8 +534,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                     Affiliate link
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Optional. Added at the start of the description when the post
-                    is published.
+                    Optional. Added at the start of the description when the post is published.
                   </p>
                   <Input
                     id={`affiliate-url-${post.id}`}
@@ -618,44 +551,31 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                 {/* Social + Playlist + Schedule */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8">
                   <div className="flex flex-col gap-2">
-                    <h4 className="text-sm font-semibold text-foreground">
-                      Share to social media
-                    </h4>
+                    <h4 className="text-sm font-semibold text-foreground">Share to social media</h4>
                     {isImage && (
                       <p className="max-w-56 text-xs text-muted-foreground">
                         Images can only be published on Instagram
-                        {integrations.some(
-                          (integration) => integration.provider === "INSTAGRAM",
-                        )
+                        {integrations.some((integration) => integration.provider === "INSTAGRAM")
                           ? "."
                           : ", and this channel has no Instagram account connected."}
                       </p>
                     )}
                     {integrations.map((integration) => {
-                      const isSelected = socialsToPost.some(
-                        (s) => s.id === integration.id,
-                      );
+                      const isSelected = socialsToPost.some((s) => s.id === integration.id);
                       // O Instagram é a única rede que publica imagem.
-                      const isUnavailableForFile =
-                        isImage && integration.provider !== "INSTAGRAM";
+                      const isUnavailableForFile = isImage && integration.provider !== "INSTAGRAM";
                       return (
                         <button
                           key={integration.id}
                           type="button"
                           disabled={isUnavailableForFile}
-                          onClick={() =>
-                            handleToggleIntegration(postIndex, integration)
-                          }
+                          onClick={() => handleToggleIntegration(postIndex, integration)}
                           data-selected={isSelected}
                           className="flex items-center border-border data-[selected=true]:border-primary cursor-pointer gap-2 rounded-md border bg-background px-3 py-2 text-sm transition-colors hover:bg-accent/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-background"
                         >
-                          {integration.provider === "YOUTUBE" && (
-                            <YoutubeIcon />
-                          )}
+                          {integration.provider === "YOUTUBE" && <YoutubeIcon />}
                           {integration.provider === "TIKTOK" && <TikTokIcon />}
-                          <span className="font-medium text-foreground">
-                            {integration.name}
-                          </span>
+                          <span className="font-medium text-foreground">{integration.name}</span>
                         </button>
                       );
                     })}
@@ -677,9 +597,7 @@ export function CreatePostForm({ integrations }: CreatePostFormProps) {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={() =>
-                            setValue(`posts.${postIndex}.scheduledTo`, null)
-                          }
+                          onClick={() => setValue(`posts.${postIndex}.scheduledTo`, null)}
                         >
                           <X className="size-4" />
                         </Button>

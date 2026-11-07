@@ -1,3 +1,4 @@
+import { Unlink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Unlink } from "lucide-react";
 
 interface ConfirmDisconnectDialogProps {
   open: boolean;
@@ -35,8 +35,8 @@ export function ConfirmDisconnectDialog({
         <DialogHeader>
           <DialogTitle>Disconnect {integrationName}?</DialogTitle>
           <DialogDescription>
-            Your {integrationName} account will be disconnected from Mintly. You
-            can reconnect it at any time.
+            Your {integrationName} account will be disconnected from Mintly. You can reconnect it at
+            any time.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

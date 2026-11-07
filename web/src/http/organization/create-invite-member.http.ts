@@ -13,9 +13,8 @@ export async function createInviteMemberHttp(
   params: CreateInviteMemberParams,
 ): Promise<CreateInviteMemberResponse> {
   const { orgSlug, email } = params;
-  const { data } = await api.post<CreateInviteMemberResponse>(
-    `/organizations/${orgSlug}/invites`,
-    { email },
-  );
+  const { data } = await api.post<CreateInviteMemberResponse>(`/organizations/${orgSlug}/invites`, {
+    email,
+  });
   return data;
 }

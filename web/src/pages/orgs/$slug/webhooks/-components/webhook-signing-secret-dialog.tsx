@@ -1,19 +1,19 @@
-import { useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { CopyButton } from "@/components/ui/copy-button"
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { CopyButton } from "@/components/ui/copy-button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 interface WebhookSigningSecretDialogProps {
-  endpointUrl: string | null
-  secret: string | null
-  onOpenChange: (open: boolean) => void
+  endpointUrl: string | null;
+  secret: string | null;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function WebhookSigningSecretDialog({
@@ -21,18 +21,16 @@ export function WebhookSigningSecretDialog({
   secret,
   onOpenChange,
 }: WebhookSigningSecretDialogProps) {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
-  const masked = secret
-    ? `${secret.slice(0, 10)}${"•".repeat(20)}${secret.slice(-4)}`
-    : ""
+  const masked = secret ? `${secret.slice(0, 10)}${"•".repeat(20)}${secret.slice(-4)}` : "";
 
   return (
     <Dialog
       open={!!secret}
       onOpenChange={(open) => {
-        if (!open) setVisible(false)
-        onOpenChange(open)
+        if (!open) setVisible(false);
+        onOpenChange(open);
       }}
     >
       <DialogContent>
@@ -40,8 +38,8 @@ export function WebhookSigningSecretDialog({
           <DialogTitle>Signing Secret</DialogTitle>
           <DialogDescription>
             Use this secret to verify that webhook events sent to{" "}
-            <span className="font-mono text-foreground">{endpointUrl}</span>{" "}
-            actually came from Mintly.
+            <span className="font-mono text-foreground">{endpointUrl}</span> actually came from
+            Mintly.
           </DialogDescription>
         </DialogHeader>
 
@@ -63,13 +61,10 @@ export function WebhookSigningSecretDialog({
 
         <p className="text-xs text-muted-foreground">
           Every request includes a{" "}
-          <code className="rounded bg-muted px-1 py-0.5">
-            Mintly-Signature
-          </code>{" "}
-          header, an HMAC SHA-256 hash of the payload signed with this
-          secret.
+          <code className="rounded bg-muted px-1 py-0.5">Mintly-Signature</code> header, an HMAC
+          SHA-256 hash of the payload signed with this secret.
         </p>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

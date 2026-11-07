@@ -1,9 +1,9 @@
-import { cancelPostHttp } from "@/http/posts/cancel-post.http";
-import type { GetPostsResponse } from "@/http/posts/get-posts.http";
-import type { Post } from "@/types/post";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+import { cancelPostHttp } from "@/http/posts/cancel-post.http";
+import type { GetPostsResponse } from "@/http/posts/get-posts.http";
+import type { Post } from "@/types/post";
 import { PostGridCard } from "./post-grid-card";
 
 type PostGridViewProps = {
@@ -11,11 +11,10 @@ type PostGridViewProps = {
 };
 
 export function PostGridView({ posts }: PostGridViewProps) {
-
   const [postsSelected, setPostsSelected] = useQueryState(
     "rows",
-    parseAsArrayOf(parseAsString).withDefault([])
-  )
+    parseAsArrayOf(parseAsString).withDefault([]),
+  );
 
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
@@ -34,9 +33,7 @@ export function PostGridView({ posts }: PostGridViewProps) {
           return {
             ...old,
             posts: old.posts.map((post) =>
-              post.id === variables.postId
-                ? { ...post, status: "CANCELED" as const }
-                : post,
+              post.id === variables.postId ? { ...post, status: "CANCELED" as const } : post,
             ),
           };
         },

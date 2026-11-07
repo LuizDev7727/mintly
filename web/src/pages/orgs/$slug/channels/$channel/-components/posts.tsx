@@ -1,18 +1,13 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getPostsHttp } from "@/http/posts/get-posts.http";
 import { useParams } from "@tanstack/react-router";
-import {
-  parseAsInteger,
-  parseAsString,
-  parseAsStringLiteral,
-  useQueryState,
-} from "nuqs";
-import { PostsPagination } from "./posts-pagination";
-import { PostsListEmpty } from "./posts-list-empty";
+import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useViewMode } from "@/context/view-mode-context";
+import { getPostsHttp } from "@/http/posts/get-posts.http";
 import { PostGridView } from "./post-grid-view";
 import { PostListView } from "./post-list-view";
+import { PostsListEmpty } from "./posts-list-empty";
 import { PostsLoading } from "./posts-loading";
+import { PostsPagination } from "./posts-pagination";
 
 const POST_STATUSES = [
   "PROCESSING",
@@ -33,21 +28,12 @@ export function Posts() {
     from: "/orgs/$slug/channels/$channel",
   });
 
-  const [currentPage] = useQueryState(
-    "post_page",
-    parseAsInteger.withDefault(0),
-  );
+  const [currentPage] = useQueryState("post_page", parseAsInteger.withDefault(0));
 
   const [currentFolderId] = useQueryState("folder_id");
-  const [titleFilter] = useQueryState(
-    "title_filter",
-    parseAsString.withDefault(""),
-  );
+  const [titleFilter] = useQueryState("title_filter", parseAsString.withDefault(""));
 
-  const [statusFilter] = useQueryState(
-    "status_filter",
-    parseAsStringLiteral(POST_STATUSES),
-  );
+  const [statusFilter] = useQueryState("status_filter", parseAsStringLiteral(POST_STATUSES));
 
   const [ownerFilter] = useQueryState("owner_filter");
 
@@ -82,7 +68,7 @@ export function Posts() {
   }
 
   if (!data || isLoading) {
-    return <PostsLoading />
+    return <PostsLoading />;
   }
 
   const { posts, meta } = data;

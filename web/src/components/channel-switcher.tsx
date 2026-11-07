@@ -1,6 +1,14 @@
-import { Link, useParams } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link, useParams } from "@tanstack/react-router";
 import { ChevronsUpDown, PlusCircle, TvMinimal } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,21 +18,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getChannelsHttp } from "@/http/channel/get-channels.http";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "./ui/sidebar";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { CreateChannelForm } from "./create-channel-form";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "./ui/sidebar";
 export function ChannelSwitcher() {
   const { isMobile } = useSidebar();
   const { slug, channel: channelId } = useParams({
@@ -38,25 +33,19 @@ export function ChannelSwitcher() {
 
   const { channels } = data;
 
-  const currentChannel = channels.find(
-    (channel) => channel.id === channelId
-  );
+  const currentChannel = channels.find((channel) => channel.id === channelId);
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              className="cursor-pointer p-1 group-data-[collapsible=icon]:p-1! data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
+            <SidebarMenuButton className="cursor-pointer p-1 group-data-[collapsible=icon]:p-1! data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <div className="flex aspect-square size-6 items-center justify-center rounded-lg">
                 <TvMinimal className="size-3.5" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0">
-                <span className="truncate font-medium">
-                  {currentChannel!.name}
-                </span>
+                <span className="truncate font-medium">{currentChannel!.name}</span>
               </div>
               <ChevronsUpDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
             </SidebarMenuButton>
@@ -71,15 +60,8 @@ export function ChannelSwitcher() {
               Channels
             </DropdownMenuLabel>
             {channels.map((channel) => (
-              <DropdownMenuItem
-                key={channel.name}
-                className="gap-2 p-2 cursor-pointer"
-                asChild
-              >
-                <Link
-                  to={"/orgs/$slug/channels/$channel"}
-                  params={{ slug, channel: channel.id }}
-                >
+              <DropdownMenuItem key={channel.name} className="gap-2 p-2 cursor-pointer" asChild>
+                <Link to={"/orgs/$slug/channels/$channel"} params={{ slug, channel: channel.id }}>
                   <div className="flex size-6 items-center justify-center rounded-md border">
                     <TvMinimal className="size-3.5 shrink-0" />
                   </div>
@@ -95,17 +77,13 @@ export function ChannelSwitcher() {
                   <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                     <PlusCircle className="size-4" />
                   </div>
-                  <span className="font-medium text-muted-foreground">
-                    Create channel
-                  </span>
+                  <span className="font-medium text-muted-foreground">Create channel</span>
                 </div>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Create new channel</DialogTitle>
-                  <DialogDescription>
-                    Create a new channel in your organization.
-                  </DialogDescription>
+                  <DialogDescription>Create a new channel in your organization.</DialogDescription>
                 </DialogHeader>
                 <CreateChannelForm />
               </DialogContent>

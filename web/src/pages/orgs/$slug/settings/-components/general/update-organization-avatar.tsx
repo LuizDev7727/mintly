@@ -1,5 +1,9 @@
-import { useRef, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 import { Save, Upload, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,14 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getInitials } from "@/utils/get-initials";
-import { uploadFile } from "@/utils/upload-file";
 import { Spinner } from "@/components/ui/spinner";
 import { updateOrganizationHttp } from "@/http/organization/update-organization.http";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { toast } from "sonner";
+import { getInitials } from "@/utils/get-initials";
+import { uploadFile } from "@/utils/upload-file";
 
 type UpdateOrganizationAvatarProps = {
   name: string;
@@ -27,11 +27,10 @@ export function UpdateOrganizationAvatar({
   name,
   avatarUrl: initialAvatarUrl,
 }: UpdateOrganizationAvatarProps) {
-
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const { slug } = useParams({
     from: "/orgs/$slug",
-  })
+  });
   // State to store the desired crop area in pixels
 
   const [fileSelected, setFileSelected] = useState<File | null>(null);
@@ -49,10 +48,10 @@ export function UpdateOrganizationAvatar({
   const { mutateAsync: updateOrganization } = useMutation({
     mutationFn: updateOrganizationHttp,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["active-organization"] })
-      toast("Organization avatar updated successfully")
-    }
-  })
+      queryClient.invalidateQueries({ queryKey: ["active-organization"] });
+      toast("Organization avatar updated successfully");
+    },
+  });
 
   async function handleUpdateAvatar() {
     if (!fileSelected) {
@@ -87,17 +86,14 @@ export function UpdateOrganizationAvatar({
       <CardHeader className="border-b">
         <CardTitle>Avatar</CardTitle>
         <CardDescription>
-          This is your organization's avatar. It will be displayed across
-          Mintly.
+          This is your organization's avatar. It will be displayed across Mintly.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex items-center gap-4 pt-6">
         <Avatar className="size-14 rounded-lg">
           {fileSelected && <AvatarImage src={URL.createObjectURL(fileSelected)} />}
           {!fileSelected && <AvatarImage src={initialAvatarUrl ?? undefined} />}
-          <AvatarFallback className="rounded-lg text-base">
-            {getInitials(name)}
-          </AvatarFallback>
+          <AvatarFallback className="rounded-lg text-base">{getInitials(name)}</AvatarFallback>
         </Avatar>
         <div className="flex items-center gap-2">
           <Button
@@ -110,12 +106,7 @@ export function UpdateOrganizationAvatar({
             Upload
           </Button>
           {fileSelected && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleRemove}
-            >
+            <Button type="button" variant="ghost" size="sm" onClick={handleRemove}>
               <X className="size-4" />
               Remove
             </Button>
@@ -134,9 +125,7 @@ export function UpdateOrganizationAvatar({
           Recommended: square image, at least 256×256px.
         </p>
         <Button size="sm" disabled={!fileSelected} onClick={handleUpdateAvatar}>
-          {
-            isSaving ? <Spinner /> : <Save />
-          }
+          {isSaving ? <Spinner /> : <Save />}
           Save
         </Button>
       </CardFooter>

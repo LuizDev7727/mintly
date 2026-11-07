@@ -1,10 +1,10 @@
-import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Settings } from "lucide-react";
+import { z } from "zod";
+import { getActiveOrganizationHttp } from "@/http/organization/get-active-organization.http";
 import { cn } from "@/lib/utils";
 import { GeneralTab } from "./-components/general/general-tab";
-import { getActiveOrganizationHttp } from "@/http/organization/get-active-organization.http";
-import { useQuery } from "@tanstack/react-query";
 
 const settingsSearchSchema = z.object({
   tab: z.enum(["general"]).default("general"),
@@ -21,9 +21,7 @@ export const Route = createFileRoute("/orgs/$slug/settings/")({
   component: SettingsPage,
 });
 
-const navItems = [
-  { id: "general", label: "General", icon: Settings },
-] as const;
+const navItems = [{ id: "general", label: "General", icon: Settings }] as const;
 
 function SettingsPage() {
   const { slug } = Route.useParams();
@@ -40,9 +38,7 @@ function SettingsPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-xl font-semibold">Settings</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage your organization settings
-        </p>
+        <p className="text-sm text-muted-foreground">Manage your organization settings</p>
       </div>
 
       <div className="flex flex-col gap-4 md:flex-row md:gap-8">
@@ -69,10 +65,7 @@ function SettingsPage() {
 
         <div className="flex min-w-0 flex-1 flex-col gap-4">
           {tab === "general" && (
-            <GeneralTab
-              name={organization!.name}
-              avatarUrl={organization!.logo}
-            />
+            <GeneralTab name={organization!.name} avatarUrl={organization!.logo} />
           )}
         </div>
       </div>

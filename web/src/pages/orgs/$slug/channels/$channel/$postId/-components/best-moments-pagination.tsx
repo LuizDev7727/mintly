@@ -1,14 +1,12 @@
-import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
+import { Button } from "@/components/ui/button";
 
 type BestMomentsPaginationProps = {
   totalPages: number;
 };
 
-export function BestMomentsPagination({
-  totalPages,
-}: BestMomentsPaginationProps) {
+export function BestMomentsPagination({ totalPages }: BestMomentsPaginationProps) {
   const [currentPage, setCurrentPage] = useQueryState(
     "best_moments_page",
     parseAsInteger.withDefault(0),

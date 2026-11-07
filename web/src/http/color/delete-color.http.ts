@@ -9,7 +9,5 @@ type DeleteColorParams = {
 export async function deleteColorHttp(params: DeleteColorParams): Promise<void> {
   const { orgSlug, channelId, colorId } = params;
 
-  await api.delete(
-    `/organizations/${orgSlug}/channels/${channelId}/colors/${colorId}`,
-  );
+  await api.delete(`/organizations/${orgSlug}/channels/${channelId}/colors/${colorId}`);
 }

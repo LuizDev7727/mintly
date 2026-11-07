@@ -1,15 +1,12 @@
-import { YoutubeIcon, TiktokIcon, InstagramIcon } from "@/components/provider-icons";
+import { InstagramIcon, TiktokIcon, YoutubeIcon } from "@/components/provider-icons";
 import type { Integration } from "@/types/integration";
 
-const providerConfig: Record<
-  Integration["provider"],
-  { label: string; icon: typeof YoutubeIcon }
-> = {
-  YOUTUBE: { label: "Youtube", icon: YoutubeIcon },
-  TIKTOK: { label: "TikTok", icon: TiktokIcon },
-  INSTAGRAM: { label: "Instagram", icon: InstagramIcon },
-};
-
+const providerConfig: Record<Integration["provider"], { label: string; icon: typeof YoutubeIcon }> =
+  {
+    YOUTUBE: { label: "Youtube", icon: YoutubeIcon },
+    TIKTOK: { label: "TikTok", icon: TiktokIcon },
+    INSTAGRAM: { label: "Instagram", icon: InstagramIcon },
+  };
 
 type IntegrationsProps = {
   integrations: Integration[];

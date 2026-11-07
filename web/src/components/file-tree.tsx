@@ -2,13 +2,13 @@ import { ChevronRight, File, Folder, FolderOpen } from "lucide-react";
 import {
   Children,
   Fragment,
-  useCallback,
   isValidElement,
+  type KeyboardEvent,
+  type ReactNode,
+  useCallback,
   useMemo,
   useRef,
   useState,
-  type KeyboardEvent,
-  type ReactNode,
 } from "react";
 import { cn } from "@/lib/utils";
 
@@ -98,18 +98,11 @@ function flattenItems(
       setSize: items.length,
     };
 
-    if (
-      item.type !== "folder" ||
-      !expanded.has(item.value) ||
-      !item.children?.length
-    ) {
+    if (item.type !== "folder" || !expanded.has(item.value) || !item.children?.length) {
       return [row];
     }
 
-    return [
-      row,
-      ...flattenItems(item.children, expanded, depth + 1, item.value),
-    ];
+    return [row, ...flattenItems(item.children, expanded, depth + 1, item.value)];
   });
 }
 
@@ -160,11 +153,7 @@ function itemsFromChildren(children: ReactNode): FileTreeItem[] {
 function DefaultIcon({ item, open }: { item: FileTreeItem; open: boolean }) {
   if (item.type === "file") return <File className="size-4" />;
 
-  return open ? (
-    <FolderOpen className="size-4" />
-  ) : (
-    <Folder className="size-4" />
-  );
+  return open ? <FolderOpen className="size-4" /> : <Folder className="size-4" />;
 }
 
 export function FileTree({
@@ -181,19 +170,12 @@ export function FileTree({
   classNames,
 }: FileTreeProps) {
   const [internalValue, setInternalValue] = useState(defaultValue);
-  const [internalExpandedIds, setInternalExpandedIds] = useState(
-    defaultExpandedIds,
-  );
-  const [focusedId, setFocusedId] = useState<string | null>(
-    value ?? defaultValue,
-  );
+  const [internalExpandedIds, setInternalExpandedIds] = useState(defaultExpandedIds);
+  const [focusedId, setFocusedId] = useState<string | null>(value ?? defaultValue);
   const rowRefs = useRef(new Map<string, HTMLButtonElement>());
   const selectedId = value === undefined ? internalValue : value;
   const currentExpandedIds = expandedIds ?? internalExpandedIds;
-  const expanded = useMemo(
-    () => new Set(currentExpandedIds),
-    [currentExpandedIds],
-  );
+  const expanded = useMemo(() => new Set(currentExpandedIds), [currentExpandedIds]);
   const items = useMemo(() => itemsFromChildren(children), [children]);
   const rows = useMemo(() => flattenItems(items, expanded), [expanded, items]);
 
@@ -265,8 +247,7 @@ export function FileTree({
         else if (next?.parentId === row.item.value) focusRow(next.item.value);
       } else if (event.key === "ArrowLeft") {
         event.preventDefault();
-        if (isFolder && isOpen && !row.item.disabled)
-          toggleFolder(row.item.value);
+        if (isFolder && isOpen && !row.item.disabled) toggleFolder(row.item.value);
         else if (row.parentId) focusRow(row.parentId);
       } else if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -290,10 +271,7 @@ export function FileTree({
         const isSelected = selectedId === row.item.value;
 
         return (
-          <div
-            key={row.item.value}
-            className={cn("relative", row.item.disabled && "opacity-40")}
-          >
+          <div key={row.item.value} className={cn("relative", row.item.disabled && "opacity-40")}>
             <button
               ref={(node) => {
                 if (node) rowRefs.current.set(row.item.value, node);
@@ -362,12 +340,7 @@ export function FileTree({
                 {row.item.icon ?? <DefaultIcon item={row.item} open={isOpen} />}
               </span>
 
-              <span
-                className={cn(
-                  "relative z-10 min-w-0 flex-1 truncate",
-                  classNames?.label,
-                )}
-              >
+              <span className={cn("relative z-10 min-w-0 flex-1 truncate", classNames?.label)}>
                 {row.item.name}
               </span>
             </button>

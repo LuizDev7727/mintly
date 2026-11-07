@@ -1,7 +1,7 @@
-import { http, HttpResponse } from "msw";
 import { faker } from "@faker-js/faker";
-import type { GetBestMomentsHttpResponse } from "../best-moments/get-best-moments.http";
+import { HttpResponse, http } from "msw";
 import type { BestMoment } from "@/types/best-moment";
+import type { GetBestMomentsHttpResponse } from "../best-moments/get-best-moments.http";
 
 const PAGE_SIZE = 10;
 
@@ -16,23 +16,20 @@ export const getBestMomentsMock = http.get<
   { projectId: string },
   never,
   GetBestMomentsHttpResponse
->(
-  "http://localhost:3000/api/projects/:projectId/best-moments",
-  ({ request }) => {
-    const { searchParams } = new URL(request.url);
-    const cursor = searchParams.get("cursor");
+>("http://localhost:3000/api/projects/:projectId/best-moments", ({ request }) => {
+  const { searchParams } = new URL(request.url);
+  const cursor = searchParams.get("cursor");
 
-    const startIndex = cursor
-      ? bestMoments.findIndex((bestMoment) => bestMoment.id === cursor) + 1
-      : 0;
+  const startIndex = cursor
+    ? bestMoments.findIndex((bestMoment) => bestMoment.id === cursor) + 1
+    : 0;
 
-    const page = bestMoments.slice(startIndex, startIndex + PAGE_SIZE);
-    const hasMore = startIndex + PAGE_SIZE < bestMoments.length;
-    const nextCursor = hasMore ? page[page.length - 1].id : null;
+  const page = bestMoments.slice(startIndex, startIndex + PAGE_SIZE);
+  const hasMore = startIndex + PAGE_SIZE < bestMoments.length;
+  const nextCursor = hasMore ? page[page.length - 1].id : null;
 
-    return HttpResponse.json({
-      bestMoments: page,
-      nextCursor,
-    });
-  },
-);
+  return HttpResponse.json({
+    bestMoments: page,
+    nextCursor,
+  });
+});

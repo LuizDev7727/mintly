@@ -1,6 +1,6 @@
-import { Suspense } from "react";
-import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, screen } from "@testing-library/react";
+import { Suspense } from "react";
 import { PendingInvitesList } from "@/pages/orgs/$slug/members/-components/pending-invites-list";
 import type { PendingInvite } from "@/types/pending-invite";
 

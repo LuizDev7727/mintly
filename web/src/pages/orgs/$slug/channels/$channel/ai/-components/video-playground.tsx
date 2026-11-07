@@ -33,13 +33,16 @@ const SAMPLE_GENERATIONS: VideoGeneration[] = [
     createdAt: Date.now() - 3 * 60 * MINUTE,
     durationSeconds: null,
   },
-  ...Array.from({ length: 9 }, (_, index): VideoGeneration => ({
-    id: `sample-${index + 4}`,
-    prompt: `Sample generation #${index + 4}: a short clip with smooth camera movement and soft lighting.`,
-    status: "complete",
-    createdAt: Date.now() - (index + 4) * 60 * MINUTE,
-    durationSeconds: 10 + index,
-  })),
+  ...Array.from(
+    { length: 9 },
+    (_, index): VideoGeneration => ({
+      id: `sample-${index + 4}`,
+      prompt: `Sample generation #${index + 4}: a short clip with smooth camera movement and soft lighting.`,
+      status: "complete",
+      createdAt: Date.now() - (index + 4) * 60 * MINUTE,
+      durationSeconds: 10 + index,
+    }),
+  ),
 ];
 
 export function VideoPlayground() {

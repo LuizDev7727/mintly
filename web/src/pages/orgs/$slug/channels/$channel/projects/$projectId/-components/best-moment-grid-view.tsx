@@ -32,9 +32,7 @@ export function BestMomentGridView({
 
           <div className="space-y-2 p-3">
             <div className="min-w-0">
-              <h3 className="line-clamp-2 text-sm font-medium leading-snug">
-                {bestMoment.title}
-              </h3>
+              <h3 className="line-clamp-2 text-sm font-medium leading-snug">{bestMoment.title}</h3>
               <p className="mt-1 text-xs text-muted-foreground">
                 {dayjs(bestMoment.createdAt).format("MMM D, YYYY")}
               </p>
@@ -46,9 +44,7 @@ export function BestMomentGridView({
                   <button
                     key={integration.id}
                     type="button"
-                    onClick={() =>
-                      onPostBestMoment(bestMoment.id, integration)
-                    }
+                    onClick={() => onPostBestMoment(bestMoment.id, integration)}
                     className="cursor-pointer inline-flex max-w-full items-center gap-1.5 rounded-full border bg-background px-2 py-1 text-xs transition-colors hover:bg-accent hover:text-accent-foreground"
                   >
                     {integration.provider === "YOUTUBE" ? (

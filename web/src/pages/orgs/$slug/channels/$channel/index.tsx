@@ -1,12 +1,11 @@
-import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Posts } from "./-components/posts";
-import { PostsFilter } from "./-components/posts-filter";
 import { CurrentFolderBadge } from "./-components/current-folder-badge";
 import { FolderTreeDropdown } from "./-components/folder-tree-dropdown";
-
+import { Posts } from "./-components/posts";
+import { PostsFilter } from "./-components/posts-filter";
 
 export const Route = createFileRoute("/orgs/$slug/channels/$channel/")({
   head: () => ({
@@ -33,10 +32,7 @@ function ChannelPage() {
           </div>
           <div className="flex items-center gap-x-2">
             <Button asChild>
-              <Link
-                to="/orgs/$slug/channels/$channel/create-upload"
-                params={{ slug, channel }}
-              >
+              <Link to="/orgs/$slug/channels/$channel/create-upload" params={{ slug, channel }}>
                 <Plus className="size-4" />
                 New Post
               </Link>

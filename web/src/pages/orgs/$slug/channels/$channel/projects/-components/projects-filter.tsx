@@ -1,18 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { getMembersHttp } from "@/http/organization/get-members.http";
-import { getInitials } from "@/utils/get-initials";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import {
@@ -27,7 +12,22 @@ import {
   X,
 } from "lucide-react";
 import { debounce, parseAsStringLiteral, useQueryState } from "nuqs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { getMembersHttp } from "@/http/organization/get-members.http";
 import { PROJECT_STATUSES } from "@/types/project";
+import { getInitials } from "@/utils/get-initials";
 
 const PROJECT_STATUS_ICONS = {
   SUCCESS: Check,
@@ -89,11 +89,9 @@ export function ProjectsFilter() {
     setOwnerFilter(null);
   }
 
-  const isFilterEmpty =
-    titleFilter.length === 0 && !statusFilter && !ownerFilter;
+  const isFilterEmpty = titleFilter.length === 0 && !statusFilter && !ownerFilter;
 
-  const activeFilterCount =
-    (statusFilter ? 1 : 0) + (ownerFilter ? 1 : 0);
+  const activeFilterCount = (statusFilter ? 1 : 0) + (ownerFilter ? 1 : 0);
 
   return (
     <div className="flex items-center gap-x-2 flex-1">
@@ -121,16 +119,12 @@ export function ProjectsFilter() {
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Filter Projects</SheetTitle>
-            <SheetDescription>
-              Narrow down projects by status or owner.
-            </SheetDescription>
+            <SheetDescription>Narrow down projects by status or owner.</SheetDescription>
           </SheetHeader>
 
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-4">
             <div className="flex flex-col gap-2">
-              <h4 className="text-sm font-semibold text-foreground">
-                Status
-              </h4>
+              <h4 className="text-sm font-semibold text-foreground">Status</h4>
               <div className="flex flex-col gap-1.5">
                 {PROJECT_STATUSES.map((status) => {
                   const StatusIcon = PROJECT_STATUS_ICONS[status];
@@ -158,9 +152,7 @@ export function ProjectsFilter() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <h4 className="text-sm font-semibold text-foreground">
-                Owner
-              </h4>
+              <h4 className="text-sm font-semibold text-foreground">Owner</h4>
               <div className="flex flex-col gap-1.5">
                 {members.map((member) => (
                   <button
@@ -171,12 +163,8 @@ export function ProjectsFilter() {
                     className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-left text-sm transition-colors hover:bg-accent/50 data-[selected=true]:border-primary"
                   >
                     <Avatar size="sm">
-                      {member.user.avatarUrl && (
-                        <AvatarImage src={member.user.avatarUrl} />
-                      )}
-                      <AvatarFallback>
-                        {getInitials(member.user.name)}
-                      </AvatarFallback>
+                      {member.user.avatarUrl && <AvatarImage src={member.user.avatarUrl} />}
+                      <AvatarFallback>{getInitials(member.user.name)}</AvatarFallback>
                     </Avatar>
                     {member.user.name}
                   </button>

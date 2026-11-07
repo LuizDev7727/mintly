@@ -1,13 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Spinner } from "@/components/ui/spinner";
-import type { GetFoldersResponse } from "@/http/folder/get-folders.http";
-import { updateFolderHttp } from "@/http/folder/update-folder.http";
-import {
-  updateFolderSchema,
-  type UpdateFolderFormType,
-} from "@/schemas/folder/update-folder.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
@@ -15,19 +5,23 @@ import { FolderPen } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
+import type { GetFoldersResponse } from "@/http/folder/get-folders.http";
+import { updateFolderHttp } from "@/http/folder/update-folder.http";
+import {
+  type UpdateFolderFormType,
+  updateFolderSchema,
+} from "@/schemas/folder/update-folder.schema";
 
 type UpdateFolderNameFormProps = {
   folderId: string;
   folderName: string;
 };
-export function UpdateFolderNameForm({
-  folderId,
-  folderName,
-}: UpdateFolderNameFormProps) {
-  const [currentFolderPage] = useQueryState(
-    "folder_page",
-    parseAsInteger.withDefault(0),
-  );
+export function UpdateFolderNameForm({ folderId, folderName }: UpdateFolderNameFormProps) {
+  const [currentFolderPage] = useQueryState("folder_page", parseAsInteger.withDefault(0));
   const [currentFolderId] = useQueryState("folder_id");
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
@@ -35,13 +29,7 @@ export function UpdateFolderNameForm({
 
   const queryClient = useQueryClient();
 
-  const folderQueryKey = [
-    "folders",
-    slug,
-    channel,
-    currentFolderId,
-    currentFolderPage,
-  ];
+  const folderQueryKey = ["folders", slug, channel, currentFolderId, currentFolderPage];
 
   const {
     register,

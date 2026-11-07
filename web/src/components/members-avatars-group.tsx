@@ -1,6 +1,5 @@
-import { useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { getMembersHttp } from "@/http/organization/get-members.http";
+import { useParams } from "@tanstack/react-router";
 import {
   Avatar,
   AvatarFallback,
@@ -8,11 +7,8 @@ import {
   AvatarGroupCount,
   AvatarImage,
 } from "@/components/ui/avatar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { getMembersHttp } from "@/http/organization/get-members.http";
 import { getInitials } from "@/utils/get-initials";
 
 const MAX_VISIBLE_MEMBERS = 4;
@@ -42,18 +38,14 @@ export function MembersAvatarsGroup() {
               {member.user.avatarUrl && (
                 <AvatarImage className="border border-input" src={member.user.avatarUrl} />
               )}
-              <AvatarFallback>
-                {getInitials(member.user.name)}
-              </AvatarFallback>
+              <AvatarFallback>{getInitials(member.user.name)}</AvatarFallback>
             </Avatar>
           </TooltipTrigger>
           <TooltipContent>{member.user.name}</TooltipContent>
         </Tooltip>
       ))}
 
-      {remainingCount > 0 && (
-        <AvatarGroupCount>+{remainingCount}</AvatarGroupCount>
-      )}
+      {remainingCount > 0 && <AvatarGroupCount>+{remainingCount}</AvatarGroupCount>}
     </AvatarGroup>
   );
 }

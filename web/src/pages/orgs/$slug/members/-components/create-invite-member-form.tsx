@@ -1,17 +1,17 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { UserRoundPlus } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { createInviteMemberHttp } from "@/http/organization/create-invite-member.http";
 import {
-  createInviteMemberSchema,
   type CreateInviteMemberFormType,
+  createInviteMemberSchema,
 } from "@/schemas/organization/create-invite-member.schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { UserRoundPlus } from "lucide-react";
-import { useForm } from "react-hook-form";
 
 export function CreateInviteMemberForm() {
   const { slug } = useParams({ from: "/orgs/$slug" });

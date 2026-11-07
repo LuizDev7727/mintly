@@ -1,37 +1,32 @@
-import { formatDistanceToNow } from "date-fns"
-import { Badge } from "@/components/ui/badge"
-import { CodeBlock } from "@/components/ui/code-block"
-import { CopyButton } from "@/components/ui/copy-button"
+import { formatDistanceToNow } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { CodeBlock } from "@/components/ui/code-block";
+import { CopyButton } from "@/components/ui/copy-button";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet"
-import type { RecentDelivery } from "@/http/webhook/get-webhooks-overview.http"
+} from "@/components/ui/sheet";
+import type { RecentDelivery } from "@/http/webhook/get-webhooks-overview.http";
 
 function DetailRows({ data }: { data: { key: string; value: string }[] }) {
   return (
     <div className="divide-y rounded-md border">
       {data.map((item) => (
-        <div
-          key={item.key}
-          className="flex items-center justify-between gap-4 px-3 py-2 text-sm"
-        >
+        <div key={item.key} className="flex items-center justify-between gap-4 px-3 py-2 text-sm">
           <span className="text-muted-foreground">{item.key}</span>
-          <span className="truncate font-mono text-xs text-foreground">
-            {item.value}
-          </span>
+          <span className="truncate font-mono text-xs text-foreground">{item.value}</span>
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 interface WebhookDeliveryDetailsSheetProps {
-  item: RecentDelivery | null
-  onOpenChange: (open: boolean) => void
+  item: RecentDelivery | null;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function WebhookDeliveryDetailsSheet({
@@ -45,22 +40,19 @@ export function WebhookDeliveryDetailsSheet({
         { key: "Content-Type", value: item.contentType ?? "—" },
         {
           key: "Content-Length",
-          value:
-            item.contentLength !== null
-              ? `${item.contentLength} bytes`
-              : "—",
+          value: item.contentLength !== null ? `${item.contentLength} bytes` : "—",
         },
         { key: "Path", value: item.pathname },
       ]
-    : []
+    : [];
 
   const headerRows = item
     ? Object.entries(item.headers).map(([key, value]) => ({ key, value }))
-    : []
+    : [];
 
   const queryParamRows = item?.queryParams
     ? Object.entries(item.queryParams).map(([key, value]) => ({ key, value }))
-    : []
+    : [];
 
   return (
     <Sheet open={!!item} onOpenChange={onOpenChange}>
@@ -68,9 +60,7 @@ export function WebhookDeliveryDetailsSheet({
         <SheetHeader className="border-b">
           <div className="flex items-center gap-2">
             <Badge>{item?.method}</Badge>
-            <SheetTitle className="truncate font-mono text-sm font-normal">
-              {item?.url}
-            </SheetTitle>
+            <SheetTitle className="truncate font-mono text-sm font-normal">{item?.url}</SheetTitle>
           </div>
           <SheetDescription>
             {item &&
@@ -116,5 +106,5 @@ export function WebhookDeliveryDetailsSheet({
         </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

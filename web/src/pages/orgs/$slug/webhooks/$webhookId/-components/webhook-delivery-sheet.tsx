@@ -1,33 +1,33 @@
-import type { ReactNode } from "react"
-import { format } from "date-fns"
-import { Badge } from "@/components/ui/badge"
-import { CodeBlock } from "@/components/ui/code-block"
-import { CopyButton } from "@/components/ui/copy-button"
+import { format } from "date-fns";
+import type { ReactNode } from "react";
+import { Badge } from "@/components/ui/badge";
+import { CodeBlock } from "@/components/ui/code-block";
+import { CopyButton } from "@/components/ui/copy-button";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet"
-import type { WebhookLog } from "@/http/webhook/get-webhook.http"
+} from "@/components/ui/sheet";
+import type { WebhookLog } from "@/http/webhook/get-webhook.http";
 
 const STATUS_LABEL = {
   SUCCESS: "Success",
   FAILED: "Error",
   PENDING: "Pending",
-} as const
+} as const;
 
 const STATUS_BADGE_VARIANT = {
   SUCCESS: "default",
   FAILED: "destructive",
   PENDING: "processing",
-} as const
+} as const;
 
 function getDurationMs(log: WebhookLog) {
-  if (!log.finishedAt) return null
+  if (!log.finishedAt) return null;
 
-  return new Date(log.finishedAt).getTime() - new Date(log.createdAt).getTime()
+  return new Date(log.finishedAt).getTime() - new Date(log.createdAt).getTime();
 }
 
 function SectionTitle({ children, count }: { children: ReactNode; count?: number }) {
@@ -40,7 +40,7 @@ function SectionTitle({ children, count }: { children: ReactNode; count?: number
         </span>
       )}
     </h3>
-  )
+  );
 }
 
 function KeyValueTable({ rows }: { rows: { key: string; value: ReactNode }[] }) {
@@ -55,36 +55,33 @@ function KeyValueTable({ rows }: { rows: { key: string; value: ReactNode }[] }) 
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 interface WebhookDeliverySheetProps {
-  log: WebhookLog | null
-  onOpenChange: (open: boolean) => void
+  log: WebhookLog | null;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function WebhookDeliverySheet({
-  log,
-  onOpenChange,
-}: WebhookDeliverySheetProps) {
+export function WebhookDeliverySheet({ log, onOpenChange }: WebhookDeliverySheetProps) {
   return (
     <Sheet open={!!log} onOpenChange={onOpenChange}>
       <SheetContent className="gap-0 overflow-y-auto sm:max-w-xl">
         {log && <DeliveryDetails log={log} />}
       </SheetContent>
     </Sheet>
-  )
+  );
 }
 
 function DeliveryDetails({ log }: { log: WebhookLog }) {
-  const createdAt = new Date(log.createdAt)
-  const duration = getDurationMs(log)
-  const isFailed = log.status === "FAILED"
+  const createdAt = new Date(log.createdAt);
+  const duration = getDurationMs(log);
+  const isFailed = log.status === "FAILED";
 
-  const headerRows = Object.entries(log.headers).map(([key, value]) => ({ key, value }))
+  const headerRows = Object.entries(log.headers).map(([key, value]) => ({ key, value }));
   const queryParamRows = log.queryParams
     ? Object.entries(log.queryParams).map(([key, value]) => ({ key, value }))
-    : []
+    : [];
 
   const fieldRows = [
     { key: "time", value: format(createdAt, "MMM d, HH:mm:ss.SSS") },
@@ -107,7 +104,7 @@ function DeliveryDetails({ log }: { log: WebhookLog }) {
     { key: "duration", value: duration !== null ? `${duration}ms` : "—" },
     { key: "retries", value: String(log.numberOfRetries) },
     { key: "delivery id", value: log.id },
-  ]
+  ];
 
   return (
     <>
@@ -117,10 +114,7 @@ function DeliveryDetails({ log }: { log: WebhookLog }) {
             {STATUS_LABEL[log.status]}
           </Badge>
           <SheetTitle className="sr-only">Delivery details</SheetTitle>
-          <SheetDescription className="sr-only">
-            Details of this webhook delivery.
-          </SheetDescription>
-
+          <SheetDescription className="sr-only">Details of this webhook delivery.</SheetDescription>
         </div>
       </SheetHeader>
 
@@ -153,9 +147,7 @@ function DeliveryDetails({ log }: { log: WebhookLog }) {
           {headerRows.length > 0 ? (
             <KeyValueTable rows={headerRows} />
           ) : (
-            <p className="text-xs text-muted-foreground">
-              No headers recorded for this delivery.
-            </p>
+            <p className="text-xs text-muted-foreground">No headers recorded for this delivery.</p>
           )}
         </section>
 
@@ -177,5 +169,5 @@ function DeliveryDetails({ log }: { log: WebhookLog }) {
         )}
       </div>
     </>
-  )
+  );
 }

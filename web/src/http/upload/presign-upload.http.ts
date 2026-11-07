@@ -24,10 +24,7 @@ export async function presignUploadHttp(
 ): Promise<PresignUploadHttpResponse> {
   const { file, resume } = params;
 
-  const { data } = await api.post<PresignUploadHttpResponse>(
-    "/uploads/presign",
-    { file, resume },
-  );
+  const { data } = await api.post<PresignUploadHttpResponse>("/uploads/presign", { file, resume });
 
   return data;
 }

@@ -16,10 +16,7 @@ type SpendingLimitDialogProps = {
 };
 
 /** Modal para definir quanto a organização pode gastar no app. Sem limite definido, o gasto é ilimitado. */
-export function SpendingLimitDialog({
-  currentLimit,
-  onSave,
-}: SpendingLimitDialogProps) {
+export function SpendingLimitDialog({ currentLimit, onSave }: SpendingLimitDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   function handleSave(limit: number | null) {
@@ -38,8 +35,8 @@ export function SpendingLimitDialog({
         <DialogHeader className="border-b px-6 py-4 text-left">
           <DialogTitle className="text-base">Spending limit</DialogTitle>
           <DialogDescription>
-            Set the maximum amount your organization can spend on Mintly. If
-            you don't set one, spending is unlimited.
+            Set the maximum amount your organization can spend on Mintly. If you don't set one,
+            spending is unlimited.
           </DialogDescription>
         </DialogHeader>
         <SpendingLimitForm currentLimit={currentLimit} onSave={handleSave} />

@@ -1,15 +1,9 @@
-import { http, HttpResponse } from "msw";
 import { faker } from "@faker-js/faker";
-import type { GetProjectsResponse } from "../projects/get-projects.http";
+import { HttpResponse, http } from "msw";
 import type { Project } from "@/types/project";
+import type { GetProjectsResponse } from "../projects/get-projects.http";
 
-const STATUSES: Project["status"][] = [
-  "SUCCESS",
-  "PROCESSING",
-  "ENCODING",
-  "ERROR",
-  "CANCELED",
-];
+const STATUSES: Project["status"][] = ["SUCCESS", "PROCESSING", "ENCODING", "ERROR", "CANCELED"];
 
 const projects: Project[] = Array.from({ length: 24 }, () => ({
   id: faker.string.uuid(),
@@ -25,9 +19,7 @@ const projects: Project[] = Array.from({ length: 24 }, () => ({
     name: faker.person.fullName(),
     avatarUrl: null,
   },
-  realtimeToken: faker.datatype.boolean()
-    ? faker.string.alphanumeric(32)
-    : null,
+  realtimeToken: faker.datatype.boolean() ? faker.string.alphanumeric(32) : null,
 }));
 
 export const getProjectsMock = http.get<
@@ -43,9 +35,7 @@ export const getProjectsMock = http.get<
     const pageSize = 12;
 
     const filtered = titleFilter
-      ? projects.filter((project) =>
-          project.title.toLowerCase().includes(titleFilter),
-        )
+      ? projects.filter((project) => project.title.toLowerCase().includes(titleFilter))
       : projects;
 
     const offset = pageIndex * pageSize;

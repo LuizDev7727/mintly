@@ -7,12 +7,10 @@ type MovePostsToFolderParams = {
   folderId: string | null;
 };
 
-export async function movePostsToFolderHttp(
-  params: MovePostsToFolderParams,
-): Promise<void> {
+export async function movePostsToFolderHttp(params: MovePostsToFolderParams): Promise<void> {
   const { orgSlug, channelId, postIds, folderId } = params;
-  await api.put(
-    `/organizations/${orgSlug}/channels/${channelId}/posts/move-to-folder`,
-    { postIds, folderId },
-  );
+  await api.put(`/organizations/${orgSlug}/channels/${channelId}/posts/move-to-folder`, {
+    postIds,
+    folderId,
+  });
 }

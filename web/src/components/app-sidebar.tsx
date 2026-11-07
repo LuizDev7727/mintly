@@ -1,34 +1,33 @@
+import { useMatch } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
+import { useScrollFade } from "@/hooks/use-scroll-fade";
+import { ChannelSwitcher } from "./channel-switcher";
+import { NavChannels } from "./nav-channels";
+import { NavMain } from "./nav-main";
+import { OrganizationSwitcher } from "./organization-switcher";
+import { PendingInvites } from "./pending-invites";
+import { Search } from "./search";
+import { StarredFolders } from "./starred-folders";
+import { SwitchViewMode } from "./switch-view-mode";
+import { ThemeToggle } from "./theme-toggle";
+import { Separator } from "./ui/separator";
 import {
   Sidebar,
   SidebarContent,
-  SidebarHeader,
-  SidebarRail,
   SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
   SidebarGroupContent,
-  SidebarMenuItem,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
   SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
   useSidebar,
 } from "./ui/sidebar";
-import { OrganizationSwitcher } from "./organization-switcher";
-import { ChannelSwitcher } from "./channel-switcher";
-import { NavMain } from "./nav-main";
-import { useMatch } from "@tanstack/react-router";
-import { NavChannels } from "./nav-channels";
-import { Separator } from "./ui/separator";
-import { StarredFolders } from "./starred-folders";
-import { Search } from "./search";
-import { ThemeToggle } from "./theme-toggle";
-import { PendingInvites } from "./pending-invites";
-import { SwitchViewMode } from "./switch-view-mode";
-import { useScrollFade } from "@/hooks/use-scroll-fade";
 
 type AppSidebarProps = ComponentProps<typeof Sidebar>;
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
-
   const { state } = useSidebar();
   const { ref: contentRef } = useScrollFade<HTMLDivElement>();
 
@@ -42,19 +41,12 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <div className="flex h-16 items-center justify-between gap-2 px-4 group-data-[state=expanded]:pr-2 transition-[height] duration-200 ease-linear group-data-[collapsible=icon]:h-12 group-data-[collapsible=icon]:justify-center">
-        <img
-          src="/logo.svg"
-          className="size-6 shrink-0"
-        />
+        <img src="/logo.svg" className="size-6 shrink-0" />
       </div>
       <Separator />
       <SidebarHeader>
         <OrganizationSwitcher />
-        {
-          isChannelRoute && (
-            <ChannelSwitcher />
-          )
-        }
+        {isChannelRoute && <ChannelSwitcher />}
       </SidebarHeader>
 
       <SidebarContent
@@ -68,20 +60,18 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
           <Separator />
         </div>
         <NavMain />
-        {
-          isChannelRoute && (
-            <>
-              <div className="px-4">
-                <Separator />
-              </div>
-              <NavChannels />
-              <div className="px-4">
-                <Separator />
-              </div>
-              <StarredFolders />
-            </>
-          )
-        }
+        {isChannelRoute && (
+          <>
+            <div className="px-4">
+              <Separator />
+            </div>
+            <NavChannels />
+            <div className="px-4">
+              <Separator />
+            </div>
+            <StarredFolders />
+          </>
+        )}
       </SidebarContent>
 
       <SidebarGroup>
@@ -89,22 +79,17 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <div
-                data-sidebar={state}
-                className="flex items-center gap-2 p-2"
-              >
+              <div data-sidebar={state} className="flex items-center gap-2 p-2">
                 <div className="flex size-4 shrink-0 items-center justify-center">
                   <ThemeToggle />
                 </div>
-                {state === "expanded" && (
-                  <span>Appearance</span>
-                )}
+                {state === "expanded" && <span>Appearance</span>}
               </div>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton>
                 <div className="flex size-4 shrink-0 items-center justify-center">
-                  <PendingInvites/>
+                  <PendingInvites />
                 </div>
                 <span>Notifications</span>
               </SidebarMenuButton>
@@ -112,7 +97,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
             <SidebarMenuItem className="flex items-center data-[sidebar=collapsed]:px-0">
               <SidebarMenuButton>
                 <div className="flex size-4 shrink-0 items-center justify-center">
-                  <SwitchViewMode/>
+                  <SwitchViewMode />
                 </div>
                 <span>Switch View</span>
               </SidebarMenuButton>

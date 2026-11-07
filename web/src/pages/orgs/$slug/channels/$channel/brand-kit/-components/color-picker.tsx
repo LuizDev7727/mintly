@@ -1,7 +1,7 @@
 "use client";
+
 // beui.dev/components/motion/color-picker
 
-import { Pipette } from "lucide-react";
 import {
   AnimatePresence,
   arc,
@@ -15,6 +15,7 @@ import {
   useTransform,
   useVelocity,
 } from "framer-motion";
+import { Pipette } from "lucide-react";
 import {
   Children,
   type ComponentPropsWithRef,
@@ -32,10 +33,10 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_GLIDE, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
-import { useDismiss } from "./use-dismiss";
-import { PresenceGate } from "./presence-gate";
 import { capturePointer, releasePointer, TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
+import { PresenceGate } from "./presence-gate";
+import { useDismiss } from "./use-dismiss";
 
 // ---------------------------------------------------------------------------
 // Color math
@@ -295,11 +296,7 @@ function useGlide(target: number) {
   return { spring, offset: useTransform(spring, (n) => `${n}%`) };
 }
 
-function useDrag(
-  onPoint: (x: number, y: number) => void,
-  onEnd: () => void,
-  disabled: boolean,
-) {
+function useDrag(onPoint: (x: number, y: number) => void, onEnd: () => void, disabled: boolean) {
   const railRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
@@ -345,7 +342,10 @@ function useDrag(
 }
 
 /** Arrow, Page and Home/End stepping. Returns the delta, or null when unhandled. */
-function keyStep(event: KeyboardEvent, big: number): { axis: "x" | "y"; delta: number } | "min" | "max" | null {
+function keyStep(
+  event: KeyboardEvent,
+  big: number,
+): { axis: "x" | "y"; delta: number } | "min" | "max" | null {
   const step = event.shiftKey ? big : 1;
   switch (event.key) {
     case "ArrowRight":
@@ -369,8 +369,7 @@ function keyStep(event: KeyboardEvent, big: number): { axis: "x" | "y"; delta: n
   }
 }
 
-const CHECKERBOARD =
-  "repeating-conic-gradient(#d4d4d8 0% 25%, #fafafa 0% 50%) 0 0 / 8px 8px";
+const CHECKERBOARD = "repeating-conic-gradient(#d4d4d8 0% 25%, #fafafa 0% 50%) 0 0 / 8px 8px";
 
 // The loupe lifts with a visible overshoot so it reads as picked up, unlike
 // the critically damped glide the thumb itself rides on.
@@ -466,8 +465,14 @@ const CHIP_RADIUS = 6;
 /** True inside ColorPickerContent, where the area morphs out of the trigger chip. */
 const MorphContext = createContext(false);
 
-export function ColorPickerArea({ label = "Saturation and brightness", className, style, ...props }: ColorPickerAreaProps) {
-  const { id, hsva, rgba, hex, disabled, update, commit, open } = usePickerContext("ColorPickerArea");
+export function ColorPickerArea({
+  label = "Saturation and brightness",
+  className,
+  style,
+  ...props
+}: ColorPickerAreaProps) {
+  const { id, hsva, rgba, hex, disabled, update, commit, open } =
+    usePickerContext("ColorPickerArea");
   const morph = useContext(MorphContext);
   const reduce = useReducedMotion();
   const { railRef, thumbRef, dragging, handlers } = useDrag(
@@ -516,7 +521,10 @@ export function ColorPickerArea({ label = "Saturation and brightness", className
           transition={{ duration: 0.4, ease: EASE_OUT, delay: 0.06 }}
         />
       )}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-black/10 ring-inset" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-black/10 ring-inset"
+      />
       <motion.div
         className="absolute inset-0"
         initial={morphing ? { opacity: 0 } : false}
@@ -580,7 +588,11 @@ function ChannelSlider({
   thumbColor: string;
 }) {
   const { disabled, commit } = usePickerContext("ColorPicker slider");
-  const { railRef, thumbRef, dragging, handlers } = useDrag((x) => onValue(x * max), commit, disabled);
+  const { railRef, thumbRef, dragging, handlers } = useDrag(
+    (x) => onValue(x * max),
+    commit,
+    disabled,
+  );
   const x = useGlide((value / max) * 100);
 
   return (
@@ -595,7 +607,10 @@ function ChannelSlider({
       )}
       style={{ background }}
     >
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-black/10 ring-inset" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-black/10 ring-inset"
+      />
       {/* The rail is inset by half a thumb so the thumb never leaves the rounded track. */}
       <div ref={railRef} className="absolute inset-y-0 right-[9px] left-[9px]">
         <Thumb
@@ -746,7 +761,10 @@ export function ColorPickerHexInput({
 
   return (
     <div ref={scope} className={cn("relative min-w-0 flex-1", className)}>
-      <span aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground"
+      >
         #
       </span>
       <input
@@ -788,7 +806,14 @@ export function ColorPickerHexInput({
   );
 }
 
-type ChannelSpec = { key: string; short: string; name: string; max: number; value: number; set: (n: number) => Hsva };
+type ChannelSpec = {
+  key: string;
+  short: string;
+  name: string;
+  max: number;
+  value: number;
+  set: (n: number) => Hsva;
+};
 
 function ChannelField({ spec }: { spec: ChannelSpec }) {
   const { update, commit, disabled } = usePickerContext("ColorPickerChannels");
@@ -840,26 +865,72 @@ export interface ColorPickerChannelsProps extends Omit<ComponentPropsWithRef<"di
 }
 
 /** Numeric RGB or HSL fields, plus an opacity field when alpha is enabled. Arrow keys nudge. */
-export function ColorPickerChannels({ format = "rgb", className, ...props }: ColorPickerChannelsProps) {
+export function ColorPickerChannels({
+  format = "rgb",
+  className,
+  ...props
+}: ColorPickerChannelsProps) {
   const { hsva, rgba, alpha } = usePickerContext("ColorPickerChannels");
   const fromRgb = (patch: Partial<Rgba>) => rgbaToHsva({ ...rgba, ...patch }, hsva);
   let specs: ChannelSpec[];
   if (format === "hsl") {
     const hsl = hsvToHsl(hsva);
     specs = [
-      { key: "h", short: "H", name: "Hue", max: 360, value: hsl.h, set: (n) => hslToHsv(n, hsl.s, hsl.l, hsva, hsva.a) },
-      { key: "s", short: "S", name: "Saturation", max: 100, value: hsl.s, set: (n) => hslToHsv(hsl.h, n, hsl.l, hsva, hsva.a) },
-      { key: "l", short: "L", name: "Lightness", max: 100, value: hsl.l, set: (n) => hslToHsv(hsl.h, hsl.s, n, hsva, hsva.a) },
+      {
+        key: "h",
+        short: "H",
+        name: "Hue",
+        max: 360,
+        value: hsl.h,
+        set: (n) => hslToHsv(n, hsl.s, hsl.l, hsva, hsva.a),
+      },
+      {
+        key: "s",
+        short: "S",
+        name: "Saturation",
+        max: 100,
+        value: hsl.s,
+        set: (n) => hslToHsv(hsl.h, n, hsl.l, hsva, hsva.a),
+      },
+      {
+        key: "l",
+        short: "L",
+        name: "Lightness",
+        max: 100,
+        value: hsl.l,
+        set: (n) => hslToHsv(hsl.h, hsl.s, n, hsva, hsva.a),
+      },
     ];
   } else {
     specs = [
       { key: "r", short: "R", name: "Red", max: 255, value: rgba.r, set: (n) => fromRgb({ r: n }) },
-      { key: "g", short: "G", name: "Green", max: 255, value: rgba.g, set: (n) => fromRgb({ g: n }) },
-      { key: "b", short: "B", name: "Blue", max: 255, value: rgba.b, set: (n) => fromRgb({ b: n }) },
+      {
+        key: "g",
+        short: "G",
+        name: "Green",
+        max: 255,
+        value: rgba.g,
+        set: (n) => fromRgb({ g: n }),
+      },
+      {
+        key: "b",
+        short: "B",
+        name: "Blue",
+        max: 255,
+        value: rgba.b,
+        set: (n) => fromRgb({ b: n }),
+      },
     ];
   }
   if (alpha) {
-    specs.push({ key: "a", short: "A", name: "Opacity percent", max: 100, value: hsva.a * 100, set: (n) => ({ ...hsva, a: n / 100 }) });
+    specs.push({
+      key: "a",
+      short: "A",
+      name: "Opacity percent",
+      max: 100,
+      value: hsva.a * 100,
+      set: (n) => ({ ...hsva, a: n / 100 }),
+    });
   }
   return (
     <div {...props} className={cn("flex min-w-0 flex-1 gap-1.5", className)}>
@@ -961,7 +1032,13 @@ export interface ColorPickerPresetProps
   label?: string;
 }
 
-export function ColorPickerPreset({ value, label, className, onClick, ...props }: ColorPickerPresetProps) {
+export function ColorPickerPreset({
+  value,
+  label,
+  className,
+  onClick,
+  ...props
+}: ColorPickerPresetProps) {
   const { hsva, hex, update, commit, disabled } = usePickerContext("ColorPickerPreset");
   const reduce = useReducedMotion();
   const parsed = parseHex(value);
@@ -1047,16 +1124,27 @@ function TriggerLabel({ hex }: { hex: string }) {
       animate={{ width: width ?? "auto" }}
       transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
     >
-      <span ref={textRef} className="relative inline-flex shrink-0 whitespace-nowrap font-mono uppercase tabular-nums">
+      <span
+        ref={textRef}
+        className="relative inline-flex shrink-0 whitespace-nowrap font-mono uppercase tabular-nums"
+      >
         {hex.slice(0, 7)}
         <AnimatePresence mode="popLayout" initial={false}>
           {alpha && (
             <motion.span
               key="alpha"
               className="text-muted-foreground"
-              initial={{ opacity: 0, x: reduce ? 0 : -4, filter: reduce ? "blur(0px)" : "blur(3px)" }}
+              initial={{
+                opacity: 0,
+                x: reduce ? 0 : -4,
+                filter: reduce ? "blur(0px)" : "blur(3px)",
+              }}
               animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, filter: reduce ? "blur(0px)" : "blur(3px)", transition: { duration: 0.12 } }}
+              exit={{
+                opacity: 0,
+                filter: reduce ? "blur(0px)" : "blur(3px)",
+                transition: { duration: 0.12 },
+              }}
               transition={SPRING_LAYOUT}
             >
               {alpha}
@@ -1069,7 +1157,12 @@ function TriggerLabel({ hex }: { hex: string }) {
 }
 
 /** Opens ColorPickerContent. Its color chip is the surface that grows into the area. */
-export function ColorPickerTrigger({ className, children, onClick, ...props }: ColorPickerTriggerProps) {
+export function ColorPickerTrigger({
+  className,
+  children,
+  onClick,
+  ...props
+}: ColorPickerTriggerProps) {
   const { id, hex, open, setOpen, triggerRef, disabled } = usePickerContext("ColorPickerTrigger");
   const reduce = useReducedMotion();
   return (
@@ -1144,7 +1237,12 @@ const PANEL_ITEM_EXIT = { opacity: 0, transition: { duration: 0.1 } };
  * placed directly inside grows out of the trigger chip; the other children
  * stagger in behind it. Closes on outside press and Escape.
  */
-export function ColorPickerContent({ align = "start", className, children, ...props }: ColorPickerContentProps) {
+export function ColorPickerContent({
+  align = "start",
+  className,
+  children,
+  ...props
+}: ColorPickerContentProps) {
   const { id, open, setOpen, triggerRef } = usePickerContext("ColorPickerContent");
   const reduce = useReducedMotion() ?? false;
   const panelRef = useRef<HTMLDivElement>(null);
@@ -1194,47 +1292,47 @@ export function ColorPickerContent({ align = "start", className, children, ...pr
             // Counted per render, for stagger delays only; keys come from Children.map.
             let row = 0;
             return (
-            <motion.div
-              {...(props as React.ComponentProps<typeof motion.div>)}
-              {...gate}
-              ref={panelRef}
-              id={`${id}-content`}
-              role="dialog"
-              aria-label={props["aria-label"] ?? "Color picker"}
-              className={cn(
-                "absolute top-full z-50 mt-2 flex w-72 flex-col gap-3 p-3",
-                align === "end" ? "right-0" : "left-0",
-                className,
-              )}
-            >
-              {/* The surface fades on its own layer so the morphing area is never faded with it. */}
               <motion.div
-                aria-hidden="true"
-                className="absolute inset-0 -z-10 rounded-2xl border border-border bg-background shadow-[0_12px_32px_-8px_rgb(0_0_0/0.25)]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.16, ease: EASE_OUT, delay: PANEL_DELAY }}
-              />
-              <MorphContext.Provider value>
-                {/* Children.map keys each wrapper from its child, stable across the exit render. */}
-                {Children.map(children, (child) => {
-                  if (isValidElement(child) && child.type === ColorPickerArea) return child;
-                  row += 1;
-                  const item = reduce ? PANEL_ITEM_REDUCED : PANEL_ITEM;
-                  return (
-                    <motion.div
-                      initial={item.initial}
-                      animate={item.animate}
-                      exit={PANEL_ITEM_EXIT}
-                      transition={{ ...SPRING_LAYOUT, delay: PANEL_DELAY + row * PANEL_STAGGER }}
-                    >
-                      {child}
-                    </motion.div>
-                  );
-                })}
-              </MorphContext.Provider>
-            </motion.div>
+                {...(props as React.ComponentProps<typeof motion.div>)}
+                {...gate}
+                ref={panelRef}
+                id={`${id}-content`}
+                role="dialog"
+                aria-label={props["aria-label"] ?? "Color picker"}
+                className={cn(
+                  "absolute top-full z-50 mt-2 flex w-72 flex-col gap-3 p-3",
+                  align === "end" ? "right-0" : "left-0",
+                  className,
+                )}
+              >
+                {/* The surface fades on its own layer so the morphing area is never faded with it. */}
+                <motion.div
+                  aria-hidden="true"
+                  className="absolute inset-0 -z-10 rounded-2xl border border-border bg-background shadow-[0_12px_32px_-8px_rgb(0_0_0/0.25)]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.16, ease: EASE_OUT, delay: PANEL_DELAY }}
+                />
+                <MorphContext.Provider value>
+                  {/* Children.map keys each wrapper from its child, stable across the exit render. */}
+                  {Children.map(children, (child) => {
+                    if (isValidElement(child) && child.type === ColorPickerArea) return child;
+                    row += 1;
+                    const item = reduce ? PANEL_ITEM_REDUCED : PANEL_ITEM;
+                    return (
+                      <motion.div
+                        initial={item.initial}
+                        animate={item.animate}
+                        exit={PANEL_ITEM_EXIT}
+                        transition={{ ...SPRING_LAYOUT, delay: PANEL_DELAY + row * PANEL_STAGGER }}
+                      >
+                        {child}
+                      </motion.div>
+                    );
+                  })}
+                </MorphContext.Provider>
+              </motion.div>
             );
           }}
         </PresenceGate>

@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react"
-import { format } from "date-fns"
-import { ChevronRight } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { format } from "date-fns";
+import { ChevronRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -10,56 +10,54 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import type { WebhookLog } from "@/http/webhook/get-webhook.http"
-import { WebhookDeliverySheet } from "./webhook-delivery-sheet"
+} from "@/components/ui/table";
+import type { WebhookLog } from "@/http/webhook/get-webhook.http";
+import { WebhookDeliverySheet } from "./webhook-delivery-sheet";
 
-const PAGE_SIZE = 12
+const PAGE_SIZE = 12;
 
 const STATUS_LABEL = {
   SUCCESS: "Success",
   FAILED: "Failed",
   PENDING: "Pending",
-} as const
+} as const;
 
 const STATUS_BADGE_VARIANT = {
   SUCCESS: "default",
   FAILED: "destructive",
   PENDING: "processing",
-} as const
+} as const;
 
 function formatDuration(log: WebhookLog) {
-  if (!log.finishedAt) return "—"
+  if (!log.finishedAt) return "—";
 
-  const duration =
-    new Date(log.finishedAt).getTime() - new Date(log.createdAt).getTime()
+  const duration = new Date(log.finishedAt).getTime() - new Date(log.createdAt).getTime();
 
-  return duration >= 1000 ? `${(duration / 1000).toFixed(1)}s` : `${duration}ms`
+  return duration >= 1000 ? `${(duration / 1000).toFixed(1)}s` : `${duration}ms`;
 }
 
 interface WebhookDeliveriesTableProps {
-  logs: WebhookLog[]
+  logs: WebhookLog[];
 }
 
 export function WebhookDeliveriesTable({ logs }: WebhookDeliveriesTableProps) {
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const sortedLogs = useMemo(
     () => [...logs].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     [logs],
-  )
+  );
 
-  const filteredLogs = sortedLogs
+  const filteredLogs = sortedLogs;
 
-  const visibleLogs = filteredLogs.slice(0, visibleCount)
-  const hasMore = filteredLogs.length > visibleCount
+  const visibleLogs = filteredLogs.slice(0, visibleCount);
+  const hasMore = filteredLogs.length > visibleCount;
 
-  const selectedLog = filteredLogs.find((log) => log.id === selectedId) ?? null
+  const selectedLog = filteredLogs.find((log) => log.id === selectedId) ?? null;
 
   return (
     <div className="overflow-hidden bg-card">
-
       {filteredLogs.length === 0 ? (
         <p className="border-t py-6 text-center text-xs text-muted-foreground">
           No deliveries yet. Events will show up here once they're triggered.
@@ -86,7 +84,7 @@ export function WebhookDeliveriesTable({ logs }: WebhookDeliveriesTableProps) {
               </TableHeader>
               <TableBody>
                 {visibleLogs.map((log) => {
-                  const createdAt = new Date(log.createdAt)
+                  const createdAt = new Date(log.createdAt);
 
                   return (
                     <TableRow
@@ -96,15 +94,13 @@ export function WebhookDeliveriesTable({ logs }: WebhookDeliveriesTableProps) {
                       data-selected={log.id === selectedId}
                       onClick={() => setSelectedId(log.id)}
                       onKeyDown={(event) => {
-                        if (event.key === "Enter") setSelectedId(log.id)
+                        if (event.key === "Enter") setSelectedId(log.id);
                       }}
                       className="group/row cursor-pointer font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/50 data-[selected=true]:bg-muted/30 data-[status=FAILED]:bg-destructive/10 data-[status=FAILED]:shadow-[inset_2px_0_0_var(--destructive)] data-[status=FAILED]:hover:bg-destructive/15"
                     >
                       <TableCell className="pl-4">
                         {format(createdAt, "HH:mm:ss")}
-                        <span className="text-muted-foreground">
-                          {format(createdAt, ".SSS")}
-                        </span>
+                        <span className="text-muted-foreground">{format(createdAt, ".SSS")}</span>
                       </TableCell>
                       <TableCell>
                         <Badge variant={STATUS_BADGE_VARIANT[log.status]}>
@@ -117,9 +113,7 @@ export function WebhookDeliveriesTable({ logs }: WebhookDeliveriesTableProps) {
                       <TableCell className="max-w-64 truncate">
                         {log.pathname || "/"}
                         {log.errorReason && (
-                          <span className="ml-2 text-destructive">
-                            {log.errorReason}
-                          </span>
+                          <span className="ml-2 text-destructive">{log.errorReason}</span>
                         )}
                       </TableCell>
                       <TableCell
@@ -141,7 +135,7 @@ export function WebhookDeliveriesTable({ logs }: WebhookDeliveriesTableProps) {
                         />
                       </TableCell>
                     </TableRow>
-                  )
+                  );
                 })}
               </TableBody>
             </Table>
@@ -168,5 +162,5 @@ export function WebhookDeliveriesTable({ logs }: WebhookDeliveriesTableProps) {
         onOpenChange={(open) => !open && setSelectedId(null)}
       />
     </div>
-  )
+  );
 }

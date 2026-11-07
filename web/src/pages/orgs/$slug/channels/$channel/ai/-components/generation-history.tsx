@@ -19,18 +19,12 @@ interface GenerationHistoryProps {
 const PAGE_SIZE = 5;
 
 export function GenerationHistory({ generations }: GenerationHistoryProps) {
-  const [currentPage] = useQueryState(
-    "generation_page",
-    parseAsInteger.withDefault(0),
-  );
+  const [currentPage] = useQueryState("generation_page", parseAsInteger.withDefault(0));
 
   const hasGenerations = generations.length > 0;
   const totalPages = Math.max(Math.ceil(generations.length / PAGE_SIZE), 1);
   const safePage = Math.min(Math.max(currentPage, 0), totalPages - 1);
-  const pageGenerations = generations.slice(
-    safePage * PAGE_SIZE,
-    (safePage + 1) * PAGE_SIZE,
-  );
+  const pageGenerations = generations.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
   const hasPagination = totalPages > 1;
 
   return (
@@ -45,12 +39,7 @@ export function GenerationHistory({ generations }: GenerationHistoryProps) {
           </p>
         </div>
         {hasGenerations && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground"
-          >
+          <Button type="button" variant="ghost" size="sm" className="text-muted-foreground">
             Clear history
           </Button>
         )}

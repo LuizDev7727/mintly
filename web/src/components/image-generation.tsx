@@ -1,21 +1,11 @@
-import { Check, CircleAlert, RotateCcw } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import {
-  useEffect,
-  useRef,
-  type ReactNode,
-  type CSSProperties
-} from "react";
-import { EASE_IN_OUT, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import { Check, CircleAlert, RotateCcw } from "lucide-react";
+import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 import { useHoverCapable } from "@/hooks/use-hover-capable";
+import { EASE_IN_OUT, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
-export type ImageGenerationStatus =
-  | "queued"
-  | "generating"
-  | "refining"
-  | "complete"
-  | "error";
+export type ImageGenerationStatus = "queued" | "generating" | "refining" | "complete" | "error";
 
 export interface ImageGenerationProps {
   /** The completed media. Pass an img, Next Image, canvas, video, or custom preview. */
@@ -67,13 +57,7 @@ const OVERLAY_OPACITY: Record<ImageGenerationStatus, number> = {
 const DOT_GAP = 10;
 const TWO_PI = Math.PI * 2;
 
-function DitherMark({
-  status,
-  reduce,
-}: {
-  status: ImageGenerationStatus;
-  reduce: boolean;
-}) {
+function DitherMark({ status, reduce }: { status: ImageGenerationStatus; reduce: boolean }) {
   if (status === "complete") {
     return <Check aria-hidden="true" className="size-3.5" />;
   }
@@ -151,10 +135,8 @@ function DitherField({
       context.clearRect(0, 0, width, height);
 
       if (!pointer.inside) {
-        pointer.targetX =
-          width / 2 + (reduce ? 0 : Math.sin(time / 1700) * width * 0.12);
-        pointer.targetY =
-          height / 2 + (reduce ? 0 : Math.cos(time / 2100) * height * 0.1);
+        pointer.targetX = width / 2 + (reduce ? 0 : Math.sin(time / 1700) * width * 0.12);
+        pointer.targetY = height / 2 + (reduce ? 0 : Math.cos(time / 2100) * height * 0.1);
       }
 
       const follow = reduce ? 1 : pointer.inside ? 0.16 : 0.045;
@@ -209,9 +191,7 @@ function DitherField({
     };
 
     const resizeObserver =
-      typeof ResizeObserver === "undefined"
-        ? null
-        : new ResizeObserver(resize);
+      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(resize);
 
     resize();
     resizeObserver?.observe(canvas);
@@ -235,10 +215,7 @@ function DitherField({
       transition={{ duration: reduce ? 0 : 0.4, ease: EASE_OUT }}
       className="absolute inset-0 overflow-hidden bg-muted"
     >
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 size-full text-foreground"
-      />
+      <canvas ref={canvasRef} className="absolute inset-0 size-full text-foreground" />
     </motion.div>
   );
 }
@@ -259,12 +236,10 @@ export function ImageGeneration({
   statusClassName,
 }: ImageGenerationProps) {
   const reduce = useReducedMotion() ?? false;
-  const active =
-    status === "queued" || status === "generating" || status === "refining";
+  const active = status === "queued" || status === "generating" || status === "refining";
   const mediaState = MEDIA_STATE[status];
   const resolvedStatusText = statusText ?? STATUS_TEXT[status];
-  const resolvedLabel =
-    label ?? (prompt ? `${resolvedStatusText}: ${prompt}` : resolvedStatusText);
+  const resolvedLabel = label ?? (prompt ? `${resolvedStatusText}: ${prompt}` : resolvedStatusText);
 
   return (
     <div
@@ -273,12 +248,7 @@ export function ImageGeneration({
       aria-busy={active}
       className={cn("w-full", className)}
     >
-      <div
-        className={cn(
-          "w-full",
-          size === "compact" && "mx-auto",
-        )}
-      >
+      <div className={cn("w-full", size === "compact" && "mx-auto")}>
         <div
           role="img"
           aria-label={resolvedLabel}
@@ -297,9 +267,7 @@ export function ImageGeneration({
                     scale: mediaState.scale,
                   }
             }
-            transition={
-              reduce ? { duration: 0 } : { duration: 0.4, ease: EASE_OUT }
-            }
+            transition={reduce ? { duration: 0 } : { duration: 0.4, ease: EASE_OUT }}
             className={cn(
               "absolute inset-0 [&>*]:size-full [&>*]:object-cover [&_img]:size-full [&_img]:object-cover",
               mediaClassName,
@@ -318,11 +286,7 @@ export function ImageGeneration({
                 transition={{ duration: reduce ? 0 : 0.25, ease: EASE_OUT }}
                 className="absolute inset-0"
               >
-                <DitherField
-                  interactive={interactive}
-                  reduce={reduce}
-                  status={status}
-                />
+                <DitherField interactive={interactive} reduce={reduce} status={status} />
               </motion.div>
             ) : null}
           </AnimatePresence>
@@ -357,9 +321,7 @@ export function ImageGeneration({
               </div>
             ) : null}
             {prompt ? (
-              <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                “{prompt}”
-              </p>
+              <p className="mt-0.5 truncate text-xs text-muted-foreground">“{prompt}”</p>
             ) : null}
           </div>
         ) : null}

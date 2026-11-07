@@ -5,12 +5,7 @@ const sectionClassName = "rounded-xl border border-border/60 p-4";
 /** Placeholder do conteúdo do sheet de detalhes enquanto o invoice carrega. */
 export function InvoiceDetailsSkeleton() {
   return (
-    <div
-      className="space-y-4"
-      role="status"
-      aria-busy="true"
-      aria-label="Loading invoice details"
-    >
+    <div className="space-y-4" role="status" aria-busy="true" aria-label="Loading invoice details">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
           <div className="flex items-center gap-3">

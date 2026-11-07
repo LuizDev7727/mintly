@@ -13,15 +13,12 @@ type CreateProjectHttpParams = {
 export async function createProjectHttp(params: CreateProjectHttpParams) {
   const { orgSlug, channelId, files } = params;
 
-  const { data } = await api.post(
-    `/organizations/${orgSlug}/channels/${channelId}/projects`,
-    {
-      files: files.map(({ key, file }) => ({
-        name: sanitizeFilename({ filename: file.name }),
-        key,
-      })),
-    },
-  );
+  const { data } = await api.post(`/organizations/${orgSlug}/channels/${channelId}/projects`, {
+    files: files.map(({ key, file }) => ({
+      name: sanitizeFilename({ filename: file.name }),
+      key,
+    })),
+  });
 
   return data;
 }

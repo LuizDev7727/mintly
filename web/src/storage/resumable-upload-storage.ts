@@ -49,9 +49,7 @@ export function findResumableUpload(
   return match ?? null;
 }
 
-export function saveResumableUpload(
-  record: Omit<ResumableUploadRecord, "updatedAt">,
-): void {
+export function saveResumableUpload(record: Omit<ResumableUploadRecord, "updatedAt">): void {
   const records = readAll().filter((entry) => entry.key !== record.key);
   records.push({ ...record, updatedAt: Date.now() });
   writeAll(records);

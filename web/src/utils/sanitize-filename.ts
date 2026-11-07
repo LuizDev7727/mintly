@@ -12,10 +12,10 @@ export function sanitizeFilename({ filename }: SanitizeFilenameProps) {
   title = title.replace(/_+/g, " ");
 
   // removeDuplicatePunct
-  title = title.replace(/([!?.,;:_\-])\1+/g, "$1");
+  title = title.replace(/([!?.,;:_-])\1+/g, "$1");
   title = title.replace(/([!?.,;:])\s*([!?.,;:])+/g, "$1");
-  title = title.replace(/\s*[:_\-]\s*(?=[A-ZÁÉÍÓÚÀÂÊÔÃÕÇ\s])/g, " ");
-  title = title.replace(/\s*[:_\-]\s*$/g, "");
+  title = title.replace(/\s*[:_-]\s*(?=[A-ZÁÉÍÓÚÀÂÊÔÃÕÇ\s])/g, " ");
+  title = title.replace(/\s*[:_-]\s*$/g, "");
 
   // trimSpaces
   title = title.replace(/\s{2,}/g, " ").trim();

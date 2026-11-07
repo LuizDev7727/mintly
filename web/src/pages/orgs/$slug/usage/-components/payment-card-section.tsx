@@ -25,9 +25,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 
 /** Seção com o cartão de pagamento da organização e o gasto contra o limite definido pelo usuário para o app. */
 export function PaymentCardSection() {
-  const [spendingLimit, setSpendingLimit] = useState<number | null>(
-    MOCK_INITIAL_SPENDING_LIMIT,
-  );
+  const [spendingLimit, setSpendingLimit] = useState<number | null>(MOCK_INITIAL_SPENDING_LIMIT);
 
   const spent = MOCK_SPENT;
   const hasSpendingLimit = spendingLimit !== null;
@@ -59,19 +57,13 @@ export function PaymentCardSection() {
             <div className="relative flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <img src="/logo.svg" alt="" className="size-6" />
-                <span className="text-base font-semibold tracking-tight text-primary">
-                  mintly
-                </span>
+                <span className="text-base font-semibold tracking-tight text-primary">mintly</span>
               </div>
               <Nfc className="size-5 text-primary/70" />
             </div>
 
             <div className="relative space-y-3">
-              <div
-                className="flex -space-x-2"
-                role="img"
-                aria-label="Mastercard"
-              >
+              <div className="flex -space-x-2" role="img" aria-label="Mastercard">
                 <span className="size-5 rounded-full bg-red-500" />
                 <span className="size-5 rounded-full bg-amber-400/90 mix-blend-screen" />
               </div>
@@ -82,20 +74,12 @@ export function PaymentCardSection() {
 
             <div className="relative flex gap-8">
               <div className="space-y-0.5">
-                <p className="text-[10px] tracking-wider text-zinc-500 uppercase">
-                  Card Holder
-                </p>
-                <p className="text-sm font-medium text-zinc-100">
-                  {MOCK_CARD.holderName}
-                </p>
+                <p className="text-[10px] tracking-wider text-zinc-500 uppercase">Card Holder</p>
+                <p className="text-sm font-medium text-zinc-100">{MOCK_CARD.holderName}</p>
               </div>
               <div className="space-y-0.5">
-                <p className="text-[10px] tracking-wider text-zinc-500 uppercase">
-                  Expires
-                </p>
-                <p className="text-sm font-medium text-zinc-100">
-                  {MOCK_CARD.expiresAt}
-                </p>
+                <p className="text-[10px] tracking-wider text-zinc-500 uppercase">Expires</p>
+                <p className="text-sm font-medium text-zinc-100">{MOCK_CARD.expiresAt}</p>
               </div>
             </div>
           </div>
@@ -138,17 +122,13 @@ export function PaymentCardSection() {
                     {currencyFormatter.format(spendingLimit)}
                   </span>
                   {" · "}
-                  {currencyFormatter.format(Math.max(spendingLimit - spent, 0))}{" "}
-                  remaining
+                  {currencyFormatter.format(Math.max(spendingLimit - spent, 0))} remaining
                 </>
               ) : (
                 <span className="font-medium text-foreground">Unlimited</span>
               )}
             </p>
-            <SpendingLimitDialog
-              currentLimit={spendingLimit}
-              onSave={setSpendingLimit}
-            />
+            <SpendingLimitDialog currentLimit={spendingLimit} onSave={setSpendingLimit} />
           </div>
         </div>
       </div>

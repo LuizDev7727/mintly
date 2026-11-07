@@ -1,25 +1,14 @@
-import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
+import { Button } from "@/components/ui/button";
 
 type PostsPaginationProps = {
   totalPages: number;
   totalCount: number;
 };
 
-export function PostsPagination({
-  totalPages,
-  totalCount,
-}: PostsPaginationProps) {
-  const [currentPage, setCurrentPage] = useQueryState(
-    "post_page",
-    parseAsInteger.withDefault(0),
-  );
+export function PostsPagination({ totalPages, totalCount }: PostsPaginationProps) {
+  const [currentPage, setCurrentPage] = useQueryState("post_page", parseAsInteger.withDefault(0));
 
   function goToFirstPage() {
     setCurrentPage(0);
@@ -66,20 +55,10 @@ export function PostsPagination({
         <span className="text-xs text-muted-foreground px-1 tabular-nums">
           Page {currentPage + 1} of {totalPages}
         </span>
-        <Button
-          variant={"outline"}
-          size={"icon"}
-          onClick={goToNextPage}
-          disabled={!hasNextPage}
-        >
+        <Button variant={"outline"} size={"icon"} onClick={goToNextPage} disabled={!hasNextPage}>
           <ChevronRight className="size-4" />
         </Button>
-        <Button
-          variant={"outline"}
-          size={"icon"}
-          onClick={goToLastPage}
-          disabled={!hasNextPage}
-        >
+        <Button variant={"outline"} size={"icon"} onClick={goToLastPage} disabled={!hasNextPage}>
           <ChevronsRight className="size-4" />
         </Button>
       </div>

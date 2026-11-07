@@ -1,4 +1,5 @@
 import { FolderIcon, MoreHorizontal, Star } from "lucide-react";
+import { useQueryState } from "nuqs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Folder } from "@/types/folder";
-import { useQueryState } from "nuqs";
 import { DeleteFolderDialog } from "./delete-folder-dialog";
 import { StarFolderButton } from "./star-folder-button";
 import { UpdateFolderNameDialog } from "./update-folder-name-dialog";
@@ -17,8 +17,7 @@ type FolderCardProps = {
 
 export function FolderCard({ folder }: FolderCardProps) {
   const [_, setSelectedFolder] = useQueryState("folder_id");
-  const [_currentFolderName, setSelectedFolderName] =
-    useQueryState("folder_name");
+  const [_currentFolderName, setSelectedFolderName] = useQueryState("folder_name");
 
   function handleSelectFolder() {
     setSelectedFolder(folder.id);
@@ -29,10 +28,7 @@ export function FolderCard({ folder }: FolderCardProps) {
 
   return (
     <div className="flex flex-col gap-2 rounded-xl border border-input p-3 transition-colors hover:bg-card/70">
-      <div
-        onClick={handleSelectFolder}
-        className="flex cursor-pointer items-start justify-between"
-      >
+      <div onClick={handleSelectFolder} className="flex cursor-pointer items-start justify-between">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
           <FolderIcon className="size-4" />
         </div>
@@ -44,9 +40,7 @@ export function FolderCard({ folder }: FolderCardProps) {
       </div>
 
       <div onClick={handleSelectFolder} className="min-w-0 cursor-pointer">
-        <p className="truncate text-sm font-semibold text-foreground">
-          {folder.title}
-        </p>
+        <p className="truncate text-sm font-semibold text-foreground">{folder.title}</p>
       </div>
 
       <div className="flex items-center justify-between">
@@ -64,15 +58,9 @@ export function FolderCard({ folder }: FolderCardProps) {
               folderIsStarred={folder.isStarred}
             />
             <DropdownMenuSeparator />
-            <UpdateFolderNameDialog
-              folderId={folder.id}
-              folderName={folder.title}
-            />
+            <UpdateFolderNameDialog folderId={folder.id} folderName={folder.title} />
             <DropdownMenuSeparator />
-            <DeleteFolderDialog
-              folderId={folder.id}
-              folderName={folder.title}
-            />
+            <DeleteFolderDialog folderId={folder.id} folderName={folder.title} />
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

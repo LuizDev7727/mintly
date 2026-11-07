@@ -1,8 +1,8 @@
+import { Play } from "lucide-react";
 import { TiktokIcon, YoutubeIcon } from "@/components/provider-icons";
 import { dayjs } from "@/lib/dayjs";
 import type { BestMoment } from "@/types/best-moment";
 import type { Integration } from "@/types/integration";
-import { Play } from "lucide-react";
 
 type BestMomentListViewProps = {
   bestMoments: BestMoment[];
@@ -36,9 +36,7 @@ export function BestMomentListView({
               </div>
             </div>
             <div className="flex min-w-0 flex-col gap-0.5">
-              <p className="truncate font-medium text-[13px]">
-                {bestMoment.title}
-              </p>
+              <p className="truncate font-medium text-[13px]">{bestMoment.title}</p>
               <p className="text-muted-foreground text-xs">
                 {dayjs(bestMoment.createdAt).format("MMM D, YYYY")}
               </p>
@@ -51,9 +49,7 @@ export function BestMomentListView({
                 <button
                   key={integration.id}
                   type="button"
-                  onClick={() =>
-                    onPostBestMoment(bestMoment.id, integration)
-                  }
+                  onClick={() => onPostBestMoment(bestMoment.id, integration)}
                   className="cursor-pointer inline-flex max-w-32 items-center gap-1.5 rounded-full border bg-background px-2 py-1 text-xs transition-colors hover:bg-accent hover:text-accent-foreground"
                 >
                   {integration.provider === "YOUTUBE" ? (

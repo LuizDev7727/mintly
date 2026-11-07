@@ -1,20 +1,18 @@
-import { useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { CopyButton } from "@/components/ui/copy-button"
-import { RegenerateApiKeyDialog } from "./regenerate-api-key-dialog"
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { CopyButton } from "@/components/ui/copy-button";
+import { RegenerateApiKeyDialog } from "./regenerate-api-key-dialog";
 
 interface ApiKeySectionProps {
-  apiKey: string | null
+  apiKey: string | null;
 }
 
 export function ApiKeySection({ apiKey }: ApiKeySectionProps) {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
-  const maskedApiKey = apiKey
-    ? `${apiKey.slice(0, 12)}${"•".repeat(16)}${apiKey.slice(-4)}`
-    : ""
+  const maskedApiKey = apiKey ? `${apiKey.slice(0, 12)}${"•".repeat(16)}${apiKey.slice(-4)}` : "";
 
   return (
     <div className="space-y-3 rounded-xl border border-border bg-card p-4">
@@ -60,12 +58,9 @@ export function ApiKeySection({ apiKey }: ApiKeySectionProps) {
           <p className="text-xs text-muted-foreground">
             No API key generated for this organization yet.
           </p>
-          <RegenerateApiKeyDialog
-            triggerLabel="Generate Key"
-            variant="default"
-          />
+          <RegenerateApiKeyDialog triggerLabel="Generate Key" variant="default" />
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function WebhooksOverviewLoading() {
   return (
@@ -96,5 +96,5 @@ export function WebhooksOverviewLoading() {
         </div>
       </div>
     </>
-  )
+  );
 }

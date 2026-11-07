@@ -6,9 +6,7 @@ type UpdateOrganizationParams = {
   avatarKey: string | null;
 };
 
-export async function updateOrganizationHttp(
-  params: UpdateOrganizationParams,
-): Promise<void> {
+export async function updateOrganizationHttp(params: UpdateOrganizationParams): Promise<void> {
   const { slug, name, avatarKey } = params;
   await api.put(`/organizations/${slug}`, { name, avatarKey });
 }

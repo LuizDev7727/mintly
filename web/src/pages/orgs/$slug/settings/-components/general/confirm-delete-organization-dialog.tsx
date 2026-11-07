@@ -23,9 +23,8 @@ export function ConfirmDeleteOrganizationDialog() {
         <DialogHeader>
           <DialogTitle>Delete Organization</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this organization? This will
-            permanently remove all members, channels, and data. This action
-            cannot be undone.
+            Are you sure you want to delete this organization? This will permanently remove all
+            members, channels, and data. This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter showCloseButton>

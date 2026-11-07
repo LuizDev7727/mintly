@@ -1,5 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -8,17 +11,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import type { GetActiveOrganizationResponse } from "@/http/organization/get-active-organization.http";
 import { updateOrganizationHttp } from "@/http/organization/update-organization.http";
 import {
-  updateOrganizationSchema,
   type UpdateOrganizationFormType,
+  updateOrganizationSchema,
 } from "@/schemas/organization/update-organization.schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 type UpdateOrganizationNameFormProps = {
   slug: string;
@@ -49,16 +49,13 @@ export function UpdateOrganizationNameForm({
   const { mutateAsync } = useMutation({
     mutationFn: updateOrganizationHttp,
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<GetActiveOrganizationResponse>(
-        ["active-organization"],
-        (old) => {
-          if (!old) return old;
+      queryClient.setQueryData<GetActiveOrganizationResponse>(["active-organization"], (old) => {
+        if (!old) return old;
 
-          return {
-            organization: { ...old.organization, name: variables.name },
-          };
-        },
-      );
+        return {
+          organization: { ...old.organization, name: variables.name },
+        };
+      });
 
       toast("Organization updated successfully");
     },
@@ -79,16 +76,10 @@ export function UpdateOrganizationNameForm({
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6">
-          <Input
-            {...register("name")}
-            placeholder={name}
-            className="max-w-sm"
-          />
+          <Input {...register("name")} placeholder={name} className="max-w-sm" />
         </CardContent>
         <CardFooter className="border-t justify-between">
-          <p className="text-sm text-muted-foreground">
-            Maximum 32 characters.
-          </p>
+          <p className="text-sm text-muted-foreground">Maximum 32 characters.</p>
           <Button size="sm" type="submit" disabled={!hasNameChanged}>
             {isSubmitting ? <Spinner /> : "Save"}
           </Button>

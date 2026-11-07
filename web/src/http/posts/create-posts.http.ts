@@ -20,13 +20,10 @@ type CreatePostsParams = {
   }[];
 };
 
-export async function createPostsHttp(
-  params: CreatePostsParams,
-) {
+export async function createPostsHttp(params: CreatePostsParams) {
   const { orgSlug, channelId, posts } = params;
-  const { data } = await api.post(
-    `/organizations/${orgSlug}/channels/${channelId}/posts`,
-    { posts },
-  );
+  const { data } = await api.post(`/organizations/${orgSlug}/channels/${channelId}/posts`, {
+    posts,
+  });
   return data;
 }

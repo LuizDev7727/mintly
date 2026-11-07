@@ -1,81 +1,81 @@
-import { useMemo, useState } from "react"
-import { format } from "date-fns"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { format } from "date-fns";
+import { useMemo, useState } from "react";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import type { WebhookLog } from "@/http/webhook/get-webhook.http"
+} from "@/components/ui/chart";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import type { WebhookLog } from "@/http/webhook/get-webhook.http";
 
-const MINUTE = 60_000
-const HOUR = 60 * MINUTE
-const DAY = 24 * HOUR
+const MINUTE = 60_000;
+const HOUR = 60 * MINUTE;
+const DAY = 24 * HOUR;
 
 const RANGES = {
   "15m": { label: "15m", description: "Last 15 minutes", duration: 15 * MINUTE, bucket: 30_000 },
   "1h": { label: "1h", description: "Last 1 hour", duration: HOUR, bucket: 2 * MINUTE },
   "24h": { label: "24h", description: "Last 24 hours", duration: DAY, bucket: HOUR },
   "7d": { label: "7d", description: "Last 7 days", duration: 7 * DAY, bucket: 6 * HOUR },
-} as const
+} as const;
 
-type RangeKey = keyof typeof RANGES
+type RangeKey = keyof typeof RANGES;
 
 const chartConfig = {
   success: { label: "Success", color: "var(--primary)" },
   pending: { label: "Pending", color: "var(--chart-4)" },
   failed: { label: "Failed", color: "var(--destructive)" },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
-type ChartSeries = keyof typeof chartConfig
+type ChartSeries = keyof typeof chartConfig;
 
-type Bucket = Record<ChartSeries, number> & { time: number }
+type Bucket = Record<ChartSeries, number> & { time: number };
 
 const STATUS_SERIES = {
   SUCCESS: "success",
   PENDING: "pending",
   FAILED: "failed",
-} as const
+} as const;
 
 interface WebhookDeliveriesChartProps {
-  logs: WebhookLog[]
+  logs: WebhookLog[];
 }
 
 export function WebhookDeliveriesChart({ logs }: WebhookDeliveriesChartProps) {
-  const [range, setRange] = useState<RangeKey>("1h")
+  const [range, setRange] = useState<RangeKey>("1h");
 
-  const { duration, bucket, description } = RANGES[range]
+  const { duration, bucket, description } = RANGES[range];
 
   const { buckets, total } = useMemo(() => {
-    const end = Date.now()
-    const start = end - duration
-    const count = Math.ceil(duration / bucket)
+    const end = Date.now();
+    const start = end - duration;
+    const count = Math.ceil(duration / bucket);
 
     const buckets: Bucket[] = Array.from({ length: count }, (_, index) => ({
       time: start + index * bucket,
       success: 0,
       pending: 0,
       failed: 0,
-    }))
+    }));
 
-    let total = 0
+    let total = 0;
 
     for (const log of logs) {
-      const createdAt = new Date(log.createdAt).getTime()
+      const createdAt = new Date(log.createdAt).getTime();
 
-      if (createdAt < start || createdAt > end) continue
+      if (createdAt < start || createdAt > end) continue;
 
-      const index = Math.min(Math.floor((createdAt - start) / bucket), count - 1)
-      buckets[index][STATUS_SERIES[log.status]] += 1
-      total += 1
+      const index = Math.min(Math.floor((createdAt - start) / bucket), count - 1);
+      buckets[index][STATUS_SERIES[log.status]] += 1;
+      total += 1;
     }
 
-    return { buckets, total }
-  }, [logs, duration, bucket])
+    return { buckets, total };
+  }, [logs, duration, bucket]);
 
-  const hasTime = duration <= DAY
+  const hasTime = duration <= DAY;
 
   return (
     <div className="space-y-4 p-4">
@@ -131,7 +131,13 @@ export function WebhookDeliveriesChart({ logs }: WebhookDeliveriesChartProps) {
             minTickGap={40}
             tickFormatter={(value) => format(value, hasTime ? "HH:mm" : "MMM d")}
           />
-          <YAxis tickLine={false} axisLine={false} tickMargin={8} width={28} allowDecimals={false} />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            width={28}
+            allowDecimals={false}
+          />
           <ChartTooltip
             cursor={{ fill: "var(--muted)", opacity: 0.4 }}
             content={
@@ -142,11 +148,21 @@ export function WebhookDeliveriesChart({ logs }: WebhookDeliveriesChartProps) {
               />
             }
           />
-          <Bar dataKey="success" stackId="deliveries" fill="var(--color-success)" radius={[0, 0, 2, 2]} />
+          <Bar
+            dataKey="success"
+            stackId="deliveries"
+            fill="var(--color-success)"
+            radius={[0, 0, 2, 2]}
+          />
           <Bar dataKey="pending" stackId="deliveries" fill="var(--color-pending)" />
-          <Bar dataKey="failed" stackId="deliveries" fill="var(--color-failed)" radius={[2, 2, 0, 0]} />
+          <Bar
+            dataKey="failed"
+            stackId="deliveries"
+            fill="var(--color-failed)"
+            radius={[2, 2, 0, 0]}
+          />
         </BarChart>
       </ChartContainer>
     </div>
-  )
+  );
 }

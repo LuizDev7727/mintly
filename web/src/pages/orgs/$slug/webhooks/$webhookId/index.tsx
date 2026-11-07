@@ -1,13 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from "@tanstack/react-query"
-import { getWebhookHttp } from "@/http/webhook/get-webhook.http"
-import { WebhookDeliveriesChart } from "./-components/webhook-deliveries-chart"
-import { WebhookDeliveriesTable } from "./-components/webhook-deliveries-table"
-import { WebhookDetailsHeader } from "./-components/webhook-details-header"
-import { WebhookDetailsLoading } from "./-components/webhook-details-loading"
-import { WebhookNotFound } from "./-components/webhook-not-found"
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { getWebhookHttp } from "@/http/webhook/get-webhook.http";
+import { WebhookDeliveriesChart } from "./-components/webhook-deliveries-chart";
+import { WebhookDeliveriesTable } from "./-components/webhook-deliveries-table";
+import { WebhookDetailsHeader } from "./-components/webhook-details-header";
+import { WebhookDetailsLoading } from "./-components/webhook-details-loading";
+import { WebhookNotFound } from "./-components/webhook-not-found";
 
-export const Route = createFileRoute('/orgs/$slug/webhooks/$webhookId/')({
+export const Route = createFileRoute("/orgs/$slug/webhooks/$webhookId/")({
   head: () => ({
     meta: [
       { title: "Webhook Details | Mintly" },
@@ -15,26 +15,26 @@ export const Route = createFileRoute('/orgs/$slug/webhooks/$webhookId/')({
     ],
   }),
   component: WebhookDetailsPage,
-})
+});
 
 function WebhookDetailsPage() {
-
-  const { slug, webhookId } = Route.useParams()
+  const { slug, webhookId } = Route.useParams();
 
   const { data, isPending, isError } = useQuery({
     queryKey: ["webhook", webhookId, slug],
-    queryFn: () => getWebhookHttp({
-      orgSlug: slug,
-      webhookId
-    }),
-  })
+    queryFn: () =>
+      getWebhookHttp({
+        orgSlug: slug,
+        webhookId,
+      }),
+  });
 
   if (isPending) {
-    return <WebhookDetailsLoading />
+    return <WebhookDetailsLoading />;
   }
 
   if (isError || !data) {
-    return <WebhookNotFound />
+    return <WebhookNotFound />;
   }
 
   return (
@@ -45,5 +45,5 @@ function WebhookDetailsPage() {
         <WebhookDeliveriesTable logs={data.logs} />
       </div>
     </div>
-  )
+  );
 }

@@ -1,34 +1,26 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import {
-  signUpSchema,
-  type SignUpFormType,
-} from "@/schemas/auth/sign-up.schema";
-import { PasswordChecker } from "./-components/password-checker";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AtSign, User } from "lucide-react";
 import { useState } from "react";
-import { AuthenticateWithGoogle } from "../-components/authenticate-with-google";
-import { authClient } from "@/lib/auth";
-import { Spinner } from "@/components/ui/spinner";
-import { TogglePasswordVisibility } from "../-components/toggle-password-visibility";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
+import { authClient } from "@/lib/auth";
+import { type SignUpFormType, signUpSchema } from "@/schemas/auth/sign-up.schema";
+import { AuthenticateWithGoogle } from "../-components/authenticate-with-google";
+import { TogglePasswordVisibility } from "../-components/toggle-password-visibility";
+import { PasswordChecker } from "./-components/password-checker";
 
 export const Route = createFileRoute("/_auth/sign-up/")({
   head: () => ({
     meta: [
       {
         name: "description",
-        content: "Create your Mintly account."
+        content: "Create your Mintly account.",
       },
       { title: "Sign Up | Mintly" },
     ],
@@ -69,7 +61,7 @@ function SignUpPage() {
           navigate({
             to: "/orgs",
             replace: true,
-            reloadDocument: true
+            reloadDocument: true,
           });
         },
       },
@@ -78,7 +70,6 @@ function SignUpPage() {
 
   return (
     <div className="w-full space-y-6">
-
       <form onSubmit={handleSubmit(handleSignUp)} className="space-y-4">
         <FieldGroup>
           <Field>
@@ -130,9 +121,7 @@ function SignUpPage() {
                 togglePasswordVisibility={togglePasswordVisibility}
               />
             </div>
-            {errors.password && (
-              <FieldError>{errors.password.message}</FieldError>
-            )}
+            {errors.password && <FieldError>{errors.password.message}</FieldError>}
             <PasswordChecker password={password} />
           </Field>
 
@@ -144,9 +133,7 @@ function SignUpPage() {
               placeholder="*********"
               {...register("confirmPassword")}
             />
-            {errors.confirmPassword && (
-              <FieldError>{errors.confirmPassword.message}</FieldError>
-            )}
+            {errors.confirmPassword && <FieldError>{errors.confirmPassword.message}</FieldError>}
           </Field>
         </FieldGroup>
 
@@ -155,7 +142,7 @@ function SignUpPage() {
           Create account
         </Button>
 
-        <Separator/>
+        <Separator />
 
         <AuthenticateWithGoogle />
       </form>

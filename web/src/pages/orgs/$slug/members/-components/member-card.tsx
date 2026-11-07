@@ -1,17 +1,13 @@
+import { Crown, Mail, MoreHorizontal, UserRoundX } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Crown, Mail, MoreHorizontal, UserRoundX } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Member } from "@/types/member";
 import { getInitials } from "@/utils/get-initials";
 
@@ -26,9 +22,7 @@ export function MemberCard({ member }: MemberCardProps) {
       <div className="flex items-start justify-between gap-x-2">
         <div className="flex items-start gap-x-2 min-w-0">
           <Avatar className={"data-[pending=true]:opacity-60"}>
-            {member.user.avatarUrl && (
-              <AvatarImage src={member.user.avatarUrl} />
-            )}
+            {member.user.avatarUrl && <AvatarImage src={member.user.avatarUrl} />}
             <AvatarFallback>{getInitials(member.user.name)}</AvatarFallback>
           </Avatar>
           <div className="min-w-0">
@@ -59,11 +53,7 @@ export function MemberCard({ member }: MemberCardProps) {
         {!isOwner && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                className="bg-transparent! shrink-0"
-                variant={"outline"}
-                size={"sm"}
-              >
+              <Button className="bg-transparent! shrink-0" variant={"outline"} size={"sm"}>
                 <MoreHorizontal />
               </Button>
             </DropdownMenuTrigger>

@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig,
 } from "@/components/ui/chart";
 import type { UsageGranularity } from "./aggregate-usage-series";
 
@@ -37,13 +37,7 @@ const brlFormatter = new Intl.NumberFormat("pt-BR", {
   maximumFractionDigits: 0,
 });
 
-export function CostsChart({
-  title,
-  description,
-  action,
-  granularity,
-  data,
-}: CostsChartProps) {
+export function CostsChart({ title, description, action, granularity, data }: CostsChartProps) {
   const totals = data.map((point) => ({
     date: point.date,
     total:
@@ -63,10 +57,7 @@ export function CostsChart({
         </div>
         {action}
       </div>
-      <ChartContainer
-        config={chartConfig}
-        className="aspect-auto min-h-62.5 w-full flex-1"
-      >
+      <ChartContainer config={chartConfig} className="aspect-auto min-h-62.5 w-full flex-1">
         <BarChart
           accessibilityLayer
           data={totals}
@@ -96,9 +87,7 @@ export function CostsChart({
               const date = new Date(value);
               return date.toLocaleDateString(
                 "en-US",
-                granularity === "monthly"
-                  ? { month: "short" }
-                  : { month: "short", day: "numeric" },
+                granularity === "monthly" ? { month: "short" } : { month: "short", day: "numeric" },
               );
             }}
           />
@@ -130,19 +119,12 @@ export function CostsChart({
                     day: "numeric",
                     year: "numeric",
                   });
-                  return granularity === "weekly"
-                    ? `Week of ${formatted}`
-                    : formatted;
+                  return granularity === "weekly" ? `Week of ${formatted}` : formatted;
                 }}
               />
             }
           />
-          <Bar
-            dataKey="total"
-            fill="var(--color-total)"
-            radius={[4, 4, 0, 0]}
-            maxBarSize={96}
-          />
+          <Bar dataKey="total" fill="var(--color-total)" radius={[4, 4, 0, 0]} maxBarSize={96} />
         </BarChart>
       </ChartContainer>
     </div>

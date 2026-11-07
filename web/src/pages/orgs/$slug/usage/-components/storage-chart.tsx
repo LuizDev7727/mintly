@@ -1,10 +1,10 @@
 import { Area, AreaChart, XAxis } from "recharts";
 
 import {
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig,
 } from "@/components/ui/chart";
 import { formatBytes } from "@/utils/format-bytes";
 
@@ -31,10 +31,7 @@ export function StorageChart({ title, description, data }: StorageChartProps) {
         <h2 className="text-base font-medium">{title}</h2>
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
-      <ChartContainer
-        config={chartConfig}
-        className="aspect-auto min-h-62.5 w-full flex-1"
-      >
+      <ChartContainer config={chartConfig} className="aspect-auto min-h-62.5 w-full flex-1">
         <AreaChart
           accessibilityLayer
           data={data}

@@ -1,8 +1,8 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { TvMinimal } from "lucide-react";
-import type { Channel } from "@/types/channel";
-import { dayjs } from "@/lib/dayjs";
 import { Separator } from "@/components/ui/separator";
+import { dayjs } from "@/lib/dayjs";
+import type { Channel } from "@/types/channel";
 
 interface ChannelCardProps {
   channel: Channel;
@@ -22,9 +22,7 @@ export function ChannelCard({ channel }: ChannelCardProps) {
           <TvMinimal className="size-5" />
         </div>
         <div className="min-w-0">
-          <h3 className="truncate text-lg font-semibold leading-tight">
-            {channel.name}
-          </h3>
+          <h3 className="truncate text-lg font-semibold leading-tight">{channel.name}</h3>
         </div>
       </div>
 
@@ -37,9 +35,7 @@ export function ChannelCard({ channel }: ChannelCardProps) {
       <div className="mt-auto flex items-center justify-start text-xs text-muted-foreground">
         <span>
           Created{" "}
-          <span className="text-foreground">
-            {dayjs(channel.createdAt).format("MMM D, YYYY")}
-          </span>
+          <span className="text-foreground">{dayjs(channel.createdAt).format("MMM D, YYYY")}</span>
         </span>
       </div>
     </Link>

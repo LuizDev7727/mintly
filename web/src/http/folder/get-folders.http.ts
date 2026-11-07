@@ -20,9 +20,7 @@ export type GetFoldersResponse = {
   };
 };
 
-export async function getFoldersHttp(
-  params: GetFoldersParams,
-): Promise<GetFoldersResponse> {
+export async function getFoldersHttp(params: GetFoldersParams): Promise<GetFoldersResponse> {
   const { orgSlug, channelId, folderId, page } = params;
   const { data } = await api.get<GetFoldersResponse>(
     `/organizations/${orgSlug}/channels/${channelId}/folders`,

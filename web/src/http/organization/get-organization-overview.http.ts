@@ -1,6 +1,6 @@
+import type { Activity } from "@/types/activity";
 import type { Webhook } from "@/types/webhook";
 import { api } from "../api";
-import type { Activity } from "@/types/activity";
 
 type GetOrganizationOverviewParams = {
   orgSlug: string;

@@ -1,12 +1,12 @@
-import { presignUploadHttp } from "@/http/upload/presign-upload.http";
+import axios from "axios";
 import { completeMultipartUploadHttp } from "@/http/upload/complete-multipart-upload.http";
 import { listMultipartUploadPartsHttp } from "@/http/upload/list-multipart-upload-parts.http";
+import { presignUploadHttp } from "@/http/upload/presign-upload.http";
 import {
   findResumableUpload,
   removeResumableUpload,
   saveResumableUpload,
 } from "@/storage/resumable-upload-storage";
-import axios from "axios";
 
 // precisa bater com PART_SIZE
 export const PART_SIZE = 1024 * 1024 * 10; // 10 MB
@@ -72,13 +72,10 @@ export async function uploadFile({
       uploadId = resumeTarget.uploadId;
 
       const totalParts = Math.ceil(file.size / PART_SIZE);
-      const confirmedPartNumbers = new Set(
-        confirmedParts.map((part) => part.partNumber),
+      const confirmedPartNumbers = new Set(confirmedParts.map((part) => part.partNumber));
+      const missingPartNumbers = Array.from({ length: totalParts }, (_, index) => index + 1).filter(
+        (partNumber) => !confirmedPartNumbers.has(partNumber),
       );
-      const missingPartNumbers = Array.from(
-        { length: totalParts },
-        (_, index) => index + 1,
-      ).filter((partNumber) => !confirmedPartNumbers.has(partNumber));
 
       parts = missingPartNumbers.length
         ? (
@@ -114,24 +111,19 @@ export async function uploadFile({
     }
 
     function reportProgress() {
-      const loaded = Object.values(loadedByPart).reduce(
-        (total, value) => total + value,
-        0,
-      );
+      const loaded = Object.values(loadedByPart).reduce((total, value) => total + value, 0);
       onProgress(Math.round((loaded / file.size) * 100));
     }
 
     reportProgress();
 
-    const uploadedParts: { partNumber: number; eTag: string }[] =
-      confirmedParts.map(({ partNumber, eTag }) => ({ partNumber, eTag }));
+    const uploadedParts: { partNumber: number; eTag: string }[] = confirmedParts.map(
+      ({ partNumber, eTag }) => ({ partNumber, eTag }),
+    );
 
     for (const { partNumber, url } of parts) {
       const chunk = uploadId
-        ? file.slice(
-            (partNumber - 1) * PART_SIZE,
-            Math.min(partNumber * PART_SIZE, file.size),
-          )
+        ? file.slice((partNumber - 1) * PART_SIZE, Math.min(partNumber * PART_SIZE, file.size))
         : file;
 
       const response = await axios.put(url, chunk, {

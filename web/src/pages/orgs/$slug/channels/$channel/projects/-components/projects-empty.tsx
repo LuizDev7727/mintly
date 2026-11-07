@@ -1,3 +1,5 @@
+import { Clapperboard } from "lucide-react";
+import { useQueryState } from "nuqs";
 import {
   Empty,
   EmptyDescription,
@@ -5,8 +7,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Clapperboard } from "lucide-react";
-import { useQueryState } from "nuqs";
 
 export function ProjectsEmpty() {
   const [titleFilter] = useQueryState("title_filter", { defaultValue: "" });
@@ -22,14 +22,11 @@ export function ProjectsEmpty() {
         {hasSearch && <EmptyTitle>No projects match your search</EmptyTitle>}
         {!hasSearch && <EmptyTitle>No projects yet</EmptyTitle>}
         {hasSearch && (
-          <EmptyDescription>
-            Try adjusting your filters or search term.
-          </EmptyDescription>
+          <EmptyDescription>Try adjusting your filters or search term.</EmptyDescription>
         )}
         {!hasSearch && (
           <EmptyDescription>
-            Upload a video and let Mintly find the best moments for you
-            automatically.
+            Upload a video and let Mintly find the best moments for you automatically.
           </EmptyDescription>
         )}
       </EmptyHeader>

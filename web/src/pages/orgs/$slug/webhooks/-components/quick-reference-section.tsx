@@ -1,12 +1,12 @@
-import { CopyButton } from "@/components/ui/copy-button"
+import { CopyButton } from "@/components/ui/copy-button";
 
 const CURL_LINES = [
   "curl https://api.mintly.com/v1/projects \\",
   '  -H "Authorization: Bearer live_just_testing" \\',
   '  -H "Content-Type: application/json" \\',
-  "  -d '{\"name\": \"My Project\"}'",
-]
-const CURL_EXAMPLE = CURL_LINES.join("\n")
+  '  -d \'{"name": "My Project"}\'',
+];
+const CURL_EXAMPLE = CURL_LINES.join("\n");
 
 export function QuickReferenceSection() {
   return (
@@ -38,5 +38,5 @@ export function QuickReferenceSection() {
         </pre>
       </div>
     </div>
-  )
+  );
 }

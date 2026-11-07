@@ -1,36 +1,31 @@
-import { useState } from "react"
-import { formatDistanceToNow } from "date-fns"
-import { Globe, KeyRound, MoreHorizontal, Pencil, Trash } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Link, useParams } from "@tanstack/react-router";
+import { formatDistanceToNow } from "date-fns";
+import { Globe, KeyRound, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { cn } from "@/lib/utils"
-import type { Webhook } from "@/types/webhook"
-import { CreateWebhookDialog } from "./create-webhook-dialog"
-import { WebhookDeliveriesSheet } from "./webhook-deliveries-sheet"
-import { WebhookSigningSecretDialog } from "./webhook-signing-secret-dialog"
-import { Link, useParams } from "@tanstack/react-router"
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import type { Webhook } from "@/types/webhook";
+import { CreateWebhookDialog } from "./create-webhook-dialog";
+import { WebhookDeliveriesSheet } from "./webhook-deliveries-sheet";
+import { WebhookSigningSecretDialog } from "./webhook-signing-secret-dialog";
 
 interface WebhookEndpointsSectionProps {
-  webhooks: Webhook[]
+  webhooks: Webhook[];
 }
 
-export function WebhookEndpointsSection({
-  webhooks,
-}: WebhookEndpointsSectionProps) {
-
+export function WebhookEndpointsSection({ webhooks }: WebhookEndpointsSectionProps) {
   const { slug } = useParams({
-    from: "/orgs/$slug"
-  })
-  const [secretDialogEndpoint, setSecretDialogEndpoint] =
-    useState<Webhook | null>(null)
-  const [deliveriesEndpoint, setDeliveriesEndpoint] =
-    useState<Webhook | null>(null)
+    from: "/orgs/$slug",
+  });
+  const [secretDialogEndpoint, setSecretDialogEndpoint] = useState<Webhook | null>(null);
+  const [deliveriesEndpoint, setDeliveriesEndpoint] = useState<Webhook | null>(null);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 rounded-xl border border-border bg-card p-4">
@@ -50,9 +45,7 @@ export function WebhookEndpointsSection({
             <div className="flex items-start justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
                 <Globe className="size-4 shrink-0 text-muted-foreground" />
-                <span className="truncate font-mono text-xs">
-                  {webhook.url}
-                </span>
+                <span className="truncate font-mono text-xs">{webhook.url}</span>
               </div>
               <div className="flex shrink-0 items-center gap-1">
                 <DropdownMenu>
@@ -64,15 +57,18 @@ export function WebhookEndpointsSection({
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
                       onSelect={(event) => {
-                        event.preventDefault()
-                        setSecretDialogEndpoint(webhook)
+                        event.preventDefault();
+                        setSecretDialogEndpoint(webhook);
                       }}
                     >
                       <KeyRound className="size-3.5" />
                       View signing secret
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/orgs/$slug/webhooks/$webhookId" params={{ slug, webhookId: webhook.id }}>
+                      <Link
+                        to="/orgs/$slug/webhooks/$webhookId"
+                        params={{ slug, webhookId: webhook.id }}
+                      >
                         <Pencil className="size-3.5" />
                         Details
                       </Link>
@@ -101,11 +97,7 @@ export function WebhookEndpointsSection({
             <p className="mt-2 text-xs text-muted-foreground">
               Last delivery:{" "}
               {webhook.lastLog ? (
-                <span
-                  className={cn(
-                    webhook.lastLog.status === "FAILED" && "text-destructive",
-                  )}
-                >
+                <span className={cn(webhook.lastLog.status === "FAILED" && "text-destructive")}>
                   {webhook.lastLog.status === "FAILED"
                     ? "Failed"
                     : webhook.lastLog.status === "PENDING"
@@ -132,16 +124,16 @@ export function WebhookEndpointsSection({
         endpointUrl={secretDialogEndpoint?.url ?? null}
         secret={secretDialogEndpoint?.signingSecret ?? null}
         onOpenChange={(open) => {
-          if (!open) setSecretDialogEndpoint(null)
+          if (!open) setSecretDialogEndpoint(null);
         }}
       />
 
       <WebhookDeliveriesSheet
         endpointUrl={deliveriesEndpoint?.url ?? null}
         onOpenChange={(open) => {
-          if (!open) setDeliveriesEndpoint(null)
+          if (!open) setDeliveriesEndpoint(null);
         }}
       />
     </div>
-  )
+  );
 }

@@ -33,9 +33,7 @@ export type GetWebhookResponse = {
   logs: WebhookLog[];
 };
 
-export async function getWebhookHttp(
-  params: GetWebhookParams,
-): Promise<GetWebhookResponse> {
+export async function getWebhookHttp(params: GetWebhookParams): Promise<GetWebhookResponse> {
   const { orgSlug, webhookId } = params;
   const { data } = await api.get<GetWebhookResponse>(
     `/organizations/${orgSlug}/webhooks/${webhookId}`,

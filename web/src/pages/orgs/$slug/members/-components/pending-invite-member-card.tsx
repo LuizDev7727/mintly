@@ -1,21 +1,19 @@
-import type { PendingInvite } from "@/types/pending-invite";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { Clock, Mail, UserRoundX } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import { dayjs } from "@/lib/dayjs";
 import { revokeInviteHttp } from "@/http/organization/revoke-invite.http";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { Clock, Mail, UserRoundX } from "lucide-react";
+import { dayjs } from "@/lib/dayjs";
+import type { PendingInvite } from "@/types/pending-invite";
 
 type PendingInviteMemberCardProps = {
   inviteMember: PendingInvite;
 };
 
-export function PendingInviteMemberCard({
-  inviteMember,
-}: PendingInviteMemberCardProps) {
+export function PendingInviteMemberCard({ inviteMember }: PendingInviteMemberCardProps) {
   const { slug } = useParams({ from: "/orgs/$slug" });
   const queryClient = useQueryClient();
 
@@ -63,9 +61,7 @@ export function PendingInviteMemberCard({
         size="sm"
         variant="destructive"
         disabled={isPending}
-        onClick={() =>
-          handleRevoke({ orgSlug: slug, inviteId: inviteMember.id })
-        }
+        onClick={() => handleRevoke({ orgSlug: slug, inviteId: inviteMember.id })}
       >
         {isPending ? <Spinner /> : <UserRoundX className="size-3" />}
         Revoke Invite

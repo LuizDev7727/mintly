@@ -1,4 +1,7 @@
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 import { FilterIcon } from "lucide-react";
+import { parseAsInteger, useQueryState } from "nuqs";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,9 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getInvoicesHttp } from "@/http/organization/get-invoices.http";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { parseAsInteger, useQueryState } from "nuqs";
 import { InvoiceCard } from "./invoice-card";
 import { InvoiceCardSkeleton } from "./invoice-card-skeleton";
 import { InvoiceHistoryEmpty } from "./invoice-history-empty";
@@ -24,16 +24,12 @@ const SKELETON_CARDS_COUNT = 8;
 export function InvoiceHistory() {
   const { slug } = useParams({ from: "/orgs/$slug" });
 
-  const [currentPage] = useQueryState(
-    "invoice_page",
-    parseAsInteger.withDefault(0),
-  );
+  const [currentPage] = useQueryState("invoice_page", parseAsInteger.withDefault(0));
   const [statusFilter, setStatusFilter] = useState(ALL_STATUSES);
 
   const { data, isLoading } = useQuery({
     queryKey: ["invoices", slug, currentPage],
-    queryFn: () =>
-      getInvoicesHttp({ orgSlug: slug, pageIndex: currentPage }),
+    queryFn: () => getInvoicesHttp({ orgSlug: slug, pageIndex: currentPage }),
     placeholderData: keepPreviousData,
   });
 
@@ -42,8 +38,7 @@ export function InvoiceHistory() {
   const totalPages = data?.meta.totalPages ?? 0;
 
   const invoices = allInvoices.filter(
-    (invoice) =>
-      statusFilter === ALL_STATUSES || invoice.status === statusFilter,
+    (invoice) => statusFilter === ALL_STATUSES || invoice.status === statusFilter,
   );
 
   const isEmpty = !isLoading && invoices.length === 0;
@@ -60,13 +55,8 @@ export function InvoiceHistory() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuRadioGroup
-              value={statusFilter}
-              onValueChange={setStatusFilter}
-            >
-              <DropdownMenuRadioItem value={ALL_STATUSES}>
-                All statuses
-              </DropdownMenuRadioItem>
+            <DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
+              <DropdownMenuRadioItem value={ALL_STATUSES}>All statuses</DropdownMenuRadioItem>
               {Object.entries(invoiceStatusConfig).map(([status, config]) => (
                 <DropdownMenuRadioItem key={status} value={status}>
                   {config.label}
@@ -77,9 +67,7 @@ export function InvoiceHistory() {
         </DropdownMenu>
       </header>
 
-      {isEmpty && (
-        <InvoiceHistoryEmpty isFiltered={allInvoices.length > 0} />
-      )}
+      {isEmpty && <InvoiceHistoryEmpty isFiltered={allInvoices.length > 0} />}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {isLoading &&

@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button"
-import { Link, useParams } from "@tanstack/react-router"
-import { ArrowLeft, WebhookOff } from "lucide-react"
+import { Link, useParams } from "@tanstack/react-router";
+import { ArrowLeft, WebhookOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function WebhookNotFound() {
   const { slug } = useParams({
     from: "/orgs/$slug",
-  })
+  });
 
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
@@ -25,5 +25,5 @@ export function WebhookNotFound() {
         </Link>
       </Button>
     </div>
-  )
+  );
 }

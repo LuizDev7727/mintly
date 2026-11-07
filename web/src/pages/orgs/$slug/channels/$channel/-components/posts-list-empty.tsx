@@ -1,3 +1,5 @@
+import { Image } from "lucide-react";
+import { useQueryState } from "nuqs";
 import {
   Empty,
   EmptyDescription,
@@ -5,8 +7,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Image } from "lucide-react";
-import { useQueryState } from "nuqs";
 
 export function PostsListEmpty() {
   const [currentFolderName] = useQueryState("folder_name");
@@ -33,8 +33,7 @@ export function PostsListEmpty() {
         )}
         {!isRootFolder && (
           <EmptyDescription>
-            No posts found in{" "}
-            <span className="font-semibold">{currentFolderName}</span>
+            No posts found in <span className="font-semibold">{currentFolderName}</span>
             {titleFilter && ` matching "${titleFilter}"`}.{" "}
           </EmptyDescription>
         )}

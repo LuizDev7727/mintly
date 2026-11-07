@@ -1,12 +1,12 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { Activity as ActivityIcon } from "lucide-react";
 import { Timeline } from "@/components/ui/timeline";
-import type { Activity } from "@/types/activity";
 import { ActivityCard } from "@/pages/orgs/$slug/activities/-components/activity-card";
+import type { Activity } from "@/types/activity";
 
 export type ActivitiesProps = {
   activities: Activity[];
-}
+};
 
 export function Activities({ activities }: ActivitiesProps) {
   const { slug } = useParams({ from: "/orgs/$slug" });

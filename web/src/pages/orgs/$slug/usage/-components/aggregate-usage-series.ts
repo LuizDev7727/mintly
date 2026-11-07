@@ -18,19 +18,13 @@ function getBucketDate(date: Date, granularity: UsageGranularity) {
 }
 
 /** Agrupa a série diária em semanas ou meses, somando cada tipo de evento. */
-export function aggregateUsageSeries(
-  series: UsagePoint[],
-  granularity: UsageGranularity,
-) {
+export function aggregateUsageSeries(series: UsagePoint[], granularity: UsageGranularity) {
   if (granularity === "daily") return series;
 
   const buckets = new Map<string, UsagePoint>();
 
   for (const point of series) {
-    const bucketKey = format(
-      getBucketDate(new Date(point.date), granularity),
-      "yyyy-MM-dd",
-    );
+    const bucketKey = format(getBucketDate(new Date(point.date), granularity), "yyyy-MM-dd");
     const bucket = buckets.get(bucketKey) ?? {
       date: bucketKey,
       clipRendered: 0,
@@ -48,7 +42,5 @@ export function aggregateUsageSeries(
     buckets.set(bucketKey, bucket);
   }
 
-  return Array.from(buckets.values()).sort((a, b) =>
-    a.date.localeCompare(b.date),
-  );
+  return Array.from(buckets.values()).sort((a, b) => a.date.localeCompare(b.date));
 }

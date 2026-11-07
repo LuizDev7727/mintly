@@ -1,5 +1,5 @@
 import { Folder } from "lucide-react";
-
+import { useQueryState } from "nuqs";
 import {
   Empty,
   EmptyDescription,
@@ -7,7 +7,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { useQueryState } from "nuqs";
 
 export function FoldersListEmpty() {
   const [currentFolderName] = useQueryState("folder_name");
@@ -22,9 +21,7 @@ export function FoldersListEmpty() {
         <EmptyTitle>No Folders Yet</EmptyTitle>
         <EmptyDescription>
           You haven&apos;t created any folders in{" "}
-          <span className="font-semibold">
-            {isRootFolder ? "this channel" : currentFolderName}
-          </span>
+          <span className="font-semibold">{isRootFolder ? "this channel" : currentFolderName}</span>
           . Get started by creating your first folder.
         </EmptyDescription>
       </EmptyHeader>

@@ -14,9 +14,7 @@ export type GetProjectResponse = {
   };
 };
 
-export async function getProjectHttp(
-  params: GetProjectParams,
-): Promise<GetProjectResponse> {
+export async function getProjectHttp(params: GetProjectParams): Promise<GetProjectResponse> {
   const { orgSlug, channelId, projectId } = params;
   const { data } = await api.get<GetProjectResponse>(
     `/organizations/${orgSlug}/channels/${channelId}/projects/${projectId}`,

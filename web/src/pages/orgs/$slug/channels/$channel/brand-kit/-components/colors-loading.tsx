@@ -1,8 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton"
-
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function ColorsLoading() {
-  return (
-    <Skeleton className="h-9 w-40 rounded-lg" />
-  )
+  return <Skeleton className="h-9 w-40 rounded-lg" />;
 }

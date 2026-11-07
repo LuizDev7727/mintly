@@ -1,8 +1,7 @@
-import { test, expect } from "@playwright/test";
 import { faker } from "@faker-js/faker";
+import { expect, test } from "@playwright/test";
 
-const CHANNEL_URL =
-  "/orgs/test-user/channels/019f1b80-42cf-79bb-b828-1cff43be9900";
+const CHANNEL_URL = "/orgs/test-user/channels/019f1b80-42cf-79bb-b828-1cff43be9900";
 
 test.beforeEach(async ({ page }) => {
   await page.goto(CHANNEL_URL);
@@ -21,9 +20,7 @@ test.describe("Folder Management", () => {
     await expect(page.getByText(folderTitle)).toBeVisible();
   });
 
-  test("should navigate into a folder when clicking on it", async ({
-    page,
-  }) => {
+  test("should navigate into a folder when clicking on it", async ({ page }) => {
     await page.waitForLoadState("networkidle");
     await page.getByRole("button", { name: "New Folder" }).click();
     const folderTitle = faker.word.noun();
@@ -55,9 +52,7 @@ test.describe("Folder Management", () => {
     await page.keyboard.press("Escape");
     await page.getByRole("dialog").waitFor({ state: "hidden" });
 
-    const folderCard = page
-      .locator("div.rounded-lg")
-      .filter({ hasText: folderTitle });
+    const folderCard = page.locator("div.rounded-lg").filter({ hasText: folderTitle });
     await folderCard.getByRole("button").last().click();
     await page.getByRole("button", { name: "Rename" }).click();
 
@@ -79,9 +74,7 @@ test.describe("Folder Management", () => {
     await page.keyboard.press("Escape");
     await page.getByRole("dialog").waitFor({ state: "hidden" });
 
-    const folderCard = page
-      .locator("div.rounded-lg")
-      .filter({ hasText: folderTitle });
+    const folderCard = page.locator("div.rounded-lg").filter({ hasText: folderTitle });
     await folderCard.getByRole("button").last().click();
     await page.getByRole("button", { name: "Delete" }).click();
 

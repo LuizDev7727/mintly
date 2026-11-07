@@ -5,9 +5,7 @@ type RevokeInviteParams = {
   inviteId: string;
 };
 
-export async function revokeInviteHttp(
-  params: RevokeInviteParams,
-): Promise<void> {
+export async function revokeInviteHttp(params: RevokeInviteParams): Promise<void> {
   const { orgSlug, inviteId } = params;
   await api.delete(`/organizations/${orgSlug}/invites/${inviteId}`);
 }

@@ -9,10 +9,7 @@ import { PendingInvitesPagination } from "./pending-invites-pagination";
 export function PendingInvitesList() {
   const { slug } = useParams({ from: "/orgs/$slug" });
 
-  const [currentPage] = useQueryState(
-    "invites_page",
-    parseAsInteger.withDefault(0),
-  );
+  const [currentPage] = useQueryState("invites_page", parseAsInteger.withDefault(0));
 
   // useSuspenseQuery re-suspends on every queryKey change (it does not accept
   // placeholderData), so changing pages shows the Suspense fallback again —

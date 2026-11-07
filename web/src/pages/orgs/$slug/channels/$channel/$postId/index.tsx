@@ -1,13 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { getPostHttp } from "@/http/posts/get-post.http";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { getPostHttp } from "@/http/posts/get-post.http";
 import { PostDetails } from "./-components/post-details";
 import { PostDetailsLoading } from "./-components/post-details-loading";
 
-export const Route = createFileRoute(
-  "/orgs/$slug/channels/$channel/$postId/",
-)({
+export const Route = createFileRoute("/orgs/$slug/channels/$channel/$postId/")({
   loader: ({ params }) => {
     return getPostHttp({
       orgSlug: params.slug,
@@ -19,9 +17,7 @@ export const Route = createFileRoute(
     meta: [
       {
         name: "description",
-        content:
-          loaderData?.description.slice(0, 150) ||
-          "View the details of this post",
+        content: loaderData?.description.slice(0, 150) || "View the details of this post",
       },
       { title: loaderData ? `${loaderData.title} | Mintly` : "Generating SEO | Mintly" },
     ],

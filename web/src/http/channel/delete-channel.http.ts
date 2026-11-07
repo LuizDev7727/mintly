@@ -5,9 +5,7 @@ type DeleteChannelParams = {
   channelId: string;
 };
 
-export async function deleteChannelHttp(
-  params: DeleteChannelParams,
-): Promise<void> {
+export async function deleteChannelHttp(params: DeleteChannelParams): Promise<void> {
   const { orgSlug, channelId } = params;
   await api.delete(`/organizations/${orgSlug}/channels/${channelId}`);
 }

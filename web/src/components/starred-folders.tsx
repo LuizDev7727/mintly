@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
 import { Folder, Star, Trash2 } from "lucide-react";
+import { useState } from "react";
 import type { GetStarredFoldersResponse } from "@/http/folder/get-starred-folders.http";
 import { getStarredFoldersHttp } from "@/http/folder/get-starred-folders.http";
 import { removeStarredFolderHttp } from "@/http/folder/remove-starred-folder.http";
@@ -25,27 +25,21 @@ export function StarredFolders() {
 
   const { data, isLoading } = useQuery({
     queryKey: starredFoldersQueryKey,
-    queryFn: () =>
-      getStarredFoldersHttp({ orgSlug: slug, channelId: channel }),
+    queryFn: () => getStarredFoldersHttp({ orgSlug: slug, channelId: channel }),
   });
 
   const { mutate: removeStarredFolder } = useMutation({
     mutationFn: removeStarredFolderHttp,
     onSuccess: (_data, variables) => {
-      queryClient.setQueryData<GetStarredFoldersResponse>(
-        starredFoldersQueryKey,
-        (old) => {
-          if (!old) {
-            return old;
-          }
+      queryClient.setQueryData<GetStarredFoldersResponse>(starredFoldersQueryKey, (old) => {
+        if (!old) {
+          return old;
+        }
 
-          return {
-            folders: old.folders.filter(
-              (folder) => folder.id !== variables.folderId,
-            ),
-          };
-        },
-      );
+        return {
+          folders: old.folders.filter((folder) => folder.id !== variables.folderId),
+        };
+      });
     },
   });
 
@@ -76,14 +70,10 @@ export function StarredFolders() {
               </SidebarMenuButton>
             </PopoverTrigger>
             <PopoverContent side="right" align="start" className="w-64 p-2">
-              <p className="px-2 pb-2 text-xs font-medium text-muted-foreground">
-                Starred Folders
-              </p>
+              <p className="px-2 pb-2 text-xs font-medium text-muted-foreground">Starred Folders</p>
 
               {isStarredFoldersEmpty ? (
-                <p className="px-2 py-1.5 text-sm text-muted-foreground">
-                  No starred folders yet.
-                </p>
+                <p className="px-2 py-1.5 text-sm text-muted-foreground">No starred folders yet.</p>
               ) : (
                 <div className="flex flex-col gap-0.5">
                   {folders.map((folder) => (
@@ -114,9 +104,7 @@ export function StarredFolders() {
               )}
             </PopoverContent>
           </Popover>
-          {!isStarredFoldersEmpty && (
-            <SidebarMenuBadge>{folders.length}</SidebarMenuBadge>
-          )}
+          {!isStarredFoldersEmpty && <SidebarMenuBadge>{folders.length}</SidebarMenuBadge>}
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>

@@ -1,5 +1,5 @@
-import { CreateChannelDialog } from "@/components/create-channel-dialog";
 import { TvMinimal } from "lucide-react";
+import { CreateChannelDialog } from "@/components/create-channel-dialog";
 
 export function CreateChannelCard() {
   return (
@@ -8,9 +8,7 @@ export function CreateChannelCard() {
         <TvMinimal className="size-5 text-muted-foreground" />
 
         <div>
-          <h3 className="text-[15px] font-semibold leading-[1.3]">
-            Create channel
-          </h3>
+          <h3 className="text-[15px] font-semibold leading-[1.3]">Create channel</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             Create posts, generate projects and configure your brand-kit.
           </p>

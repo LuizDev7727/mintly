@@ -1,7 +1,7 @@
 type VideoCardProps = {
-  src: string,
-  poster?: string,
-}
+  src: string;
+  poster?: string;
+};
 
 export function VideoCard({ src, poster }: VideoCardProps) {
   return (
@@ -14,5 +14,5 @@ export function VideoCard({ src, poster }: VideoCardProps) {
       preload="metadata"
       className="size-full bg-black object-contain"
     />
-  )
+  );
 }

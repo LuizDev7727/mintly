@@ -1,34 +1,25 @@
-import { getFoldersHttp } from "@/http/folder/get-folders.http";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { FolderCard } from "./folder-card";
 import { parseAsInteger, useQueryState } from "nuqs";
-import { FoldersPagination } from "./folders-pagination";
-import { FolderListLoading } from "./folder-list-loading";
+import { getFoldersHttp } from "@/http/folder/get-folders.http";
 import { BackToPreviousFolder } from "./back-to-previous-folder";
-import { FoldersListEmpty } from "./folders-list-empty";
 import { BackToRootFolderButton } from "./back-to-root-folder-button";
+import { FolderCard } from "./folder-card";
+import { FolderListLoading } from "./folder-list-loading";
+import { FoldersListEmpty } from "./folders-list-empty";
+import { FoldersPagination } from "./folders-pagination";
 
 export function FoldersList() {
   const [currentFolderId] = useQueryState("folder_id");
 
-  const [currentFolderPage] = useQueryState(
-    "folder_page",
-    parseAsInteger.withDefault(0),
-  );
+  const [currentFolderPage] = useQueryState("folder_page", parseAsInteger.withDefault(0));
 
   const { slug: orgSlug, channel: channelId } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
 
   const { data, isLoading, error } = useQuery({
-    queryKey: [
-      "folders",
-      orgSlug,
-      channelId,
-      currentFolderId,
-      currentFolderPage,
-    ],
+    queryKey: ["folders", orgSlug, channelId, currentFolderId, currentFolderPage],
     queryFn: async () =>
       getFoldersHttp({
         orgSlug,

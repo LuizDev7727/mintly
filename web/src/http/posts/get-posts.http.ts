@@ -1,5 +1,5 @@
-import { api } from "../api";
 import type { Post } from "@/types/post";
+import { api } from "../api";
 
 type GetPostsParams = {
   orgSlug: string;
@@ -19,11 +19,8 @@ export type GetPostsResponse = {
   };
 };
 
-export async function getPostsHttp(
-  params: GetPostsParams,
-): Promise<GetPostsResponse> {
-  const { orgSlug, channelSlug, folderId, pageIndex, titleFilter, statusFilter, ownerId } =
-    params;
+export async function getPostsHttp(params: GetPostsParams): Promise<GetPostsResponse> {
+  const { orgSlug, channelSlug, folderId, pageIndex, titleFilter, statusFilter, ownerId } = params;
   const { data } = await api.get<GetPostsResponse>(
     `/organizations/${orgSlug}/channels/${channelSlug}/posts`,
     { params: { folderId, pageIndex, titleFilter, statusFilter, ownerId } },

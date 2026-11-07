@@ -1,5 +1,5 @@
-import { test, expect } from "@playwright/test";
 import { faker } from "@faker-js/faker";
+import { expect, test } from "@playwright/test";
 
 test.describe("Delete Channel", () => {
   test("should delete a channel successfully", async ({ page }) => {
@@ -11,15 +11,11 @@ test.describe("Delete Channel", () => {
     await page.getByPlaceholder("Amazon").fill(channelName);
     await page.getByRole("button", { name: "Create Channel" }).click();
 
-    await expect(
-      page.getByText("Channel created successfully!"),
-    ).toBeVisible();
+    await expect(page.getByText("Channel created successfully!")).toBeVisible();
     await page.keyboard.press("Escape");
     await page.getByRole("dialog").waitFor({ state: "hidden" });
 
-    const channelCard = page
-      .locator("div.rounded-md")
-      .filter({ hasText: channelName });
+    const channelCard = page.locator("div.rounded-md").filter({ hasText: channelName });
     await channelCard.getByRole("link", { name: "See channel" }).click();
 
     await page.waitForLoadState("networkidle");
@@ -32,9 +28,7 @@ test.describe("Delete Channel", () => {
     const deleteDialog = page.getByRole("dialog", { name: "Delete Channel" });
     await deleteDialog.getByRole("button", { name: "Delete Channel" }).click();
 
-    await expect(
-      page.getByText("Channel deleted successfully"),
-    ).toBeVisible();
+    await expect(page.getByText("Channel deleted successfully")).toBeVisible();
     await page.waitForURL("**/orgs/test-user");
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL("/orgs/test-user");

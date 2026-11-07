@@ -14,9 +14,7 @@ describe("getFirstErrorMessage", () => {
       ],
     };
 
-    expect(getFirstErrorMessage(errors)).toBe(
-      "Post needs at least one integration selected",
-    );
+    expect(getFirstErrorMessage(errors)).toBe("Post needs at least one integration selected");
   });
 
   it("should return the first message when there are several errors", () => {

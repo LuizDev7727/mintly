@@ -25,8 +25,7 @@ function BrandKitPage() {
       <header>
         <h1 className="text-xl font-medium">Brand Kit</h1>
         <p className="text-sm text-muted-foreground">
-          Define the look of your channel. We use it to generate thumbnails that
-          feel like yours.
+          Define the look of your channel. We use it to generate thumbnails that feel like yours.
         </p>
       </header>
 
@@ -37,7 +36,7 @@ function BrandKitPage() {
             Pick the colors that should show up in your thumbnails.
           </p>
         </div>
-        <Suspense fallback={<ColorsLoading/>}>
+        <Suspense fallback={<ColorsLoading />}>
           <BrandColors />
         </Suspense>
       </section>

@@ -34,16 +34,7 @@ export function InstagramIcon({ className }: { className?: string }) {
         </radialGradient>
       </defs>
       <rect width="24" height="24" rx="6" fill="url(#instagram-gradient)" />
-      <rect
-        x="6"
-        y="6"
-        width="12"
-        height="12"
-        rx="4"
-        stroke="#fff"
-        strokeWidth="1.5"
-        fill="none"
-      />
+      <rect x="6" y="6" width="12" height="12" rx="4" stroke="#fff" strokeWidth="1.5" fill="none" />
       <circle cx="12" cy="12" r="3.2" stroke="#fff" strokeWidth="1.5" fill="none" />
       <circle cx="15.6" cy="8.4" r="0.9" fill="#fff" />
     </svg>

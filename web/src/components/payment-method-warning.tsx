@@ -1,11 +1,11 @@
+import { useMutation } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 import { CreditCard } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { usePaymentMethodStatus } from "@/hooks/use-payment-method-status";
 import { createCheckoutSessionHttp } from "@/http/organization/create-checkout-session.http";
-import { useMutation } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { toast } from "sonner";
 
 export function PaymentMethodWarning() {
   const { slug } = useParams({ from: "/orgs/$slug" });
@@ -35,9 +35,7 @@ export function PaymentMethodWarning() {
   return (
     <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-destructive/30 bg-destructive/10 py-1 pl-3 pr-1 text-xs text-destructive">
       <CreditCard className="size-3.5 shrink-0" />
-      <span className="hidden sm:inline">
-        Add a payment method
-      </span>
+      <span className="hidden sm:inline">Add a payment method</span>
       <Button
         size="sm"
         variant="destructive"

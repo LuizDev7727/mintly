@@ -1,6 +1,6 @@
-import { useId, useRef, useState } from "react";
-import { ImagePlusIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ImagePlusIcon } from "lucide-react";
+import { useId, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth";
 import {
-  updateProfileSchema,
   type UpdateProfileFormType,
+  updateProfileSchema,
 } from "@/schemas/profile/update-profile.schema";
 import { getInitials } from "@/utils/get-initials";
 import { uploadFile } from "@/utils/upload-file";
@@ -56,9 +56,7 @@ function ProfileAvatar({ name, logo, onFileSelected }: ProfileAvatarProps) {
             width={80}
           />
         ) : (
-          <span className="font-medium text-lg text-muted-foreground">
-            {getInitials(name)}
-          </span>
+          <span className="font-medium text-lg text-muted-foreground">{getInitials(name)}</span>
         )}
         <button
           aria-label="Change profile picture"
@@ -86,11 +84,7 @@ type UpdateProfileFormProps = {
   bio: string | null;
 };
 
-export function UpdateProfileForm({
-  name,
-  logo,
-  bio,
-}: UpdateProfileFormProps) {
+export function UpdateProfileForm({ name, logo, bio }: UpdateProfileFormProps) {
   const id = useId();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
@@ -110,8 +104,7 @@ export function UpdateProfileForm({
   const bioValue = watch("bio") ?? "";
 
   async function onSubmit(formBody: UpdateProfileFormType) {
-
-    let image: string | undefined = undefined;
+    let image: string | undefined;
 
     if (avatarFile) {
       const { key } = await uploadFile({
@@ -137,19 +130,11 @@ export function UpdateProfileForm({
         <div className="h-32">
           <div className="relative flex size-full items-center justify-center overflow-hidden bg-primary" />
         </div>
-        <ProfileAvatar
-          logo={logo}
-          name={name}
-          onFileSelected={setAvatarFile}
-        />
+        <ProfileAvatar logo={logo} name={name} onFileSelected={setAvatarFile} />
         <div className="space-y-4 px-6 pt-4 pb-6">
           <Field>
             <Label htmlFor={`${id}-name`}>Name</Label>
-            <Input
-              id={`${id}-name`}
-              placeholder="Matt Welsh"
-              {...register("name")}
-            />
+            <Input id={`${id}-name`} placeholder="Matt Welsh" {...register("name")} />
             {errors.name && <FieldError>{errors.name.message}</FieldError>}
           </Field>
           <Field>
@@ -167,14 +152,11 @@ export function UpdateProfileForm({
               id={`${id}-bio-description`}
               role="status"
             >
-              <span className="tabular-nums">
-                {BIO_MAX_LENGTH - bioValue.length}
-              </span>{" "}
-              characters left
+              <span className="tabular-nums">{BIO_MAX_LENGTH - bioValue.length}</span> characters
+              left
             </p>
             {errors.bio && <FieldError>{errors.bio.message}</FieldError>}
           </Field>
-
         </div>
       </div>
       <DialogFooter className="border-t px-6 py-4">

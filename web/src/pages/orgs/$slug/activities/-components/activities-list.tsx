@@ -1,40 +1,36 @@
-import { useEffect, useRef } from "react";
-import { useParams } from "@tanstack/react-router";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
-import { Timeline } from "@/components/ui/timeline";
-import { Spinner } from "@/components/ui/spinner";
-import { getActivitiesHttp } from "@/http/activity/get-activities.http";
+import { useParams } from "@tanstack/react-router";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
+import { useEffect, useRef } from "react";
+import { Spinner } from "@/components/ui/spinner";
+import { Timeline } from "@/components/ui/timeline";
+import { getActivitiesHttp } from "@/http/activity/get-activities.http";
+import { ActivitiesListEmpty } from "./activities-list-empty";
 import { ACTIVITY_ACTIONS } from "./activity-action-config";
 import { ActivityCard } from "./activity-card";
-import { ActivitiesListEmpty } from "./activities-list-empty";
 
 export function ActivitiesList() {
   const { slug } = useParams({ from: "/orgs/$slug/activities/" });
 
-  const [actionFilter] = useQueryState(
-    "action_filter",
-    parseAsStringLiteral(ACTIVITY_ACTIONS),
-  );
+  const [actionFilter] = useQueryState("action_filter", parseAsStringLiteral(ACTIVITY_ACTIONS));
 
   const [authorFilter] = useQueryState("author_filter");
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useSuspenseInfiniteQuery({
-      queryKey: ["activities", slug, actionFilter, authorFilter],
-      queryFn: ({ pageParam }) =>
-        getActivitiesHttp({
-          orgSlug: slug,
-          cursor: pageParam,
-          actionFilter,
-          authorId: authorFilter ?? null,
-        }),
-      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-      initialPageParam: undefined as string | undefined,
-    });
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery({
+    queryKey: ["activities", slug, actionFilter, authorFilter],
+    queryFn: ({ pageParam }) =>
+      getActivitiesHttp({
+        orgSlug: slug,
+        cursor: pageParam,
+        actionFilter,
+        authorId: authorFilter ?? null,
+      }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    initialPageParam: undefined as string | undefined,
+  });
 
   const activities = data.pages.flatMap((page) => page.activities);
 
@@ -62,7 +58,6 @@ export function ActivitiesList() {
       observerRef.current?.disconnect();
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
 
   const isActivitiesEmpty = activities.length === 0;
 

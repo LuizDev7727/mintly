@@ -17,10 +17,7 @@ export function PostsLoading() {
           <div className="flex items-start gap-2.5 pt-2.5">
             <div className="flex -space-x-2">
               {Array.from({ length: 2 }).map((_, j) => (
-                <Skeleton
-                  key={j}
-                  className="size-6 shrink-0 rounded-full ring-2 ring-sidebar"
-                />
+                <Skeleton key={j} className="size-6 shrink-0 rounded-full ring-2 ring-sidebar" />
               ))}
             </div>
 

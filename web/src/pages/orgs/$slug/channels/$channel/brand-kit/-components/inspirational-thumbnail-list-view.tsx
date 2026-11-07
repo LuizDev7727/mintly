@@ -38,11 +38,7 @@ export function InspirationalThumbnailListView({
             />
 
             <div className="aspect-video h-12 shrink-0 overflow-hidden rounded bg-muted">
-              <img
-                alt={thumbnail.name}
-                src={thumbnail.url}
-                className="size-full object-cover"
-              />
+              <img alt={thumbnail.name} src={thumbnail.url} className="size-full object-cover" />
             </div>
 
             <div className="min-w-0">

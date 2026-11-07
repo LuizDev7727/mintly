@@ -3,10 +3,7 @@ export type UploadOutcome<TItem> =
   | { status: "cancelled"; id: string }
   | { status: "failed"; id: string };
 
-export type UploadedOutcome<TItem> = Extract<
-  UploadOutcome<TItem>,
-  { status: "uploaded" }
->;
+export type UploadedOutcome<TItem> = Extract<UploadOutcome<TItem>, { status: "uploaded" }>;
 
 type UploadBatchSummary<TItem> = {
   uploaded: UploadedOutcome<TItem>[];
@@ -38,9 +35,7 @@ type DescribeBatchResultParams = {
 const pluralize = (count: number, singular: string, plural: string) =>
   `${count} ${count === 1 ? singular : plural}`;
 
-export function describeBatchResult(
-  params: DescribeBatchResultParams,
-): BatchResultMessage {
+export function describeBatchResult(params: DescribeBatchResultParams): BatchResultMessage {
   const { createdCount, notUploadedCount } = params;
 
   if (createdCount === 0) {

@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { FolderRoot } from "lucide-react";
 import { useQueryState } from "nuqs";
+import { Button } from "@/components/ui/button";
 
 export function BackToRootFolderButton() {
   const [currentFolder, setFolder] = useQueryState("folder_id");
@@ -13,11 +13,7 @@ export function BackToRootFolderButton() {
 
   const isRootFolder = currentFolder === null;
   return (
-    <Button
-      variant={"outline"}
-      onClick={handleSetRootFolder}
-      disabled={isRootFolder}
-    >
+    <Button variant={"outline"} onClick={handleSetRootFolder} disabled={isRootFolder}>
       <FolderRoot className="size-4" />
       Back to Root
     </Button>

@@ -1,5 +1,5 @@
-import { test, expect } from "@playwright/test";
 import { faker } from "@faker-js/faker";
+import { expect, test } from "@playwright/test";
 
 test.describe("Sign Up", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
@@ -9,21 +9,15 @@ test.describe("Sign Up", () => {
 
   test("should render sign up page with correct title", async ({ page }) => {
     await expect(page).toHaveTitle(/Sign Up | Mintly/);
-    await expect(
-      page.getByRole("button", { name: "Create account" }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Create account" })).toBeVisible();
   });
 
-  test("should show validation errors when submitting empty form", async ({
-    page,
-  }) => {
+  test("should show validation errors when submitting empty form", async ({ page }) => {
     await page.getByRole("button", { name: "Create account" }).click();
 
     await expect(page.getByText("Name is required")).toBeVisible();
     await expect(page.getByText("Invalid email address")).toBeVisible();
-    await expect(
-      page.getByText("Password must be at least 8 characters"),
-    ).toBeVisible();
+    await expect(page.getByText("Password must be at least 8 characters")).toBeVisible();
     await expect(page.getByText("Please confirm your password")).toBeVisible();
   });
 
@@ -39,17 +33,13 @@ test.describe("Sign Up", () => {
     await toggleButton.click();
 
     await expect(passwordInput).toHaveAttribute("type", "text");
-    await expect(
-      page.getByRole("button", { name: "Hide password" }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Hide password" })).toBeVisible();
   });
 
   test("should show error when passwords do not match", async ({ page }) => {
     await page.getByLabel("Name").fill("John Doe");
     await page.getByLabel("Email").fill("john@example.com");
-    await page
-      .getByRole("textbox", { name: "Password", exact: true })
-      .fill("Password123@");
+    await page.getByRole("textbox", { name: "Password", exact: true }).fill("Password123@");
     await page.getByLabel("Confirm password").fill("Different123@");
     await page.getByRole("button", { name: "Create account" }).click();
 
@@ -62,14 +52,10 @@ test.describe("Sign Up", () => {
     await expect(page).toHaveURL("/");
   });
 
-  test("should create account successfully and redirect to orgs", async ({
-    page,
-  }) => {
+  test("should create account successfully and redirect to orgs", async ({ page }) => {
     await page.getByLabel("Name").fill(faker.person.fullName());
     await page.getByLabel("Email").fill(faker.internet.email());
-    await page
-      .getByRole("textbox", { name: "Password", exact: true })
-      .fill("Password123!");
+    await page.getByRole("textbox", { name: "Password", exact: true }).fill("Password123!");
     await page.getByLabel("Confirm password").fill("Password123!");
     await page.getByRole("button", { name: "Create account" }).click();
 

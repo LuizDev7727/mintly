@@ -19,8 +19,6 @@ export type GetPendingInvitesResponse = {
 };
 
 export async function getPendingInvitesHttp(): Promise<GetPendingInvitesResponse> {
-  const { data } = await api.get<GetPendingInvitesResponse>(
-    "/invitations/pending",
-  );
+  const { data } = await api.get<GetPendingInvitesResponse>("/invitations/pending");
   return data;
 }

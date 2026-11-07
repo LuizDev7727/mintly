@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Sign In", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
@@ -16,9 +16,7 @@ test.describe("Sign In", () => {
     await expect(page.getByRole("button", { name: "Log in" })).toBeVisible();
   });
 
-  test("should show validation errors when submitting empty form", async ({
-    page,
-  }) => {
+  test("should show validation errors when submitting empty form", async ({ page }) => {
     await page.getByRole("button", { name: "Log in" }).click();
 
     await expect(page.getByText("Invalid email address")).toBeVisible();
@@ -37,9 +35,7 @@ test.describe("Sign In", () => {
     await toggleButton.click();
 
     await expect(passwordInput).toHaveAttribute("type", "text");
-    await expect(
-      page.getByRole("button", { name: "Hide password" }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Hide password" })).toBeVisible();
   });
 
   test("should navigate to sign up page", async ({ page }) => {

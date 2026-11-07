@@ -1,8 +1,23 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import {
+  AlertTriangle,
+  Ban,
+  Calendar,
+  Check,
+  Loader2,
+  type LucideIcon,
+  RotateCcw,
+  Search,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
+import { debounce, parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
+import type { ChangeEvent } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MoveToFolderButton } from "./move-to-folder-button";
 import {
   Sheet,
   SheetContent,
@@ -14,27 +29,7 @@ import {
 } from "@/components/ui/sheet";
 import { getMembersHttp } from "@/http/organization/get-members.http";
 import { getInitials } from "@/utils/get-initials";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import {
-  AlertTriangle,
-  Ban,
-  Calendar,
-  Check,
-  Loader2,
-  RotateCcw,
-  Search,
-  SlidersHorizontal,
-  X,
-  type LucideIcon,
-} from "lucide-react";
-import {
-  debounce,
-  parseAsString,
-  parseAsStringLiteral,
-  useQueryState,
-} from "nuqs";
-import type { ChangeEvent } from "react";
+import { MoveToFolderButton } from "./move-to-folder-button";
 
 const POST_STATUSES = [
   "PROCESSING",
@@ -70,10 +65,7 @@ export function PostsFilter() {
   });
   const queryClient = useQueryClient();
 
-  const [title, setTitle] = useQueryState(
-    "title_filter",
-    parseAsString.withDefault(""),
-  );
+  const [title, setTitle] = useQueryState("title_filter", parseAsString.withDefault(""));
 
   const [statusFilter, setStatusFilter] = useQueryState(
     "status_filter",
@@ -116,8 +108,7 @@ export function PostsFilter() {
     setOwnerFilter(null);
   }
 
-  const isFilterEmpty =
-    title.length === 0 && !statusFilter && !ownerFilter;
+  const isFilterEmpty = title.length === 0 && !statusFilter && !ownerFilter;
 
   const activeFilterCount = (statusFilter ? 1 : 0) + (ownerFilter ? 1 : 0);
 
@@ -151,16 +142,12 @@ export function PostsFilter() {
           <SheetContent>
             <SheetHeader>
               <SheetTitle>Filter Posts</SheetTitle>
-              <SheetDescription>
-                Narrow down posts by status or owner.
-              </SheetDescription>
+              <SheetDescription>Narrow down posts by status or owner.</SheetDescription>
             </SheetHeader>
 
             <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-4">
               <div className="flex flex-col gap-2">
-                <h4 className="text-sm font-semibold text-foreground">
-                  Status
-                </h4>
+                <h4 className="text-sm font-semibold text-foreground">Status</h4>
                 <div className="flex flex-col gap-1.5">
                   {POST_STATUSES.map((status) => {
                     const StatusIcon = POST_STATUS_ICONS[status];
@@ -191,9 +178,7 @@ export function PostsFilter() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <h4 className="text-sm font-semibold text-foreground">
-                  Owner
-                </h4>
+                <h4 className="text-sm font-semibold text-foreground">Owner</h4>
                 <div className="flex flex-col gap-1.5">
                   {members.map((member) => (
                     <button
@@ -204,12 +189,8 @@ export function PostsFilter() {
                       className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-left text-sm transition-colors hover:bg-accent/50 data-[selected=true]:border-primary"
                     >
                       <Avatar size="sm">
-                        {member.user.avatarUrl && (
-                          <AvatarImage src={member.user.avatarUrl} />
-                        )}
-                        <AvatarFallback>
-                          {getInitials(member.user.name)}
-                        </AvatarFallback>
+                        {member.user.avatarUrl && <AvatarImage src={member.user.avatarUrl} />}
+                        <AvatarFallback>{getInitials(member.user.name)}</AvatarFallback>
                       </Avatar>
                       {member.user.name}
                     </button>

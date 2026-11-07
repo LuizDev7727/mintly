@@ -15,9 +15,9 @@ export async function createWebhookHttp(
   params: CreateWebhookParams,
 ): Promise<CreateWebhookResponse> {
   const { orgSlug, url, triggers } = params;
-  const { data } = await api.post<CreateWebhookResponse>(
-    `/organizations/${orgSlug}/webhooks`,
-    { url, triggers },
-  );
+  const { data } = await api.post<CreateWebhookResponse>(`/organizations/${orgSlug}/webhooks`, {
+    url,
+    triggers,
+  });
   return data;
 }

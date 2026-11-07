@@ -1,8 +1,4 @@
-export type VideoGenerationStatus =
-  | "queued"
-  | "generating"
-  | "complete"
-  | "error";
+export type VideoGenerationStatus = "queued" | "generating" | "complete" | "error";
 
 export type VideoGeneration = {
   id: string;

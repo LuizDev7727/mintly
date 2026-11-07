@@ -1,3 +1,6 @@
+import { FolderPlus } from "lucide-react";
+import { useQueryState } from "nuqs";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,10 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FolderPlus } from "lucide-react";
 import { CreateFolderForm } from "./create-folder-form";
-import { useQueryState } from "nuqs";
-import type { ReactNode } from "react";
 
 type CreateFolderDialogProps = {
   /** Custom trigger element. Defaults to the "New Folder" button. */
@@ -35,9 +35,8 @@ export function CreateFolderDialog({ trigger }: CreateFolderDialogProps) {
           <DialogTitle>Create Folder</DialogTitle>
           <DialogDescription>
             You are creating a folder in{" "}
-            <span className="font-bold">{currentFolderName ?? "Root"}</span>.
-            This will permanently delete your account and remove your data from
-            our servers.
+            <span className="font-bold">{currentFolderName ?? "Root"}</span>. This will permanently
+            delete your account and remove your data from our servers.
           </DialogDescription>
         </DialogHeader>
         <CreateFolderForm />

@@ -1,22 +1,22 @@
-import { SocialsToPostAvatarsGroup } from "./socials-to-post-avatars-group";
+import { Link } from "@tanstack/react-router";
+import { useRealtimeRun, useRealtimeStream } from "@trigger.dev/react-hooks";
+import { Eye, ImageIcon, MoreHorizontal, Trash2 } from "lucide-react";
+import { AnimatedCircularProgressBar } from "@/components/animated-circular-progress";
+import { ImageGeneration } from "@/components/image-generation";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Spinner } from "@/components/ui/spinner";
 import { dayjs } from "@/lib/dayjs";
 import type { Post } from "@/types/post";
 import { formatDuration } from "@/utils/format-duration";
-import { Link } from "@tanstack/react-router";
-import { Eye, ImageIcon, MoreHorizontal, Trash2 } from "lucide-react";
 import { PostStatusBadge } from "./post-status-badge";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { ImageGeneration } from "@/components/image-generation";
-import { useRealtimeRun, useRealtimeStream } from "@trigger.dev/react-hooks";
-import { AnimatedCircularProgressBar } from "@/components/animated-circular-progress";
-import { Checkbox } from "@/components/ui/checkbox";
+import { SocialsToPostAvatarsGroup } from "./socials-to-post-avatars-group";
 
 type PostGridCardProps = {
   post: Post;
@@ -41,9 +41,7 @@ export function PostGridCard({
   // decides if we subscribe at all. Once subscribed, `status` below reflects
   // the live value from the run's metadata instead.
   const wasProcessingOnLoad =
-    post.status !== "PUBLISHED" &&
-    post.status !== "ERROR" &&
-    post.status !== "CANCELED";
+    post.status !== "PUBLISHED" && post.status !== "ERROR" && post.status !== "CANCELED";
 
   const { run } = useRealtimeRun(post.runId, {
     accessToken: post.realtimeToken ?? undefined,
@@ -52,19 +50,14 @@ export function PostGridCard({
 
   const status = (run?.metadata?.status as Post["status"] | undefined) ?? post.status;
 
-  const isPostProcessing =
-    status !== "PUBLISHED" && status !== "ERROR" && status !== "CANCELED";
+  const isPostProcessing = status !== "PUBLISHED" && status !== "ERROR" && status !== "CANCELED";
 
   const isEncoding = status === "ENCODING";
 
-  const { parts } = useRealtimeStream<{ percent: number }>(
-    post.runId,
-    "encoding-progress",
-    {
-      accessToken: post.realtimeToken ?? undefined,
-      enabled: isEncoding && !!post.realtimeToken,
-    },
-  );
+  const { parts } = useRealtimeStream<{ percent: number }>(post.runId, "encoding-progress", {
+    accessToken: post.realtimeToken ?? undefined,
+    enabled: isEncoding && !!post.realtimeToken,
+  });
 
   const encodingProgress = parts.at(-1)?.percent ?? 0;
 
@@ -85,11 +78,7 @@ export function PostGridCard({
         )}
 
         {post.thumbnailUrl !== null ? (
-          <img
-            src={post.thumbnailUrl}
-            alt={post.title}
-            className="h-full w-full object-cover"
-          />
+          <img src={post.thumbnailUrl} alt={post.title} className="h-full w-full object-cover" />
         ) : !isEncoding ? (
           <div className="flex h-full w-full items-center justify-center text-muted-foreground">
             <ImageIcon size={28} />
@@ -97,9 +86,7 @@ export function PostGridCard({
         ) : null}
 
         <div className="absolute left-2 top-2 flex items-center gap-1">
-          <Checkbox
-            onCheckedChange={onSelect}
-          />
+          <Checkbox onCheckedChange={onSelect} />
           <PostStatusBadge status={status} />
         </div>
 
@@ -120,9 +107,7 @@ export function PostGridCard({
 
       {/* Linha inferior: avatar group + texto + menu */}
       <div className="flex items-start gap-2.5 pt-2.5">
-        <SocialsToPostAvatarsGroup
-          socialsToPost={post.socialsToPost}
-        />
+        <SocialsToPostAvatarsGroup socialsToPost={post.socialsToPost} />
 
         {/* Título + meta */}
         <div className="min-w-0 flex-1">
@@ -155,11 +140,7 @@ export function PostGridCard({
                   disabled={isCancellingPost}
                   onClick={onCancel}
                 >
-                  {isCancellingPost ? (
-                    <Spinner className="size-3.5" />
-                  ) : (
-                    <Trash2 size={13} />
-                  )}
+                  {isCancellingPost ? <Spinner className="size-3.5" /> : <Trash2 size={13} />}
                   Cancel
                 </Button>
               </DropdownMenuItem>

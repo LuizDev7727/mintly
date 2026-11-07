@@ -6,12 +6,12 @@ import {
   RotateCw,
   Send,
   XCircle,
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import type { GetWebhooksOverviewResponse } from "@/http/webhook/get-webhooks-overview.http"
-import { Sparkline } from "@/components/sparkline"
+} from "lucide-react";
+import { Sparkline } from "@/components/sparkline";
+import type { GetWebhooksOverviewResponse } from "@/http/webhook/get-webhooks-overview.http";
+import { cn } from "@/lib/utils";
 
-type MetricKey = keyof GetWebhooksOverviewResponse["metrics"]
+type MetricKey = keyof GetWebhooksOverviewResponse["metrics"];
 
 const METRIC_ORDER: MetricKey[] = [
   "totalDeliveries",
@@ -19,16 +19,16 @@ const METRIC_ORDER: MetricKey[] = [
   "failed",
   "pending",
   "retryRate",
-]
+];
 
 const METRIC_CONFIG: Record<
   MetricKey,
   {
-    label: string
-    icon: typeof Send
-    iconClassName: string
-    sparklineColor: string
-    formatValue: (value: number) => string
+    label: string;
+    icon: typeof Send;
+    iconClassName: string;
+    sparklineColor: string;
+    formatValue: (value: number) => string;
   }
 > = {
   totalDeliveries: {
@@ -66,27 +66,24 @@ const METRIC_CONFIG: Record<
     sparklineColor: "#8b5cf6",
     formatValue: (value) => `${value}%`,
   },
-}
+};
 
 interface WebhookStatsSectionProps {
-  metrics: GetWebhooksOverviewResponse["metrics"]
+  metrics: GetWebhooksOverviewResponse["metrics"];
 }
 
 export function WebhookStatsSection({ metrics }: WebhookStatsSectionProps) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
       {METRIC_ORDER.map((key) => {
-        const config = METRIC_CONFIG[key]
-        const metric = metrics[key]
-        const Icon = config.icon
-        const direction = metric.trend >= 0 ? "up" : "down"
-        const TrendIcon = direction === "up" ? ArrowUpRight : ArrowDownRight
+        const config = METRIC_CONFIG[key];
+        const metric = metrics[key];
+        const Icon = config.icon;
+        const direction = metric.trend >= 0 ? "up" : "down";
+        const TrendIcon = direction === "up" ? ArrowUpRight : ArrowDownRight;
 
         return (
-          <div
-            key={key}
-            className="rounded-lg border dark:bg-zinc-900/20 overflow-hidden"
-          >
+          <div key={key} className="rounded-lg border dark:bg-zinc-900/20 overflow-hidden">
             <div className="px-5 pt-5 space-y-3">
               <div
                 className={cn(
@@ -106,10 +103,7 @@ export function WebhookStatsSection({ metrics }: WebhookStatsSectionProps) {
 
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <TrendIcon
-                  className={cn(
-                    "size-3",
-                    direction === "up" ? "text-primary" : "text-destructive",
-                  )}
+                  className={cn("size-3", direction === "up" ? "text-primary" : "text-destructive")}
                 />
                 {Math.abs(metric.trend)}% from yesterday
               </div>
@@ -117,8 +111,8 @@ export function WebhookStatsSection({ metrics }: WebhookStatsSectionProps) {
 
             <Sparkline data={metric.sparkline} color={config.sparklineColor} />
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

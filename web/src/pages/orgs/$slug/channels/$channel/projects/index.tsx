@@ -1,28 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Projects } from "./-components/projects";
-import { Plus } from "lucide-react"
 import { Separator } from "@/components/ui/separator";
+import { Projects } from "./-components/projects";
 import { ProjectsFilter } from "./-components/projects-filter";
 
-export const Route = createFileRoute("/orgs/$slug/channels/$channel/projects/")(
-  {
-    head: () => ({
-      meta: [
-        {
-          name: "description",
-          content: "Create shorts/reels with AI-powered best moment generation",
-        },
-        { title: "Projects | Mintly" },
-      ],
-    }),
-    component: ChannelProjectsPage,
-  },
-);
+export const Route = createFileRoute("/orgs/$slug/channels/$channel/projects/")({
+  head: () => ({
+    meta: [
+      {
+        name: "description",
+        content: "Create shorts/reels with AI-powered best moment generation",
+      },
+      { title: "Projects | Mintly" },
+    ],
+  }),
+  component: ChannelProjectsPage,
+});
 
 function ChannelProjectsPage() {
-
-  const { slug, channel } = Route.useParams()
+  const { slug, channel } = Route.useParams();
 
   return (
     <div className="flex flex-1 flex-col gap-6">
@@ -35,18 +32,16 @@ function ChannelProjectsPage() {
                 to="/orgs/$slug/channels/$channel/projects/create-project"
                 params={{
                   slug,
-                  channel
+                  channel,
                 }}
               >
-                <Plus/>
+                <Plus />
                 Create Project
               </Link>
             </Button>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Generate best moments to your videos
-        </p>
+        <p className="text-sm text-muted-foreground">Generate best moments to your videos</p>
       </header>
 
       <div className="flex items-center justify-between gap-2">

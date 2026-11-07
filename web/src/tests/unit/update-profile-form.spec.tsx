@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { UpdateProfileForm } from "@/components/profile/update-profile-form";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const updateUserMock = vi.fn().mockResolvedValue(undefined);
 

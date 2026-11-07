@@ -31,18 +31,13 @@ export type GetUsageResponse = {
   }[];
 };
 
-export async function getUsageHttp(
-  params: GetUsageParams,
-): Promise<GetUsageResponse> {
+export async function getUsageHttp(params: GetUsageParams): Promise<GetUsageResponse> {
   const { orgSlug, startDate, endDate } = params;
-  const { data } = await api.get<GetUsageResponse>(
-    `/organizations/${orgSlug}/usage`,
-    {
-      params: {
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-      },
+  const { data } = await api.get<GetUsageResponse>(`/organizations/${orgSlug}/usage`, {
+    params: {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
     },
-  );
+  });
   return data;
 }

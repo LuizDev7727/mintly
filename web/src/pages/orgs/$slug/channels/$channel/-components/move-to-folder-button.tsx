@@ -1,7 +1,5 @@
-import { useState } from "react";
-import { useParams } from "@tanstack/react-router";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+import { useParams } from "@tanstack/react-router";
 import {
   ArrowLeft,
   ArrowLeftRight,
@@ -10,9 +8,10 @@ import {
   FolderIcon,
   FolderRoot,
 } from "lucide-react";
+import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +21,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { getFoldersHttp, type GetFoldersResponse } from "@/http/folder/get-folders.http";
+import { Spinner } from "@/components/ui/spinner";
+import { type GetFoldersResponse, getFoldersHttp } from "@/http/folder/get-folders.http";
 import { movePostsToFolderHttp } from "@/http/posts/move-posts-to-folder.http";
 import { FolderListLoading } from "./folder-list-loading";
 
@@ -163,12 +163,7 @@ export function MoveToFolderButton() {
         </DialogHeader>
 
         <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={isRoot}
-            onClick={handleBackToParent}
-          >
+          <Button variant="outline" size="sm" disabled={isRoot} onClick={handleBackToParent}>
             <ArrowLeft className="size-4" />
             {parent ? `Back to ${parent.title}` : "Back to Root"}
           </Button>
@@ -206,12 +201,8 @@ export function MoveToFolderButton() {
                     <FolderIcon className="size-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">
-                      {folder.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {folder.postsCount} posts
-                    </p>
+                    <p className="truncate text-sm font-semibold">{folder.title}</p>
+                    <p className="text-xs text-muted-foreground">{folder.postsCount} posts</p>
                   </div>
                 </button>
               ))}
@@ -246,16 +237,10 @@ export function MoveToFolderButton() {
         <DialogFooter className="items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
             Moving to:{" "}
-            <span className="font-medium text-foreground">
-              {browsingFolderTitle ?? "Root"}
-            </span>
+            <span className="font-medium text-foreground">{browsingFolderTitle ?? "Root"}</span>
           </p>
           <Button onClick={handleMoveHere} disabled={isMoving}>
-            {isMoving ? (
-              <Spinner className="size-4" />
-            ) : (
-              <ArrowLeftRight className="size-4" />
-            )}
+            {isMoving ? <Spinner className="size-4" /> : <ArrowLeftRight className="size-4" />}
             Move here
           </Button>
         </DialogFooter>

@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function WebhookDetailsLoading() {
   return (
@@ -40,5 +40,5 @@ export function WebhookDetailsLoading() {
         </div>
       </div>
     </div>
-  )
+  );
 }

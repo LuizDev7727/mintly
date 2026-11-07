@@ -5,13 +5,9 @@ export const updateSpendingLimitSchema = z.object({
   spendingLimit: z
     .string()
     .refine(
-      (value) =>
-        value.trim() === "" ||
-        (Number.isFinite(Number(value)) && Number(value) > 0),
+      (value) => value.trim() === "" || (Number.isFinite(Number(value)) && Number(value) > 0),
       "Enter an amount greater than zero, or leave empty for unlimited",
     ),
 });
 
-export type UpdateSpendingLimitFormType = z.infer<
-  typeof updateSpendingLimitSchema
->;
+export type UpdateSpendingLimitFormType = z.infer<typeof updateSpendingLimitSchema>;

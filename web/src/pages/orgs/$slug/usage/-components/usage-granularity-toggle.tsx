@@ -6,13 +6,9 @@ type UsageGranularityToggleProps = {
   onValueChange: (value: UsageGranularity) => void;
 };
 
-const itemClassName =
-  "text-muted-foreground data-[state=on]:text-foreground";
+const itemClassName = "text-muted-foreground data-[state=on]:text-foreground";
 
-export function UsageGranularityToggle({
-  value,
-  onValueChange,
-}: UsageGranularityToggleProps) {
+export function UsageGranularityToggle({ value, onValueChange }: UsageGranularityToggleProps) {
   return (
     <ToggleGroup
       type="single"

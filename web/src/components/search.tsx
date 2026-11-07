@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
-import { FolderIcon, ImageIcon, LayoutGridIcon, SearchIcon } from "lucide-react"
-import { useQuery } from "@tanstack/react-query"
-import { useNavigate, useParams } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { FolderIcon, ImageIcon, LayoutGridIcon, SearchIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import {
   CommandDialog,
@@ -10,87 +10,80 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
-import { Kbd } from "@/components/ui/kbd"
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { dayjs } from "@/lib/dayjs"
+} from "@/components/ui/command";
+import { Kbd } from "@/components/ui/kbd";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import {
   getSearchResultsHttp,
   type PostSearchResult,
   type ProjectSearchResult,
-} from "@/http/search/get-search-results.http"
+} from "@/http/search/get-search-results.http";
+import { dayjs } from "@/lib/dayjs";
 
-const SEARCH_KEYBOARD_SHORTCUT = "k"
-const MIN_QUERY_LENGTH = 2
-const DEBOUNCE_DELAY_MS = 300
+const SEARCH_KEYBOARD_SHORTCUT = "k";
+const MIN_QUERY_LENGTH = 2;
+const DEBOUNCE_DELAY_MS = 300;
 
 type SearchResult = {
-  id: string
-  title: string
-  channelId: string
-}
+  id: string;
+  title: string;
+  channelId: string;
+};
 
-const isMac =
-  typeof navigator !== "undefined" && /Mac/.test(navigator.platform)
+const isMac = typeof navigator !== "undefined" && /Mac/.test(navigator.platform);
 
 export function Search() {
-  const [open, setOpen] = useState(false)
-  const [query, setQuery] = useState("")
-  const [debouncedQuery, setDebouncedQuery] = useState("")
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  const { slug: orgSlug } = useParams({ from: "/orgs/$slug" })
-  const navigate = useNavigate()
+  const { slug: orgSlug } = useParams({ from: "/orgs/$slug" });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.key === SEARCH_KEYBOARD_SHORTCUT &&
-        (event.metaKey || event.ctrlKey)
-      ) {
-        event.preventDefault()
-        setOpen((current) => !current)
+      if (event.key === SEARCH_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        setOpen((current) => !current);
       }
-    }
+    };
 
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [])
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setDebouncedQuery(query)
-    }, DEBOUNCE_DELAY_MS)
+      setDebouncedQuery(query);
+    }, DEBOUNCE_DELAY_MS);
 
-    return () => clearTimeout(timeoutId)
-  }, [query])
+    return () => clearTimeout(timeoutId);
+  }, [query]);
 
-  const shouldSearch = debouncedQuery.trim().length >= MIN_QUERY_LENGTH
+  const shouldSearch = debouncedQuery.trim().length >= MIN_QUERY_LENGTH;
 
   const { data, isLoading } = useQuery({
     queryKey: ["search", orgSlug, debouncedQuery],
-    queryFn: async () => getSearchResultsHttp({
-      orgSlug,
-      query: debouncedQuery
-    }),
+    queryFn: async () =>
+      getSearchResultsHttp({
+        orgSlug,
+        query: debouncedQuery,
+      }),
     enabled: shouldSearch,
-  })
+  });
 
   function closeAndReset() {
-    setOpen(false)
-    setQuery("")
-    setDebouncedQuery("")
+    setOpen(false);
+    setQuery("");
+    setDebouncedQuery("");
   }
 
   function handleSelectPost(post: PostSearchResult) {
     navigate({
       to: "/orgs/$slug/channels/$channel/$postId",
       params: { slug: orgSlug, channel: post.channelId, postId: post.id },
-    })
-    closeAndReset()
+    });
+    closeAndReset();
   }
 
   function handleSelectProject(project: ProjectSearchResult) {
@@ -101,8 +94,8 @@ export function Search() {
         channel: project.channelId,
         projectId: project.id,
       },
-    })
-    closeAndReset()
+    });
+    closeAndReset();
   }
 
   function handleSelectFolder(folder: SearchResult) {
@@ -110,15 +103,12 @@ export function Search() {
       to: "/orgs/$slug/channels/$channel",
       params: { slug: orgSlug, channel: folder.channelId },
       search: { folder_id: folder.id, folder_name: folder.title },
-    })
-    closeAndReset()
+    });
+    closeAndReset();
   }
 
   const hasResults =
-    !!data &&
-    (data.posts.length > 0 ||
-      data.projects.length > 0 ||
-      data.folders.length > 0)
+    !!data && (data.posts.length > 0 || data.projects.length > 0 || data.folders.length > 0);
 
   return (
     <div className="flex flex-col gap-4">
@@ -146,12 +136,8 @@ export function Search() {
           onValueChange={setQuery}
         />
         <CommandList>
-          {!shouldSearch && (
-            <CommandEmpty>Type at least 2 characters to search.</CommandEmpty>
-          )}
-          {shouldSearch && isLoading && (
-            <CommandEmpty>Searching...</CommandEmpty>
-          )}
+          {!shouldSearch && <CommandEmpty>Type at least 2 characters to search.</CommandEmpty>}
+          {shouldSearch && isLoading && <CommandEmpty>Searching...</CommandEmpty>}
           {shouldSearch && !isLoading && !hasResults && (
             <CommandEmpty>No results found.</CommandEmpty>
           )}
@@ -166,11 +152,7 @@ export function Search() {
                 >
                   <div className="aspect-video h-9 shrink-0 overflow-hidden rounded-sm">
                     {post.thumbnailUrl ? (
-                      <img
-                        src={post.thumbnailUrl}
-                        alt=""
-                        className="size-full object-cover"
-                      />
+                      <img src={post.thumbnailUrl} alt="" className="size-full object-cover" />
                     ) : (
                       <div className="flex size-full items-center justify-center rounded-sm border border-input text-muted-foreground">
                         <ImageIcon className="size-4" />
@@ -198,11 +180,7 @@ export function Search() {
                 >
                   <div className="aspect-video h-9 shrink-0 overflow-hidden rounded-lg">
                     {project.thumbnailUrl ? (
-                      <img
-                        src={project.thumbnailUrl}
-                        alt=""
-                        className="size-full object-cover"
-                      />
+                      <img src={project.thumbnailUrl} alt="" className="size-full object-cover" />
                     ) : (
                       <div className="flex size-full items-center justify-center rounded-lg border border-input text-muted-foreground">
                         <LayoutGridIcon className="size-4" />
@@ -239,5 +217,5 @@ export function Search() {
         </CommandList>
       </CommandDialog>
     </div>
-  )
+  );
 }

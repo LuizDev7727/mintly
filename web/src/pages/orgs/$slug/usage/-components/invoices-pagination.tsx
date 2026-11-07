@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
+import { Button } from "@/components/ui/button";
 
 type InvoicesPaginationProps = {
   totalPages: number;
@@ -37,12 +37,7 @@ export function InvoicesPagination({ totalPages }: InvoicesPaginationProps) {
       <span className="text-xs text-muted-foreground tabular-nums">
         Page {currentPage + 1} of {Math.max(totalPages, 1)}
       </span>
-      <Button
-        variant="outline"
-        size="icon-sm"
-        onClick={goToNextPage}
-        disabled={!hasNextPage}
-      >
+      <Button variant="outline" size="icon-sm" onClick={goToNextPage} disabled={!hasNextPage}>
         <ChevronRight className="size-4" />
         <span className="sr-only">Next page</span>
       </Button>

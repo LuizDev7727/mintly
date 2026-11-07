@@ -5,10 +5,7 @@ interface ThumbnailDropzoneProps {
   onBrowse: () => void;
 }
 
-export function ThumbnailDropzone({
-  variant,
-  onBrowse,
-}: ThumbnailDropzoneProps) {
+export function ThumbnailDropzone({ variant, onBrowse }: ThumbnailDropzoneProps) {
   return (
     <button
       type="button"
@@ -18,9 +15,7 @@ export function ThumbnailDropzone({
     >
       <Plus className="size-5" />
       <span>Add thumbnails</span>
-      {variant === "tile" && (
-        <span className="text-xs">or drop them anywhere</span>
-      )}
+      {variant === "tile" && <span className="text-xs">or drop them anywhere</span>}
     </button>
   );
 }

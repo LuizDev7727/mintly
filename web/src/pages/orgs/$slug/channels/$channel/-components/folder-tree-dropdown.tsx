@@ -1,24 +1,13 @@
-import {
-  FileTree,
-  FileTreeFile,
-  FileTreeFolder,
-} from "@/components/file-tree";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
-import {
-  getFoldersTreeHttp,
-  type FolderTreeNode,
-} from "@/http/folder/get-folders-tree.http";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { ChevronDown, Folder, FolderOpen, PlusCircle } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { useEffect, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
+import { FileTree, FileTreeFile, FileTreeFolder } from "@/components/file-tree";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
+import { type FolderTreeNode, getFoldersTreeHttp } from "@/http/folder/get-folders-tree.http";
 import { CreateFolderDialog } from "./create-folder-dialog";
 import { FolderActionsMenu } from "./folder-actions-menu";
 
@@ -28,8 +17,7 @@ const ROOT_FOLDER_LABEL = "All Folders";
 export function FolderTreeDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentFolderId, setCurrentFolderId] = useQueryState("folder_id");
-  const [_, setCurrentFolderName] =
-    useQueryState("folder_name");
+  const [_, setCurrentFolderName] = useQueryState("folder_name");
   const [expandedFolderIds, setExpandedFolderIds] = useState<string[]>([]);
 
   const { slug: orgSlug, channel: channelId } = useParams({
@@ -58,9 +46,7 @@ export function FolderTreeDropdown() {
 
     if (ancestorIds.length === 0) return;
 
-    setExpandedFolderIds((current) => [
-      ...new Set([...current, ...ancestorIds]),
-    ]);
+    setExpandedFolderIds((current) => [...new Set([...current, ...ancestorIds])]);
   }, [currentFolderId, folders]);
 
   const foldersByParentId = new Map<string | null, FolderTreeNode[]>();
@@ -108,12 +94,7 @@ export function FolderTreeDropdown() {
       }
 
       return (
-        <FileTreeFolder
-          key={folder.id}
-          value={folder.id}
-          name={folder.title}
-          actions={actions}
-        >
+        <FileTreeFolder key={folder.id} value={folder.id} name={folder.title} actions={actions}>
           {renderFolders(folder.id)}
         </FileTreeFolder>
       );
@@ -126,9 +107,7 @@ export function FolderTreeDropdown() {
         <Button variant="outline" className="w-fit justify-between gap-2">
           <span className="flex min-w-0 items-center gap-2">
             <Folder className="size-4 shrink-0" />
-            <span className="truncate">
-              All Folders
-            </span>
+            <span className="truncate">All Folders</span>
           </span>
           <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
         </Button>
@@ -146,15 +125,9 @@ export function FolderTreeDropdown() {
           </button>
 
           {isLoading && (
-            <p className="px-2 py-1.5 text-xs text-muted-foreground">
-              Loading folders...
-            </p>
+            <p className="px-2 py-1.5 text-xs text-muted-foreground">Loading folders...</p>
           )}
-          {isEmpty && (
-            <p className="px-2 py-1.5 text-xs text-muted-foreground">
-              No folders yet
-            </p>
-          )}
+          {isEmpty && <p className="px-2 py-1.5 text-xs text-muted-foreground">No folders yet</p>}
 
           {folders.length > 0 && (
             <FileTree
@@ -172,16 +145,11 @@ export function FolderTreeDropdown() {
         <Separator className="my-1" />
         <CreateFolderDialog
           trigger={
-            <button
-              type="button"
-              className="flex w-full cursor-pointer items-center gap-2 p-2"
-            >
+            <button type="button" className="flex w-full cursor-pointer items-center gap-2 p-2">
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <PlusCircle className="size-4" />
               </div>
-              <span className="font-medium text-muted-foreground">
-                Create folder
-              </span>
+              <span className="font-medium text-muted-foreground">Create folder</span>
             </button>
           }
         />

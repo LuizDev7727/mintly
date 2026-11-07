@@ -6,11 +6,7 @@ type RemoveStarredFolderParams = {
   folderId: string;
 };
 
-export async function removeStarredFolderHttp(
-  params: RemoveStarredFolderParams,
-): Promise<void> {
+export async function removeStarredFolderHttp(params: RemoveStarredFolderParams): Promise<void> {
   const { orgSlug, channelId, folderId } = params;
-  await api.delete(
-    `/organizations/${orgSlug}/channels/${channelId}/starred-folders/${folderId}`,
-  );
+  await api.delete(`/organizations/${orgSlug}/channels/${channelId}/starred-folders/${folderId}`);
 }

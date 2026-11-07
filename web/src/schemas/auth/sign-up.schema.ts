@@ -7,21 +7,12 @@ export const signUpSchema = z
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
-      .refine(
-        (value) => /[A-Z]/.test(value),
-        "Password must contain at least one uppercase letter"
-      )
-      .refine(
-        (value) => /[a-z]/.test(value),
-        "Password must contain at least one lowercase letter"
-      )
-      .refine(
-        (value) => /[0-9]/.test(value),
-        "Password must contain at least one number"
-      )
+      .refine((value) => /[A-Z]/.test(value), "Password must contain at least one uppercase letter")
+      .refine((value) => /[a-z]/.test(value), "Password must contain at least one lowercase letter")
+      .refine((value) => /[0-9]/.test(value), "Password must contain at least one number")
       .refine(
         (value) => /[^A-Za-z0-9]/.test(value),
-        "Password must contain at least one special character"
+        "Password must contain at least one special character",
       ),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })

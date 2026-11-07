@@ -1,23 +1,19 @@
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Spinner } from "@/components/ui/spinner";
-import { Bell, X } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { getInitials } from "@/utils/get-initials";
-import { dayjs } from "@/lib/dayjs";
-import { Separator } from "./ui/separator";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  getPendingInvitesHttp,
-  type GetPendingInvitesResponse,
-} from "@/http/invitation/get-pending-invites.http";
+import { Bell, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Spinner } from "@/components/ui/spinner";
 import { acceptInviteHttp } from "@/http/invitation/accept-invite.http";
 import { declineInviteHttp } from "@/http/invitation/decline-invite.http";
+import {
+  type GetPendingInvitesResponse,
+  getPendingInvitesHttp,
+} from "@/http/invitation/get-pending-invites.http";
+import { dayjs } from "@/lib/dayjs";
+import { getInitials } from "@/utils/get-initials";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
+import { Separator } from "./ui/separator";
 
 export function PendingInvites() {
   const queryClient = useQueryClient();
@@ -40,20 +36,15 @@ export function PendingInvites() {
   } = useMutation({
     mutationFn: acceptInviteHttp,
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<GetPendingInvitesResponse>(
-        ["pending-invites"],
-        (old) => {
-          if (!old) return old;
+      queryClient.setQueryData<GetPendingInvitesResponse>(["pending-invites"], (old) => {
+        if (!old) return old;
 
-          return {
-            invites: old.invites.filter(
-              (invite) => invite.id !== variables.inviteId,
-            ),
-          };
-        },
-      );
+        return {
+          invites: old.invites.filter((invite) => invite.id !== variables.inviteId),
+        };
+      });
       queryClient.invalidateQueries({
-        queryKey: ["organizations"]
+        queryKey: ["organizations"],
       });
     },
   });
@@ -65,18 +56,13 @@ export function PendingInvites() {
   } = useMutation({
     mutationFn: declineInviteHttp,
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<GetPendingInvitesResponse>(
-        ["pending-invites"],
-        (old) => {
-          if (!old) return old;
+      queryClient.setQueryData<GetPendingInvitesResponse>(["pending-invites"], (old) => {
+        if (!old) return old;
 
-          return {
-            invites: old.invites.filter(
-              (invite) => invite.id !== variables.inviteId,
-            ),
-          };
-        },
-      );
+        return {
+          invites: old.invites.filter((invite) => invite.id !== variables.inviteId),
+        };
+      });
     },
   });
 
@@ -109,40 +95,27 @@ export function PendingInvites() {
           </div>
         ) : (
           invites.map((notification) => {
-            const isAcceptingThis =
-              isAccepting && acceptVariables?.inviteId === notification.id;
-            const isDecliningThis =
-              isDeclining && declineVariables?.inviteId === notification.id;
+            const isAcceptingThis = isAccepting && acceptVariables?.inviteId === notification.id;
+            const isDecliningThis = isDeclining && declineVariables?.inviteId === notification.id;
             const isProcessing = isAcceptingThis || isDecliningThis;
 
             return (
-              <div
-                key={notification.id}
-                className="z-50 max-w-100 rounded-md p-2 shadow-lg"
-              >
+              <div key={notification.id} className="z-50 max-w-100 rounded-md p-2 shadow-lg">
                 <div className="flex gap-3">
                   <Avatar>
                     {notification.author.avatarUrl && (
                       <AvatarImage src={notification.author.avatarUrl} />
                     )}
-                    <AvatarFallback>
-                      {getInitials(notification.author.name)}
-                    </AvatarFallback>
+                    <AvatarFallback>{getInitials(notification.author.name)}</AvatarFallback>
                   </Avatar>
                   <div className="flex grow flex-col gap-3">
                     <div className="space-y-1">
                       <p className="text-muted-foreground text-sm">
-                        <a
-                          className="font-medium text-foreground hover:underline"
-                          href="#"
-                        >
+                        <a className="font-medium text-foreground hover:underline" href="#">
                           {notification.author.name}
                         </a>{" "}
                         mentioned you in{" "}
-                        <a
-                          className="font-medium text-foreground hover:underline"
-                          href="#"
-                        >
+                        <a className="font-medium text-foreground hover:underline" href="#">
                           {notification.organization.name}
                         </a>
                         .
@@ -155,9 +128,7 @@ export function PendingInvites() {
                       <Button
                         size="sm"
                         disabled={isProcessing}
-                        onClick={() =>
-                          handleAccept({ inviteId: notification.id })
-                        }
+                        onClick={() => handleAccept({ inviteId: notification.id })}
                       >
                         {isAcceptingThis ? <Spinner /> : "Accept"}
                       </Button>
@@ -165,9 +136,7 @@ export function PendingInvites() {
                         size="sm"
                         variant="outline"
                         disabled={isProcessing}
-                        onClick={() =>
-                          handleDecline({ inviteId: notification.id })
-                        }
+                        onClick={() => handleDecline({ inviteId: notification.id })}
                       >
                         {isDecliningThis ? <Spinner /> : "Decline"}
                       </Button>

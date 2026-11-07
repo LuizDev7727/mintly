@@ -1,8 +1,8 @@
+import { Link, useParams } from "@tanstack/react-router";
+import { TvMinimal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Channel } from "@/types/channel";
 import { getInitials } from "@/utils/get-initials";
-import { Link, useParams } from "@tanstack/react-router";
-import { TvMinimal } from "lucide-react";
 
 type ChannelListViewProps = {
   channels: Channel[];
@@ -28,12 +28,8 @@ export function ChannelListView({ channels }: ChannelListViewProps) {
               <TvMinimal className="size-4" />
             </div>
             <div className="min-w-0">
-              <p className="truncate text-[15px] font-semibold leading-[1.3]">
-                {channel.name}
-              </p>
-              <p className="mt-1 truncate text-xs text-muted-foreground">
-                {channel.description}
-              </p>
+              <p className="truncate text-[15px] font-semibold leading-[1.3]">{channel.name}</p>
+              <p className="mt-1 truncate text-xs text-muted-foreground">{channel.description}</p>
             </div>
           </div>
 
@@ -45,9 +41,7 @@ export function ChannelListView({ channels }: ChannelListViewProps) {
               </Avatar>
               <p className="truncate text-sm text-muted-foreground">{CREATED_BY}</p>
             </div>
-            <p className="whitespace-nowrap text-sm text-muted-foreground">
-              Created {CREATED_AT}
-            </p>
+            <p className="whitespace-nowrap text-sm text-muted-foreground">Created {CREATED_AT}</p>
           </div>
         </Link>
       ))}

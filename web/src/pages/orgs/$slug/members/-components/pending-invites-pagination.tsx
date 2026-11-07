@@ -1,11 +1,6 @@
-import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
+import { Button } from "@/components/ui/button";
 
 type PendingInvitesPaginationProps = {
   totalPages: number;

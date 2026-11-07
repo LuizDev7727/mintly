@@ -1,4 +1,4 @@
-import { Link, useMatchRoute, type LinkProps } from "@tanstack/react-router";
+import { Link, type LinkProps, useMatchRoute } from "@tanstack/react-router";
 
 export function NavLink(props: LinkProps) {
   const matchRoute = useMatchRoute();

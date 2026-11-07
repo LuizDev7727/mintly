@@ -20,9 +20,7 @@ export function BillingEmailForm() {
     defaultValues: { email: "" },
   });
 
-  async function handleSubmitBillingEmail(
-    formBody: UpdateBillingEmailFormType,
-  ) {
+  async function handleSubmitBillingEmail(formBody: UpdateBillingEmailFormType) {
     const { email } = formBody;
     // TODO: chamar o endpoint de atualização do e-mail de cobrança quando existir.
     void email;
@@ -67,11 +65,7 @@ export function BillingEmailForm() {
         )}
       </div>
 
-      <Button
-        type="submit"
-        className="mt-auto w-full"
-        disabled
-      >
+      <Button type="submit" className="mt-auto w-full" disabled>
         Save changes
       </Button>
     </form>

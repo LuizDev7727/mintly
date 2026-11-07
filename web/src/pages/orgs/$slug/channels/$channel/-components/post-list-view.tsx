@@ -1,3 +1,17 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, useParams } from "@tanstack/react-router";
+import {
+  AlertTriangle,
+  Ban,
+  Calendar,
+  Check,
+  Eye,
+  Image,
+  Loader2,
+  MoreHorizontal,
+  Trash2,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -6,16 +20,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
-import { Badge } from "@/components/ui/badge";
 import { cancelPostHttp } from "@/http/posts/cancel-post.http";
 import type { GetPostsResponse } from "@/http/posts/get-posts.http";
 import { dayjs } from "@/lib/dayjs";
 import type { Post } from "@/types/post";
 import { formatBytes } from "@/utils/format-bytes";
 import { formatDuration } from "@/utils/format-duration";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link, useParams } from "@tanstack/react-router";
-import { Eye, Image, MoreHorizontal, Trash2, Check, AlertTriangle, Calendar, Ban, Loader2 } from "lucide-react";
 import { SocialsToPostAvatarsGroup } from "./socials-to-post-avatars-group";
 
 type PostListViewProps = {
@@ -44,9 +54,7 @@ export function PostListView({ posts }: PostListViewProps) {
           return {
             ...old,
             posts: old.posts.map((post) =>
-              post.id === variables.postId
-                ? { ...post, status: "CANCELED" as const }
-                : post,
+              post.id === variables.postId ? { ...post, status: "CANCELED" as const } : post,
             ),
           };
         },
@@ -109,9 +117,7 @@ export function PostListView({ posts }: PostListViewProps) {
         const hasThumbnail = post.thumbnailUrl !== null;
 
         const isPostProcessing =
-          post.status !== "PUBLISHED" &&
-          post.status !== "ERROR" &&
-          post.status !== "CANCELED";
+          post.status !== "PUBLISHED" && post.status !== "ERROR" && post.status !== "CANCELED";
 
         return (
           <div
@@ -136,18 +142,14 @@ export function PostListView({ posts }: PostListViewProps) {
                 <p className="truncate text-sm font-medium">{post.title}</p>
                 <p className="truncate text-xs text-muted-foreground">
                   {post.author.name} {" · "}
-                  {formatBytes(post.size)} ·{" "}
-                  {post.duration ? formatDuration(post.duration) : "-"} ·{" "}
+                  {formatBytes(post.size)} · {post.duration ? formatDuration(post.duration) : "-"} ·{" "}
                   {post.publishAt ? dayjs(post.publishAt).format("MMM D") : "Now"}
                 </p>
               </div>
             </div>
 
             <div className="flex shrink-0 items-center gap-3">
-
-              <SocialsToPostAvatarsGroup
-                socialsToPost={post.socialsToPost}
-              />
+              <SocialsToPostAvatarsGroup socialsToPost={post.socialsToPost} />
 
               <PostStatusBadge status={post.status} />
 
@@ -176,11 +178,7 @@ export function PostListView({ posts }: PostListViewProps) {
                         disabled={isCancellingPost}
                         onClick={() => handleCancelPost(post)}
                       >
-                        {isCancellingPost ? (
-                          <Spinner className="size-3.5" />
-                        ) : (
-                          <Trash2 size={13} />
-                        )}
+                        {isCancellingPost ? <Spinner className="size-3.5" /> : <Trash2 size={13} />}
                       </Button>
                     </DropdownMenuItem>
                   )}

@@ -1,6 +1,16 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
+import {
+  Activity,
+  ChartPieIcon,
+  ChevronsUpDown,
+  LayoutDashboard,
+  Moon,
+  Settings2Icon,
+  TvMinimal,
+  UsersIcon,
+  Webhook,
+} from "lucide-react";
 import { OrganizationSwitcherLoading } from "@/components/organization-switcher-loading";
+import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
@@ -15,17 +25,7 @@ import {
   SidebarProvider,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import {
-  Activity,
-  ChartPieIcon,
-  ChevronsUpDown,
-  LayoutDashboard,
-  Moon,
-  Settings2Icon,
-  TvMinimal,
-  UsersIcon,
-  Webhook,
-} from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: "Overview" },
@@ -129,10 +129,7 @@ export function PlatformLoading() {
                 </div>
               ))}
               {Array.from({ length: 2 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="rounded-lg border dark:bg-zinc-900/20 overflow-hidden"
-                >
+                <div key={i} className="rounded-lg border dark:bg-zinc-900/20 overflow-hidden">
                   <div className="px-5 pt-5 space-y-3">
                     <div className="flex items-center justify-between">
                       <Skeleton className="h-4 w-16" />

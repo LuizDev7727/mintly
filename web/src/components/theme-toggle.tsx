@@ -1,6 +1,6 @@
+import { MoonIcon, SunIcon } from "lucide-react";
 import { useCallback, useRef } from "react";
 import { flushSync } from "react-dom";
-import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Toggle } from "./ui/toggle";
 
@@ -24,10 +24,7 @@ function getCircleClipPaths(
   const toRadius = (r: number) =>
     `${(r / (Math.hypot(viewportWidth, viewportHeight) / Math.SQRT2)) * 100}%`;
 
-  return [
-    `circle(0% at ${point(cx, cy)})`,
-    `circle(${toRadius(maxRadius)} at ${point(cx, cy)})`,
-  ];
+  return [`circle(0% at ${point(cx, cy)})`, `circle(${toRadius(maxRadius)} at ${point(cx, cy)})`];
 }
 
 export function ThemeToggle() {
@@ -37,8 +34,7 @@ export function ThemeToggle() {
 
   const isDark =
     theme === "dark" ||
-    (theme === "system" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
+    (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   const handleThemeToggle = useCallback(() => {
     const button = buttonRef.current;
@@ -67,25 +63,13 @@ export function ThemeToggle() {
     const x = left + width / 2;
     const y = top + height / 2;
 
-    const maxRadius = Math.hypot(
-      Math.max(x, viewportWidth - x),
-      Math.max(y, viewportHeight - y),
-    );
+    const maxRadius = Math.hypot(Math.max(x, viewportWidth - x), Math.max(y, viewportHeight - y));
 
-    const clipPath = getCircleClipPaths(
-      x,
-      y,
-      maxRadius,
-      viewportWidth,
-      viewportHeight,
-    );
+    const clipPath = getCircleClipPaths(x, y, maxRadius, viewportWidth, viewportHeight);
 
     const root = document.documentElement;
     root.dataset.themeVt = "active";
-    root.style.setProperty(
-      "--theme-toggle-vt-duration",
-      `${TRANSITION_DURATION}ms`,
-    );
+    root.style.setProperty("--theme-toggle-vt-duration", `${TRANSITION_DURATION}ms`);
     // Pin the collapsed clip-path via CSS so the browser doesn't paint the
     // new theme unclipped between snapshot and the ready.then() JS animation.
     root.style.setProperty("--theme-vt-clip-from", clipPath[0]);

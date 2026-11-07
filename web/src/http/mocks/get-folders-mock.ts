@@ -1,5 +1,5 @@
-import { http, HttpResponse } from "msw";
 import { faker } from "@faker-js/faker";
+import { HttpResponse, http } from "msw";
 import type { GetFoldersResponse } from "../folder/get-folders.http";
 
 export const folders = Array.from({ length: 36 }, () => ({

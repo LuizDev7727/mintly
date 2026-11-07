@@ -1,12 +1,10 @@
-import { createFileRoute, useParams } from "@tanstack/react-router";
-import { CreatePostForm } from "./-components/create-post-form";
 import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useParams } from "@tanstack/react-router";
 import { getIntegrationsHttp } from "@/http/integration/get-integrations.http";
+import { CreatePostForm } from "./-components/create-post-form";
 import { NoIntegrationsConnected } from "./-components/no-integrations-connected";
 
-export const Route = createFileRoute(
-  "/orgs/$slug/channels/$channel/create-upload/",
-)({
+export const Route = createFileRoute("/orgs/$slug/channels/$channel/create-upload/")({
   head: () => ({
     meta: [
       {

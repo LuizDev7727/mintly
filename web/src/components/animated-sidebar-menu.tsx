@@ -1,11 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useId,
-  useState,
-  type ComponentProps,
-} from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { type ComponentProps, createContext, useContext, useId, useState } from "react";
 
 import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
@@ -18,8 +12,7 @@ type AnimatedSidebarMenuContextValue = {
   setActiveId: (id: string | null) => void;
 };
 
-const AnimatedSidebarMenuContext =
-  createContext<AnimatedSidebarMenuContextValue | null>(null);
+const AnimatedSidebarMenuContext = createContext<AnimatedSidebarMenuContextValue | null>(null);
 
 export function AnimatedSidebarMenu({
   onMouseLeave,
@@ -29,9 +22,7 @@ export function AnimatedSidebarMenu({
   const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
-    <AnimatedSidebarMenuContext.Provider
-      value={{ layoutId, activeId, setActiveId }}
-    >
+    <AnimatedSidebarMenuContext.Provider value={{ layoutId, activeId, setActiveId }}>
       <SidebarMenu
         onMouseLeave={(event) => {
           setActiveId(null);
@@ -54,9 +45,7 @@ export function AnimatedSidebarMenuItem({
   const reduceMotion = useReducedMotion();
 
   if (!context) {
-    throw new Error(
-      "AnimatedSidebarMenuItem must be used inside AnimatedSidebarMenu",
-    );
+    throw new Error("AnimatedSidebarMenuItem must be used inside AnimatedSidebarMenu");
   }
 
   const isHovered = context.activeId === id;

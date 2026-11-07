@@ -1,28 +1,20 @@
-import { createFileRoute } from "@tanstack/react-router";
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  CircleDollarSign,
-  HardDrive,
-} from "lucide-react";
-import { useMemo, useState } from "react";
-import { format, startOfDay, subDays, subMonths, subWeeks } from "date-fns";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { StorageChart } from "./-components/storage-chart";
-import {
-  aggregateUsageSeries,
-  type UsageGranularity,
-} from "./-components/aggregate-usage-series";
-import { CostsChart } from "./-components/costs-chart";
-import { UsageGranularityToggle } from "./-components/usage-granularity-toggle";
-import { StorageChartEmpty } from "./-components/storage-chart-empty";
-import { BillingEmailForm } from "./-components/billing-email-form";
-import { InvoiceHistory } from "./-components/invoice-history";
-import { PaymentCardSection } from "./-components/payment-card-section";
 import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { format, startOfDay, subDays, subMonths, subWeeks } from "date-fns";
+import { ArrowDownRight, ArrowUpRight, CircleDollarSign, HardDrive } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { getUsageHttp } from "@/http/organization/get-usage.http";
 import { formatBytes } from "@/utils/format-bytes";
+import { aggregateUsageSeries, type UsageGranularity } from "./-components/aggregate-usage-series";
+import { BillingEmailForm } from "./-components/billing-email-form";
+import { CostsChart } from "./-components/costs-chart";
+import { InvoiceHistory } from "./-components/invoice-history";
+import { PaymentCardSection } from "./-components/payment-card-section";
+import { StorageChart } from "./-components/storage-chart";
+import { StorageChartEmpty } from "./-components/storage-chart-empty";
+import { UsageGranularityToggle } from "./-components/usage-granularity-toggle";
 
 export const Route = createFileRoute("/orgs/$slug/usage/")({
   head: () => ({
@@ -58,9 +50,7 @@ const MOCK_USAGE_SERIES = Array.from({ length: 365 }, (_, index) => {
 // Série fictícia de storage acumulado (em bytes), crescendo ao longo do ano.
 const MOCK_STORAGE_SERIES = Array.from({ length: 365 }, (_, index) => ({
   date: format(subDays(new Date(), 364 - index), "yyyy-MM-dd"),
-  storage: Math.round(
-    (2 + index * 0.03 + Math.max(0, Math.sin(index / 9)) * 0.6) * 1024 ** 3,
-  ),
+  storage: Math.round((2 + index * 0.03 + Math.max(0, Math.sin(index / 9)) * 0.6) * 1024 ** 3),
 }));
 
 const GRANULARITY_DESCRIPTION: Record<UsageGranularity, string> = {
@@ -113,9 +103,7 @@ function OrgUsagePage() {
   const storageSeries = USE_MOCK_USAGE
     ? MOCK_STORAGE_SERIES.filter((point) => new Date(point.date) >= period.from)
     : (data?.storageSeries ?? []);
-  const hasStorageData = data
-    ? storageSeries.some((point) => point.storage > 0)
-    : true;
+  const hasStorageData = data ? storageSeries.some((point) => point.storage > 0) : true;
 
   return (
     <div className="space-y-8">
@@ -140,9 +128,7 @@ function OrgUsagePage() {
                   <div className="flex size-8 items-center justify-center rounded-md border">
                     <CircleDollarSign className="size-4" />
                   </div>
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Costs
-                  </span>
+                  <span className="text-sm font-medium text-muted-foreground">Costs</span>
                 </div>
                 <Badge variant={(costs?.changePercentage ?? 0) > 0 ? "destructive" : "default"}>
                   {(costs?.changePercentage ?? 0) >= 0 ? (
@@ -171,9 +157,7 @@ function OrgUsagePage() {
                   <div className="flex size-8 items-center justify-center rounded-md border ">
                     <HardDrive className="size-4" />
                   </div>
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Storage
-                  </span>
+                  <span className="text-sm font-medium text-muted-foreground">Storage</span>
                 </div>
                 <Badge>
                   {(storage?.changePercentage ?? 0) >= 0 ? (
@@ -201,12 +185,7 @@ function OrgUsagePage() {
               title="Usage"
               description={GRANULARITY_DESCRIPTION[granularity]}
               granularity={granularity}
-              action={
-                <UsageGranularityToggle
-                  value={granularity}
-                  onValueChange={setGranularity}
-                />
-              }
+              action={<UsageGranularityToggle value={granularity} onValueChange={setGranularity} />}
               data={usageSeries}
             />
           </div>

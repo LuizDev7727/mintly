@@ -14,9 +14,7 @@ type ConfirmLeaveOrganizationDialogProps = {
   isOwner: boolean;
 };
 
-export function ConfirmLeaveOrganizationDialog({
-  isOwner,
-}: ConfirmLeaveOrganizationDialogProps) {
+export function ConfirmLeaveOrganizationDialog({ isOwner }: ConfirmLeaveOrganizationDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -29,8 +27,8 @@ export function ConfirmLeaveOrganizationDialog({
         <DialogHeader>
           <DialogTitle>Leave Organization</DialogTitle>
           <DialogDescription>
-            Are you sure you want to leave this organization? You will
-            immediately lose access to all its resources and channels.
+            Are you sure you want to leave this organization? You will immediately lose access to
+            all its resources and channels.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter showCloseButton>

@@ -1,3 +1,7 @@
+import { Link } from "@tanstack/react-router";
+import { useRealtimeRun, useRealtimeStream } from "@trigger.dev/react-hooks";
+import { Eye, ImageIcon, MoreHorizontal, Trash2 } from "lucide-react";
+import { AnimatedCircularProgressBar } from "@/components/animated-circular-progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,11 +13,7 @@ import {
 import { dayjs } from "@/lib/dayjs";
 import type { Project } from "@/types/project";
 import { getInitials } from "@/utils/get-initials";
-import { Link } from "@tanstack/react-router";
-import { Eye, ImageIcon, MoreHorizontal, Trash2 } from "lucide-react";
 import { ProjectStatusBadge } from "./projects-status-badge";
-import { AnimatedCircularProgressBar } from "@/components/animated-circular-progress";
-import { useRealtimeRun, useRealtimeStream } from "@trigger.dev/react-hooks";
 
 type ProjectGridCardProps = {
   project: Project;
@@ -21,18 +21,12 @@ type ProjectGridCardProps = {
   channel: string;
 };
 
-export function ProjectGridCard({
-  project,
-  slug,
-  channel,
-}: ProjectGridCardProps) {
+export function ProjectGridCard({ project, slug, channel }: ProjectGridCardProps) {
   // Whether the project was still processing at the time it was fetched —
   // decides if we subscribe at all. Once subscribed, `status` below reflects
   // the live value from the run's metadata instead.
   const wasProcessingOnLoad =
-    project.status !== "SUCCESS" &&
-    project.status !== "ERROR" &&
-    project.status !== "CANCELED";
+    project.status !== "SUCCESS" && project.status !== "ERROR" && project.status !== "CANCELED";
 
   const { run } = useRealtimeRun(project.runId, {
     accessToken: project.realtimeToken ?? undefined,
@@ -44,20 +38,14 @@ export function ProjectGridCard({
     stopOnCompletion: false,
   });
 
-  const status =
-    (run?.metadata?.status as Project["status"] | undefined) ??
-    project.status;
+  const status = (run?.metadata?.status as Project["status"] | undefined) ?? project.status;
 
   const isEncoding = status === "ENCODING";
 
-  const { parts } = useRealtimeStream<{ percent: number }>(
-    project.runId,
-    "encoding-progress",
-    {
-      accessToken: project.realtimeToken ?? undefined,
-      enabled: isEncoding && !!project.realtimeToken,
-    },
-  );
+  const { parts } = useRealtimeStream<{ percent: number }>(project.runId, "encoding-progress", {
+    accessToken: project.realtimeToken ?? undefined,
+    enabled: isEncoding && !!project.realtimeToken,
+  });
 
   const encodingProgress = parts.at(-1)?.percent ?? 0;
 
@@ -97,10 +85,7 @@ export function ProjectGridCard({
       <div className="flex items-start gap-2.5 pt-2.5">
         <Avatar size="sm">
           {project.owner.avatarUrl && (
-            <AvatarImage
-              src={project.owner.avatarUrl}
-              alt={project.owner.name}
-            />
+            <AvatarImage src={project.owner.avatarUrl} alt={project.owner.name} />
           )}
           <AvatarFallback>{getInitials(project.owner.name)}</AvatarFallback>
         </Avatar>

@@ -1,5 +1,5 @@
-import { KeyRound } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { KeyRound } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,13 +8,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 interface RegenerateApiKeyDialogProps {
-  triggerLabel: string
-  variant?: React.ComponentProps<typeof Button>["variant"]
-  size?: React.ComponentProps<typeof Button>["size"]
-  className?: string
+  triggerLabel: string;
+  variant?: React.ComponentProps<typeof Button>["variant"];
+  size?: React.ComponentProps<typeof Button>["size"];
+  className?: string;
 }
 
 export function RegenerateApiKeyDialog({
@@ -35,9 +35,8 @@ export function RegenerateApiKeyDialog({
         <DialogHeader>
           <DialogTitle>Regenerate API Key</DialogTitle>
           <DialogDescription>
-            This will invalidate your current key immediately. Any
-            integration using it will stop working until you update it with
-            the new key. This action cannot be undone.
+            This will invalidate your current key immediately. Any integration using it will stop
+            working until you update it with the new key. This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter showCloseButton>
@@ -48,5 +47,5 @@ export function RegenerateApiKeyDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

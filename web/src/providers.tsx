@@ -1,11 +1,11 @@
-import { ThemeProvider } from "@/components/theme-provider";
-import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import type { ReactNode } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ViewModeProvider } from "@/context/view-mode-context";
-import { queryClient } from "./lib/react-query";
 import { Toaster } from "./components/ui/sonner";
+import { queryClient } from "./lib/react-query";
 
 type ProvidersProps = {
   children: ReactNode;

@@ -1,53 +1,32 @@
-import { useViewMode } from "@/context/view-mode-context";
-import { getProjectsHttp } from "@/http/projects/get-projects.http";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import {
-  parseAsInteger,
-  parseAsString,
-  parseAsStringLiteral,
-  useQueryState,
-} from "nuqs";
+import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
+import { useViewMode } from "@/context/view-mode-context";
+import { getProjectsHttp } from "@/http/projects/get-projects.http";
+import { PROJECT_STATUSES } from "@/types/project";
 import { ProjectsEmpty } from "./projects-empty";
 import { ProjectsGridView } from "./projects-grid-view";
 import { ProjectsListView } from "./projects-list-view";
 import { ProjectsLoading } from "./projects-loading";
 import { ProjectsPagination } from "./projects-pagination";
-import { PROJECT_STATUSES } from "@/types/project";
 
 export function Projects() {
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
 
-  const [currentPage] = useQueryState(
-    "project_page",
-    parseAsInteger.withDefault(0),
-  );
+  const [currentPage] = useQueryState("project_page", parseAsInteger.withDefault(0));
 
-  const [titleFilter] = useQueryState(
-    "title_filter",
-    parseAsString.withDefault(""),
-  );
+  const [titleFilter] = useQueryState("title_filter", parseAsString.withDefault(""));
 
-  const [statusFilter] = useQueryState(
-    "status_filter",
-    parseAsStringLiteral(PROJECT_STATUSES),
-  );
+  const [statusFilter] = useQueryState("status_filter", parseAsStringLiteral(PROJECT_STATUSES));
 
   const [ownerFilter] = useQueryState("owner_filter");
 
   const { view } = useViewMode();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: [
-      slug,
-      channel,
-      titleFilter,
-      statusFilter,
-      ownerFilter,
-      currentPage,
-    ],
+    queryKey: [slug, channel, titleFilter, statusFilter, ownerFilter, currentPage],
     queryFn: async () =>
       getProjectsHttp({
         orgSlug: slug,
@@ -89,5 +68,5 @@ export function Projects() {
         <ProjectsPagination totalPages={totalPages} totalCount={totalCount} />
       </div>
     </div>
-  )
+  );
 }

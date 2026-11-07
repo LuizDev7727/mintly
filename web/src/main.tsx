@@ -7,11 +7,11 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { env } from "./env.ts";
+import { enableMSW } from "./http/mocks/index.ts";
 // Import the generated route tree
 import { routeTree } from "./route-tree.gen.ts";
-import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { enableMSW } from "./http/mocks/index.ts";
-import { env } from "./env.ts";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -42,9 +42,9 @@ Sentry.init({
   //
   // https://mintly-api-prod.fly.dev
   tracePropagationTargets: [
-    /^\//,                                  // requisições relativas (mesmo domínio)
-    /^http:\/\/localhost:\d+\/api/,           // localhost em dev, qualquer porta
-    /^https:\/\/mintly-api-prod\.fly\.dev/,         // API pública em produção
+    /^\//, // requisições relativas (mesmo domínio)
+    /^http:\/\/localhost:\d+\/api/, // localhost em dev, qualquer porta
+    /^https:\/\/mintly-api-prod\.fly\.dev/, // API pública em produção
   ],
 });
 

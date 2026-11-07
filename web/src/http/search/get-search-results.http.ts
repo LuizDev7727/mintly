@@ -38,9 +38,8 @@ export async function getSearchResultsHttp(
   params: GetSearchResultsParams,
 ): Promise<GetSearchResultsResponse> {
   const { orgSlug, query } = params;
-  const { data } = await api.get<GetSearchResultsResponse>(
-    `/organizations/${orgSlug}/search`,
-    { params: { query } },
-  );
+  const { data } = await api.get<GetSearchResultsResponse>(`/organizations/${orgSlug}/search`, {
+    params: { query },
+  });
   return data;
 }

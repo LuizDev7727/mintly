@@ -10,7 +10,7 @@ import {
 import { dayjs } from "@/lib/dayjs";
 import { formatAmount } from "@/utils/format-amount";
 import { InvoiceDetailsSheet } from "./invoice-details-sheet";
-import { invoiceStatusConfig, type InvoiceStatus } from "./invoice-status";
+import { type InvoiceStatus, invoiceStatusConfig } from "./invoice-status";
 
 type InvoiceCardProps = {
   invoice: {
@@ -31,10 +31,7 @@ export function InvoiceCard({ invoice }: InvoiceCardProps) {
         <div className="flex size-8 items-center justify-center rounded-lg border border-border/60 bg-background/60 text-muted-foreground transition-colors group-hover:text-primary">
           <ReceiptText className="size-4" />
         </div>
-        <Badge
-          variant={status.variant}
-          className={`rounded-md ${status.className}`}
-        >
+        <Badge variant={status.variant} className={`rounded-md ${status.className}`}>
           {status.label}
         </Badge>
       </div>

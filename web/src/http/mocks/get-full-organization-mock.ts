@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+import { HttpResponse, http } from "msw";
 
 type GetFullOrganizationResponse = {
   id: string;
@@ -35,11 +35,7 @@ type GetFullOrganizationResponse = {
   }>;
 };
 
-export const getFullOrganizationMock = http.get<
-  never,
-  never,
-  GetFullOrganizationResponse
->(
+export const getFullOrganizationMock = http.get<never, never, GetFullOrganizationResponse>(
   "http://localhost:3000/api/auth/organization/get-full-organization",
   async () => {
     // Delay 2s

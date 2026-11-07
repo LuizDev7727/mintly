@@ -15,13 +15,10 @@ export type GetMembersResponse = {
   };
 };
 
-export async function getMembersHttp(
-  params: GetMembersParams,
-): Promise<GetMembersResponse> {
+export async function getMembersHttp(params: GetMembersParams): Promise<GetMembersResponse> {
   const { orgSlug, pageIndex } = params;
-  const { data } = await api.get<GetMembersResponse>(
-    `/organizations/${orgSlug}/members`,
-    { params: { pageIndex } },
-  );
+  const { data } = await api.get<GetMembersResponse>(`/organizations/${orgSlug}/members`, {
+    params: { pageIndex },
+  });
   return data;
 }

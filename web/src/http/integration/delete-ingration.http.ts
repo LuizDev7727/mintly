@@ -6,12 +6,8 @@ type DeleteIntegrationHttpParams = {
   integrationId: string;
 };
 
-export async function deleteIntegrationHttp(
-  params: DeleteIntegrationHttpParams,
-): Promise<void> {
+export async function deleteIntegrationHttp(params: DeleteIntegrationHttpParams): Promise<void> {
   const { orgSlug, channelId, integrationId } = params;
 
-  await api.delete(
-    `/organizations/${orgSlug}/channels/${channelId}/integrations/${integrationId}`,
-  );
+  await api.delete(`/organizations/${orgSlug}/channels/${channelId}/integrations/${integrationId}`);
 }

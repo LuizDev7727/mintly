@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 
 export function OverviewError() {
   const { slug } = useParams({ from: "/orgs/$slug" });
@@ -8,7 +8,7 @@ export function OverviewError() {
 
   function handleRetry() {
     queryClient.invalidateQueries({
-      queryKey: ["overview", slug]
+      queryKey: ["overview", slug],
     });
   }
 

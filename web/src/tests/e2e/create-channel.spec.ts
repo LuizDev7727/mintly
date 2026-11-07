@@ -1,19 +1,15 @@
-import { test, expect } from "@playwright/test";
 import { faker } from "@faker-js/faker";
+import { expect, test } from "@playwright/test";
 
 test.describe("Create Channel", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/orgs/test-user");
   });
 
-  test("should open create channel dialog when clicking the button", async ({
-    page,
-  }) => {
+  test("should open create channel dialog when clicking the button", async ({ page }) => {
     await page.getByRole("button", { name: "Create new channel" }).click();
 
-    await expect(
-      page.getByText("Create a new channel in your organization."),
-    ).toBeVisible();
+    await expect(page.getByText("Create a new channel in your organization.")).toBeVisible();
   });
 
   test("should create a channel successfully", async ({ page }) => {

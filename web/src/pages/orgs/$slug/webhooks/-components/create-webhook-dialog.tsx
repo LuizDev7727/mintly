@@ -1,5 +1,5 @@
-import { PlusIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { PlusIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,8 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { CreateWebhookForm } from "./create-webhook-form"
+} from "@/components/ui/dialog";
+import { CreateWebhookForm } from "./create-webhook-form";
 
 export function CreateWebhookDialog() {
   return (
@@ -23,13 +23,12 @@ export function CreateWebhookDialog() {
         <DialogHeader>
           <DialogTitle>Add Webhook Endpoint</DialogTitle>
           <DialogDescription>
-            Mintly will send a POST request to this URL whenever one of the
-            selected events happens.
+            Mintly will send a POST request to this URL whenever one of the selected events happens.
           </DialogDescription>
         </DialogHeader>
 
         <CreateWebhookForm />
       </DialogContent>
     </Dialog>
-  )
+  );
 }

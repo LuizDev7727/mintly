@@ -1,5 +1,5 @@
-import { test, expect } from "@playwright/test";
 import { faker } from "@faker-js/faker";
+import { expect, test } from "@playwright/test";
 
 test.describe("Update Channel Name", () => {
   test("should update the channel name successfully", async ({ page }) => {
@@ -11,15 +11,11 @@ test.describe("Update Channel Name", () => {
     await page.getByPlaceholder("Amazon").fill(channelName);
     await page.getByRole("button", { name: "Create Channel" }).click();
 
-    await expect(
-      page.getByText("Channel created successfully!"),
-    ).toBeVisible();
+    await expect(page.getByText("Channel created successfully!")).toBeVisible();
     await page.keyboard.press("Escape");
     await page.getByRole("dialog").waitFor({ state: "hidden" });
 
-    const channelCard = page
-      .locator("div.rounded-md")
-      .filter({ hasText: channelName });
+    const channelCard = page.locator("div.rounded-md").filter({ hasText: channelName });
     await channelCard.getByRole("link", { name: "See channel" }).click();
 
     await page.waitForLoadState("networkidle");
@@ -32,9 +28,7 @@ test.describe("Update Channel Name", () => {
     await nameInput.fill(newChannelName);
     await page.getByRole("button", { name: "Save" }).click();
 
-    await expect(
-      page.getByText("Channel updated successfully"),
-    ).toBeVisible();
+    await expect(page.getByText("Channel updated successfully")).toBeVisible();
     await expect(nameInput).toHaveValue(newChannelName);
   });
 });

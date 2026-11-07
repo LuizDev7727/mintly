@@ -4,6 +4,4 @@ export const createInviteMemberSchema = z.object({
   email: z.email(),
 });
 
-export type CreateInviteMemberFormType = z.infer<
-  typeof createInviteMemberSchema
->;
+export type CreateInviteMemberFormType = z.infer<typeof createInviteMemberSchema>;

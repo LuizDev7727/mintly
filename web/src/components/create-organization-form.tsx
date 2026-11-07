@@ -1,17 +1,17 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusCircle } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { createOrganizationHttp } from "@/http/organization/create-organization.http";
+import type { GetOrganizationsResponse } from "@/http/organization/get-organizations.http";
+import {
+  type CreateOrganizationFormType,
+  createOrganizationSchema,
+} from "@/schemas/organization/create-organization.schema";
+import { createSlug } from "@/utils/create-slug";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  createOrganizationSchema,
-  type CreateOrganizationFormType,
-} from "@/schemas/organization/create-organization.schema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createOrganizationHttp } from "@/http/organization/create-organization.http";
-import type { GetOrganizationsResponse } from "@/http/organization/get-organizations.http";
-import { createSlug } from "@/utils/create-slug";
 import { Spinner } from "./ui/spinner";
 
 export function CreateOrganizationForm() {
@@ -35,23 +35,20 @@ export function CreateOrganizationForm() {
     mutationFn: createOrganizationHttp,
     onSuccess: (data, variables) => {
       const { organizationId } = data;
-      queryClient.setQueryData<GetOrganizationsResponse>(
-        ["organizations"],
-        (old) => {
-          if (!old) return { organizations: [] };
+      queryClient.setQueryData<GetOrganizationsResponse>(["organizations"], (old) => {
+        if (!old) return { organizations: [] };
 
-          const newOrganizations = [
-            ...old.organizations,
-            {
-              id: organizationId,
-              name: variables.name,
-              slug,
-              membersCount: 1,
-            },
-          ];
-          return { organizations: newOrganizations };
-        },
-      );
+        const newOrganizations = [
+          ...old.organizations,
+          {
+            id: organizationId,
+            name: variables.name,
+            slug,
+            membersCount: 1,
+          },
+        ];
+        return { organizations: newOrganizations };
+      });
     },
   });
 

@@ -1,17 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { getProjectHttp } from "@/http/projects/get-project.http";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import { Suspense } from "react";
-import { BestMomentsLoading } from "./-components/best-moments-loading";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { getProjectHttp } from "@/http/projects/get-project.http";
 import { BestMoments } from "./-components/best-moments";
+import { BestMomentsLoading } from "./-components/best-moments-loading";
 import { ProjectNotFound } from "./-components/project-not-found";
 
-export const Route = createFileRoute(
-  "/orgs/$slug/channels/$channel/projects/$projectId/",
-)({
+export const Route = createFileRoute("/orgs/$slug/channels/$channel/projects/$projectId/")({
   head: () => ({
     meta: [
       {
@@ -49,10 +47,7 @@ function ProjectBestMomentsPage() {
     <div className="space-y-6">
       <header className="space-y-4">
         <Button asChild variant="ghost" size="sm" className="-ms-2">
-          <Link
-            to="/orgs/$slug/channels/$channel/projects"
-            params={{ slug, channel }}
-          >
+          <Link to="/orgs/$slug/channels/$channel/projects" params={{ slug, channel }}>
             <ArrowLeft className="size-4" />
             Back to projects
           </Link>
@@ -64,7 +59,9 @@ function ProjectBestMomentsPage() {
             <div className="flex items-center gap-x-2">
               <p className="text-muted-foreground">{project.owner.name}</p>
               <div className="bg-border w-2 rotate-90 h-px" />
-              <p className="text-muted-foreground text-sm">{project.bestMomentsCount} best moments</p>
+              <p className="text-muted-foreground text-sm">
+                {project.bestMomentsCount} best moments
+              </p>
             </div>
           </div>
         </div>

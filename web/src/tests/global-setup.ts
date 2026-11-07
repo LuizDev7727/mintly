@@ -10,9 +10,7 @@ export default async function globalSetup(config: FullConfig) {
 
   await page.goto(`${baseURL}/`);
   await page.getByLabel("Email").fill("testuser@gmail.com");
-  await page
-    .getByRole("textbox", { name: "Password", exact: true })
-    .fill("DwayneJ781@");
+  await page.getByRole("textbox", { name: "Password", exact: true }).fill("DwayneJ781@");
   await page.getByRole("button", { name: "Log in" }).click();
   await page.waitForURL("**/orgs**");
 

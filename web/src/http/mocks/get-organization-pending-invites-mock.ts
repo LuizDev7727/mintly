@@ -1,7 +1,7 @@
-import { http, HttpResponse } from "msw";
 import { faker } from "@faker-js/faker";
-import type { GetOrganizationPendingInvitesResponse } from "../organization/get-organization-pending-invites.http";
+import { HttpResponse, http } from "msw";
 import type { PendingInvite } from "@/types/pending-invite";
+import type { GetOrganizationPendingInvitesResponse } from "../organization/get-organization-pending-invites.http";
 
 const pendingInvites: PendingInvite[] = Array.from({ length: 13 }, () => ({
   id: faker.string.uuid(),
@@ -14,22 +14,19 @@ export const getOrganizationPendingInvitesMock = http.get<
   { orgSlug: string },
   never,
   GetOrganizationPendingInvitesResponse
->(
-  "http://localhost:3000/api/organizations/:orgSlug/invites/pending",
-  ({ request }) => {
-    const { searchParams } = new URL(request.url);
-    const pageIndex = Number(searchParams.get("pageIndex") ?? 0);
-    const pageSize = 12;
+>("http://localhost:3000/api/organizations/:orgSlug/invites/pending", ({ request }) => {
+  const { searchParams } = new URL(request.url);
+  const pageIndex = Number(searchParams.get("pageIndex") ?? 0);
+  const pageSize = 12;
 
-    const offset = pageIndex * pageSize;
-    const paginated = pendingInvites.slice(offset, offset + pageSize);
+  const offset = pageIndex * pageSize;
+  const paginated = pendingInvites.slice(offset, offset + pageSize);
 
-    return HttpResponse.json({
-      pendingInvites: paginated,
-      meta: {
-        totalCount: pendingInvites.length,
-        totalPages: Math.ceil(pendingInvites.length / pageSize),
-      },
-    });
-  },
-);
+  return HttpResponse.json({
+    pendingInvites: paginated,
+    meta: {
+      totalCount: pendingInvites.length,
+      totalPages: Math.ceil(pendingInvites.length / pageSize),
+    },
+  });
+});

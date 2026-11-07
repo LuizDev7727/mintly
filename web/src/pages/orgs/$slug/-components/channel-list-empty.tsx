@@ -1,3 +1,4 @@
+import { Cloud } from "lucide-react";
 import { CreateChannelDialog } from "@/components/create-channel-dialog";
 import {
   Empty,
@@ -7,7 +8,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Cloud } from "lucide-react";
 
 export function ChannelsListEmpty() {
   return (
@@ -17,9 +17,7 @@ export function ChannelsListEmpty() {
           <Cloud />
         </EmptyMedia>
         <EmptyTitle>Channels Empty</EmptyTitle>
-        <EmptyDescription>
-          No channels found. Create a channel to get started.
-        </EmptyDescription>
+        <EmptyDescription>No channels found. Create a channel to get started.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <CreateChannelDialog />

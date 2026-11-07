@@ -18,14 +18,17 @@ export async function getActivitiesHttp(
 ): Promise<GetActivitiesHttpResponse> {
   const { orgSlug, cursor, actionFilter, authorId } = params;
 
-  const { data } = await api.get<GetActivitiesHttpResponse>(`/organizations/${orgSlug}/activities`, {
-    params: { cursor, actionFilter, authorId },
-  });
+  const { data } = await api.get<GetActivitiesHttpResponse>(
+    `/organizations/${orgSlug}/activities`,
+    {
+      params: { cursor, actionFilter, authorId },
+    },
+  );
 
   const { activities, nextCursor } = data;
 
   return {
     activities,
-    nextCursor
+    nextCursor,
   };
 }

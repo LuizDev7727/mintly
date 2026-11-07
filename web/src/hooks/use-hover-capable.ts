@@ -17,5 +17,5 @@ export function useHoverCapable() {
     return () => mq.removeEventListener?.("change", update);
   }, []);
 
-  return { canHover }
+  return { canHover };
 }

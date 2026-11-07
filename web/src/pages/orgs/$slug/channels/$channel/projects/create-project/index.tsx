@@ -1,20 +1,18 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { CreateProjectForm } from './-components/create-project-form'
+import { createFileRoute } from "@tanstack/react-router";
+import { CreateProjectForm } from "./-components/create-project-form";
 
-export const Route = createFileRoute(
-  '/orgs/$slug/channels/$channel/projects/create-project/',
-)({
+export const Route = createFileRoute("/orgs/$slug/channels/$channel/projects/create-project/")({
   head: () => ({
     meta: [
       {
-        name: 'description',
-        content: 'Create a new project by uploading videos to generate best moments',
+        name: "description",
+        content: "Create a new project by uploading videos to generate best moments",
       },
-      { title: 'Create Project | Mintly' },
+      { title: "Create Project | Mintly" },
     ],
   }),
   component: CreateProjectPage,
-})
+});
 
 function CreateProjectPage() {
   return (
@@ -25,7 +23,7 @@ function CreateProjectPage() {
           Upload one or more videos to generate best moments for your channel
         </p>
       </div>
-      <CreateProjectForm/>
+      <CreateProjectForm />
     </div>
-  )
+  );
 }

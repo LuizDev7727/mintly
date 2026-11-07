@@ -12,9 +12,7 @@ export type AddColorResponse = {
   colorId: string;
 };
 
-export async function addColorHttp(
-  params: AddColorParams,
-): Promise<AddColorResponse> {
+export async function addColorHttp(params: AddColorParams): Promise<AddColorResponse> {
   const { orgSlug, channelId, r, g, b } = params;
 
   const { data } = await api.post<AddColorResponse>(

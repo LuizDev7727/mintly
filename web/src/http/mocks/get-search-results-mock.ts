@@ -1,5 +1,5 @@
-import { http, HttpResponse } from "msw";
 import { faker } from "@faker-js/faker";
+import { HttpResponse, http } from "msw";
 import type { GetSearchResultsResponse } from "../search/get-search-results.http";
 
 const RESULTS_PER_TYPE = 5;
@@ -34,11 +34,7 @@ const folders = Array.from({ length: 20 }, () => ({
   channelId: faker.string.uuid(),
 }));
 
-export const getSearchResultsMock = http.get<
-  { orgSlug: string },
-  never,
-  GetSearchResultsResponse
->(
+export const getSearchResultsMock = http.get<{ orgSlug: string }, never, GetSearchResultsResponse>(
   "http://localhost:3000/api/organizations/:orgSlug/search",
   ({ request }) => {
     const { searchParams } = new URL(request.url);
@@ -48,12 +44,8 @@ export const getSearchResultsMock = http.get<
 
     return HttpResponse.json({
       posts: posts.filter((post) => matches(post.title)).slice(0, RESULTS_PER_TYPE),
-      projects: projects
-        .filter((project) => matches(project.title))
-        .slice(0, RESULTS_PER_TYPE),
-      folders: folders
-        .filter((folder) => matches(folder.title))
-        .slice(0, RESULTS_PER_TYPE),
+      projects: projects.filter((project) => matches(project.title)).slice(0, RESULTS_PER_TYPE),
+      folders: folders.filter((folder) => matches(folder.title)).slice(0, RESULTS_PER_TYPE),
     });
   },
 );

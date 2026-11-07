@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
+import { Button } from "@/components/ui/button";
 
 type FoldersPaginationProps = {
   totalPages: number;
@@ -13,10 +13,7 @@ export function FoldersPagination({
   currentFolderPage,
   isLoading,
 }: FoldersPaginationProps) {
-  const [_, setCurrentFolderPage] = useQueryState(
-    "folder_page",
-    parseAsInteger.withDefault(0),
-  );
+  const [_, setCurrentFolderPage] = useQueryState("folder_page", parseAsInteger.withDefault(0));
 
   const hasNextPage = currentFolderPage < totalPages;
   const hasPrevPage = currentFolderPage > 0;

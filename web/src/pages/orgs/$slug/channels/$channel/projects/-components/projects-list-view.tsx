@@ -1,10 +1,10 @@
+import { Link, useParams } from "@tanstack/react-router";
+import { AlertTriangle, Ban, Calendar, Check, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { dayjs } from "@/lib/dayjs";
 import type { Project } from "@/types/project";
 import { getInitials } from "@/utils/get-initials";
-import { dayjs } from "@/lib/dayjs";
-import { Link, useParams } from "@tanstack/react-router";
-import { Badge } from "@/components/ui/badge";
-import { Check, AlertTriangle, Calendar, Ban, Loader2 } from "lucide-react";
 
 type ProjectsListViewProps = {
   projects: Project[];
@@ -80,9 +80,7 @@ export function ProjectsListView({ projects }: ProjectsListViewProps) {
                 )}
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium">
-                  {project.title}
-                </p>
+                <p className="truncate text-sm font-medium">{project.title}</p>
                 <p className="truncate text-xs text-muted-foreground">
                   {project.clipCount} clips {" · "}
                   {dayjs(project.createdAt).fromNow()}
@@ -94,14 +92,9 @@ export function ProjectsListView({ projects }: ProjectsListViewProps) {
               <ProjectStatusBadge status={project.status} />
 
               <Avatar className="size-6">
-                {
-                  project.owner.avatarUrl && (
-                    <AvatarImage
-                      src={project.owner.avatarUrl}
-                      alt={project.owner.name}
-                    />
-                  )
-                }
+                {project.owner.avatarUrl && (
+                  <AvatarImage src={project.owner.avatarUrl} alt={project.owner.name} />
+                )}
                 <AvatarFallback className="text-[10px]">
                   {getInitials(project.owner.name)}
                 </AvatarFallback>

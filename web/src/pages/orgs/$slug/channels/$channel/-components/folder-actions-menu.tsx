@@ -1,3 +1,4 @@
+import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -6,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { FolderTreeNode } from "@/http/folder/get-folders-tree.http";
-import { MoreHorizontal } from "lucide-react";
 import { DeleteFolderDialog } from "./delete-folder-dialog";
 import { StarFolderButton } from "./star-folder-button";
 import { UpdateFolderNameDialog } from "./update-folder-name-dialog";

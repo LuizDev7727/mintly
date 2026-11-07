@@ -1,16 +1,12 @@
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Info } from "lucide-react";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig,
 } from "@/components/ui/chart";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const chartData = [
   { date: "2025-06-01", usage: 0.09 },
@@ -67,9 +63,7 @@ export function UsageChart() {
             <TooltipTrigger asChild>
               <Info className="size-3.5 text-muted-foreground" />
             </TooltipTrigger>
-            <TooltipContent>
-              Total usage cost per day over the last 30 days.
-            </TooltipContent>
+            <TooltipContent>Total usage cost per day over the last 30 days.</TooltipContent>
           </Tooltip>
         </div>
         <p className="text-xs text-muted-foreground">Last 30 days</p>
@@ -86,16 +80,8 @@ export function UsageChart() {
         >
           <defs>
             <linearGradient id="fillUsage" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="var(--color-usage)"
-                stopOpacity={0.5}
-              />
-              <stop
-                offset="95%"
-                stopColor="var(--color-usage)"
-                stopOpacity={0.05}
-              />
+              <stop offset="5%" stopColor="var(--color-usage)" stopOpacity={0.5} />
+              <stop offset="95%" stopColor="var(--color-usage)" stopOpacity={0.05} />
             </linearGradient>
           </defs>
           <CartesianGrid vertical={false} />

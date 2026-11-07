@@ -45,12 +45,7 @@ export function DeleteThumbnailsDialog({
           >
             Cancel
           </Button>
-          <Button
-            type="button"
-            variant="destructive"
-            disabled={isDeleting}
-            onClick={onConfirm}
-          >
+          <Button type="button" variant="destructive" disabled={isDeleting} onClick={onConfirm}>
             {isDeleting ? <Spinner /> : <Trash2 />}
             Remove
           </Button>

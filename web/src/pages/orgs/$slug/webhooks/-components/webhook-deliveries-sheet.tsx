@@ -1,28 +1,24 @@
-import { ChevronDown, RotateCw } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+import { ChevronDown, RotateCw } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
 
 type Delivery = {
-  id: string
-  event: string
-  timestamp: string
-  statusCode: number | null
-  status: "success" | "failed"
-  attempt: number
-  responseBody: string | null
-}
+  id: string;
+  event: string;
+  timestamp: string;
+  statusCode: number | null;
+  status: "success" | "failed";
+  attempt: number;
+  responseBody: string | null;
+};
 
 const MOCK_DELIVERIES: Delivery[] = [
   {
@@ -71,17 +67,14 @@ const MOCK_DELIVERIES: Delivery[] = [
     attempt: 3,
     responseBody: null,
   },
-]
+];
 
 interface WebhookDeliveriesSheetProps {
-  endpointUrl: string | null
-  onOpenChange: (open: boolean) => void
+  endpointUrl: string | null;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function WebhookDeliveriesSheet({
-  endpointUrl,
-  onOpenChange,
-}: WebhookDeliveriesSheetProps) {
+export function WebhookDeliveriesSheet({ endpointUrl, onOpenChange }: WebhookDeliveriesSheetProps) {
   return (
     <Sheet open={!!endpointUrl} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-md">
@@ -102,11 +95,7 @@ export function WebhookDeliveriesSheet({
                     <Badge variant="outline" className="font-mono">
                       {delivery.event}
                     </Badge>
-                    <Badge
-                      variant={
-                        delivery.status === "success" ? "success" : "destructive"
-                      }
-                    >
+                    <Badge variant={delivery.status === "success" ? "success" : "destructive"}>
                       {delivery.statusCode ?? "Timeout"}
                     </Badge>
                   </div>
@@ -148,5 +137,5 @@ export function WebhookDeliveriesSheet({
         </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+import { HttpResponse, http } from "msw";
 
 type UpdateFolderMockParams = {
   folderId: string;
@@ -8,11 +8,7 @@ type UpdateFolderMockRequest = {
   title: string;
 };
 
-export const updateFolderMock = http.put<
-  UpdateFolderMockParams,
-  UpdateFolderMockRequest,
-  never
->(
+export const updateFolderMock = http.put<UpdateFolderMockParams, UpdateFolderMockRequest, never>(
   "http://localhost:3000/api/folders/:folderId",
   () => {
     return new HttpResponse(null, { status: 204 });

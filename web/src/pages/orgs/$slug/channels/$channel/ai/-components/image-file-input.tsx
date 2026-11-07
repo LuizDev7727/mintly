@@ -9,10 +9,7 @@ interface ImageFileInputProps {
 
 export function ImageFileInput({ file, onChange }: ImageFileInputProps) {
   const inputId = useId();
-  const previewUrl = useMemo(
-    () => (file ? URL.createObjectURL(file) : null),
-    [file],
-  );
+  const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
 
   useEffect(() => {
     return () => {

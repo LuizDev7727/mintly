@@ -8,10 +8,7 @@ import { MembersPagination } from "./members-pagination";
 export function MembersList() {
   const { slug } = useParams({ from: "/orgs/$slug" });
 
-  const [currentPage] = useQueryState(
-    "members_page",
-    parseAsInteger.withDefault(0),
-  );
+  const [currentPage] = useQueryState("members_page", parseAsInteger.withDefault(0));
 
   // useSuspenseQuery re-suspends on every queryKey change (it does not accept
   // placeholderData), so changing pages shows the Suspense fallback again —
@@ -29,10 +26,7 @@ export function MembersList() {
         ))}
       </div>
 
-      <MembersPagination
-        totalPages={data.meta.totalPages}
-        totalCount={data.meta.totalCount}
-      />
+      <MembersPagination totalPages={data.meta.totalPages} totalCount={data.meta.totalCount} />
     </div>
   );
 }

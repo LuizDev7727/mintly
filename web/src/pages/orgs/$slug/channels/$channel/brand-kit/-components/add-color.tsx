@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { addColorHttp } from "@/http/color/add-color.http";
 import {
   ColorPicker,
   ColorPickerArea,
@@ -10,8 +12,6 @@ import {
   ColorPickerHue,
   ColorPickerTrigger,
 } from "./color-picker";
-import { Button } from "@/components/ui/button";
-import { addColorHttp } from "@/http/color/add-color.http";
 
 const NEW_COLOR_DEFAULT = "#a3e635";
 

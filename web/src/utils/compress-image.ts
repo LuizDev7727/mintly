@@ -21,12 +21,7 @@ export function compressImage({
   maxHeight = Number.POSITIVE_INFINITY,
   quality = 1,
 }: CompressImageParams) {
-  const allowedFileTypes = [
-    "image/jpg",
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-  ];
+  const allowedFileTypes = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
 
   if (!allowedFileTypes.includes(file.type)) {
     throw new Error("Image format not supported");

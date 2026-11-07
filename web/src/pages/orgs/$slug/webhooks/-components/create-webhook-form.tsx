@@ -1,33 +1,33 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useParams } from "@tanstack/react-router"
-import { PlusIcon } from "lucide-react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { DialogFooter } from "@/components/ui/dialog"
-import { FieldError } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Skeleton } from "@/components/ui/skeleton"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { PlusIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DialogFooter } from "@/components/ui/dialog";
+import { FieldError } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import { createWebhookHttp } from "@/http/webhook/create-webhook.http";
+import { getAvailableEventsHttp } from "@/http/webhook/get-available-events.http";
+import type { GetWebhooksOverviewResponse } from "@/http/webhook/get-webhooks-overview.http";
 import {
-  createWebhookSchema,
   type CreateWebhookFormType,
-} from "@/schemas/webhook/create-webhook.schema"
-import { getAvailableEventsHttp } from "@/http/webhook/get-available-events.http"
-import { createWebhookHttp } from "@/http/webhook/create-webhook.http"
-import type { GetWebhooksOverviewResponse } from "@/http/webhook/get-webhooks-overview.http"
-import type { Webhook } from "@/types/webhook"
+  createWebhookSchema,
+} from "@/schemas/webhook/create-webhook.schema";
+import type { Webhook } from "@/types/webhook";
 
 export function CreateWebhookForm() {
-  const { slug } = useParams({ from: "/orgs/$slug" })
-  const queryClient = useQueryClient()
+  const { slug } = useParams({ from: "/orgs/$slug" });
+  const queryClient = useQueryClient();
 
   const { data: availableEvents, isPending: isLoadingEvents } = useQuery({
     queryKey: ["webhook-available-events", slug],
     queryFn: () => getAvailableEventsHttp({ orgSlug: slug }),
-  })
+  });
 
   const {
     register,
@@ -41,9 +41,9 @@ export function CreateWebhookForm() {
       url: "",
       triggers: [],
     },
-  })
+  });
 
-  const selectedTriggers = watch("triggers")
+  const selectedTriggers = watch("triggers");
 
   function toggleTrigger(trigger: string, checked: boolean) {
     if (checked) {
@@ -54,60 +54,54 @@ export function CreateWebhookForm() {
           { trigger: trigger as CreateWebhookFormType["triggers"][number]["trigger"] },
         ],
         { shouldValidate: true },
-      )
-      return
+      );
+      return;
     }
 
     setValue(
       "triggers",
       selectedTriggers.filter((item) => item.trigger !== trigger),
       { shouldValidate: true },
-    )
+    );
   }
 
   const { mutateAsync: createWebhook } = useMutation({
     mutationFn: createWebhookHttp,
     onSuccess: (data, variables) => {
-      queryClient.setQueryData<GetWebhooksOverviewResponse>(
-        ["webhooks-overview", slug],
-        (old) => {
-          if (!old) return old
+      queryClient.setQueryData<GetWebhooksOverviewResponse>(["webhooks-overview", slug], (old) => {
+        if (!old) return old;
 
-          const newWebhook: Webhook = {
-            id: data.id,
-            url: variables.url,
-            triggers: variables.triggers,
-            signingSecret: data.signingKey,
-            createdAt: new Date().toISOString(),
-            lastLog: null,
-          }
+        const newWebhook: Webhook = {
+          id: data.id,
+          url: variables.url,
+          triggers: variables.triggers,
+          signingSecret: data.signingKey,
+          createdAt: new Date().toISOString(),
+          lastLog: null,
+        };
 
-          return {
-            ...old,
-            webhooks: [newWebhook, ...old.webhooks],
-          }
-        },
-      )
+        return {
+          ...old,
+          webhooks: [newWebhook, ...old.webhooks],
+        };
+      });
 
-      toast("Webhook endpoint created successfully!")
+      toast("Webhook endpoint created successfully!");
     },
-  })
+  });
 
   async function handleCreateWebhook(formBody: CreateWebhookFormType) {
-    const { url, triggers } = formBody
+    const { url, triggers } = formBody;
 
     await createWebhook({
       orgSlug: slug,
       url,
       triggers: triggers.map((item) => item.trigger),
-    })
+    });
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(handleCreateWebhook)}
-      className="space-y-4"
-    >
+    <form onSubmit={handleSubmit(handleCreateWebhook)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="webhook-url">Endpoint URL</Label>
         <Input
@@ -138,12 +132,8 @@ export function CreateWebhookForm() {
               >
                 <Checkbox
                   id={event.trigger}
-                  checked={selectedTriggers.some(
-                    (item) => item.trigger === event.trigger,
-                  )}
-                  onCheckedChange={(checked) =>
-                    toggleTrigger(event.trigger, checked === true)
-                  }
+                  checked={selectedTriggers.some((item) => item.trigger === event.trigger)}
+                  onCheckedChange={(checked) => toggleTrigger(event.trigger, checked === true)}
                 />
                 {event.trigger}
               </Label>
@@ -151,9 +141,7 @@ export function CreateWebhookForm() {
           </div>
         )}
 
-        {errors.triggers && (
-          <FieldError>{errors.triggers.message}</FieldError>
-        )}
+        {errors.triggers && <FieldError>{errors.triggers.message}</FieldError>}
       </div>
 
       <DialogFooter showCloseButton>
@@ -163,5 +151,5 @@ export function CreateWebhookForm() {
         </Button>
       </DialogFooter>
     </form>
-  )
+  );
 }

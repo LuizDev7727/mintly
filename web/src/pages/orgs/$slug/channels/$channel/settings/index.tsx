@@ -1,30 +1,26 @@
-import { getChannelHttp } from "@/http/channel/get-channel.http";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { Suspense } from "react";
-import { UpdateChannelNameForm } from "./-components/update-channel-name-form";
+import { getChannelHttp } from "@/http/channel/get-channel.http";
 import { DeleteChannel } from "./-components/delete-channel";
+import { UpdateChannelNameForm } from "./-components/update-channel-name-form";
 
-export const Route = createFileRoute("/orgs/$slug/channels/$channel/settings/")(
-  {
-    head: () => ({
-      meta: [
-        { title: "Channel Settings | Mintly" },
-        { name: "description", content: "Manage your channel settings." },
-      ],
-    }),
-    component: ChannelSettingsPage,
-  },
-);
+export const Route = createFileRoute("/orgs/$slug/channels/$channel/settings/")({
+  head: () => ({
+    meta: [
+      { title: "Channel Settings | Mintly" },
+      { name: "description", content: "Manage your channel settings." },
+    ],
+  }),
+  component: ChannelSettingsPage,
+});
 
 function ChannelSettingsPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-xl font-semibold">Channel Settings</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage your channel settings
-        </p>
+        <p className="text-sm text-muted-foreground">Manage your channel settings</p>
       </div>
 
       <div className="flex flex-col gap-4">

@@ -1,5 +1,5 @@
-import { http, HttpResponse } from "msw";
 import { faker } from "@faker-js/faker";
+import { HttpResponse, http } from "msw";
 import type { CreateFolderResponse } from "../folder/create-folder.http";
 
 type CreateFolderMockParams = {
@@ -16,12 +16,6 @@ export const createFolderMock = http.post<
   CreateFolderMockParams,
   CreateFolderMockRequest,
   CreateFolderResponse
->(
-  "http://localhost:3000/api/organizations/:orgSlug/channels/:channelSlug/folders",
-  () => {
-    return HttpResponse.json(
-      { folderId: faker.string.uuid() },
-      { status: 201 },
-    );
-  },
-);
+>("http://localhost:3000/api/organizations/:orgSlug/channels/:channelSlug/folders", () => {
+  return HttpResponse.json({ folderId: faker.string.uuid() }, { status: 201 });
+});

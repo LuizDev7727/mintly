@@ -1,5 +1,5 @@
+import { type LinkProps, useMatchRoute } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
-import { useMatchRoute, type LinkProps } from "@tanstack/react-router";
 
 import { FlickeringGrid } from "@/components/flickering-grid";
 import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";

@@ -1,18 +1,18 @@
 import type { Decorator, Preview } from "@storybook/react-vite";
 import "../src/index.css";
-import { initialize, mswLoader } from "msw-storybook-addon";
-import { handlers } from "../src/http/mocks/handlers";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "../src/components/theme-provider";
-import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
-import { TooltipProvider } from "../src/components/ui/tooltip";
 import {
   createMemoryHistory,
-  createRoute,
   createRootRoute,
+  createRoute,
   createRouter,
   RouterProvider,
 } from "@tanstack/react-router";
+import { initialize, mswLoader } from "msw-storybook-addon";
+import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
+import { ThemeProvider } from "../src/components/theme-provider";
+import { TooltipProvider } from "../src/components/ui/tooltip";
+import { handlers } from "../src/http/mocks/handlers";
 
 initialize({ onUnhandledRequest: "bypass" });
 
@@ -51,9 +51,7 @@ const withProviders: Decorator = (Story, context) => {
   const router = createRouter({
     routeTree: rootRoute.addChildren([orgRoute.addChildren([channelRoute])]),
     history: createMemoryHistory({
-      initialEntries: [
-        context.parameters.initialEntry ?? DEFAULT_INITIAL_ENTRY,
-      ],
+      initialEntries: [context.parameters.initialEntry ?? DEFAULT_INITIAL_ENTRY],
     }),
   });
 

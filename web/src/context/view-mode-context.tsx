@@ -31,9 +31,7 @@ export function ViewModeProvider({
   defaultView = "grid",
   ...props
 }: ViewModeProviderProps) {
-  const [view, setViewState] = useState<ViewMode>(() =>
-    getStoredView(defaultView),
-  );
+  const [view, setViewState] = useState<ViewMode>(() => getStoredView(defaultView));
 
   function setView(nextView: ViewMode) {
     window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, nextView);
@@ -55,8 +53,7 @@ export function ViewModeProvider({
 export const useViewMode = () => {
   const context = useContext(ViewModeContext);
 
-  if (context === undefined)
-    throw new Error("useViewMode must be used within a ViewModeProvider");
+  if (context === undefined) throw new Error("useViewMode must be used within a ViewModeProvider");
 
   return context;
 };

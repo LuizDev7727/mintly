@@ -1,19 +1,12 @@
-import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
+import { Button } from "@/components/ui/button";
 
 type GenerationHistoryPaginationProps = {
   totalPages: number;
 };
 
-export function GenerationHistoryPagination({
-  totalPages,
-}: GenerationHistoryPaginationProps) {
+export function GenerationHistoryPagination({ totalPages }: GenerationHistoryPaginationProps) {
   const [currentPage, setCurrentPage] = useQueryState(
     "generation_page",
     parseAsInteger.withDefault(0),

@@ -1,6 +1,6 @@
-import { Suspense } from "react";
-import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, screen } from "@testing-library/react";
+import { Suspense } from "react";
 import { MembersList } from "@/pages/orgs/$slug/members/-components/members-list";
 import type { Member } from "@/types/member";
 
@@ -26,13 +26,9 @@ vi.mock("@/pages/orgs/$slug/members/-components/member-card", () => ({
 }));
 
 vi.mock("@/pages/orgs/$slug/members/-components/members-pagination", () => ({
-  MembersPagination: ({
-    totalPages,
-    totalCount,
-  }: {
-    totalPages: number;
-    totalCount: number;
-  }) => <div data-testid="pagination">{`${totalCount} total, ${totalPages} pages`}</div>,
+  MembersPagination: ({ totalPages, totalCount }: { totalPages: number; totalCount: number }) => (
+    <div data-testid="pagination">{`${totalCount} total, ${totalPages} pages`}</div>
+  ),
 }));
 
 function renderWithClient(ui: React.ReactElement) {

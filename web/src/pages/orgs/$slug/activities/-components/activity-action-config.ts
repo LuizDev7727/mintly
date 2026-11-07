@@ -1,16 +1,16 @@
-import type { Activity } from "@/types/activity";
 import {
   Ban,
   Clapperboard,
   ImageOff,
   ImagePlus,
+  type LucideIcon,
   Trash2,
   TvMinimal,
   Unlink,
   Video,
   Workflow,
-  type LucideIcon,
 } from "lucide-react";
+import type { Activity } from "@/types/activity";
 
 export const ACTIVITY_ACTIONS = [
   "CREATED_CHANNEL",

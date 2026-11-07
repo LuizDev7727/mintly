@@ -1,8 +1,8 @@
+import { Link, useParams } from "@tanstack/react-router";
+import { TvMinimal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Channel } from "@/types/channel";
 import { getInitials } from "@/utils/get-initials";
-import { Link, useParams } from "@tanstack/react-router";
-import { TvMinimal } from "lucide-react";
 
 type ChannelGridViewProps = {
   channels: Channel[];
@@ -30,9 +30,7 @@ export function ChannelGridView({ channels }: ChannelGridViewProps) {
           </header>
 
           <div className="px-4 pb-4">
-            <h3 className="text-[15px] font-semibold leading-[1.3]">
-              {channel.name}
-            </h3>
+            <h3 className="text-[15px] font-semibold leading-[1.3]">{channel.name}</h3>
             <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">
               {channel.description}
             </p>

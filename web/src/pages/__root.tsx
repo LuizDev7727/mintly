@@ -1,4 +1,4 @@
-import { HeadContent, Outlet, createRootRoute } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router";
 import { Providers } from "@/providers";
 
 export const Route = createRootRoute({

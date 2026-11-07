@@ -1,3 +1,8 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { MoreHorizontal } from "lucide-react";
+import { useState } from "react";
+import { TiktokIcon } from "@/components/provider-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,23 +12,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { MoreHorizontal } from "lucide-react";
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { ConfirmDisconnectDialog } from "./confirm-disconnect-dialog";
-import { TiktokIcon } from "@/components/provider-icons";
 import { deleteIntegrationHttp } from "@/http/integration/delete-ingration.http";
 import { requestTiktokIntegrationUrlHttp } from "@/http/integration/request-tiktok-integration-url.http";
 import type { Integration } from "@/types/integration";
+import { ConfirmDisconnectDialog } from "./confirm-disconnect-dialog";
 
 interface TiktokIntegrationCardProps {
   integration: Integration | undefined;
 }
 
-export function TiktokIntegrationCard({
-  integration,
-}: TiktokIntegrationCardProps) {
+export function TiktokIntegrationCard({ integration }: TiktokIntegrationCardProps) {
   const { slug, channel } = useParams({ from: "/orgs/$slug/channels/$channel" });
   const queryClient = useQueryClient();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -62,11 +60,7 @@ export function TiktokIntegrationCard({
           {integration && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="size-8 shrink-0 bg-transparent!"
-                >
+                <Button variant="outline" size="icon" className="size-8 shrink-0 bg-transparent!">
                   <MoreHorizontal className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -89,8 +83,7 @@ export function TiktokIntegrationCard({
         </div>
 
         <p className="mt-3 text-sm text-muted-foreground">
-          Connect your TikTok account to publish clips and reach your
-          audience directly from Mintly.
+          Connect your TikTok account to publish clips and reach your audience directly from Mintly.
         </p>
 
         <Separator className="my-4" />
@@ -99,10 +92,7 @@ export function TiktokIntegrationCard({
           <div className="flex h-full items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <Avatar className="size-6">
-                <AvatarImage
-                  src={integration.avatarUrl ?? undefined}
-                  alt={integration.name}
-                />
+                <AvatarImage src={integration.avatarUrl ?? undefined} alt={integration.name} />
                 <AvatarFallback className="text-[10px]">
                   {integration.name[0].toUpperCase()}
                 </AvatarFallback>

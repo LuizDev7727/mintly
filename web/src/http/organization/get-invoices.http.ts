@@ -19,9 +19,7 @@ export type GetInvoicesResponse = {
   };
 };
 
-export async function getInvoicesHttp(
-  params: GetInvoicesParams,
-): Promise<GetInvoicesResponse> {
+export async function getInvoicesHttp(params: GetInvoicesParams): Promise<GetInvoicesResponse> {
   const { orgSlug, pageIndex } = params;
   const { data } = await api.get<GetInvoicesResponse>(
     `/organizations/${orgSlug}/billing/invoices`,

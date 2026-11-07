@@ -13,9 +13,7 @@ export type GetColorsResponse = {
   }[];
 };
 
-export async function getColorsHttp(
-  params: GetColorsParams,
-): Promise<GetColorsResponse> {
+export async function getColorsHttp(params: GetColorsParams): Promise<GetColorsResponse> {
   const { orgSlug, channelId } = params;
 
   const { data } = await api.get<GetColorsResponse>(

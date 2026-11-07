@@ -1,8 +1,4 @@
-import {
-  type InfiniteData,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { type InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import axios from "axios";
 import { useRef, useState } from "react";
@@ -41,42 +37,41 @@ export function useInspirationalThumbnailUploads() {
   const { mutateAsync: addInspirationalThumbnail } = useMutation({
     mutationFn: addInspirationalThumbnailHttp,
     onSuccess: ({ inspirationalThumbnailId }, { file }) => {
-      queryClient.setQueryData<
-        InfiniteData<GetInspirationalThumbnailsHttpResponse>
-      >(["inspirational-thumbnails", channel], (old) => {
-        if (!old) return old;
+      queryClient.setQueryData<InfiniteData<GetInspirationalThumbnailsHttpResponse>>(
+        ["inspirational-thumbnails", channel],
+        (old) => {
+          if (!old) return old;
 
-        const newInspirationalThumbnail = {
-          id: inspirationalThumbnailId,
-          name: file.name,
-          sizeInBytes: file.size,
-          url: URL.createObjectURL(file),
-          createdAt: new Date(),
-        };
+          const newInspirationalThumbnail = {
+            id: inspirationalThumbnailId,
+            name: file.name,
+            sizeInBytes: file.size,
+            url: URL.createObjectURL(file),
+            createdAt: new Date(),
+          };
 
-        return {
-          ...old,
-          pages: old.pages.map((page, index) =>
-            index === 0
-              ? {
-                  ...page,
-                  inspirationalThumbnails: [
-                    newInspirationalThumbnail,
-                    ...page.inspirationalThumbnails,
-                  ],
-                }
-              : page,
-          ),
-        };
-      });
+          return {
+            ...old,
+            pages: old.pages.map((page, index) =>
+              index === 0
+                ? {
+                    ...page,
+                    inspirationalThumbnails: [
+                      newInspirationalThumbnail,
+                      ...page.inspirationalThumbnails,
+                    ],
+                  }
+                : page,
+            ),
+          };
+        },
+      );
     },
   });
 
   function patchUpload(id: string, patch: Partial<ThumbnailUpload>) {
     setUploads((prev) =>
-      prev.map((upload) =>
-        upload.id === id ? { ...upload, ...patch } : upload,
-      ),
+      prev.map((upload) => (upload.id === id ? { ...upload, ...patch } : upload)),
     );
   }
 
@@ -133,10 +128,7 @@ export function useInspirationalThumbnailUploads() {
     }
 
     const id = crypto.randomUUID();
-    setUploads((prev) => [
-      ...prev,
-      { id, file: original, status: "processing", progress: 0 },
-    ]);
+    setUploads((prev) => [...prev, { id, file: original, status: "processing", progress: 0 }]);
 
     try {
       await runUpload(id, await compressImage({ file: original }));

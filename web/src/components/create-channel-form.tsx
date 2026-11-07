@@ -1,20 +1,20 @@
-import {
-  createChannelSchema,
-  type CreateChannelFormType,
-} from "@/schemas/channel/create-channel.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { Loader2, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { createChannelHttp } from "@/http/channel/create-channel.http";
+import type { GetChannelsResponse } from "@/http/channel/get-channels.http";
+import {
+  type CreateChannelFormType,
+  createChannelSchema,
+} from "@/schemas/channel/create-channel.schema";
+import type { Channel } from "@/types/channel";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { createChannelHttp } from "@/http/channel/create-channel.http";
-import type { GetChannelsResponse } from "@/http/channel/get-channels.http";
-import type { Channel } from "@/types/channel";
-import { Loader2, Plus } from "lucide-react";
-import { toast } from "sonner";
 
 export function CreateChannelForm() {
   const { slug } = useParams({
@@ -41,13 +41,10 @@ export function CreateChannelForm() {
         createdAt: new Date().toISOString(),
       };
 
-      queryClient.setQueryData<GetChannelsResponse>(
-        ["channels", slug],
-        (old) => {
-          if (!old) return undefined;
-          return { ...old, channels: [newChannel, ...old.channels] };
-        },
-      );
+      queryClient.setQueryData<GetChannelsResponse>(["channels", slug], (old) => {
+        if (!old) return undefined;
+        return { ...old, channels: [newChannel, ...old.channels] };
+      });
 
       toast("Channel created successfully!");
     },
@@ -66,16 +63,9 @@ export function CreateChannelForm() {
       <Label>Name</Label>
       <Input {...register("name")} placeholder="Amazon" />
       <Label>Description</Label>
-      <Textarea
-        {...register("description")}
-        placeholder="What is this channel about?"
-      />
+      <Textarea {...register("description")} placeholder="What is this channel about?" />
       <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? (
-          <Loader2 className="animate-spin size-4" />
-        ) : (
-          <Plus className="size-4" />
-        )}
+        {isSubmitting ? <Loader2 className="animate-spin size-4" /> : <Plus className="size-4" />}
         Create Channel
       </Button>
     </form>

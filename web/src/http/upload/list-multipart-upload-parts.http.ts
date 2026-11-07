@@ -14,10 +14,9 @@ export async function listMultipartUploadPartsHttp(
 ): Promise<ListMultipartUploadPartsHttpResponse> {
   const { key, uploadId } = params;
 
-  const { data } = await api.get<ListMultipartUploadPartsHttpResponse>(
-    "/uploads/list-parts",
-    { params: { key, uploadId } },
-  );
+  const { data } = await api.get<ListMultipartUploadPartsHttpResponse>("/uploads/list-parts", {
+    params: { key, uploadId },
+  });
 
   return data;
 }

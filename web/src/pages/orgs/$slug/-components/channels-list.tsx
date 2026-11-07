@@ -1,9 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { getChannelsHttp } from "@/http/channel/get-channels.http";
 import { useViewMode } from "@/context/view-mode-context";
-import { ChannelsListEmpty } from "./channel-list-empty";
+import { getChannelsHttp } from "@/http/channel/get-channels.http";
 import { ChannelGridView } from "./channel-grid-view";
+import { ChannelsListEmpty } from "./channel-list-empty";
 import { ChannelListView } from "./channel-list-view";
 
 export function ChannelsList() {

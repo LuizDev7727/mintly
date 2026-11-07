@@ -1,6 +1,6 @@
+import { AlertTriangle, Ban, Calendar, Check, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Post } from "@/types/post";
-import { AlertTriangle, Ban, Calendar, Check, Loader2 } from "lucide-react";
 
 type PostStatusBadgeProps = {
   status: Post["status"];

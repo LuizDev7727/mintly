@@ -32,14 +32,9 @@ export function ThumbnailUploadCard({
   const isProcessing = status === "processing";
 
   return (
-    <div
-      data-variant={variant}
-      className="flex items-center data-[variant=tile]:min-h-32"
-    >
+    <div data-variant={variant} className="flex items-center data-[variant=tile]:min-h-32">
       <Attachment state={status} className="w-full">
-        <AttachmentMedia>
-          {hasFailed ? <AlertCircle /> : <Spinner />}
-        </AttachmentMedia>
+        <AttachmentMedia>{hasFailed ? <AlertCircle /> : <Spinner />}</AttachmentMedia>
         <AttachmentContent>
           <AttachmentTitle>{file.name}</AttachmentTitle>
           <AttachmentDescription>
@@ -51,16 +46,10 @@ export function ThumbnailUploadCard({
         <AttachmentActions>
           {hasFailed ? (
             <>
-              <AttachmentAction
-                aria-label={`Retry upload of ${file.name}`}
-                onClick={onRetry}
-              >
+              <AttachmentAction aria-label={`Retry upload of ${file.name}`} onClick={onRetry}>
                 <RotateCcw />
               </AttachmentAction>
-              <AttachmentAction
-                aria-label={`Dismiss ${file.name}`}
-                onClick={onDismiss}
-              >
+              <AttachmentAction aria-label={`Dismiss ${file.name}`} onClick={onDismiss}>
                 <X />
               </AttachmentAction>
             </>

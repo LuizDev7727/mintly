@@ -1,7 +1,7 @@
-import { useState } from "react"
-import { formatDistanceToNow } from "date-fns"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,19 +9,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { cn } from "@/lib/utils"
-import type { RecentDelivery } from "@/http/webhook/get-webhooks-overview.http"
-import { WebhookDeliveryDetailsSheet } from "./webhook-delivery-details-sheet"
+} from "@/components/ui/table";
+import type { RecentDelivery } from "@/http/webhook/get-webhooks-overview.http";
+import { cn } from "@/lib/utils";
+import { WebhookDeliveryDetailsSheet } from "./webhook-delivery-details-sheet";
 
 interface RecentDeliveriesSectionProps {
-  deliveries: RecentDelivery[]
+  deliveries: RecentDelivery[];
 }
 
-export function RecentDeliveriesSection({
-  deliveries,
-}: RecentDeliveriesSectionProps) {
-  const [selectedItem, setSelectedItem] = useState<RecentDelivery | null>(null)
+export function RecentDeliveriesSection({ deliveries }: RecentDeliveriesSectionProps) {
+  const [selectedItem, setSelectedItem] = useState<RecentDelivery | null>(null);
 
   return (
     <div className="space-y-4 rounded-xl border border-border bg-card p-4">
@@ -50,10 +48,7 @@ export function RecentDeliveriesSection({
           <TableBody>
             {deliveries.length === 0 && (
               <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="py-6 text-center text-xs text-muted-foreground"
-                >
+                <TableCell colSpan={4} className="py-6 text-center text-xs text-muted-foreground">
                   No deliveries yet.
                 </TableCell>
               </TableRow>
@@ -110,9 +105,9 @@ export function RecentDeliveriesSection({
       <WebhookDeliveryDetailsSheet
         item={selectedItem}
         onOpenChange={(open) => {
-          if (!open) setSelectedItem(null)
+          if (!open) setSelectedItem(null);
         }}
       />
     </div>
-  )
+  );
 }

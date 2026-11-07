@@ -1,46 +1,40 @@
+import { useMutation, useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { useViewMode } from "@/context/view-mode-context";
 import { getBestMomentsHttp } from "@/http/best-moments/get-best-moments.http";
 import { sendBestMomentToSocialMediaHttp } from "@/http/best-moments/send-best-moment-to-social-media.http";
 import { getIntegrationsHttp } from "@/http/integration/get-integrations.http";
 import type { Integration } from "@/types/integration";
-import {
-  useMutation,
-  useSuspenseInfiniteQuery,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
-import { toast } from "sonner";
-import { BestMomentsEmpty } from "./best-moments-empty";
 import { BestMomentGridView } from "./best-moment-grid-view";
 import { BestMomentListView } from "./best-moment-list-view";
-import { useParams } from "@tanstack/react-router";
+import { BestMomentsEmpty } from "./best-moments-empty";
 
 export function BestMoments() {
-
   const { slug, channel, projectId } = useParams({
-    from:"/orgs/$slug/channels/$channel/projects/$projectId/"
-  })
+    from: "/orgs/$slug/channels/$channel/projects/$projectId/",
+  });
 
   const { view } = useViewMode();
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useSuspenseInfiniteQuery({
-      queryKey: ["best-moments", projectId],
-      queryFn: ({ pageParam }) =>
-        getBestMomentsHttp({
-          orgSlug: slug,
-          channelId: channel,
-          projectId,
-          cursor: pageParam,
-        }),
-      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-      initialPageParam: undefined as string | undefined,
-      refetchOnWindowFocus: false
-    });
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery({
+    queryKey: ["best-moments", projectId],
+    queryFn: ({ pageParam }) =>
+      getBestMomentsHttp({
+        orgSlug: slug,
+        channelId: channel,
+        projectId,
+        cursor: pageParam,
+      }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    initialPageParam: undefined as string | undefined,
+    refetchOnWindowFocus: false,
+  });
 
   const { data: integrationsData } = useSuspenseQuery({
     queryKey: ["integrations", channel],
@@ -87,7 +81,7 @@ export function BestMoments() {
       orgSlug: slug,
       bestMomentId,
       channelId: channel,
-      integrationId: integration.id
+      integrationId: integration.id,
     });
   }
 

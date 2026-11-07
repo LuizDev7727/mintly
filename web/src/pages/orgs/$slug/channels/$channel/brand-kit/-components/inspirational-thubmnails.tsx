@@ -63,22 +63,19 @@ export function InspirationalThumbnails() {
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useSuspenseInfiniteQuery({
-      queryKey: ["inspirational-thumbnails", channel],
-      queryFn: ({ pageParam }) =>
-        getInspirationalThumbnailsHttp({
-          orgSlug: slug,
-          channelId: channel,
-          cursor: pageParam,
-        }),
-      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-      initialPageParam: undefined as string | undefined,
-    });
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery({
+    queryKey: ["inspirational-thumbnails", channel],
+    queryFn: ({ pageParam }) =>
+      getInspirationalThumbnailsHttp({
+        orgSlug: slug,
+        channelId: channel,
+        cursor: pageParam,
+      }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    initialPageParam: undefined as string | undefined,
+  });
 
-  const inspirationalThumbnails = data.pages.flatMap(
-    (page) => page.inspirationalThumbnails,
-  );
+  const inspirationalThumbnails = data.pages.flatMap((page) => page.inspirationalThumbnails);
 
   useEffect(() => {
     observerRef.current?.disconnect();
@@ -101,36 +98,34 @@ export function InspirationalThumbnails() {
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const { mutateAsync: removeInspirationalThumbnail, isPending: isRemoving } =
-    useMutation({
-      mutationFn: deleteInspirationalThumbnailHttp,
-      onSuccess: (_, { inspirationalThumbnailId }) => {
-        queryClient.setQueryData<InfiniteData<InspirationalThumbnailsPage>>(
-          ["inspirational-thumbnails", channel],
-          (old) => {
-            if (!old) return old;
+  const { mutateAsync: removeInspirationalThumbnail, isPending: isRemoving } = useMutation({
+    mutationFn: deleteInspirationalThumbnailHttp,
+    onSuccess: (_, { inspirationalThumbnailId }) => {
+      queryClient.setQueryData<InfiniteData<InspirationalThumbnailsPage>>(
+        ["inspirational-thumbnails", channel],
+        (old) => {
+          if (!old) return old;
 
-            return {
-              ...old,
-              pages: old.pages.map((page) => ({
-                ...page,
-                inspirationalThumbnails: page.inspirationalThumbnails.filter(
-                  (thumbnail) => thumbnail.id !== inspirationalThumbnailId,
-                ),
-              })),
-            };
-          },
-        );
-      },
-    });
+          return {
+            ...old,
+            pages: old.pages.map((page) => ({
+              ...page,
+              inspirationalThumbnails: page.inspirationalThumbnails.filter(
+                (thumbnail) => thumbnail.id !== inspirationalThumbnailId,
+              ),
+            })),
+          };
+        },
+      );
+    },
+  });
 
   const selectedRowsCount = selectedRows.length;
   const hasSelection = selectedRowsCount > 0;
   const hasThumbnails = inspirationalThumbnails.length > 0;
   const hasUploads = uploads.length > 0;
   const isEmpty = !hasThumbnails && !hasUploads;
-  const areAllSelected =
-    hasThumbnails && selectedRowsCount === inspirationalThumbnails.length;
+  const areAllSelected = hasThumbnails && selectedRowsCount === inspirationalThumbnails.length;
 
   function handleBrowse() {
     fileInputRef.current?.click();
@@ -158,15 +153,11 @@ export function InspirationalThumbnails() {
     );
 
     // mantém selecionadas só as que falharam (o toast de erro é global)
-    const failedIds = selectedRows.filter(
-      (_, index) => results[index].status === "rejected",
-    );
+    const failedIds = selectedRows.filter((_, index) => results[index].status === "rejected");
     const deletedCount = selectedRowsCount - failedIds.length;
 
     if (deletedCount > 0) {
-      toast(
-        `${deletedCount} ${deletedCount === 1 ? "thumbnail" : "thumbnails"} removed.`,
-      );
+      toast(`${deletedCount} ${deletedCount === 1 ? "thumbnail" : "thumbnails"} removed.`);
     }
 
     setSelectedRows(failedIds);
@@ -254,8 +245,8 @@ export function InspirationalThumbnails() {
             </EmptyMedia>
             <EmptyTitle>Add your first inspirations</EmptyTitle>
             <EmptyDescription>
-              Upload 3 to 10 thumbnails with the style you want us to follow.
-              PNG or JPG, up to {MAX_FILE_SIZE_IN_MB} MB each.
+              Upload 3 to 10 thumbnails with the style you want us to follow. PNG or JPG, up to{" "}
+              {MAX_FILE_SIZE_IN_MB} MB each.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
@@ -269,10 +260,8 @@ export function InspirationalThumbnails() {
         <>
           <p className="text-sm text-muted-foreground">
             {inspirationalThumbnails.length}{" "}
-            {inspirationalThumbnails.length === 1
-              ? "thumbnail"
-              : "thumbnails"}{" "}
-            · PNG or JPG, up to {MAX_FILE_SIZE_IN_MB} MB each
+            {inspirationalThumbnails.length === 1 ? "thumbnail" : "thumbnails"} · PNG or JPG, up to{" "}
+            {MAX_FILE_SIZE_IN_MB} MB each
           </p>
 
           {view === "grid" ? (
@@ -310,21 +299,11 @@ export function InspirationalThumbnails() {
         <div className="sticky bottom-4 z-10 mx-auto flex w-fit items-center gap-3 rounded-lg border bg-card px-4 py-2 shadow-lg">
           <p className="text-sm">{selectedRowsCount} selected</p>
           {!areAllSelected && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleSelectAll}
-            >
+            <Button type="button" variant="ghost" size="sm" onClick={handleSelectAll}>
               Select all
             </Button>
           )}
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setSelectedRows([])}
-          >
+          <Button type="button" variant="ghost" size="sm" onClick={() => setSelectedRows([])}>
             Clear
           </Button>
           <Button

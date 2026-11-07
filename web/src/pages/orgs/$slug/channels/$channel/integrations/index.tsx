@@ -1,11 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
-import { IntegrationsList } from "./-components/integrations-list";
 import { IntegrationListLoading } from "./-components/integration-list-loading";
+import { IntegrationsList } from "./-components/integrations-list";
 
-export const Route = createFileRoute(
-  "/orgs/$slug/channels/$channel/integrations/",
-)({
+export const Route = createFileRoute("/orgs/$slug/channels/$channel/integrations/")({
   head: () => ({
     meta: [
       {

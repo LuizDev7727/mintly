@@ -14,10 +14,7 @@ type SpendingLimitFormProps = {
   onSave: (limit: number | null) => void;
 };
 
-export function SpendingLimitForm({
-  currentLimit,
-  onSave,
-}: SpendingLimitFormProps) {
+export function SpendingLimitForm({ currentLimit, onSave }: SpendingLimitFormProps) {
   const {
     register,
     handleSubmit,
@@ -51,12 +48,8 @@ export function SpendingLimitForm({
             {...register("spendingLimit")}
           />
         </div>
-        {errors.spendingLimit && (
-          <FieldError>{errors.spendingLimit.message}</FieldError>
-        )}
-        <p className="text-xs text-muted-foreground">
-          Leave empty to allow unlimited spending.
-        </p>
+        {errors.spendingLimit && <FieldError>{errors.spendingLimit.message}</FieldError>}
+        <p className="text-xs text-muted-foreground">Leave empty to allow unlimited spending.</p>
       </div>
       <DialogFooter className="border-t px-6 py-4">
         <DialogClose asChild>

@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 import {
   Building2,
   CircleDollarSign,
@@ -21,10 +23,8 @@ import {
 import { getInvoiceHttp } from "@/http/organization/get-invoice.http";
 import { dayjs } from "@/lib/dayjs";
 import { formatAmount } from "@/utils/format-amount";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
 import { InvoiceDetailsSkeleton } from "./invoice-details-skeleton";
-import { invoiceStatusConfig, type InvoiceStatus } from "./invoice-status";
+import { type InvoiceStatus, invoiceStatusConfig } from "./invoice-status";
 
 type InvoiceDetailsSheetProps = {
   invoiceId: string;
@@ -44,9 +44,7 @@ export function InvoiceDetailsSheet({ invoiceId }: InvoiceDetailsSheetProps) {
   });
 
   const invoice = data?.invoice;
-  const status = invoice
-    ? invoiceStatusConfig[invoice.status as InvoiceStatus]
-    : null;
+  const status = invoice ? invoiceStatusConfig[invoice.status as InvoiceStatus] : null;
 
   const metadata = invoice
     ? [
@@ -115,9 +113,7 @@ export function InvoiceDetailsSheet({ invoiceId }: InvoiceDetailsSheetProps) {
           </div>
           <div>
             <SheetTitle>Invoice details</SheetTitle>
-            <SheetDescription>
-              View all information about this invoice.
-            </SheetDescription>
+            <SheetDescription>View all information about this invoice.</SheetDescription>
           </div>
         </SheetHeader>
 
@@ -133,13 +129,8 @@ export function InvoiceDetailsSheet({ invoiceId }: InvoiceDetailsSheetProps) {
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-3">
-                    <h2 className="text-xl font-semibold tracking-tight">
-                      {invoice.id}
-                    </h2>
-                    <Badge
-                      variant={status.variant}
-                      className={`rounded-md ${status.className}`}
-                    >
+                    <h2 className="text-xl font-semibold tracking-tight">{invoice.id}</h2>
+                    <Badge variant={status.variant} className={`rounded-md ${status.className}`}>
                       {status.label}
                     </Badge>
                   </div>
@@ -160,9 +151,7 @@ export function InvoiceDetailsSheet({ invoiceId }: InvoiceDetailsSheetProps) {
                   <p className="text-xl font-semibold tabular-nums">
                     {formatAmount(invoice.amounts.total, invoice.currency)}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {invoice.currency.toUpperCase()}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{invoice.currency.toUpperCase()}</p>
                 </div>
               </div>
 
@@ -182,9 +171,7 @@ export function InvoiceDetailsSheet({ invoiceId }: InvoiceDetailsSheetProps) {
               >
                 {metadata.map((item) => (
                   <div key={item.label} className="min-w-0 space-y-1">
-                    <p className="text-xs text-muted-foreground">
-                      {item.label}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{item.label}</p>
                     <p className="truncate text-sm font-medium">{item.value}</p>
                   </div>
                 ))}
@@ -206,24 +193,16 @@ export function InvoiceDetailsSheet({ invoiceId }: InvoiceDetailsSheetProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-3">
                     <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">
-                        Company name
-                      </p>
-                      <p className="text-sm font-medium">
-                        {invoice.billing.companyName}
-                      </p>
+                      <p className="text-xs text-muted-foreground">Company name</p>
+                      <p className="text-sm font-medium">{invoice.billing.companyName}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Tax ID</p>
-                      <p className="text-sm font-medium">
-                        {invoice.billing.taxId}
-                      </p>
+                      <p className="text-sm font-medium">{invoice.billing.taxId}</p>
                     </div>
                   </div>
                   <div className="space-y-1 border-l border-border/60 pl-4">
-                    <p className="text-xs text-muted-foreground">
-                      Billing address
-                    </p>
+                    <p className="text-xs text-muted-foreground">Billing address</p>
                     {invoice.billing.address.map((line) => (
                       <p key={line} className="text-sm font-medium">
                         {line}
@@ -241,13 +220,8 @@ export function InvoiceDetailsSheet({ invoiceId }: InvoiceDetailsSheetProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     {amountsSummary.map((item) => (
-                      <div
-                        key={item.label}
-                        className="flex items-center justify-between text-xs"
-                      >
-                        <span className="text-muted-foreground">
-                          {item.label}
-                        </span>
+                      <div key={item.label} className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">{item.label}</span>
                         <span className="tabular-nums">{item.value}</span>
                       </div>
                     ))}
@@ -260,13 +234,8 @@ export function InvoiceDetailsSheet({ invoiceId }: InvoiceDetailsSheetProps) {
                   </div>
                   <div className="space-y-2 border-l border-border/60 pl-4">
                     {amountsBalance.map((item) => (
-                      <div
-                        key={item.label}
-                        className="flex items-center justify-between text-xs"
-                      >
-                        <span className="text-muted-foreground">
-                          {item.label}
-                        </span>
+                      <div key={item.label} className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">{item.label}</span>
                         <span className="tabular-nums">{item.value}</span>
                       </div>
                     ))}

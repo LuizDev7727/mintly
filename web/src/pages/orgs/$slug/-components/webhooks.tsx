@@ -1,4 +1,4 @@
-import { useParams, Link } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { Link2, MoreHorizontal, Webhook } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,20 +42,11 @@ export function Webhooks({ webhooks }: WebhooksProps) {
                 className="flex items-center gap-2 rounded-md border px-3 py-2.5"
               >
                 <Link2 className="size-3.5 shrink-0 text-muted-foreground" />
-                <span className="min-w-0 flex-1 truncate font-mono text-xs">
-                  {webhook.url}
-                </span>
-                <Badge
-                  variant={isFailing ? "destructive" : "default"}
-                  className="shrink-0"
-                >
+                <span className="min-w-0 flex-1 truncate font-mono text-xs">{webhook.url}</span>
+                <Badge variant={isFailing ? "destructive" : "default"} className="shrink-0">
                   {isFailing ? "Failing" : "Active"}
                 </Badge>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  className="shrink-0 text-muted-foreground"
-                >
+                <Button variant="ghost" size="icon-sm" className="shrink-0 text-muted-foreground">
                   <MoreHorizontal className="size-3.5" />
                 </Button>
               </div>

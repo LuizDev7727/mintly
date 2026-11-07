@@ -1,25 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { FieldError } from "@/components/ui/field";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { createProjectHttp } from "@/http/projects/create-project.http";
-import {
-  createProjectSchema,
-  type CreateProjectFormType,
-} from "@/schemas/project/create-project.schema";
-import { formatBytes } from "@/utils/format-bytes";
-import { formatDuration } from "@/utils/format-duration";
-import { getFileExtension } from "@/utils/get-file-extension";
-import { getVideoDuration } from "@/utils/get-video-duration";
-import { uploadFile } from "@/utils/upload-file";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { useParams } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import axios from "axios";
 import {
   AlertTriangle,
@@ -31,9 +12,24 @@ import {
   Trash2,
   Video,
 } from "lucide-react";
-import { useState, type ChangeEvent, type DragEvent } from "react";
+import { type ChangeEvent, type DragEvent, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { FieldError } from "@/components/ui/field";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
+import { createProjectHttp } from "@/http/projects/create-project.http";
+import {
+  type CreateProjectFormType,
+  createProjectSchema,
+} from "@/schemas/project/create-project.schema";
+import { formatBytes } from "@/utils/format-bytes";
+import { formatDuration } from "@/utils/format-duration";
+import { getFileExtension } from "@/utils/get-file-extension";
+import { getVideoDuration } from "@/utils/get-video-duration";
+import { uploadFile } from "@/utils/upload-file";
 
 type UploadStatus = "uploading" | "completed" | "error";
 
@@ -43,13 +39,10 @@ type UploadEntry = {
 };
 
 export function CreateProjectForm() {
-
   const navigate = useNavigate();
 
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadProgressMap, setUploadProgressMap] = useState(
-    new Map<number, UploadEntry>(),
-  );
+  const [uploadProgressMap, setUploadProgressMap] = useState(new Map<number, UploadEntry>());
 
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
@@ -74,10 +67,7 @@ export function CreateProjectForm() {
   } = useFieldArray({ control, name: "files" });
 
   const isFilesEmpty = videoFields.length === 0;
-  const totalSize = videoFields.reduce(
-    (acc, videoField) => acc + (videoField.file?.size ?? 0),
-    0,
-  );
+  const totalSize = videoFields.reduce((acc, videoField) => acc + (videoField.file?.size ?? 0), 0);
 
   const { mutateAsync: createProject } = useMutation({
     mutationFn: createProjectHttp,
@@ -86,9 +76,9 @@ export function CreateProjectForm() {
         to: "/orgs/$slug/channels/$channel/projects",
         params: {
           slug,
-          channel
-        }
-      })
+          channel,
+        },
+      });
     },
   });
 
@@ -218,12 +208,8 @@ export function CreateProjectForm() {
           <Video className="size-8 text-muted-foreground" />
         </div>
         <div>
-          <p className="text-sm font-medium text-foreground">
-            Drag & Drop your videos
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            or click to browse
-          </p>
+          <p className="text-sm font-medium text-foreground">Drag & Drop your videos</p>
+          <p className="text-xs text-muted-foreground mt-1">or click to browse</p>
         </div>
       </label>
 
@@ -231,26 +217,19 @@ export function CreateProjectForm() {
 
       <Separator />
 
-      <form
-        onSubmit={handleSubmit(handleCreateProject)}
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={handleSubmit(handleCreateProject)} className="flex flex-col gap-4">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
             <div className="px-2.5 py-1.5 dark:bg-zinc-900/20 border dark:text-primary border-input rounded-md">
               <p className="text-muted-foreground">
-                Total:{" "}
-                <span className="text-primary font-medium">
-                  {formatBytes(totalSize)}
-                </span>{" "}
+                Total: <span className="text-primary font-medium">{formatBytes(totalSize)}</span>{" "}
                 will be add to your storage
               </p>
             </div>
             <div className="px-2.5 py-1.5 dark:bg-zinc-900/20 border border-input rounded-md flex items-center gap-x-1.5 dark:text-primary">
               <ListVideo className="size-4 text-zinc-400" />
               <span className="text-zinc-400">
-                <span className="font-medium">{videoFields.length}</span>{" "}
-                video(s)
+                <span className="font-medium">{videoFields.length}</span> video(s)
               </span>
             </div>
           </div>
@@ -264,12 +243,7 @@ export function CreateProjectForm() {
               <Trash2 className="size-4" />
               Remove All Videos
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isSubmitting}
-              asChild
-            >
+            <Button type="button" variant="outline" disabled={isSubmitting} asChild>
               <label htmlFor="file">
                 <CirclePlus className="size-4" />
                 Add Video(s)
@@ -278,12 +252,7 @@ export function CreateProjectForm() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="inline-flex">
-                  <Button
-                    type="submit"
-                    disabled={
-                      isSubmitting || isFilesEmpty
-                    }
-                  >
+                  <Button type="submit" disabled={isSubmitting || isFilesEmpty}>
                     {isSubmitting ? (
                       <Loader2 className="size-4 animate-spin" />
                     ) : (
@@ -338,8 +307,7 @@ export function CreateProjectForm() {
                 <div className="flex items-center gap-2 ps-[60px]">
                   <Progress value={uploadEntry.progress} className="flex-1" />
                   <span className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
-                    {uploadEntry.status === "uploading" &&
-                      `${uploadEntry.progress}%`}
+                    {uploadEntry.status === "uploading" && `${uploadEntry.progress}%`}
                     {uploadEntry.status === "completed" && (
                       <>
                         <Check className="size-3.5 text-primary" />

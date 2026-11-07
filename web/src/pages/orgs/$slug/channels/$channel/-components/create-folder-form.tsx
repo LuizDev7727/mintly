@@ -1,13 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Spinner } from "@/components/ui/spinner";
-import { createFolderHttp } from "@/http/folder/create-folder.http";
-import type { GetFoldersResponse } from "@/http/folder/get-folders.http";
-import {
-  createFolderSchema,
-  type CreateFolderFormType,
-} from "@/schemas/folder/create-folder.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
@@ -15,25 +5,26 @@ import { FolderPlus } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
+import { createFolderHttp } from "@/http/folder/create-folder.http";
+import type { GetFoldersResponse } from "@/http/folder/get-folders.http";
+import {
+  type CreateFolderFormType,
+  createFolderSchema,
+} from "@/schemas/folder/create-folder.schema";
 
 export function CreateFolderForm() {
-  const [currentFolderPage] = useQueryState(
-    "folder_page",
-    parseAsInteger.withDefault(0),
-  );
+  const [currentFolderPage] = useQueryState("folder_page", parseAsInteger.withDefault(0));
   const [currentFolderId] = useQueryState("folder_id");
   const { slug, channel } = useParams({
     from: "/orgs/$slug/channels/$channel",
   });
   const queryClient = useQueryClient();
 
-  const foldersKey = [
-    "folders",
-    slug,
-    channel,
-    currentFolderId,
-    currentFolderPage,
-  ];
+  const foldersKey = ["folders", slug, channel, currentFolderId, currentFolderPage];
 
   const {
     register,
@@ -54,9 +45,7 @@ export function CreateFolderForm() {
         title,
         postsCount: 0,
         isStarred: false,
-        parent: currentFolderId
-          ? { id: currentFolderId, title: "precisamos-pegar-title" }
-          : null,
+        parent: currentFolderId ? { id: currentFolderId, title: "precisamos-pegar-title" } : null,
       };
 
       queryClient.setQueryData<GetFoldersResponse>(foldersKey, (oldData) => {
@@ -94,12 +83,7 @@ export function CreateFolderForm() {
   return (
     <form className="space-y-4" onSubmit={handleSubmit(handleCreateFolder)}>
       <Label htmlFor="name">Name</Label>
-      <Input
-        id="name"
-        {...register("name")}
-        type="text"
-        placeholder="Folder Name"
-      />
+      <Input id="name" {...register("name")} type="text" placeholder="Folder Name" />
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? <Spinner /> : <FolderPlus />}
         Create Folder

@@ -1,33 +1,25 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AtSign } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import {
-  signInSchema,
-  type SignInFormType,
-} from "@/schemas/auth/sign-in.schema";
-import { AuthenticateWithGoogle } from "./-components/authenticate-with-google";
+import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth";
-import { toast } from "sonner";
+import { type SignInFormType, signInSchema } from "@/schemas/auth/sign-in.schema";
+import { AuthenticateWithGoogle } from "./-components/authenticate-with-google";
 import { TogglePasswordVisibility } from "./-components/toggle-password-visibility";
-import { Separator } from "@/components/ui/separator";
 
 export const Route = createFileRoute("/_auth/")({
   head: () => ({
     meta: [
       {
         name: "description",
-        content: "Sign in to your Mintly account."
+        content: "Sign in to your Mintly account.",
       },
       { title: "Sign In | Mintly" },
     ],
@@ -62,7 +54,7 @@ function SignInPage() {
           navigate({
             to: "/orgs",
             replace: true,
-            reloadDocument: true
+            reloadDocument: true,
           });
         },
         onError: async ({ error }) => {
@@ -74,7 +66,6 @@ function SignInPage() {
 
   return (
     <div className="w-full space-y-6">
-
       <form onSubmit={handleSubmit(handleSignIn)} className="space-y-4">
         <FieldGroup>
           <Field>
@@ -109,9 +100,7 @@ function SignInPage() {
                 togglePasswordVisibility={togglePasswordVisibility}
               />
             </div>
-            {errors.password && (
-              <FieldError>{errors.password.message}</FieldError>
-            )}
+            {errors.password && <FieldError>{errors.password.message}</FieldError>}
           </Field>
         </FieldGroup>
 

@@ -69,10 +69,7 @@ export function PasswordChecker({ password }: PasswordCheckerProps) {
       </div>
 
       {/* Password strength description */}
-      <p
-        className="mb-2 font-medium text-foreground text-sm"
-        id={`${id}-description`}
-      >
+      <p className="mb-2 font-medium text-foreground text-sm" id={`${id}-description`}>
         {getStrengthText(strengthScore)}. Must contain:
       </p>
 
@@ -81,21 +78,11 @@ export function PasswordChecker({ password }: PasswordCheckerProps) {
         {strength.map((req) => (
           <li className="flex items-center gap-2" key={req.text}>
             {req.met ? (
-              <CheckIcon
-                aria-hidden="true"
-                className="text-emerald-500"
-                size={16}
-              />
+              <CheckIcon aria-hidden="true" className="text-emerald-500" size={16} />
             ) : (
-              <XIcon
-                aria-hidden="true"
-                className="text-muted-foreground/80"
-                size={16}
-              />
+              <XIcon aria-hidden="true" className="text-muted-foreground/80" size={16} />
             )}
-            <span
-              className={`text-xs ${req.met ? "text-emerald-600" : "text-muted-foreground"}`}
-            >
+            <span className={`text-xs ${req.met ? "text-emerald-600" : "text-muted-foreground"}`}>
               {req.text}
               <span className="sr-only">
                 {req.met ? " - Requirement met" : " - Requirement not met"}

@@ -1,3 +1,4 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Building, ChevronsUpDown, PlusCircle } from "lucide-react";
 import {
@@ -12,26 +13,19 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "./ui/sidebar";
-import { OrganizationSwitcherLoading } from "./organization-switcher-loading";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getOrganizationsHttp } from "@/http/organization/get-organizations.http";
 import { getActiveOrganizationHttp } from "@/http/organization/get-active-organization.http";
+import { getOrganizationsHttp } from "@/http/organization/get-organizations.http";
 import { setActiveOrganizationHttp } from "@/http/organization/set-active-organization.http";
 import { CreateOrganizationForm } from "./create-organization-form";
+import { OrganizationSwitcherLoading } from "./organization-switcher-loading";
 import { Avatar, AvatarImage } from "./ui/avatar";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "./ui/sidebar";
 
 export function OrganizationSwitcher() {
-
   const queryClient = useQueryClient();
   const { isMobile } = useSidebar();
 
@@ -54,15 +48,13 @@ export function OrganizationSwitcher() {
       const { organizationSlug } = variables;
 
       queryClient.setQueryData(["active-organization"], () => {
-        const selectedOrg = organizations.find(
-          (org) => org.slug === organizationSlug,
-        );
+        const selectedOrg = organizations.find((org) => org.slug === organizationSlug);
         return { organization: selectedOrg };
       });
     },
   });
 
-  if (!data|| !currentOrg || isActiveOrgLoading || isOrganizationsLoading) {
+  if (!data || !currentOrg || isActiveOrgLoading || isOrganizationsLoading) {
     return <OrganizationSwitcherLoading />;
   }
 
@@ -78,21 +70,18 @@ export function OrganizationSwitcher() {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              className="cursor-pointer p-1 group-data-[collapsible=icon]:p-1! data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              {organization.logo ?
+            <SidebarMenuButton className="cursor-pointer p-1 group-data-[collapsible=icon]:p-1! data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+              {organization.logo ? (
                 <Avatar>
                   <AvatarImage src={organization.logo} />
-                </Avatar> :
+                </Avatar>
+              ) : (
                 <div className="flex aspect-square size-6 items-center justify-center rounded-md">
                   <Building className="size-3.5" />
                 </div>
-              }
+              )}
               <div className="grid flex-1 text-left text-sm leading-tight transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0">
-                <span className="truncate font-medium">
-                  {organization.name}'s workspace
-                </span>
+                <span className="truncate font-medium">{organization.name}'s workspace</span>
               </div>
               <ChevronsUpDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
             </SidebarMenuButton>
@@ -128,17 +117,15 @@ export function OrganizationSwitcher() {
                   <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                     <PlusCircle className="size-4" />
                   </div>
-                  <p className="text-muted-foreground font-medium">
-                    Create new
-                  </p>
+                  <p className="text-muted-foreground font-medium">Create new</p>
                 </button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Create Organization</DialogTitle>
                   <DialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    your account and remove your data from our servers.
+                    This action cannot be undone. This will permanently delete your account and
+                    remove your data from our servers.
                   </DialogDescription>
                 </DialogHeader>
                 <CreateOrganizationForm />
