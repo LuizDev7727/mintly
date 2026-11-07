@@ -23,6 +23,9 @@ import { getChannelRoute } from "./infra/http/routes/internal/channel/get-channe
 import { createChannelRoute } from "./infra/http/routes/internal/channel/create-channel.route.ts";
 import { updateChannelRoute } from "./infra/http/routes/internal/channel/update-channel.route.ts";
 import { deleteChannelRoute } from "./infra/http/routes/internal/channel/delete-channel.route.ts";
+import { addColorRoute } from "./infra/http/routes/internal/color/add-color.route.ts";
+import { deleteColorRoute } from "./infra/http/routes/internal/color/delete-color.route.ts";
+import { getColorsRoute } from "./infra/http/routes/internal/color/get-colors.route.ts";
 import { createFolderRoute } from "./infra/http/routes/internal/folder/create-folder.route.ts";
 import { deleteFolderRoute } from "./infra/http/routes/internal/folder/delete-folder.route.ts";
 import { getFoldersRoute } from "./infra/http/routes/internal/folder/get-folders.route.ts";
@@ -144,6 +147,10 @@ server.register(getChannelRoute);
 server.register(createChannelRoute);
 server.register(updateChannelRoute);
 server.register(deleteChannelRoute);
+
+server.register(addColorRoute);
+server.register(getColorsRoute);
+server.register(deleteColorRoute);
 
 server.register(createFolderRoute);
 server.register(deleteFolderRoute);

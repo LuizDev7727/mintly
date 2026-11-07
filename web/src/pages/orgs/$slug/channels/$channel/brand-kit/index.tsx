@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { Separator } from "@/components/ui/separator";
 import { BrandColors } from "./-components/brand-colors";
+import { ColorsLoading } from "./-components/colors-loading";
 import { InspirationalThumbnails } from "./-components/inspirational-thubmnails";
 import { InspirationalThumbnailsSkeleton } from "./-components/inspirational-thumbnails-skeleton";
 
@@ -36,7 +37,9 @@ function BrandKitPage() {
             Pick the colors that should show up in your thumbnails.
           </p>
         </div>
-        <BrandColors />
+        <Suspense fallback={<ColorsLoading/>}>
+          <BrandColors />
+        </Suspense>
       </section>
 
       <Separator />
