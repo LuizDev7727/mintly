@@ -7,7 +7,9 @@ export function OverviewError() {
   const queryClient = useQueryClient();
 
   function handleRetry() {
-    queryClient.invalidateQueries({ queryKey: ["overview", slug] });
+    queryClient.invalidateQueries({
+      queryKey: ["overview", slug]
+    });
   }
 
   return (
