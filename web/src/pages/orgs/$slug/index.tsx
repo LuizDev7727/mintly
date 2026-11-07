@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Webhooks } from "./-components/webhooks";
 import { Activities } from "./-components/activities";
 import { OverviewLoading } from "./-components/overview-loading";
+import { OverviewError } from "./-components/overview-error";
 import { ChartPie, HardDrive, Package, Users } from "lucide-react";
 import { Sparkline } from "@/components/sparkline";
 import { useQuery } from "@tanstack/react-query";
@@ -24,15 +25,21 @@ export const Route = createFileRoute("/orgs/$slug/")({
 function OverviewPage() {
   const { slug } = Route.useParams();
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending, isError } = useQuery({
     queryKey: ['overview', slug],
     queryFn: () => getOrganizationOverviewHttp({
       orgSlug: slug
     })
   })
 
-  if (!data || isLoading) {
+  if (isPending) {
     return <OverviewLoading />;
+  }
+
+  // Sem isto, uma requisição que falha deixava `data` indefinido e a tela
+  // ficava no skeleton para sempre, escondendo o erro.
+  if (isError || !data) {
+    return <OverviewError />;
   }
 
   const { overview } = data;
