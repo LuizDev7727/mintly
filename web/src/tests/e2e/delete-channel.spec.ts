@@ -29,8 +29,11 @@ test.describe("Delete Channel", () => {
 
     await expect(page.getByText("Channel deleted successfully")).toBeVisible();
     await page.waitForURL("**/orgs/test-user");
-    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL("/orgs/test-user");
-    await expect(page.getByText(channelName)).not.toBeVisible();
+
+    // Recarrega a lista de canais para conferir no servidor, sem depender do cache da tela.
+    await page.goto("/orgs/test-user/channels");
+    await expect(page.getByRole("heading", { name: "Channels" })).toBeVisible();
+    await expect(page.getByRole("link", { name: channelName })).toHaveCount(0);
   });
 });
