@@ -25,7 +25,7 @@ test.describe("Update Channel Name", () => {
     const newChannelName = faker.company.name();
     const nameInput = page.getByPlaceholder("Channel name");
     await nameInput.fill(newChannelName);
-    await page.getByRole("button", { name: "Save" }).click();
+    await page.getByRole("button", { name: "Update Channel" }).click();
 
     await expect(page.getByText("Channel updated successfully")).toBeVisible();
     await expect(nameInput).toHaveValue(newChannelName);
