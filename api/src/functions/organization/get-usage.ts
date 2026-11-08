@@ -172,10 +172,11 @@ export async function getUsage({
   // Cumulative within the selected range (starts at 0 on startDate), not the
   // org's all-time total — matches the "for the selected period" chart title.
   let runningTotal = 0;
-  const storageSeries = storageRows.map(({ date, totalSize }) => ({
-    date,
-    storage: (runningTotal += totalSize),
-  }));
+  const storageSeries = storageRows.map(({ date, totalSize }) => {
+    runningTotal += totalSize;
+
+    return { date, storage: runningTotal };
+  });
 
   return {
     // TODO: mockado enquanto o billing via Polar está fora do ar.

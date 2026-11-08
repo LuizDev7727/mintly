@@ -340,10 +340,22 @@ export const createPostTask = schemaTask({
     // Os uploads rodam em paralelo e a run só termina quando todos acabam: o
     // `onSuccess` (PUBLISHED) só dispara se todas as redes deram certo, e
     // qualquer falha cai no `onFailure` (ERROR).
-    const uploads = socialsToPost.map((social) => {
+    type UploadTasks =
+      | typeof uploadPostToYoutubeTask
+      | typeof uploadPostToInstagramTask
+      | typeof uploadPostToTiktokTask;
+
+    type UploadItem =
+      Parameters<typeof batch.triggerAndWait<UploadTasks>>[0] extends AsyncIterable<infer Item>
+        ? Item
+        : never;
+
+    const uploads: UploadItem[] = [];
+
+    for (const social of socialsToPost) {
       switch (social.provider) {
         case "YOUTUBE":
-          return {
+          uploads.push({
             id: "upload-post-to-youtube" as const,
             payload: {
               title: publishTitle,
@@ -354,10 +366,11 @@ export const createPostTask = schemaTask({
               integrationId: social.id,
               channelId,
             },
-          };
+          });
+          break;
 
         case "INSTAGRAM":
-          return {
+          uploads.push({
             id: "upload-post-to-instagram" as const,
             payload: {
               title: publishTitle,
@@ -368,10 +381,11 @@ export const createPostTask = schemaTask({
               channelId,
               mediaType: isImage ? ("IMAGE" as const) : ("VIDEO" as const),
             },
-          };
+          });
+          break;
 
         case "TIKTOK":
-          return {
+          uploads.push({
             id: "upload-post-to-tiktok" as const,
             payload: {
               title: publishTitle,
@@ -380,15 +394,12 @@ export const createPostTask = schemaTask({
               postId,
               channelId,
             },
-          };
+          });
+          break;
       }
-    });
+    }
 
-    const uploadsResult = await batch.triggerAndWait<
-      | typeof uploadPostToYoutubeTask
-      | typeof uploadPostToInstagramTask
-      | typeof uploadPostToTiktokTask
-    >(uploads);
+    const uploadsResult = await batch.triggerAndWait<UploadTasks>(uploads);
 
     const failedUploads = uploadsResult.runs
       .filter((run) => !run.ok)

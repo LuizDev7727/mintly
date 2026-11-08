@@ -20,7 +20,9 @@ export const authRoute: FastifyPluginAsyncZod = async (app) => {
         const response = await auth.handler(req);
 
         reply.status(response.status);
-        response.headers.forEach((value, key) => reply.header(key, value));
+        response.headers.forEach((value, key) => {
+          reply.header(key, value);
+        });
         return reply.send(response.body ? await response.text() : null);
       } catch (error) {
         return reply.status(500).send({
