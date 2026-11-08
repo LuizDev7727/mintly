@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Delete Channel", () => {
   test("should delete a channel successfully", async ({ page }) => {
-    await page.goto("/orgs/test-user");
+    await page.goto("/orgs/test-user/channels");
 
     await page.getByRole("button", { name: "Create new channel" }).click();
 
@@ -15,8 +15,7 @@ test.describe("Delete Channel", () => {
     await page.keyboard.press("Escape");
     await page.getByRole("dialog").waitFor({ state: "hidden" });
 
-    const channelCard = page.locator("div.rounded-md").filter({ hasText: channelName });
-    await channelCard.getByRole("link", { name: "See channel" }).click();
+    await page.getByRole("link", { name: channelName }).click();
 
     await page.waitForLoadState("networkidle");
 

@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Create Channel", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/orgs/test-user");
+    await page.goto("/orgs/test-user/channels");
   });
 
   test("should open create channel dialog when clicking the button", async ({ page }) => {
