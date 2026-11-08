@@ -1,4 +1,5 @@
 import { ChannelAlreadyExistsError } from "@/errors/channel-already-exists.error.ts";
+import { ColorLimitReachedError } from "@/errors/color-limit-reached.error.ts";
 import { FolderAlreadyExistsError } from "@/errors/folder-already-exists.error.ts";
 import { OrganizationAlreadyCreatedError } from "@/errors/organization-already-created.ts";
 import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
@@ -43,6 +44,12 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
   }
 
   if (error instanceof FolderAlreadyExistsError) {
+    return reply.status(409).send({
+      message: error.message,
+    });
+  }
+
+  if (error instanceof ColorLimitReachedError) {
     return reply.status(409).send({
       message: error.message,
     });

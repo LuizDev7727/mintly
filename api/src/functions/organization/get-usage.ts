@@ -122,7 +122,7 @@ export async function getUsage({
         postDate: sql<string>`TO_CHAR(${postsTable.createdAt}, 'YYYY-MM-DD')`.as(
           "post_date",
         ),
-        totalSize: sql<number>`coalesce(sum(${postsTable.size}), 0)::int`.as(
+        totalSize: sql<number>`coalesce(sum(${postsTable.size}), 0)::float8`.as(
           "total_size",
         ),
       })
@@ -153,7 +153,7 @@ export async function getUsage({
       .orderBy(dateSeries.date),
     db
       .select({
-        totalBytes: sql<number>`coalesce(sum(${postsTable.size}), 0)::int`,
+        totalBytes: sql<number>`coalesce(sum(${postsTable.size}), 0)::float8`,
       })
       .from(postsTable)
       .innerJoin(channelsTable, eq(postsTable.channelId, channelsTable.id))
@@ -165,7 +165,7 @@ export async function getUsage({
       ),
     db
       .select({
-        totalBytes: sql<number>`coalesce(sum(${postsTable.size}), 0)::int`,
+        totalBytes: sql<number>`coalesce(sum(${postsTable.size}), 0)::float8`,
       })
       .from(postsTable)
       .innerJoin(channelsTable, eq(postsTable.channelId, channelsTable.id))

@@ -15,6 +15,17 @@ export const createPostSchema = z.object({
           },
           { error: "The date cannot be in the past" },
         ),
+      affiliateUrl: z
+        .string()
+        .max(2048, { error: "The affiliate link is too long" })
+        .refine(
+          (value) => {
+            const url = value.trim();
+            if (!url) return true;
+            return z.url({ protocol: /^https?$/ }).safeParse(url).success;
+          },
+          { error: "The affiliate link must be a valid http(s) URL" },
+        ),
       socialsToPost: z
         .array(
           z.object({
