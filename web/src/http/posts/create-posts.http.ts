@@ -15,6 +15,7 @@ type CreatePostsParams = {
     shouldGenerateThumbnail: boolean;
     shouldGenerateShorts: boolean;
     scheduledTo: string | null;
+    affiliateUrl: string | null;
     socialsToPost: Integration[];
   }[];
 };

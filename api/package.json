@@ -15,7 +15,7 @@
     "db:migrate": "dotenv -e .env drizzle-kit migrate",
     "db:ui": "dotenv -e .env drizzle-kit studio",
     "db:seed": "dotenv -e .env tsx src/infra/db/seed.ts",
-    "test": "dotenv -e .env vitest run",
+    "test": "dotenv -e .env vitest run --coverage",
     "test:ui": "dotenv -e .env vitest --ui",
     "trigger:dev": "dotenv -e .env -- pnpm dlx trigger.dev@latest dev"
   },

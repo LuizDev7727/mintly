@@ -21,6 +21,12 @@ const scheduledToSchema = z
     error: "The date cannot be in the past",
   });
 
+// Link de afiliado opcional: só http(s), para nunca publicar `javascript:` & afins.
+const affiliateUrlSchema = z
+  .url({ protocol: /^https?$/, error: "The affiliate link must be a valid http(s) URL" })
+  .max(2048)
+  .nullable();
+
 export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/api/organizations/:slug/channels/:channelId/posts",
@@ -47,6 +53,7 @@ export const createPostsRoute: FastifyPluginAsyncZod = async (app) => {
                 shouldGenerateThumbnail: z.boolean(),
                 shouldGenerateShorts: z.boolean(),
                 scheduledTo: scheduledToSchema,
+                affiliateUrl: affiliateUrlSchema.default(null),
                 socialsToPost: z
                   .array(
                     z.object({

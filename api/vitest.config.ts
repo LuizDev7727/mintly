@@ -18,13 +18,12 @@ export default defineConfig({
     // acontecem quando o arquivo roda sozinho.
     hookTimeout: 60_000,
     testTimeout: 30_000,
-    // coverage: {
-    //   enabled: true,
-    //   provider: 'v8',
-    //   reporter: ['text', 'text-summary', 'html'],
-    //   all: true,
-    //   include: ['src/**/*.ts'],
-    //   exclude: ['**/*.test.ts', 'src/tests/**'],
-    // },
+    coverage: {
+      enabled: true,
+      provider: 'v8',
+      reporter: ['text', 'text-summary', 'html'],
+      include: ['src/tests/http/*.ts'],
+      exclude: ['**/*.test.ts', 'src/tests/**'],
+    },
   },
 });

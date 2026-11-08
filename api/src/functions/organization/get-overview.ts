@@ -62,7 +62,7 @@ export async function getOverview({ orgSlug }: GetOverviewProps): Promise<GetOve
     db
       .select({
         postDate: sql<string>`TO_CHAR(${postsTable.createdAt}, 'YYYY-MM-DD')`.as("post_date"),
-        totalSize: sql<number>`coalesce(sum(${postsTable.size}), 0)::int`.as("total_size"),
+        totalSize: sql<number>`coalesce(sum(${postsTable.size}), 0)::float8`.as("total_size"),
       })
       .from(postsTable)
       .innerJoin(channelsTable, eq(postsTable.channelId, channelsTable.id))
@@ -127,7 +127,9 @@ export async function getOverview({ orgSlug }: GetOverviewProps): Promise<GetOve
       .orderBy(desc(webhooksTable.createdAt)),
     db
       .select({
-        totalStorage: sql<number>`coalesce(sum(${postsTable.size}), 0)::int`,
+        // float8 e não int: a soma dos tamanhos (bytes) passa de 2 GB com
+        // facilidade, e `::int` estoura com "integer out of range".
+        totalStorage: sql<number>`coalesce(sum(${postsTable.size}), 0)::float8`,
       })
       .from(postsTable)
       .innerJoin(channelsTable, eq(postsTable.channelId, channelsTable.id))

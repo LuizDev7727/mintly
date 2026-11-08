@@ -111,7 +111,8 @@ jobs:
       needs.detect.outputs.has_e2e_tests == 'true' &&
       (needs.test-api.result == 'success' || needs.test-api.result == 'skipped')
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    # Fixo: o Playwright 1.60 não suporta o Ubuntu 26.04 (ubuntu-latest).
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v7
