@@ -74,7 +74,7 @@ export function CreateFolderForm() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["folders", slug, channel, "tree"],
+        queryKey: ["folders", slug, channel],
       });
 
       toast("Folder created successfully");

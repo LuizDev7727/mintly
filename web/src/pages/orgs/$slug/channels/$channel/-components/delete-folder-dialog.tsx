@@ -61,7 +61,7 @@ export function DeleteFolderDialog({
         };
       });
       queryClient.invalidateQueries({
-        queryKey: ["folders", slug, channel, "tree"],
+        queryKey: ["folders", slug, channel],
       });
       toast("Folder deleted successfully");
     },

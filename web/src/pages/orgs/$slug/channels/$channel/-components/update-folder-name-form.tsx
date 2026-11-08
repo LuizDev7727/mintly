@@ -76,7 +76,7 @@ export function UpdateFolderNameForm({
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["folders", slug, channel, "tree"],
+        queryKey: ["folders", slug, channel],
       });
 
       toast("Folder updated successfully");
