@@ -33,7 +33,7 @@ async function createFolder(page: Page, title: string) {
 
   await expect(page.getByText("Folder created successfully")).toBeVisible();
   await page.keyboard.press("Escape");
-  await page.getByRole("dialog").waitFor({ state: "hidden" });
+  await expect(dialog).toBeHidden();
 }
 
 async function openFolderActions(page: Page, title: string) {
@@ -84,7 +84,7 @@ test.describe("Folder Management", () => {
 
     await expect(page.getByText("Folder updated successfully")).toBeVisible();
     await page.keyboard.press("Escape");
-    await page.getByRole("dialog").waitFor({ state: "hidden" });
+    await expect(renameDialog).toBeHidden();
 
     await openFolderTree(page);
     await expect(page.getByRole("treeitem", { name: newTitle })).toBeVisible();
@@ -103,7 +103,7 @@ test.describe("Folder Management", () => {
 
     await expect(page.getByText("Folder deleted successfully")).toBeVisible();
     await page.keyboard.press("Escape");
-    await page.getByRole("dialog").waitFor({ state: "hidden" });
+    await expect(deleteDialog).toBeHidden();
 
     await openFolderTree(page);
     await expect(page.getByRole("treeitem", { name: folderTitle })).toHaveCount(0);
