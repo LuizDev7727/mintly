@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Building, ChevronsUpDown, PlusCircle } from "lucide-react";
+import { Building, ChevronDown, PlusCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -94,7 +94,7 @@ export function OrganizationSwitcher() {
                   {organization.name}'s workspace
                 </span>
               </div>
-              <ChevronsUpDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
+              <ChevronDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
