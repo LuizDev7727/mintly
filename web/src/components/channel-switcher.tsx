@@ -1,6 +1,6 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ChevronsUpDown, PlusCircle, TvMinimal } from "lucide-react";
+import { ChevronDown, PlusCircle, TvMinimal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,7 +58,7 @@ export function ChannelSwitcher() {
                   {currentChannel!.name}
                 </span>
               </div>
-              <ChevronsUpDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
+              <ChevronDown className="ml-auto transition-all duration-200 ease-linear group-data-[collapsible=icon]:opacity-0" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
