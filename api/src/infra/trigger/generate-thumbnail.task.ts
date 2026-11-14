@@ -8,6 +8,7 @@ import type { Prediction } from "replicate";
 import { Readable } from "node:stream";
 import { Upload } from "@aws-sdk/lib-storage";
 import { db } from "@/infra/db/client.ts";
+import { createPostEvent } from "@/functions/events/create-post-event.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { eq } from "drizzle-orm";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
@@ -39,6 +40,8 @@ export const generateThubmnailTask = schemaTask({
         status: "ERROR",
       })
       .where(eq(postsTable.id, postId));
+
+    await createPostEvent({ postId, status: "GENERATED_THUMBNAIL_FAILED" });
   },
 
   // Set an optional maxDuration to prevent tasks from running indefinitely
@@ -256,6 +259,13 @@ export const generateThubmnailTask = schemaTask({
     logger.log("Processo de geração de thumbnail concluído", {
       postId,
       thumbnailStorageKey: fileName,
+    });
+  },
+
+  onSuccess: async ({ payload }) => {
+    await createPostEvent({
+      postId: payload.postId,
+      status: "GENERATED_THUMBNAIL",
     });
   },
 });
