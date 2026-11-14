@@ -71,6 +71,16 @@ jobs:
       - name: Wait for PostgreSQL
         run: until docker exec mintly-pg pg_isready -U mintly; do sleep 1; done
 
+      # Port 6379: the app reads REDIS_URL from Infisical (env "dev"), which
+      # points to localhost:6379 (better-auth secondary storage), so the CI Redis
+      # must listen there too.
+      - name: Start Redis
+        run: |
+          docker run -d             --name mintly-redis             -p 6379:6379             redis:7-alpine
+
+      - name: Wait for Redis
+        run: until docker exec mintly-redis redis-cli ping | grep -q PONG; do sleep 1; done
+
       # Retry: this step failed intermittently on CI (silently, with only
       # ELIFECYCLE in the log) and the cause is not known. Migrations are
       # idempotent, so retrying is safe.
@@ -93,6 +103,10 @@ jobs:
       - name: Postgres container logs (on failure)
         if: failure()
         run: docker logs mintly-pg
+
+      - name: Redis container logs (on failure)
+        if: failure()
+        run: docker logs mintly-redis
 
       - name: Run API tests
         working-directory: api
@@ -166,6 +180,16 @@ jobs:
       - name: Wait for PostgreSQL
         run: until docker exec mintly-pg pg_isready -U mintly; do sleep 1; done
 
+      # Port 6379: the app reads REDIS_URL from Infisical (env "dev"), which
+      # points to localhost:6379 (better-auth secondary storage), so the CI Redis
+      # must listen there too.
+      - name: Start Redis
+        run: |
+          docker run -d             --name mintly-redis             -p 6379:6379             redis:7-alpine
+
+      - name: Wait for Redis
+        run: until docker exec mintly-redis redis-cli ping | grep -q PONG; do sleep 1; done
+
       # Retry: this step failed intermittently on CI (silently, with only
       # ELIFECYCLE in the log) and the cause is not known. Migrations are
       # idempotent, so retrying is safe.
@@ -188,6 +212,10 @@ jobs:
       - name: Postgres container logs (on failure)
         if: failure()
         run: docker logs mintly-pg
+
+      - name: Redis container logs (on failure)
+        if: failure()
+        run: docker logs mintly-redis
 
       - name: Seed E2E test user
         working-directory: api
