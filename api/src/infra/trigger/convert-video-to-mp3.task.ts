@@ -10,6 +10,7 @@ import { uuidv7 } from "uuidv7";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 // import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { db } from "@/infra/db/client.ts";
+import { createPostEvent } from "@/functions/events/create-post-event.ts";
 import { eq } from "drizzle-orm";
 import { projectsTable } from "../db/tables/projects.table.ts";
 
@@ -121,6 +122,15 @@ export const convertVideoToMp3Task = schemaTask({
     }
   },
 
+  onFailure: async ({ payload }) => {
+    if (payload.type === "post") {
+      await createPostEvent({
+        postId: payload.postId,
+        status: "ENCODED_VIDEO_FAILED",
+      });
+    }
+  },
+
   // Set an optional maxDuration to prevent tasks from running indefinitely
   maxDuration: 300, // Stop executing after 300 secs (5 mins) of compute
   run: async (payload, _) => {
@@ -228,5 +238,14 @@ export const convertVideoToMp3Task = schemaTask({
     return {
       audioUrl,
     };
+  },
+
+  onSuccess: async ({ payload }) => {
+    if (payload.type === "post") {
+      await createPostEvent({
+        postId: payload.postId,
+        status: "ENCODED_VIDEO",
+      });
+    }
   },
 });

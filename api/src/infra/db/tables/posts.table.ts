@@ -15,6 +15,7 @@ import { usersTable } from "./users.table.ts";
 import { socialsToPostTable } from "./socials-to-post.table.ts";
 import { channelsTable } from "./channels.table.ts";
 import { tsVector } from "./columns/ts-vector.column.ts";
+import { postEventsTable } from "./post-events.table.ts";
 
 export const statusEnum = pgEnum("post_status", [
   "PROCESSING",
@@ -72,6 +73,7 @@ export const postsTable = pgTable(
 
 export const postsRelations = relations(postsTable, ({ one, many }) => ({
   socialsToPost: many(socialsToPostTable),
+  events: many(postEventsTable),
   folder: one(foldersTable, {
     fields: [postsTable.folderId],
     references: [foldersTable.id],

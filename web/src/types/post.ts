@@ -25,6 +25,7 @@ export type Post = {
   size: number;
   type: string;
   runId: string;
+  mimeType: string;
   status:
     | "PROCESSING"
     | "SCHEDULED"
