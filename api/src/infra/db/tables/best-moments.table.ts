@@ -8,6 +8,7 @@ export const bestMomentsTable = pgTable("best_moments", {
     .primaryKey()
     .$defaultFn(() => uuidv7()),
   title: text("title").notNull(),
+  description: text("description").default(""),
   storageKey: text("storage_key").notNull(), //change to storageKey
   projectId: text("project_id").references(() => projectsTable.id, {
     onDelete: "cascade",
