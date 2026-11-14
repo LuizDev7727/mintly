@@ -17,6 +17,7 @@ import { ImageGeneration } from "@/components/image-generation";
 import { useRealtimeRun, useRealtimeStream } from "@trigger.dev/react-hooks";
 import { AnimatedCircularProgressBar } from "@/components/animated-circular-progress";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PostLogsSheet } from "./post-logs-sheet";
 
 type PostGridCardProps = {
   post: Post;
@@ -172,6 +173,30 @@ export function PostGridCard({
                 <Eye className="size-4" />
                 View details
               </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <PostLogsSheet
+                id={post.id}
+                author={{
+                  name: post.author.name,
+                  avatarUrl: post.author.avatarUrl ?? ""
+                }}
+                title={post.title}
+                mimeType={post.mimeType}
+                scheduledTo={null}
+                startedAt={null}
+                status="ERROR"
+                thumbnailUrl={""}
+                realtimeToken={post.realtimeToken}
+                publishAt={post.publishAt}
+                socialsToPost={post.socialsToPost}
+                size={post.size}
+                runId={post.runId}
+                duration={post.duration}
+                description={""}
+                createdAt={post.createdAt}
+                type="asd"
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

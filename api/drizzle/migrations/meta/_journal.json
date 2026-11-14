@@ -267,6 +267,13 @@
       "when": 1794058445871,
       "tag": "0037_common_quicksilver",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1794528773219,
+      "tag": "0038_funny_kitty_pryde",
+      "breakpoints": true
     }
   ]
 }

@@ -42,6 +42,7 @@ import { createWebhookRoute } from "./infra/http/routes/internal/webhook/create-
 import { handleWebhookEventRoute } from "./infra/http/routes/internal/webhook/handle-webhook-event.route.ts";
 import { getPostsRoute } from "./infra/http/routes/internal/post/get-posts.route.ts";
 import { getPostRoute } from "./infra/http/routes/internal/post/get-post.route.ts";
+import { getPostEventsRoute } from "./infra/http/routes/internal/event/get-post-events.route.ts";
 import { createPostsRoute } from "./infra/http/routes/internal/post/create-posts.route.ts";
 import { cancelPostRoute } from "./infra/http/routes/internal/post/cancel-post.route.ts";
 import { movePostsToFolderRoute } from "./infra/http/routes/internal/post/move-posts-to-folder.route.ts";
@@ -169,6 +170,7 @@ server.register(handleWebhookEventRoute);
 
 server.register(getPostsRoute);
 server.register(getPostRoute);
+server.register(getPostEventsRoute);
 server.register(createPostsRoute);
 server.register(cancelPostRoute);
 server.register(movePostsToFolderRoute);

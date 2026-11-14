@@ -1,6 +1,7 @@
 import { logger, wait, schemaTask } from "@trigger.dev/sdk/v3";
 import { z } from "zod";
 import { db } from "@/infra/db/client.ts";
+import { createPostEvent } from "@/functions/events/create-post-event.ts";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { eq } from "drizzle-orm";
@@ -54,6 +55,15 @@ export const seoEnrichmentTask = schemaTask({
         status: "ERROR",
       })
       .where(eq(postsTable.id, postId));
+
+    await createPostEvent({ postId, status: "GENERATED_METADATA_FAILED" });
+  },
+
+  onSuccess: async ({ payload }) => {
+    await createPostEvent({
+      postId: payload.postId,
+      status: "GENERATED_METADATA",
+    });
   },
 
   // Bumped from 120s: the Modal container can take a while on a cold start

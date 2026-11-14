@@ -5,6 +5,7 @@ import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { channelsTable } from "@/infra/db/tables/channels.table.ts";
 import { eq } from "drizzle-orm";
 import { db } from "../db/client.ts";
+import { createPostEvent } from "@/functions/events/create-post-event.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { setUsage } from "@/utils/set-usage.ts";
 
@@ -81,6 +82,22 @@ export const transcribeAudioTask = schemaTask({
         status: "ERROR",
       })
       .where(eq(postsTable.id, payload.projectId));
+    }
+
+    if (type === "post") {
+      await createPostEvent({
+        postId: payload.postId,
+        status: "TRANSCRIBED_AUDIO_FAILED",
+      });
+    }
+  },
+
+  onSuccess: async ({ payload }) => {
+    if (payload.type === "post") {
+      await createPostEvent({
+        postId: payload.postId,
+        status: "TRANSCRIBED_AUDIO",
+      });
     }
   },
 

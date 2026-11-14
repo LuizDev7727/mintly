@@ -10,6 +10,7 @@ import { uuidv7 } from "uuidv7";
 import { postsTable } from "@/infra/db/tables/posts.table.ts";
 // import { projectsTable } from "@/infra/db/tables/projects.table.ts";
 import { db } from "@/infra/db/client.ts";
+import { createPostEvent } from "@/functions/events/create-post-event.ts";
 import { eq } from "drizzle-orm";
 import { projectsTable } from "../db/tables/projects.table.ts";
 
@@ -118,6 +119,24 @@ export const convertVideoToMp3Task = schemaTask({
         .update(projectsTable)
         .set({ status: "ENCODING" })
         .where(eq(projectsTable.id, payload.projectId));
+    }
+  },
+
+  onSuccess: async ({ payload }) => {
+    if (payload.type === "post") {
+      await createPostEvent({
+        postId: payload.postId,
+        status: "ENCODED_VIDEO",
+      });
+    }
+  },
+
+  onFailure: async ({ payload }) => {
+    if (payload.type === "post") {
+      await createPostEvent({
+        postId: payload.postId,
+        status: "ENCODED_VIDEO_FAILED",
+      });
     }
   },
 
