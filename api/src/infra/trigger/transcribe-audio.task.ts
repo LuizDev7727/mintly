@@ -92,15 +92,6 @@ export const transcribeAudioTask = schemaTask({
     }
   },
 
-  onSuccess: async ({ payload }) => {
-    if (payload.type === "post") {
-      await createPostEvent({
-        postId: payload.postId,
-        status: "TRANSCRIBED_AUDIO",
-      });
-    }
-  },
-
   // Set an optional maxDuration to prevent tasks from running indefinitely
   maxDuration: 300, // Stop executing after 300 secs (5 mins) of compute
   run: async (payload, { ctx }) => {
@@ -168,5 +159,14 @@ export const transcribeAudioTask = schemaTask({
       transcription,
       words: allWords,
     };
+  },
+
+  onSuccess: async ({ payload }) => {
+    if (payload.type === "post") {
+      await createPostEvent({
+        postId: payload.postId,
+        status: "TRANSCRIBED_AUDIO",
+      });
+    }
   },
 });

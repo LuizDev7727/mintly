@@ -28,6 +28,7 @@ const posts: Post[] = Array.from({ length: 48 }, () => ({
   title: faker.lorem.words({ min: 3, max: 8 }),
   size: faker.number.int({ min: 1_000_000, max: 500_000_000 }),
   type: faker.helpers.arrayElement(["video/mp4", "image/png", "image/jpeg"]),
+  mimeType: faker.helpers.arrayElement(["video/mp4", "image/png", "image/jpeg"]),
   status: faker.helpers.arrayElement(STATUSES),
   duration: faker.number.int({ min: 0, max: 3600 }),
   createdAt: faker.date.recent().toISOString(),

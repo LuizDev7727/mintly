@@ -44,13 +44,6 @@ export const generateThubmnailTask = schemaTask({
     await createPostEvent({ postId, status: "GENERATED_THUMBNAIL_FAILED" });
   },
 
-  onSuccess: async ({ payload }) => {
-    await createPostEvent({
-      postId: payload.postId,
-      status: "GENERATED_THUMBNAIL",
-    });
-  },
-
   // Set an optional maxDuration to prevent tasks from running indefinitely
   maxDuration: 300, // Stop executing after 300 secs (5 mins) of compute
   run: async (payload) => {
@@ -266,6 +259,13 @@ export const generateThubmnailTask = schemaTask({
     logger.log("Processo de geração de thumbnail concluído", {
       postId,
       thumbnailStorageKey: fileName,
+    });
+  },
+
+  onSuccess: async ({ payload }) => {
+    await createPostEvent({
+      postId: payload.postId,
+      status: "GENERATED_THUMBNAIL",
     });
   },
 });

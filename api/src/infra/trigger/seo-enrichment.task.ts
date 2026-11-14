@@ -59,13 +59,6 @@ export const seoEnrichmentTask = schemaTask({
     await createPostEvent({ postId, status: "GENERATED_METADATA_FAILED" });
   },
 
-  onSuccess: async ({ payload }) => {
-    await createPostEvent({
-      postId: payload.postId,
-      status: "GENERATED_METADATA",
-    });
-  },
-
   // Bumped from 120s: the Modal container can take a while on a cold start
   // (Qwen2.5 7B weights), and this budget only counts active compute time —
   // time spent suspended in wait.forToken doesn't count against it.
@@ -148,5 +141,12 @@ export const seoEnrichmentTask = schemaTask({
       .where(eq(postsTable.id, postId));
 
     return { title, description, tags };
+  },
+
+  onSuccess: async ({ payload }) => {
+    await createPostEvent({
+      postId: payload.postId,
+      status: "GENERATED_METADATA",
+    });
   },
 });

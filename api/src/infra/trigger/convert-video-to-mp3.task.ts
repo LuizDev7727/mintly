@@ -122,15 +122,6 @@ export const convertVideoToMp3Task = schemaTask({
     }
   },
 
-  onSuccess: async ({ payload }) => {
-    if (payload.type === "post") {
-      await createPostEvent({
-        postId: payload.postId,
-        status: "ENCODED_VIDEO",
-      });
-    }
-  },
-
   onFailure: async ({ payload }) => {
     if (payload.type === "post") {
       await createPostEvent({
@@ -247,5 +238,14 @@ export const convertVideoToMp3Task = schemaTask({
     return {
       audioUrl,
     };
+  },
+
+  onSuccess: async ({ payload }) => {
+    if (payload.type === "post") {
+      await createPostEvent({
+        postId: payload.postId,
+        status: "ENCODED_VIDEO",
+      });
+    }
   },
 });
