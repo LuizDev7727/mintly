@@ -21,6 +21,27 @@ Essas regras são **aplicadas por um hook**, não só por texto: `.claude/hooks/
 - **`CONTEXT.md`** — glossário do domínio (organização, canal, projeto, post, pipelines, billing) com o que cada coisa é e não é. Leia antes de mexer em pipelines, billing ou modelagem de dados.
 - **`/mintly-review`** — revisão read-only do diff contra `development` com revisores independentes em paralelo (isolamento entre organizações, segurança, requisitos, convenções, regressão, pipelines/billing, performance). Rode antes de abrir um PR.
 
+## Design (skills `craft`)
+
+As skills de design vêm do repositório [`diego3g/craft`](https://github.com/diego3g/craft) (MIT, aviso em `.claude/skills/CRAFT-LICENSE`) e ficam em `.claude/skills/` (`craft`, `craft-setup`, `craft-states`, `craft-explore`, `craft-system`, `craft-sync`, `craft-critique`, `using-craft`). A ferramenta de design é o **Doop** (MCP `doop`); cada skill tem o mapeamento em `references/adapters/doop.md`. Os adaptadores de Paper e Figma foram removidos; `html.md` fica como fallback.
+
+- **`DESIGN.md` fica em `web/`**, não na raiz do monorepo: onde as skills dizem "project root", leia `web/`. O mesmo vale para o `design-sync.json`.
+- Antes de responder a qualquer pedido que desenhe, revise ou mude uma UI, confira esta tabela e use a skill. Primeiro veja se `web/DESIGN.md` existe.
+- Edição pequena que a pessoa descreveu exatamente (um valor, um rótulo, um tamanho): faça direto.
+- Um *stop* das skills significa terminar o turno com a pergunta. Nunca decida um stop pela pessoa, e nunca aprove um frame do Doop (`set_frame_approval`) sem ela pedir.
+
+| Situação | Skill |
+|---|---|
+| Sem `web/DESIGN.md` e um pedido de design | `craft-setup`, depois `craft` |
+| Desenhar / criar / redesenhar página, tela, fluxo ou elemento | `craft` |
+| "Opções", "alternativas", "não gostei" | `craft-explore` |
+| "Revise", "refine", "melhore", ou antes de mostrar um design seu | `craft-critique` |
+| Tokens, style guide, um componente, "auditoria" | `craft-system` |
+| "Traga o design system para o Doop", "aplique as mudanças do guia no código" | `craft-sync` |
+| "Quais estados faltam?" | `craft-states` |
+
+Para atualizar as skills, reimporte as pastas de `skills/` do repositório original e refaça o `doop.md` se o formato dos adaptadores mudar.
+
 ## Estrutura do Monorepo
 
 Cada pasta na raiz é um projeto independente, com seu próprio `package.json`/lockfile. Não é um workspace único — não assuma que uma dependência instalada numa pasta está disponível em outra.
