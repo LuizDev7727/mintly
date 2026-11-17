@@ -5,6 +5,17 @@ import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
 
+const scheduledToSchema = z
+  .string()
+  .nullable()
+  .refine((value) => !value || !Number.isNaN(new Date(value).getTime()), {
+    error: "The date is invalid",
+    abort: true,
+  })
+  .refine((value) => !value || new Date(value) > new Date(), {
+    error: "The date cannot be in the past",
+  });
+
 export const sendBestMomentToSocialMediaRoute: FastifyPluginAsyncZod = async (
   app,
 ) => {
@@ -22,6 +33,8 @@ export const sendBestMomentToSocialMediaRoute: FastifyPluginAsyncZod = async (
         }),
         body: z.object({
           integrationId: z.string(),
+          // Sem o campo (ou null), publica na hora.
+          scheduledTo: scheduledToSchema.default(null),
         }),
         response: {
           204: z.never(),
@@ -30,7 +43,7 @@ export const sendBestMomentToSocialMediaRoute: FastifyPluginAsyncZod = async (
     },
     async (request, reply) => {
       const { channelId, bestMomentId } = request.params;
-      const { integrationId } = request.body;
+      const { integrationId, scheduledTo } = request.body;
       const { slug } = request.params;
       const ownerId = request.user.id;
 
@@ -49,6 +62,7 @@ export const sendBestMomentToSocialMediaRoute: FastifyPluginAsyncZod = async (
         bestMomentId,
         integrationId,
         ownerId,
+        scheduledTo: scheduledTo ? new Date(scheduledTo) : null,
       });
 
       span.end();

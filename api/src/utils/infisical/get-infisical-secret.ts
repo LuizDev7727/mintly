@@ -42,6 +42,7 @@ type Env = {
   INSTAGRAM_ACCESS_TOKEN: string;
   INSTAGRAM_REDIRECT_URI: string;
   INSTAGRAM_REDIRECT_CALLBACK_URI: string;
+  REDIS_URL: string
 };
 
 type GetInfisicalSecretProps = {

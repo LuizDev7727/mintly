@@ -26,6 +26,7 @@ import {
   needsJpegConversion,
 } from "@/utils/media-type.ts";
 import { db } from "@/infra/db/client.ts";
+import { createPostEvent } from "@/functions/events/create-post-event.ts";
 import { uploadPostToYoutubeTask } from "./upload-post-to-youtube.task.ts";
 import { uploadPostToTiktokTask } from "./upload-post-to-tiktok.task.ts";
 import { uploadPostToInstagramTask } from "./upload-post-to-instagram.task.ts";
@@ -235,6 +236,8 @@ export const createPostTask = schemaTask({
       })
       .where(eq(postsTable.id, postId));
 
+    await createPostEvent({ postId, status: "PUBLISHED" });
+
     // Um webhook que falha não pode mudar o resultado do post: só é registrado.
     const published = postOutputSchema.safeParse(output);
 
@@ -403,6 +406,7 @@ export const createPostTask = schemaTask({
       .map((run) => run.taskIdentifier);
 
     if (failedUploads.length > 0) {
+      await createPostEvent({ postId, status: "PUBLISHED_FAILED" });
       failStep(failedUploads.join(", "));
     }
 

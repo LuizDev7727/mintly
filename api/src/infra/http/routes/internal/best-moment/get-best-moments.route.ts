@@ -27,6 +27,8 @@ export const getBestMomentsRoute: FastifyPluginAsyncZod = async (app) => {
               z.object({
                 id: z.string(),
                 title: z.string(),
+                description: z.string().nullable(),
+                tags: z.array(z.string()),
                 url: z.url(),
                 createdAt: z.date(),
               }),

@@ -1,0 +1,1 @@
+ALTER TABLE "best_moments" ADD COLUMN "description" text DEFAULT '';
