@@ -4,6 +4,7 @@
 boto3
 fastapi[standard]
 ffmpegcv
+gdown
 numpy
 opencv-python
 pandas

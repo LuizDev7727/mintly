@@ -8,6 +8,23 @@ services:
       - POSTGRES_PASSWORD=mintly
       - POSTGRES_DB=mintly
 
+  mintly-redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis-ui:
+    image: redis/redisinsight:latest
+    ports:
+      - "5540:5540" # UI
+    depends_on:
+      - mintly-redis
+
   jaeger:
     image: jaegertracing/all-in-one:1.57
     ports:

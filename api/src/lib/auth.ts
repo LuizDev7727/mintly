@@ -16,6 +16,7 @@ import { organizationsTable } from "@/infra/db/tables/organizations.table.ts";
 import { createOrganization } from "@/functions/organization/create-organization.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
 import { createSlug } from "./create-slug.ts";
+import { redis } from "./redis.ts";
 
 export const auth = betterAuth({
   baseURL: await getInfisicalSecret({ secretName: "BETTER_AUTH_URL" }),
@@ -110,6 +111,29 @@ export const auth = betterAuth({
           };
         },
       },
+    },
+  },
+  session: {
+    expiresIn: 60 * 60 * 2, // 2 hours
+    updateAge: 60 * 60, // 1 hour
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60
+    },
+  },
+  secondaryStorage: {
+    get: async (key: string) => {
+      return await redis.get(key)
+    },
+    set: async (key: string, value: string, ttl?: number) => {
+      await redis.set(key, value)
+
+      if (ttl) {
+        await redis.expire(key, ttl)
+      }
+    },
+    delete: async (key: string) => {
+      await redis.del(key)
     },
   },
   plugins: [

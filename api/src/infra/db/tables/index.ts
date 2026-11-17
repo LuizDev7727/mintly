@@ -7,6 +7,10 @@ import { inspirationalThumbnailsTable } from "./inspirational-thumbnail.table.ts
 import { invitationsTable } from "./invitations.table.ts";
 import { membersTable } from "./members.table.ts";
 import { organizationsTable } from "./organizations.table.ts";
+import {
+  postEventsTable,
+  postEventsRelations,
+} from "./post-events.table.ts";
 import { postsTable, postsRelations } from "./posts.table.ts";
 import { sessionsTable } from "./sessions.table.ts";
 import { usersTable } from "./users.table.ts";
@@ -23,6 +27,8 @@ export const tables = {
   invitationsTable,
   membersTable,
   organizationsTable,
+  // postEventsTable,
+  // postEventsRelations,
   postsTable,
   postsRelations,
   sessionsTable,

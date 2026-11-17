@@ -75,8 +75,13 @@ describe("send best moment to social media (POST /best-moments/:bestMomentId/sen
 
     expect(tasks.trigger).toHaveBeenCalledTimes(1);
     expect(tasks.trigger).toHaveBeenCalledWith("publish-best-moment", {
-      videoUrl: expect.any(String),
-      title: "my clip",
+      bestMoment: {
+        title: "my clip",
+        description: "",
+        storageKey: "my-clip-key",
+        scheduledTo: null,
+        tags: [],
+      },
       postId: post.id,
       integrationId,
       channelId,

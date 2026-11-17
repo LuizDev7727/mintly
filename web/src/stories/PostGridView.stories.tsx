@@ -38,6 +38,7 @@ const basePost: Post = {
   title: "How we migrated our video pipeline to Modal",
   size: 128_000_000,
   type: "video/mp4",
+  mimeType: "video/mp4",
   status: "CANCELED",
   duration: 754,
   createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
