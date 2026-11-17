@@ -2,8 +2,9 @@ import { ResourceNotFoundError } from "@/errors/resource-not-found.error.ts";
 import { db } from "@/infra/db/client.ts";
 import { bestMomentsTable } from "@/infra/db/tables/best-moments.table.ts";
 import { projectsTable } from "@/infra/db/tables/projects.table.ts";
+import { tagsTable } from "@/infra/db/tables/tags.table.ts";
 import { generateSignedUrl } from "@/utils/cloudflare/generate-signed-url.ts";
-import { and, desc, eq, lt } from "drizzle-orm";
+import { and, desc, eq, lt, sql } from "drizzle-orm";
 
 type GetBestMomentsParams = {
   projectId: string;
@@ -15,6 +16,8 @@ type GetBestMomentsResponse = {
   bestMoments: {
     id: string;
     title: string;
+    description: string | null;
+    tags: string[];
     url: string;
     createdAt: Date;
   }[];
@@ -39,20 +42,36 @@ export async function getBestMoments(
     throw new ResourceNotFoundError("Project not found");
   }
 
+  // leftJoin (não innerJoin): clipes sem tag, como os antigos, precisam continuar
+  // aparecendo. O groupBy mantém uma linha por clipe, então o limit e o cursor
+  // continuam contando clipes e não tags.
   const result = await db
     .select({
       id: bestMomentsTable.id,
       title: bestMomentsTable.title,
+      description: bestMomentsTable.description,
       storageKey: bestMomentsTable.storageKey,
       createdAt: bestMomentsTable.createdAt,
+      tags: sql<string[]>`
+        coalesce(
+          json_agg(${tagsTable.name} order by ${tagsTable.id})
+            filter (where ${tagsTable.id} is not null),
+          '[]'::json
+        )
+      `.as("tags"),
     })
     .from(bestMomentsTable)
+    .leftJoin(
+      tagsTable,
+      eq(tagsTable.bestMomentId, bestMomentsTable.id)
+    )
     .where(
       and(
         eq(bestMomentsTable.projectId, projectId),
         cursor ? lt(bestMomentsTable.id, cursor) : undefined,
       ),
     )
+    .groupBy(bestMomentsTable.id)
     .orderBy(desc(bestMomentsTable.id))
     .limit(PAGE_SIZE + 1);
 

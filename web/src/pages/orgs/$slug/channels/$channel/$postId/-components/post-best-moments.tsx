@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import type { BestMoment } from "@/types/best-moment";
 import { Sparkles } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { BestMomentCard } from "./best-moment-card";
@@ -9,15 +10,23 @@ const PAGE_SIZE = 6;
 
 // TODO: remover — melhores momentos fictícios até existir endpoint para listá-los.
 // Troque para `[]` para ver o estado vazio.
-const MOCK_BEST_MOMENTS = [
-  { id: "bm-1", title: "O momento em que o Claude Code resolve o bug sozinho", createdAt: "2026-10-02T12:00:00Z" },
-  { id: "bm-2", title: "Como o CLAUDE.md muda o jeito que o agente trabalha", createdAt: "2026-10-02T12:00:00Z" },
-  { id: "bm-3", title: "Skills: instruções reutilizáveis em 30 segundos", createdAt: "2026-10-02T12:00:00Z" },
-  { id: "bm-4", title: "Commands para automatizar tarefas repetitivas", createdAt: "2026-10-02T12:00:00Z" },
-  { id: "bm-5", title: "Conectando o Claude a ferramentas externas com MCP", createdAt: "2026-10-02T12:00:00Z" },
-  { id: "bm-6", title: "O fluxo de trabalho completo, do começo ao fim", createdAt: "2026-10-02T12:00:00Z" },
-  { id: "bm-7", title: "Erros comuns ao configurar o contexto do projeto", createdAt: "2026-10-02T12:00:00Z" },
-];
+const MOCK_BEST_MOMENTS: BestMoment[] = [
+  "O momento em que o Claude Code resolve o bug sozinho",
+  "Como o CLAUDE.md muda o jeito que o agente trabalha",
+  "Skills: instruções reutilizáveis em 30 segundos",
+  "Commands para automatizar tarefas repetitivas",
+  "Conectando o Claude a ferramentas externas com MCP",
+  "O fluxo de trabalho completo, do começo ao fim",
+  "Erros comuns ao configurar o contexto do projeto",
+].map((title, index) => ({
+  id: `bm-${index + 1}`,
+  title,
+  description:
+    "Um trecho curto e completo do vídeo, escolhido para fazer sentido sozinho, sem precisar do resto da gravação.",
+  tags: ["claude code", "produtividade", "automação"],
+  url: "",
+  createdAt: new Date("2026-10-02T12:00:00Z"),
+}));
 
 /** Seção de melhores momentos do post. Só faz sentido para posts que são vídeo. */
 export function PostBestMoments() {
