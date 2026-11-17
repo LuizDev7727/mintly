@@ -8,8 +8,10 @@ const PAGE_SIZE = 10;
 const bestMoments: BestMoment[] = Array.from({ length: 34 }, () => ({
   id: faker.string.uuid(),
   title: faker.lorem.words({ min: 3, max: 6 }),
+  description: faker.lorem.sentences({ min: 1, max: 3 }),
+  tags: faker.helpers.multiple(() => faker.lorem.word(), { count: { min: 3, max: 8 } }),
   url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-  createdAt: faker.date.recent().toISOString(),
+  createdAt: faker.date.recent(),
 }));
 
 export const getBestMomentsMock = http.get<

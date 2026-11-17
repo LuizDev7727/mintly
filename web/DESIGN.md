@@ -40,8 +40,12 @@ Catalog data from One Page Love. The pages are landing pages, not app screens: t
 - 2026-11-15 — Doop (canvas `wJ5x0T7f9m`) is the design tool, not Paper or Figma.
 - 2026-11-15 — Mood words: crisp, premium, bold — chosen by the person.
 - 2026-11-15 — Imported the design system into Doop (canvas `wJ5x0T7f9m`): 40 tokens (31 colour with light and dark, 8 radius, 1 font), the Guide page, and Button, Input, Badge, Card, Switch and Nav item — names as in the code; oklch accepted by Doop, radii resolved to px, dark as the default theme.
+- 2026-11-17 — Best moment card (Doop page "Best moment card"): shows only video, title, description, tags and one action, post to YouTube; no score, grades or export buttons — the person asked for just those. Horizontal (video left, text right) from md up, stacked (video on top, text below) on phones; the video plays inside the card; any organization member can post; tags are visual only (AI-generated per clip, no filter or reuse); no "already published" state yet. Built from the existing Button and Badge (secondary) with no new tokens.
+- 2026-11-17 — On phones the video area is 4:5 (cropped poster), not full 9:16, so the title and action stay near the first screen of the card.
 
 ## Open questions
+- Best moment card: the description is cut at 4 lines with no way to read the rest. Add "Show more", or is the cut enough? The title is cut at 2 lines (full text only in code via `title`).
+- Best moment card: after "Posted to YouTube", should it link to the video? The API doesn't return the video URL yet.
 - Which screen is the most used, and what is its one job? (Channel posts list is a guess, not confirmed.)
 - Number and date formats: `pt-BR` or `en-US`? The code mixes them (money in `pt-BR`, dates in `en-US`).
 - Default theme: dark, light, or follow the system? Both exist in code; the Doop canvas screens are dark.

@@ -27,19 +27,18 @@ import subprocess
 import time
 import uuid
 
-import boto3
-import cv2
-import ffmpegcv
 import modal
-import numpy as np
-import pysubs2
-import requests
 from fastapi import status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from tqdm import tqdm
 
 LR_ASD_DIR = "/LR-ASD"
+
+# Pesos do detector de rosto (S3FD) do LR-ASD. Não estão no git (py/.gitignore):
+# são baixados do Google Drive uma única vez, no build da imagem. Sem isso o
+# LR-ASD tenta rodar `gdown` em tempo de execução e quebra o clipe.
+SFD_FACE_DRIVE_ID = "1YyLBqkYNiPt_5mc-QKYXcYVgvz9adz2B"
+SFD_FACE_PATH = f"{LR_ASD_DIR}/model/faceDetector/s3fd/sfd_face.pth"
 
 # Preço por segundo de GPU no Modal (https://modal.com/pricing), usado pra
 # reportar o custo real de cada job pro Trigger.dev via callback_url.
@@ -65,9 +64,26 @@ image = (
         ]
     )
     .add_local_dir("LR-ASD", LR_ASD_DIR, copy=True)
+    .run_commands(
+        f'gdown "https://drive.google.com/uc?id={SFD_FACE_DRIVE_ID}" -O {SFD_FACE_PATH}',
+        # Falha o build se o Drive devolver uma página HTML no lugar do modelo.
+        f"test $(stat -c%s {SFD_FACE_PATH}) -gt 1000000",
+    )
 )
 
 app = modal.App("mintly-clip-processor", image=image)
+
+# Dependências que só existem na imagem do Modal (requirements.txt): o
+# `modal deploy` executa este arquivo localmente antes de enviá-lo, e importar
+# isso no topo quebraria o deploy com ModuleNotFoundError.
+with image.imports():
+    import boto3
+    import cv2
+    import ffmpegcv
+    import numpy as np
+    import pysubs2
+    import requests
+    from tqdm import tqdm
 
 
 class Word(BaseModel):
@@ -391,6 +407,8 @@ class ClipProcessor:
                 request.end_time,
                 request.words,
             )
+
+            result["size"] = output_video_path.stat().st_size
 
             self.s3_client.upload_file(str(output_video_path), self.bucket_name, output_key)
 

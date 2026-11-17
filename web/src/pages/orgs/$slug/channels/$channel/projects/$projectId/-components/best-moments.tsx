@@ -1,19 +1,13 @@
 import { Spinner } from "@/components/ui/spinner";
-import { useViewMode } from "@/context/view-mode-context";
 import { getBestMomentsHttp } from "@/http/best-moments/get-best-moments.http";
-import { sendBestMomentToSocialMediaHttp } from "@/http/best-moments/send-best-moment-to-social-media.http";
 import { getIntegrationsHttp } from "@/http/integration/get-integrations.http";
-import type { Integration } from "@/types/integration";
 import {
-  useMutation,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { toast } from "sonner";
 import { BestMomentsEmpty } from "./best-moments-empty";
-import { BestMomentGridView } from "./best-moment-grid-view";
-import { BestMomentListView } from "./best-moment-list-view";
+import { BestMomentCard } from "./best-moment-card";
 import { useParams } from "@tanstack/react-router";
 
 export function BestMoments() {
@@ -21,8 +15,6 @@ export function BestMoments() {
   const { slug, channel, projectId } = useParams({
     from:"/orgs/$slug/channels/$channel/projects/$projectId/"
   })
-
-  const { view } = useViewMode();
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -75,22 +67,6 @@ export function BestMoments() {
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const { mutateAsync: sendBestMomentToSocialMedia } = useMutation({
-    mutationFn: sendBestMomentToSocialMediaHttp,
-    onSuccess: () => {
-      toast(`Starting to upload to social media`);
-    },
-  });
-
-  async function handlePostBestMoment(bestMomentId: string, integration: Integration) {
-    await sendBestMomentToSocialMedia({
-      orgSlug: slug,
-      bestMomentId,
-      channelId: channel,
-      integrationId: integration.id
-    });
-  }
-
   const isBestMomentsEmpty = bestMoments.length === 0;
 
   if (isBestMomentsEmpty) {
@@ -99,20 +75,15 @@ export function BestMoments() {
 
   return (
     <div className="space-y-4">
-      {view === "grid" && (
-        <BestMomentGridView
-          bestMoments={bestMoments}
-          integrations={integrations}
-          onPostBestMoment={handlePostBestMoment}
-        />
-      )}
-      {view === "list" && (
-        <BestMomentListView
-          bestMoments={bestMoments}
-          integrations={integrations}
-          onPostBestMoment={handlePostBestMoment}
-        />
-      )}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        {bestMoments.map((bestMoment) => (
+          <BestMomentCard
+            key={bestMoment.id}
+            bestMoment={bestMoment}
+            integrations={integrations}
+          />
+        ))}
+      </div>
 
       {hasNextPage && (
         <div className="p-2" ref={loadMoreRef}>

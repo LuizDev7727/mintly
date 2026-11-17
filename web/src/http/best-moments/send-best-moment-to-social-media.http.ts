@@ -5,14 +5,17 @@ type SendBestMomentToSocialMediaParams = {
   channelId: string;
   bestMomentId: string;
   integrationId: string;
+  // ISO 8601. Sem o campo (ou null), publica na hora.
+  scheduledTo?: string | null;
 };
 
 export async function sendBestMomentToSocialMediaHttp(
   params: SendBestMomentToSocialMediaParams,
 ): Promise<void> {
-  const { orgSlug, channelId, bestMomentId, integrationId } = params;
+  const { orgSlug, channelId, bestMomentId, integrationId, scheduledTo } =
+    params;
   await api.post(
     `/organizations/${orgSlug}/channels/${channelId}/best-moments/${bestMomentId}/send`,
-    { integrationId },
+    { integrationId, scheduledTo: scheduledTo ?? null },
   );
 }

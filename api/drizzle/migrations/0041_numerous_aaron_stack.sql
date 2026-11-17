@@ -1,0 +1,1 @@
+ALTER TABLE "best_moments" ADD COLUMN "size" integer DEFAULT 0 NOT NULL;

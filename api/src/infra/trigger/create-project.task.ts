@@ -7,6 +7,7 @@ import { channelsTable } from "../db/tables/channels.table.ts";
 import { transcribeAudioTask } from "./transcribe-audio.task.ts";
 import { convertVideoToMp3Task } from "./convert-video-to-mp3.task.ts";
 import { bestMomentsTable } from "../db/tables/best-moments.table.ts";
+import { tagsTable } from "../db/tables/tags.table.ts";
 import { getInfisicalSecret } from "@/utils/infisical/get-infisical-secret.ts";
 import { setUsage } from "@/utils/set-usage.ts";
 
@@ -22,6 +23,7 @@ type ModalGenerateTextCallbackPayload = {
 
 type ModalCallbackPayload = {
   output_key: string;
+  size: number;
   status: string;
   cost: {
     amount: number;
@@ -153,20 +155,23 @@ export const createProjectTask = schemaTask({
          - The exact start timestamp (startTime) and end timestamp (endTime)
          - An SEO-optimized title for the video
          - An SEO-optimized description for the video
+         - A list of relevant tags (keywords) for the video
 
       Mandatory rules:
       - Use only words spoken in the transcript to define the literal sentences. Never invent or adapt speech.
       - Only use the start and end timestamps provided in the input. Modifying timestamps is not allowed.
       - The title and description must be written in the same language and the same regional variant (country) as the transcript, for example Brazilian Portuguese if the transcript is in Brazilian Portuguese. Never translate them into another language or variant.
+      - The tags must also be written in the same language and regional variant as the transcript. Provide between 3 and 8 short, relevant tags per moment, without the "#" symbol.
 
       Output format:
       Return ONLY a raw JSON array — no markdown, no code blocks, no explanation.
       Each element must follow this exact structure:
-      { "startTime": number, "endTime": number, "title": string, "description": string }
+      { "startTime": number, "endTime": number, "title": string, "description": string, "tags": string[] }
 
       - "startTime" and "endTime": timestamps in seconds, taken from the transcript.
       - "title": the SEO-optimized title of the video.
       - "description": the SEO-optimized description of the video.
+      - "tags": an array of short tags (keywords) describing the video.
 
       If there are no valid moments to extract, return an empty array [].
 
@@ -181,6 +186,7 @@ export const createProjectTask = schemaTask({
         endTime: z.number(),
         title: z.string(),
         description: z.string(),
+        tags: z.array(z.string()),
       }),
     );
 
@@ -233,7 +239,8 @@ export const createProjectTask = schemaTask({
     logger.log("Best moments generated: ", { bestMoments });
 
     for (let i = 0; i < bestMoments.length; i++) {
-      const { startTime, endTime, title, words, description } = bestMoments[i];
+      const { startTime, endTime, title, words, description, tags } =
+        bestMoments[i];
 
       const token = await wait.createToken();
 
@@ -270,12 +277,27 @@ export const createProjectTask = schemaTask({
         },
       })
 
-      await db.insert(bestMomentsTable).values({
-        title,
-        description,
-        storageKey: result.output_key,
-        projectId: projectId,
-      });
+      const [bestMoment] = await db
+        .insert(bestMomentsTable)
+        .values({
+          title,
+          description,
+          storageKey: result.output_key,
+          size: result.size,
+          startTime,
+          endTime,
+          projectId: projectId,
+        })
+        .returning({ id: bestMomentsTable.id });
+
+      if (tags.length > 0) {
+        await db.insert(tagsTable).values(
+          tags.map((name) => ({
+            name,
+            bestMomentId: bestMoment.id,
+          })),
+        );
+      }
 
     }
 
