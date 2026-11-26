@@ -1,12 +1,12 @@
 """
-Modal app responsável por gerar texto usando Qwen2.5 7B (Qwen2.5 não tem
-variante 8B — 7B é o tamanho mais próximo do pedido original), substituindo
+Modal app responsável por gerar texto usando Qwen2.5 14B Instruct (era 7B,
+que não seguia restrições como a duração de 30-45s dos clipes), substituindo
 o Gemini (gemini-2.5-flash-lite) na geração de SEO (título, descrição e
 tags) — ver api/src/infra/trigger/seo-enrichment.task.ts. O Gemini vinha
 apresentando erros de sobrecarga (503 / "model is overloaded") que
 quebravam o pipeline de geração de SEO.
 
-Recebe um prompt e uma callback_url, roda a geração via Qwen2.5 7B e envia
+Recebe um prompt e uma callback_url, roda a geração via Qwen2.5 14B e envia
 o resultado (ou o erro) para a callback_url informada, no mesmo padrão de
 waitpoint já usado pelos outros serviços (ver main.py / transcribe_audio.py).
 
@@ -28,12 +28,15 @@ from fastapi import status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
-MAX_NEW_TOKENS = 2048
+MODEL_NAME = "Qwen/Qwen2.5-14B-Instruct"
+# 20 momentos com título, descrição SEO e tags em JSON passam fácil de 2048
+# tokens; cortar no meio quebra o JSON.parse no Node.
+MAX_NEW_TOKENS = 6144
 
 # Preço por segundo de GPU no Modal (https://modal.com/pricing), usado pra
 # reportar o custo real de cada job pro Trigger.dev via callback_url.
-GPU_TYPE = "A10G"
+# O 14B em bf16 (~30GB) não cabe na A10G (24GB), por isso A100-40GB.
+GPU_TYPE = "A100-40GB"
 GPU_PRICE_PER_SECOND_USD = {
     "T4": 0.000164,
     "L4": 0.000222,
@@ -57,7 +60,7 @@ generate_text_image = (
 
 app = modal.App("mintly-generate-text", image=generate_text_image)
 
-# Cacheia os pesos do modelo num Volume para não baixar de novo (~16GB) a
+# Cacheia os pesos do modelo num Volume para não baixar de novo (~30GB) a
 # cada cold start.
 model_volume = modal.Volume.from_name("qwen-models", create_if_missing=True)
 
@@ -69,7 +72,7 @@ class GenerateTextRequest(BaseModel):
 
 @app.cls(
     gpu=GPU_TYPE,
-    timeout=300,
+    timeout=600,
     retries=0,
     scaledown_window=20,
     volumes={"/cache": model_volume},
