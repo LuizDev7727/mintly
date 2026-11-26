@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,8 @@ import { authClient } from "@/lib/auth";
 import { Spinner } from "@/components/ui/spinner";
 import { TogglePasswordVisibility } from "../-components/toggle-password-visibility";
 import { Separator } from "@/components/ui/separator";
+import { AuthHeading } from "../-components/auth-heading";
+import { AuthTerms } from "../-components/auth-terms";
 
 export const Route = createFileRoute("/_auth/sign-up/")({
   head: () => ({
@@ -33,6 +35,13 @@ export const Route = createFileRoute("/_auth/sign-up/")({
       { title: "Sign Up | Mintly" },
     ],
   }),
+  beforeLoad: async () => {
+    const { data: session } = await authClient.getSession();
+
+    if (session !== null) {
+      throw redirect({ to: "/orgs" });
+    }
+  },
   component: SignUpPage,
 });
 
@@ -67,7 +76,7 @@ function SignUpPage() {
         onSuccess: () => {
           toast("Account created successfully!");
           navigate({
-            to: "/orgs",
+            to: "/sign-up/onboarding",
             replace: true,
             reloadDocument: true
           });
@@ -78,6 +87,7 @@ function SignUpPage() {
 
   return (
     <div className="w-full space-y-6">
+      <AuthHeading />
 
       <form onSubmit={handleSubmit(handleSignUp)} className="space-y-4">
         <FieldGroup>
@@ -166,6 +176,8 @@ function SignUpPage() {
           Sign in
         </Link>
       </p>
+
+      <AuthTerms />
     </div>
   );
 }

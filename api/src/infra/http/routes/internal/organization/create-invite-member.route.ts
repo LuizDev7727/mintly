@@ -1,4 +1,5 @@
 import { createInviteMember } from "@/functions/organization/create-invite-member.ts";
+import { advanceOnboarding } from "@/functions/onboarding/advance-onboarding.ts";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
@@ -47,6 +48,8 @@ export const createInviteMemberRoute: FastifyPluginAsyncZod = async (
           name: inviter.name
         }
       });
+
+      await advanceOnboarding({ userId: inviter.id });
 
       span.end();
 

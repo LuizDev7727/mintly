@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { authClient } from "@/lib/auth";
+import { getOnboardingHttp } from "@/http/onboarding/get-onboarding.http";
 import { NavUser } from "@/components/nav-user";
 import { NavigationBreadcrumb } from "@/components/navigation-breadcrumb";
 
@@ -18,6 +19,13 @@ export const Route = createFileRoute("/orgs/$slug")({
 
     if (isSessionEmpty) {
       throw redirect({ to: "/" });
+    }
+
+    // The app is blocked until the user finishes the onboarding.
+    const { completed } = await getOnboardingHttp();
+
+    if (!completed) {
+      throw redirect({ to: "/sign-up/onboarding" });
     }
   },
   component: OrganizationLayout,

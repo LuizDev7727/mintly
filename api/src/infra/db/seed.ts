@@ -22,6 +22,8 @@ async function seedUser() {
       name: E2E_USER.name,
       email: E2E_USER.email,
       emailVerified: true,
+      // 3 = ONBOARDING_STEPS.length: the e2e user starts past the onboarding.
+      onboardingStep: 3,
     })
     .returning({ id: usersTable.id });
 

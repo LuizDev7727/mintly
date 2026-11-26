@@ -19,6 +19,9 @@ export const requestYoutubeIntegrationUrlRoute: FastifyPluginAsyncZod = async (
           slug: z.string(),
           channelId: z.string(),
         }),
+        querystring: z.object({
+          source: z.literal("onboarding").optional(),
+        }),
         response: {
           200: z.object({
             url: z.url(),
@@ -39,6 +42,7 @@ export const requestYoutubeIntegrationUrlRoute: FastifyPluginAsyncZod = async (
       const { url } = await requestYoutubeIntegrationUrl({
         orgSlug: slug,
         channelId,
+        source: request.query.source,
       });
 
       span.end();
