@@ -3,6 +3,7 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { tracer } from "../../../tracer/tracer.ts";
 import { createChannel } from "@/functions/channel/create-channel.ts";
+import { advanceOnboarding } from "@/functions/onboarding/advance-onboarding.ts";
 import { createActivity } from "@/utils/create-activity.ts";
 import { checkUserSession } from "../../../middleware/check-user-session.ts";
 import { checkMembership } from "@/infra/http/middleware/check-membership.ts";
@@ -55,6 +56,8 @@ export const createChannelRoute: FastifyPluginAsyncZod = async (app) => {
         description: `Created channel ${name}`,
         orgSlug: activeOrganizationId
       })
+
+      await advanceOnboarding({ userId: id });
 
       span.end();
 

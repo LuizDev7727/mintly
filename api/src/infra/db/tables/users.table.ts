@@ -23,6 +23,8 @@ export const usersTable = pgTable("users", {
   image: text("image"),
   bio: text("bio"),
   credits: integer("credits").notNull().default(0),
+  // Number of onboarding steps already done (see ONBOARDING_STEPS).
+  onboardingStep: integer("onboarding_step").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

@@ -16,6 +16,8 @@ import { env } from "./env.ts";
 import { getInfisicalSecret } from "./utils/infisical/get-infisical-secret.ts";
 import { errorHandler } from "./infra/http/routes/error-handler.ts";
 import { protectChannelRoutes } from "./infra/http/middleware/check-channel.ts";
+import { getOnboardingRoute } from "./infra/http/routes/internal/onboarding/get-onboarding.route.ts";
+import { skipOnboardingInviteRoute } from "./infra/http/routes/internal/onboarding/skip-onboarding-invite.route.ts";
 import { getHealthRoute } from "./infra/http/routes/internal/health/get-health.route.ts";
 import { authRoute } from "./infra/http/routes/internal/auth/auth.route.ts";
 import { getChannelsRoute } from "./infra/http/routes/internal/channel/get-channels.route.ts";
@@ -146,6 +148,8 @@ server.register(authRoute);
 server.register(getChannelsRoute);
 server.register(getChannelRoute);
 server.register(createChannelRoute);
+server.register(getOnboardingRoute);
+server.register(skipOnboardingInviteRoute);
 server.register(updateChannelRoute);
 server.register(deleteChannelRoute);
 

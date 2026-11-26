@@ -295,6 +295,13 @@
       "when": 1794916685473,
       "tag": "0041_numerous_aaron_stack",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1795694405623,
+      "tag": "0042_happy_the_stranger",
+      "breakpoints": true
     }
   ]
 }
