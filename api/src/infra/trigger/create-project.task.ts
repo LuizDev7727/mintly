@@ -150,16 +150,25 @@ export const createProjectTask = schemaTask({
 
       Follow these instructions strictly:
 
-      1. List the 20 best standalone moments in the transcript.
-      2. For each of the 20 moments, provide:
+      1. List up to 20 of the best standalone moments in the transcript. Return fewer if there are not enough good ones. Never pad the list with weak or short moments.
+      2. For each moment, provide:
          - The exact start timestamp (startTime) and end timestamp (endTime)
          - An SEO-optimized title for the video
          - An SEO-optimized description for the video
          - A list of relevant tags (keywords) for the video
 
+      How to build a moment (critical):
+      - Each transcript line is a short segment (usually only 2 to 8 seconds). A moment is a sequence of CONSECUTIVE transcript lines combined together.
+      - startTime = the START timestamp of the FIRST line of the moment.
+      - endTime = the END timestamp of the LAST line of the moment.
+      - endTime - startTime MUST be between 30 and 45 seconds. A single line is never enough: keep adding the next consecutive lines until the total duration reaches at least 30 seconds, and stop before it exceeds 45 seconds.
+      - Before answering, compute endTime - startTime for every moment. Discard or adjust any moment whose duration is below 30 or above 45 seconds.
+
+      Example: given the lines "[10.00 - 14.20] ...", "[14.20 - 22.80] ...", "[22.80 - 31.50] ...", "[31.50 - 41.50] ...", the moment that uses all four lines is { "startTime": 10.00, "endTime": 41.50 } (duration 31.5s, valid). Using only "[10.00 - 14.20]" (4.2s) would be INVALID.
+
       Mandatory rules:
       - Use only words spoken in the transcript to define the literal sentences. Never invent or adapt speech.
-      - Only use the start and end timestamps provided in the input. Modifying timestamps is not allowed.
+      - startTime and endTime must be copied exactly from the start of a line and the end of a line in the transcript. Never invent timestamps that do not appear in the input.
       - The title and description must be written in the same language and the same regional variant (country) as the transcript, for example Brazilian Portuguese if the transcript is in Brazilian Portuguese. Never translate them into another language or variant.
       - The tags must also be written in the same language and regional variant as the transcript. Provide between 3 and 8 short, relevant tags per moment, without the "#" symbol.
 
@@ -168,7 +177,7 @@ export const createProjectTask = schemaTask({
       Each element must follow this exact structure:
       { "startTime": number, "endTime": number, "title": string, "description": string, "tags": string[] }
 
-      - "startTime" and "endTime": timestamps in seconds, taken from the transcript.
+      - "startTime" and "endTime": timestamps in seconds, taken from the transcript, with 30 <= endTime - startTime <= 45.
       - "title": the SEO-optimized title of the video.
       - "description": the SEO-optimized description of the video.
       - "tags": an array of short tags (keywords) describing the video.

@@ -29,9 +29,9 @@ Secret do Modal: `mintly-transcribe-audio-secret` (`HF_TOKEN`, necessário só q
 
 ### `generate_text.py` — `mintly-generate-text`
 
-Geração de texto via **Qwen2.5 7B** (`Qwen/Qwen2.5-7B-Instruct`, `transformers` — Qwen2.5 não tem variante 8B), substituindo o Gemini (`gemini-2.5-flash-lite`) na geração de SEO — ver `api/src/infra/trigger/seo-enrichment.task.ts`. O Gemini vinha apresentando erros de sobrecarga (503) que quebravam o pipeline; a task manda um `prompt` já pronto e usa o `text` retornado.
+Geração de texto via **Qwen2.5 14B** (`Qwen/Qwen2.5-14B-Instruct`, `transformers`, bf16 ~30GB, por isso GPU A100-40GB — não cabe na A10G; o 7B anterior não seguia a restrição de 30-45s dos clipes), substituindo o Gemini (`gemini-2.5-flash-lite`) na geração de SEO — ver `api/src/infra/trigger/seo-enrichment.task.ts`. O Gemini vinha apresentando erros de sobrecarga (503) que quebravam o pipeline; a task manda um `prompt` já pronto e usa o `text` retornado.
 
-Classe `TextGenerationService` (`@app.cls(gpu="A10G", ...)`). Os pesos do modelo ficam num `modal.Volume` (`qwen-models`) montado em `/cache`, mesmo motivo do `transcribe_audio.py`: `HF_HOME` precisa ser setado *antes* de importar `transformers`.
+Classe `TextGenerationService` (`@app.cls(gpu="A100-40GB", ...)`). Os pesos do modelo ficam num `modal.Volume` (`qwen-models`) montado em `/cache`, mesmo motivo do `transcribe_audio.py`: `HF_HOME` precisa ser setado *antes* de importar `transformers`.
 
 Secret do Modal: `mintly-generate-text-secret` (`HF_TOKEN`, opcional — Qwen2.5 não é gated, só acelera o download).
 
