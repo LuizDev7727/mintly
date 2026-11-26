@@ -21,6 +21,7 @@ import { Route as OrgsSlugSettingsIndexRouteImport } from './pages/orgs/$slug/se
 import { Route as OrgsSlugMembersIndexRouteImport } from './pages/orgs/$slug/members/index'
 import { Route as OrgsSlugChannelsIndexRouteImport } from './pages/orgs/$slug/channels/index'
 import { Route as OrgsSlugActivitiesIndexRouteImport } from './pages/orgs/$slug/activities/index'
+import { Route as AuthSignUpOnboardingIndexRouteImport } from './pages/_auth/sign-up/onboarding/index'
 import { Route as OrgsSlugChannelsChannelLayoutRouteImport } from './pages/orgs/$slug/channels/$channel/layout'
 import { Route as OrgsSlugWebhooksWebhookIdIndexRouteImport } from './pages/orgs/$slug/webhooks/$webhookId/index'
 import { Route as OrgsSlugChannelsChannelIndexRouteImport } from './pages/orgs/$slug/channels/$channel/index'
@@ -93,6 +94,12 @@ const OrgsSlugActivitiesIndexRoute = OrgsSlugActivitiesIndexRouteImport.update({
   path: '/activities/',
   getParentRoute: () => OrgsSlugLayoutRoute,
 } as any)
+const AuthSignUpOnboardingIndexRoute =
+  AuthSignUpOnboardingIndexRouteImport.update({
+    id: '/sign-up/onboarding/',
+    path: '/sign-up/onboarding/',
+    getParentRoute: () => AuthLayoutRoute,
+  } as any)
 const OrgsSlugChannelsChannelLayoutRoute =
   OrgsSlugChannelsChannelLayoutRouteImport.update({
     id: '/channels/$channel',
@@ -173,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/sign-up/': typeof AuthSignUpIndexRoute
   '/orgs/$slug/': typeof OrgsSlugIndexRoute
   '/orgs/$slug/channels/$channel': typeof OrgsSlugChannelsChannelLayoutRouteWithChildren
+  '/sign-up/onboarding/': typeof AuthSignUpOnboardingIndexRoute
   '/orgs/$slug/activities/': typeof OrgsSlugActivitiesIndexRoute
   '/orgs/$slug/channels/': typeof OrgsSlugChannelsIndexRoute
   '/orgs/$slug/members/': typeof OrgsSlugMembersIndexRoute
@@ -196,6 +204,7 @@ export interface FileRoutesByTo {
   '/orgs': typeof OrgsIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
   '/orgs/$slug': typeof OrgsSlugIndexRoute
+  '/sign-up/onboarding': typeof AuthSignUpOnboardingIndexRoute
   '/orgs/$slug/activities': typeof OrgsSlugActivitiesIndexRoute
   '/orgs/$slug/channels': typeof OrgsSlugChannelsIndexRoute
   '/orgs/$slug/members': typeof OrgsSlugMembersIndexRoute
@@ -223,6 +232,7 @@ export interface FileRoutesById {
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
   '/orgs/$slug/': typeof OrgsSlugIndexRoute
   '/orgs/$slug/channels/$channel': typeof OrgsSlugChannelsChannelLayoutRouteWithChildren
+  '/_auth/sign-up/onboarding/': typeof AuthSignUpOnboardingIndexRoute
   '/orgs/$slug/activities/': typeof OrgsSlugActivitiesIndexRoute
   '/orgs/$slug/channels/': typeof OrgsSlugChannelsIndexRoute
   '/orgs/$slug/members/': typeof OrgsSlugMembersIndexRoute
@@ -250,6 +260,7 @@ export interface FileRouteTypes {
     | '/sign-up/'
     | '/orgs/$slug/'
     | '/orgs/$slug/channels/$channel'
+    | '/sign-up/onboarding/'
     | '/orgs/$slug/activities/'
     | '/orgs/$slug/channels/'
     | '/orgs/$slug/members/'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/orgs'
     | '/sign-up'
     | '/orgs/$slug'
+    | '/sign-up/onboarding'
     | '/orgs/$slug/activities'
     | '/orgs/$slug/channels'
     | '/orgs/$slug/members'
@@ -299,6 +311,7 @@ export interface FileRouteTypes {
     | '/_auth/sign-up/'
     | '/orgs/$slug/'
     | '/orgs/$slug/channels/$channel'
+    | '/_auth/sign-up/onboarding/'
     | '/orgs/$slug/activities/'
     | '/orgs/$slug/channels/'
     | '/orgs/$slug/members/'
@@ -410,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgsSlugActivitiesIndexRouteImport
       parentRoute: typeof OrgsSlugLayoutRoute
     }
+    '/_auth/sign-up/onboarding/': {
+      id: '/_auth/sign-up/onboarding/'
+      path: '/sign-up/onboarding'
+      fullPath: '/sign-up/onboarding/'
+      preLoaderRoute: typeof AuthSignUpOnboardingIndexRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
     '/orgs/$slug/channels/$channel': {
       id: '/orgs/$slug/channels/$channel'
       path: '/channels/$channel'
@@ -500,11 +520,13 @@ declare module '@tanstack/react-router' {
 interface AuthLayoutRouteChildren {
   AuthIndexRoute: typeof AuthIndexRoute
   AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
+  AuthSignUpOnboardingIndexRoute: typeof AuthSignUpOnboardingIndexRoute
 }
 
 const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
   AuthIndexRoute: AuthIndexRoute,
   AuthSignUpIndexRoute: AuthSignUpIndexRoute,
+  AuthSignUpOnboardingIndexRoute: AuthSignUpOnboardingIndexRoute,
 }
 
 const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(

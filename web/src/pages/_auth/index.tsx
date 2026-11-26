@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -21,6 +21,8 @@ import { authClient } from "@/lib/auth";
 import { toast } from "sonner";
 import { TogglePasswordVisibility } from "./-components/toggle-password-visibility";
 import { Separator } from "@/components/ui/separator";
+import { AuthHeading } from "./-components/auth-heading";
+import { AuthTerms } from "./-components/auth-terms";
 
 export const Route = createFileRoute("/_auth/")({
   head: () => ({
@@ -32,6 +34,13 @@ export const Route = createFileRoute("/_auth/")({
       { title: "Sign In | Mintly" },
     ],
   }),
+  beforeLoad: async () => {
+    const { data: session } = await authClient.getSession();
+
+    if (session !== null) {
+      throw redirect({ to: "/orgs" });
+    }
+  },
   component: SignInPage,
 });
 
@@ -74,6 +83,7 @@ function SignInPage() {
 
   return (
     <div className="w-full space-y-6">
+      <AuthHeading />
 
       <form onSubmit={handleSubmit(handleSignIn)} className="space-y-4">
         <FieldGroup>
@@ -131,6 +141,8 @@ function SignInPage() {
           Sign up
         </Link>
       </p>
+
+      <AuthTerms />
     </div>
   );
 }

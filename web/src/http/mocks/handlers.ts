@@ -16,6 +16,8 @@ import { getBestMomentsMock } from "./get-best-moments-mock";
 import { getSearchResultsMock } from "./get-search-results-mock";
 import { getMembersCountMock } from "./get-members-count-mock";
 import { getOrganizationPendingInvitesMock } from "./get-organization-pending-invites-mock";
+import { getOnboardingMock } from "./get-onboarding-mock";
+import { skipOnboardingInviteMock } from "./skip-onboarding-invite-mock";
 
 export const handlers = [
   getActiveOrganizationMock,
@@ -36,4 +38,6 @@ export const handlers = [
   getSearchResultsMock,
   getMembersCountMock,
   getOrganizationPendingInvitesMock,
+  getOnboardingMock,
+  skipOnboardingInviteMock,
 ];
