@@ -69,6 +69,30 @@ describe("POST [/api/me/onboarding/skip-invite]", () => {
     expect(onboarding.body.channelId).toEqual(createChannel.body.channelId);
   });
 
+  test("should advance the onboarding when the invite step is satisfied by an invite", async () => {
+    const { userId } = await makeFakeUser();
+    const { organizationSlug } = await makeFakeOrganization(userId, {
+      name: faker.company.name(),
+    });
+    await makeFakeMember(organizationSlug, userId);
+    const headers = Object.fromEntries(
+      (await authTest.getAuthHeaders({ userId })).entries(),
+    );
+
+    const invite = await request(server.server)
+      .post(`/api/organizations/${organizationSlug}/invites`)
+      .set(headers)
+      .send({ email: faker.internet.email() });
+
+    expect(invite.status).toEqual(201);
+
+    const onboarding = await request(server.server)
+      .get("/api/me/onboarding")
+      .set(headers);
+
+    expect(onboarding.body.step).toEqual(1);
+  });
+
   test("should not leak progress between users", async () => {
     const { userId } = await makeFakeUser();
     const { organizationSlug } = await makeFakeOrganization(userId, {

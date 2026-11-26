@@ -49,7 +49,19 @@ export const youtubeCallbackRoute: FastifyPluginAsyncZod = async (app) => {
 
       span.setAttribute("channel.id", channelId);
 
-      await connectYoutube({ channelId, code });
+      try {
+        await connectYoutube({ channelId, code });
+      } catch (connectError) {
+        span.end();
+
+        // In the onboarding tab, close it anyway: the screen sees no integration.
+        if (isOnboarding) {
+          request.log.error(connectError);
+          return reply.type("text/html").send(CLOSE_TAB_PAGE);
+        }
+
+        throw connectError;
+      }
 
       const { ownerId } = await getChannelOwnerId({ channelId });
 
