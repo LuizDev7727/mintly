@@ -35,3 +35,4 @@ jobs:
           VITE_API_BASE_URL: http://localhost:3000
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           VITE_NODE_ENV: test
+          VITE_LAUNCH_DAILY_KEY: test-key
