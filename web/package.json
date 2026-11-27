@@ -21,6 +21,7 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
     "@hookform/resolvers": "^5.4.0",
+    "@launchdarkly/react-sdk": "^4.2.6",
     "@origin-space/image-cropper": "^0.1.9",
     "@sentry/react": "^10.74.0",
     "@tailwindcss/vite": "^4.3.0",
