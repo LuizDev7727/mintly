@@ -1,0 +1,26 @@
+name: Perf runner smoke test
+
+# Prova que o self-hosted runner (PC extra) executa jobs. Não roda em
+# pull_request: o repo é público e o runner fica numa rede doméstica.
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/load-testing-setup]
+    paths: [.github/workflows/perf-smoke.yml]
+
+jobs:
+  smoke:
+    runs-on: [self-hosted, linux, x64]
+    timeout-minutes: 5
+    steps:
+      - name: Onde estou rodando
+        run: |
+          echo "host: $(hostname)"
+          uname -a
+          echo "cpus: $(nproc)"
+          free -h
+
+      - name: Docker disponível
+        run: |
+          docker --version
+          docker run --rm hello-world
