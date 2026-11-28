@@ -65,8 +65,12 @@ jobs:
       # Portas 5483 e 6379: o Infisical (env "dev") aponta DATABASE_URL e REDIS_URL
       # para localhost nelas, igual ao CI. Publicadas só em 127.0.0.1: o Redis não
       # tem senha e este PC está numa rede doméstica.
-      # Versões fixas (Postgres 17 = produção): uma imagem nova não pode mudar a
-      # latência entre duas rodadas sem mudança de código.
+      # Versões fixas: uma imagem nova não pode mudar a latência entre duas rodadas
+      # sem mudança de código. A Bitnami só publica a tag `latest`, então o Postgres
+      # é fixado por digest. NÃO trocar pela imagem oficial `postgres:17`: no mesmo
+      # workload ela ficou ~4x mais lenta neste PC (51 vs 226 req/s, p95 2.2s vs
+      # 0.43s), causa ainda não investigada. Se o digest sumir do Docker Hub,
+      # atualize-o e rode o teste de novo antes de comparar com rodadas antigas.
       - name: Start PostgreSQL
         run: |
           docker run -d \
@@ -75,7 +79,7 @@ jobs:
             -e POSTGRES_USER=mintly \
             -e POSTGRES_PASSWORD=mintly \
             -e POSTGRES_DB=mintly \
-            bitnami/postgresql:latest
+            bitnami/postgresql@sha256:17db3b66b9701262c495a5463605e75e8de1909c9c7e6c2b3cfe6b4c6958542a
 
       - name: Start Redis
         run: docker run -d --name "$REDIS_CONTAINER" -p 127.0.0.1:6379:6379 redis:7-alpine
@@ -89,6 +93,12 @@ jobs:
           done
           echo "PostgreSQL/Redis não ficaram prontos em 60s"
           exit 1
+
+      # Fica no log de cada rodada: o resultado só é comparável com a mesma versão.
+      - name: Log service versions
+        run: |
+          docker exec "$PG_CONTAINER" postgres --version
+          docker exec "$REDIS_CONTAINER" redis-server --version
 
       - name: Run migrations
         working-directory: api
