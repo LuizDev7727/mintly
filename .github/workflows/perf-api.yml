@@ -1,0 +1,200 @@
+name: API load test (k6)
+
+# Roda no PC extra (self-hosted runner) e o repo é público.
+# NÃO trocar `pull_request_target` por `pull_request`: com `pull_request` o
+# workflow executado é o do próprio PR, e um fork poderia editá-lo para rodar
+# código arbitrário neste PC. Com `pull_request_target` o YAML vem da branch base
+# (staging); o `if` do job barra tudo que não seja development do próprio repo.
+on:
+  workflow_dispatch:
+  # Portão do release: PR development -> staging (sem filtro de paths, para
+  # pegar regressões de qualquer mudança na API).
+  pull_request_target:
+    branches: [staging]
+
+# Uma rodada por vez: duas ao mesmo tempo distorcem as medições e disputam as
+# portas fixas 5483/6379/3000.
+concurrency:
+  group: perf-api
+  cancel-in-progress: false
+
+env:
+  PG_CONTAINER: mintly-perf-pg
+  REDIS_CONTAINER: mintly-perf-redis
+  API_CONTAINER: mintly-perf-api
+
+jobs:
+  load-test:
+    # Trava: PR de fork ou de qualquer branch que não seja a development não
+    # executa nada neste PC. O workflow_dispatch passa direto (exige permissão
+    # de escrita no repo).
+    if: >-
+      github.event_name != 'pull_request_target' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       github.event.pull_request.head.ref == 'development')
+    runs-on: [self-hosted, linux, x64]
+    timeout-minutes: 30
+
+    steps:
+      # No pull_request_target o checkout padrão é o da base; testamos o código
+      # do PR (já garantido como same-repo pela trava acima).
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      # O PC é persistente: se uma rodada anterior morreu no meio, sobram containers.
+      - name: Remove containers de rodadas anteriores
+        run: docker rm -f "$PG_CONTAINER" "$REDIS_CONTAINER" "$API_CONTAINER" || true
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.1.1
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+          cache-dependency-path: api/pnpm-lock.yaml
+
+      - name: Install API dependencies
+        working-directory: api
+        run: pnpm install
+
+      # Portas 5483 e 6379: o Infisical (env "dev") aponta DATABASE_URL e REDIS_URL
+      # para localhost nelas, igual ao CI. Publicadas só em 127.0.0.1: o Redis não
+      # tem senha e este PC está numa rede doméstica.
+      # Versões fixas: uma imagem nova não pode mudar a latência entre duas rodadas
+      # sem mudança de código. A Bitnami só publica a tag `latest`, então o Postgres
+      # é fixado por digest (em 2026-11-28 = PostgreSQL 18.7, enquanto a produção
+      # usa 17: o teste mede a 18). NÃO trocar pela imagem oficial `postgres:17`: no mesmo
+      # workload ela ficou ~4x mais lenta neste PC (51 vs 226 req/s, p95 2.2s vs
+      # 0.43s), causa ainda não investigada. Se o digest sumir do Docker Hub,
+      # atualize-o e rode o teste de novo antes de comparar com rodadas antigas.
+      - name: Start PostgreSQL
+        run: |
+          docker run -d \
+            --name "$PG_CONTAINER" \
+            -p 127.0.0.1:5483:5432 \
+            -e POSTGRES_USER=mintly \
+            -e POSTGRES_PASSWORD=mintly \
+            -e POSTGRES_DB=mintly \
+            bitnami/postgresql@sha256:17db3b66b9701262c495a5463605e75e8de1909c9c7e6c2b3cfe6b4c6958542a
+
+      - name: Start Redis
+        run: docker run -d --name "$REDIS_CONTAINER" -p 127.0.0.1:6379:6379 redis:7-alpine
+
+      - name: Wait for PostgreSQL and Redis
+        run: |
+          for i in $(seq 1 60); do
+            docker exec "$PG_CONTAINER" pg_isready -U mintly \
+              && docker exec "$REDIS_CONTAINER" redis-cli ping | grep -q PONG && exit 0
+            sleep 1
+          done
+          echo "PostgreSQL/Redis não ficaram prontos em 60s"
+          exit 1
+
+      # Fica no log de cada rodada: o resultado só é comparável com a mesma versão.
+      - name: Log service versions
+        run: |
+          docker exec "$PG_CONTAINER" postgres --version
+          docker exec "$REDIS_CONTAINER" redis-server --version
+
+      - name: Run migrations
+        working-directory: api
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if pnpm db:migrate; then
+              exit 0
+            fi
+            echo "Migration attempt $attempt/5 failed"
+            sleep 3
+          done
+          exit 1
+        env:
+          DATABASE_URL: postgresql://mintly:mintly@localhost:5483/mintly
+
+      - name: Seed
+        working-directory: api
+        run: pnpm db:seed
+        env:
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
+          INFISICAL_ENVIRONMENT: dev
+
+      - name: Seed perf dataset
+        working-directory: api
+        run: pnpm db:seed:perf
+        env:
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
+          INFISICAL_ENVIRONMENT: dev
+
+      - name: Build API image
+        run: docker build -t mintly-api:perf ./api
+
+      # Mesmo tamanho da produção no Fly (1 vCPU, 1 GB): o resultado diz quanto
+      # a API aguenta nesse tamanho. NODE_ENV=test pelo mesmo motivo do CI e2e.
+      - name: Start API (1 vCPU, 1 GB)
+        env:
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
+        run: |
+          docker run -d \
+            --name "$API_CONTAINER" \
+            --network host \
+            --cpus=1 \
+            --memory=1g \
+            -e "BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET" \
+            -e NODE_ENV=test \
+            -e OTEL_SERVICE_NAME=mintly-api-perf \
+            -e OTEL_TRACES_EXPORTER=none \
+            -e "INFISICAL_CLIENT_ID=$INFISICAL_CLIENT_ID" \
+            -e "INFISICAL_CLIENT_SECRET=$INFISICAL_CLIENT_SECRET" \
+            -e "INFISICAL_PROJECT_ID=$INFISICAL_PROJECT_ID" \
+            -e INFISICAL_ENVIRONMENT=dev \
+            mintly-api:perf
+
+      - name: Wait for API
+        run: |
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 1
+          done
+          echo "API não respondeu em 60s"
+          docker logs "$API_CONTAINER"
+          exit 1
+
+      # --user: a imagem do k6 roda com um uid próprio e não conseguiria gravar
+      # em results/, que pertence ao usuário do runner.
+      # Rotas autenticadas que só leem do banco (login uma vez no setup do k6).
+      - name: Run k6 (authenticated routes)
+        run: |
+          mkdir -p api/perf/results
+          docker run --rm \
+            --network host \
+            --user "$(id -u):$(id -g)" \
+            -v "$PWD/api/perf:/perf" \
+            -e BASE_URL=http://localhost:3000 \
+            grafana/k6:2.4.0 run \
+              --summary-export=/perf/results/routes-summary.json \
+              /perf/k6/routes.js
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: k6-results
+          path: api/perf/results/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: API container logs (on failure)
+        if: failure()
+        run: docker logs "$API_CONTAINER"
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f "$PG_CONTAINER" "$REDIS_CONTAINER" "$API_CONTAINER" || true
