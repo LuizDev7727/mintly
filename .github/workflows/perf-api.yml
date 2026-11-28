@@ -1,13 +1,21 @@
 name: API load test (k6)
 
-# Roda no PC extra (self-hosted runner). Nunca em pull_request: o repo é público
-# e o runner fica numa rede doméstica, então um fork não pode executar código aqui.
+# Roda no PC extra (self-hosted runner), numa rede doméstica, e o repo é público.
+#
+# Por isso o gatilho de PR é `pull_request_target` e NÃO `pull_request`: com
+# `pull_request`, o workflow executado é o do próprio PR, então um fork poderia
+# editá-lo e rodar código arbitrário neste PC. Com `pull_request_target`, o
+# arquivo de workflow vem sempre da branch base (staging) e o job só executa
+# quando o PR vem do próprio repo e da development (ver `if` do job).
 on:
   workflow_dispatch:
+  # Portão do release: PR development -> staging.
+  pull_request_target:
+    branches: [staging]
   # Roda sozinho quando o workflow ou os cenários mudam na development (só
   # mantenedores fazem merge lá). Em outras branches, use o workflow_dispatch.
   push:
-    branches: [development, feature/load-testing-setup] # TEMP: tirar feature/* antes do merge
+    branches: [development]
     paths:
       - .github/workflows/perf-api.yml
       - api/perf/**
@@ -26,11 +34,21 @@ env:
 
 jobs:
   load-test:
+    # Trava: PR de fork ou de qualquer branch que não seja a development não
+    # executa nada neste PC. push e workflow_dispatch passam direto.
+    if: >-
+      github.event_name != 'pull_request_target' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       github.event.pull_request.head.ref == 'development')
     runs-on: [self-hosted, linux, x64]
     timeout-minutes: 30
 
     steps:
+      # No pull_request_target o checkout padrão é o da base; testamos o código
+      # do PR (já garantido como same-repo pela trava acima).
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       # O PC é persistente: se uma rodada anterior morreu no meio, sobram containers.
       - name: Remove containers de rodadas anteriores
