@@ -11,8 +11,6 @@ on:
   # pegar regressões de qualquer mudança na API).
   pull_request_target:
     branches: [staging]
-  push: # TEMP-VALIDACAO: remover antes do PR
-    branches: [feature/load-testing-setup]
 
 # Uma rodada por vez: duas ao mesmo tempo distorcem as medições e disputam as
 # portas fixas 5483/6379/3000.
@@ -67,7 +65,8 @@ jobs:
       # tem senha e este PC está numa rede doméstica.
       # Versões fixas: uma imagem nova não pode mudar a latência entre duas rodadas
       # sem mudança de código. A Bitnami só publica a tag `latest`, então o Postgres
-      # é fixado por digest. NÃO trocar pela imagem oficial `postgres:17`: no mesmo
+      # é fixado por digest (em 2026-11-28 = PostgreSQL 18.7, enquanto a produção
+      # usa 17: o teste mede a 18). NÃO trocar pela imagem oficial `postgres:17`: no mesmo
       # workload ela ficou ~4x mais lenta neste PC (51 vs 226 req/s, p95 2.2s vs
       # 0.43s), causa ainda não investigada. Se o digest sumir do Docker Hub,
       # atualize-o e rode o teste de novo antes de comparar com rodadas antigas.
