@@ -171,15 +171,39 @@ jobs:
       # --user: a imagem do k6 roda com um uid próprio e não conseguiria gravar
       # em results/, que pertence ao usuário do runner.
       # Rotas autenticadas que só leem do banco (login uma vez no setup do k6).
+      #
+      # Envio ao Grafana Cloud (Prometheus remote write): só acontece se os 3
+      # secrets existirem; sem eles o teste roda igual e só gera o artefato.
+      # O token vai por `-e NOME` (sem valor) para não aparecer na linha de comando.
+      # As tags sha/run_id identificam a rodada nos painéis.
       - name: Run k6 (authenticated routes)
+        env:
+          PROM_URL: ${{ secrets.GRAFANA_CLOUD_PROM_URL }}
+          PROM_USER: ${{ secrets.GRAFANA_CLOUD_PROM_USER }}
+          K6_PROMETHEUS_RW_PASSWORD: ${{ secrets.GRAFANA_CLOUD_K6_TOKEN }}
         run: |
           mkdir -p api/perf/results
+          OUT=()
+          if [ -n "$PROM_URL" ] && [ -n "$PROM_USER" ] && [ -n "$K6_PROMETHEUS_RW_PASSWORD" ]; then
+            OUT=(--out experimental-prometheus-rw)
+            echo "Métricas do k6 serão enviadas ao Grafana Cloud"
+          else
+            echo "Secrets do Grafana Cloud ausentes: envio de métricas pulado"
+          fi
           docker run --rm \
             --network host \
             --user "$(id -u):$(id -g)" \
             -v "$PWD/api/perf:/perf" \
             -e BASE_URL=http://localhost:3000 \
-            grafana/k6:2.4.0 run \
+            -e K6_PROMETHEUS_RW_SERVER_URL="$PROM_URL" \
+            -e K6_PROMETHEUS_RW_USERNAME="$PROM_USER" \
+            -e K6_PROMETHEUS_RW_PASSWORD \
+            -e K6_PROMETHEUS_RW_TREND_STATS="p(50),p(90),p(95),p(99),avg,max" \
+            -e K6_PROMETHEUS_RW_STALE_MARKERS=true \
+            grafana/k6:2.4.0 run "${OUT[@]}" \
+              --tag sha="${GITHUB_SHA:0:8}" \
+              --tag run_id="$GITHUB_RUN_ID" \
+              --tag trigger="$GITHUB_EVENT_NAME" \
               --summary-export=/perf/results/routes-summary.json \
               /perf/k6/routes.js
 
