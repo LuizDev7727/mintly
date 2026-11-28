@@ -1,0 +1,119 @@
+// Alloy do PC de performance: coleta CPU/RAM dos containers do teste, métricas do
+// host e logs, e envia tudo ao Grafana Cloud. As credenciais vêm do .env (nunca
+// do repo). Só os containers `mintly-perf-*` (API, Postgres, Redis do workflow)
+// são enviados: o resto do PC não entra, para caber no plano grátis.
+
+// ---------------------------------------------------------------- métricas ---
+
+prometheus.remote_write "cloud" {
+  endpoint {
+    url = sys.env("GRAFANA_PROM_URL")
+
+    basic_auth {
+      username = sys.env("GRAFANA_PROM_USER")
+      password = sys.env("GRAFANA_ALLOY_TOKEN")
+    }
+  }
+
+  external_labels = {
+    host   = "debian-perf",
+    source = "alloy",
+  }
+}
+
+// CPU, memória, rede e disco por container (cAdvisor embutido no Alloy).
+prometheus.exporter.cadvisor "containers" {
+  docker_host      = "unix:///var/run/docker.sock"
+  storage_duration = "5m"
+  docker_only      = true
+  enabled_metrics  = ["cpu", "memory", "network", "diskIO"]
+}
+
+prometheus.scrape "containers" {
+  targets         = prometheus.exporter.cadvisor.containers.targets
+  forward_to      = [prometheus.relabel.perf_containers_only.receiver]
+  scrape_interval = "10s"
+}
+
+// Mantém só os containers do teste. Séries sem `name` (cgroups do host) saem.
+prometheus.relabel "perf_containers_only" {
+  forward_to = [prometheus.remote_write.cloud.receiver]
+
+  rule {
+    source_labels = ["name"]
+    regex         = "mintly-perf-.*"
+    action        = "keep"
+  }
+}
+
+// O PC todo (para saber se havia outra coisa competindo por CPU durante o teste).
+prometheus.exporter.unix "host" {
+  procfs_path     = "/host/proc"
+  sysfs_path      = "/host/sys"
+  rootfs_path     = "/rootfs"
+  set_collectors  = ["cpu", "meminfo", "loadavg", "diskstats", "netdev", "filesystem"]
+}
+
+prometheus.scrape "host" {
+  targets         = prometheus.exporter.unix.host.targets
+  forward_to      = [prometheus.remote_write.cloud.receiver]
+  scrape_interval = "10s"
+}
+
+// -------------------------------------------------------------------- logs ---
+
+loki.write "cloud" {
+  endpoint {
+    url = sys.env("GRAFANA_LOKI_URL")
+
+    basic_auth {
+      username = sys.env("GRAFANA_LOKI_USER")
+      password = sys.env("GRAFANA_ALLOY_TOKEN")
+    }
+  }
+
+  external_labels = {
+    host = "debian-perf",
+  }
+}
+
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "perf_logs" {
+  targets = discovery.docker.containers.targets
+
+  // O nome no Docker vem com "/" na frente; só `mintly-perf-*` passa.
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(mintly-perf-.*)"
+    target_label  = "container"
+    replacement   = "$1"
+  }
+
+  rule {
+    source_labels = ["container"]
+    regex         = ".+"
+    action        = "keep"
+  }
+}
+
+loki.source.docker "perf" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.perf_logs.output
+  forward_to = [loki.process.cap.receiver]
+}
+
+// A API loga cada requisição em várias linhas (uma rodada faz ~20 mil). Em vez de
+// tentar adivinhar o que descartar, limita a vazão para não estourar a cota do
+// plano grátis; linhas acima do limite são descartadas.
+loki.process "cap" {
+  forward_to = [loki.write.cloud.receiver]
+
+  stage.limit {
+    rate  = 200
+    burst = 400
+    drop  = true
+  }
+}

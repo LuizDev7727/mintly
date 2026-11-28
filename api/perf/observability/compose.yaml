@@ -1,0 +1,37 @@
+# Alloy do PC de performance. Sobe uma vez no Debian e fica rodando (restart:
+# unless-stopped); os containers do teste nascem e morrem a cada rodada e são
+# descobertos pelo nome (`mintly-perf-*`).
+#
+# Uso: cp .env.example .env && chmod 600 .env && (preencher) && docker compose up -d
+services:
+  alloy:
+    image: grafana/alloy:v1.22.0
+    # Não pode se chamar `mintly-perf-*`: senão enviaria os próprios logs e métricas.
+    container_name: perf-alloy
+    restart: unless-stopped
+    # O cAdvisor embutido precisa de acesso ao host (cgroups, /sys, socket do
+    # Docker). É root no host na prática, então este compose só roda no PC de teste.
+    privileged: true
+    pid: host
+    env_file: .env
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    ports:
+      # Interface de depuração do Alloy, só no localhost do Debian.
+      - "127.0.0.1:12345:12345"
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy:ro
+      - alloy-data:/var/lib/alloy/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/rootfs:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+
+volumes:
+  alloy-data:
