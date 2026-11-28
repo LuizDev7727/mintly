@@ -11,6 +11,8 @@ on:
   # pegar regressões de qualquer mudança na API).
   pull_request_target:
     branches: [staging]
+  push: # TEMP-VALIDACAO: remover antes do PR
+    branches: [feature/perf-observability]
 
 # Uma rodada por vez: duas ao mesmo tempo distorcem as medições e disputam as
 # portas fixas 5483/6379/3000.
