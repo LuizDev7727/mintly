@@ -15,18 +15,20 @@ export const options = {
     { duration: "30s", target: 60 },
     { duration: "10s", target: 0 }, // resfriamento
   ],
-  // Valores iniciais: ajustar depois da primeira rodada real (baseline).
+  // Baseline da 1ª rodada no PC extra (API em 1 vCPU, 60 VUs) + ~25% de folga.
+  // p95 medido (ms): channels 197, projects 464, posts 364, folders 373,
+  // folders-tree 716, search 205.
   thresholds: {
     http_req_failed: ["rate<0.01"],
     checks: ["rate>0.99"],
     "http_req_duration{name:list-channels}": ["p(95)<300"],
-    "http_req_duration{name:list-projects}": ["p(95)<500"],
-    "http_req_duration{name:list-projects-filtered}": ["p(95)<500"],
+    "http_req_duration{name:list-projects}": ["p(95)<600"],
+    "http_req_duration{name:list-projects-filtered}": ["p(95)<600"],
     "http_req_duration{name:list-posts}": ["p(95)<500"],
     "http_req_duration{name:list-posts-filtered}": ["p(95)<500"],
-    "http_req_duration{name:list-folders}": ["p(95)<300"],
-    "http_req_duration{name:folders-tree}": ["p(95)<500"],
-    "http_req_duration{name:search}": ["p(95)<500"],
+    "http_req_duration{name:list-folders}": ["p(95)<500"],
+    "http_req_duration{name:folders-tree}": ["p(95)<900"],
+    "http_req_duration{name:search}": ["p(95)<300"],
   },
 };
 
