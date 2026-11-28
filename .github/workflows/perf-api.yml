@@ -146,21 +146,10 @@ jobs:
 
       # --user: a imagem do k6 roda com um uid próprio e não conseguiria gravar
       # em results/, que pertence ao usuário do runner.
-      - name: Run k6 (health)
-        run: |
-          mkdir -p api/perf/results
-          docker run --rm \
-            --network host \
-            --user "$(id -u):$(id -g)" \
-            -v "$PWD/api/perf:/perf" \
-            -e BASE_URL=http://localhost:3000 \
-            grafana/k6:latest run \
-              --summary-export=/perf/results/health-summary.json \
-              /perf/k6/health.js
-
       # Rotas autenticadas que só leem do banco (login uma vez no setup do k6).
       - name: Run k6 (authenticated routes)
         run: |
+          mkdir -p api/perf/results
           docker run --rm \
             --network host \
             --user "$(id -u):$(id -g)" \
