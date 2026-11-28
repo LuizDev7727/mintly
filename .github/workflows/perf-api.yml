@@ -4,11 +4,14 @@ name: API load test (k6)
 # e o runner fica numa rede doméstica, então um fork não pode executar código aqui.
 on:
   workflow_dispatch:
-  # Temporário: enquanto o workflow não está na branch padrão, o workflow_dispatch
-  # não aparece na UI/CLI. Remover quando for para a development.
+  # Roda sozinho quando o workflow ou os cenários mudam na development (só
+  # mantenedores fazem merge lá). Em outras branches, use o workflow_dispatch.
   push:
-    branches: [feature/load-testing-setup]
-    paths: [.github/workflows/perf-api.yml, api/perf/**]
+    branches: [development, feature/load-testing-setup] # TEMP: tirar feature/* antes do merge
+    paths:
+      - .github/workflows/perf-api.yml
+      - api/perf/**
+      - api/src/infra/db/seed-perf.ts
 
 # Uma rodada por vez: duas ao mesmo tempo distorcem as medições e disputam as
 # portas fixas 5483/6379/3000.
@@ -33,7 +36,7 @@ jobs:
       - name: Remove containers de rodadas anteriores
         run: docker rm -f "$PG_CONTAINER" "$REDIS_CONTAINER" "$API_CONTAINER" || true
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 11.1.1
 
@@ -95,6 +98,15 @@ jobs:
           INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
           INFISICAL_ENVIRONMENT: dev
 
+      - name: Seed perf dataset
+        working-directory: api
+        run: pnpm db:seed:perf
+        env:
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
+          INFISICAL_ENVIRONMENT: dev
+
       - name: Build API image
         run: docker build -t mintly-api:perf ./api
 
@@ -146,7 +158,19 @@ jobs:
               --summary-export=/perf/results/health-summary.json \
               /perf/k6/health.js
 
-      - uses: actions/upload-artifact@v4
+      # Rotas autenticadas que só leem do banco (login uma vez no setup do k6).
+      - name: Run k6 (authenticated routes)
+        run: |
+          docker run --rm \
+            --network host \
+            --user "$(id -u):$(id -g)" \
+            -v "$PWD/api/perf:/perf" \
+            -e BASE_URL=http://localhost:3000 \
+            grafana/k6:latest run \
+              --summary-export=/perf/results/routes-summary.json \
+              /perf/k6/routes.js
+
+      - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: k6-results
