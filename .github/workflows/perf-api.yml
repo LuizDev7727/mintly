@@ -75,7 +75,7 @@ jobs:
             -e POSTGRES_USER=mintly \
             -e POSTGRES_PASSWORD=mintly \
             -e POSTGRES_DB=mintly \
-            postgres:17
+            bitnami/postgresql:latest
 
       - name: Start Redis
         run: docker run -d --name "$REDIS_CONTAINER" -p 127.0.0.1:6379:6379 redis:7-alpine
