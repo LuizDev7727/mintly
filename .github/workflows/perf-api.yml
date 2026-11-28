@@ -11,6 +11,8 @@ on:
   # pegar regressões de qualquer mudança na API).
   pull_request_target:
     branches: [staging]
+  push: # TEMP-VALIDACAO: remover antes do PR
+    branches: [feature/load-testing-setup]
 
 # Uma rodada por vez: duas ao mesmo tempo distorcem as medições e disputam as
 # portas fixas 5483/6379/3000.
@@ -61,19 +63,22 @@ jobs:
         run: pnpm install
 
       # Portas 5483 e 6379: o Infisical (env "dev") aponta DATABASE_URL e REDIS_URL
-      # para localhost nelas, igual ao CI.
+      # para localhost nelas, igual ao CI. Publicadas só em 127.0.0.1: o Redis não
+      # tem senha e este PC está numa rede doméstica.
+      # Versões fixas (Postgres 17 = produção): uma imagem nova não pode mudar a
+      # latência entre duas rodadas sem mudança de código.
       - name: Start PostgreSQL
         run: |
           docker run -d \
             --name "$PG_CONTAINER" \
-            -p 5483:5432 \
+            -p 127.0.0.1:5483:5432 \
             -e POSTGRES_USER=mintly \
             -e POSTGRES_PASSWORD=mintly \
             -e POSTGRES_DB=mintly \
-            bitnami/postgresql:latest
+            postgres:17
 
       - name: Start Redis
-        run: docker run -d --name "$REDIS_CONTAINER" -p 6379:6379 redis:7-alpine
+        run: docker run -d --name "$REDIS_CONTAINER" -p 127.0.0.1:6379:6379 redis:7-alpine
 
       - name: Wait for PostgreSQL and Redis
         run: |
@@ -165,7 +170,7 @@ jobs:
             --user "$(id -u):$(id -g)" \
             -v "$PWD/api/perf:/perf" \
             -e BASE_URL=http://localhost:3000 \
-            grafana/k6:latest run \
+            grafana/k6:2.4.0 run \
               --summary-export=/perf/results/routes-summary.json \
               /perf/k6/routes.js
 
