@@ -1,25 +1,16 @@
 name: API load test (k6)
 
-# Roda no PC extra (self-hosted runner), numa rede doméstica, e o repo é público.
-#
-# Por isso o gatilho de PR é `pull_request_target` e NÃO `pull_request`: com
-# `pull_request`, o workflow executado é o do próprio PR, então um fork poderia
-# editá-lo e rodar código arbitrário neste PC. Com `pull_request_target`, o
-# arquivo de workflow vem sempre da branch base (staging) e o job só executa
-# quando o PR vem do próprio repo e da development (ver `if` do job).
+# Roda no PC extra (self-hosted runner) e o repo é público.
+# NÃO trocar `pull_request_target` por `pull_request`: com `pull_request` o
+# workflow executado é o do próprio PR, e um fork poderia editá-lo para rodar
+# código arbitrário neste PC. Com `pull_request_target` o YAML vem da branch base
+# (staging); o `if` do job barra tudo que não seja development do próprio repo.
 on:
   workflow_dispatch:
-  # Portão do release: PR development -> staging.
+  # Portão do release: PR development -> staging (sem filtro de paths, para
+  # pegar regressões de qualquer mudança na API).
   pull_request_target:
     branches: [staging]
-  # Roda sozinho quando o workflow ou os cenários mudam na development (só
-  # mantenedores fazem merge lá). Em outras branches, use o workflow_dispatch.
-  push:
-    branches: [development]
-    paths:
-      - .github/workflows/perf-api.yml
-      - api/perf/**
-      - api/src/infra/db/seed-perf.ts
 
 # Uma rodada por vez: duas ao mesmo tempo distorcem as medições e disputam as
 # portas fixas 5483/6379/3000.
@@ -35,7 +26,8 @@ env:
 jobs:
   load-test:
     # Trava: PR de fork ou de qualquer branch que não seja a development não
-    # executa nada neste PC. push e workflow_dispatch passam direto.
+    # executa nada neste PC. O workflow_dispatch passa direto (exige permissão
+    # de escrita no repo).
     if: >-
       github.event_name != 'pull_request_target' ||
       (github.event.pull_request.head.repo.full_name == github.repository &&
